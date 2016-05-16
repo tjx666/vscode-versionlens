@@ -32,6 +32,9 @@ Supports
 
 ### Change Log
 
+- 0.4.3
+  - Fixes versionlens for dub sub packages
+
 - 0.4.2
   - Transferred this project over to https://github.com/vscode-contrib/vscode-versionlens
 
