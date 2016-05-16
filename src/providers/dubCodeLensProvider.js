@@ -13,10 +13,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
   constructor(config) {
     super(config);
     this.packageDependencyKeys = [
-      'dependencies',
-      'devDependencies',
-      'peerDependencies',
-      'optionalDependencies'
+      'dependencies'
     ];
   }
 
@@ -26,6 +23,20 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
       scheme: 'file',
       pattern: '**/dub.json'
     };
+  }
+
+  private addDependencies(root, collector) {
+    root.getChildNodes().forEach((node) => {
+      if (this.packageDependencyKeys.indexOf(node.key.value) !== -1) {
+        collector.addRange(node.value.getChildNodes());
+      }
+      else if (node.key.value == "subPackages") {
+        node.value.items.forEach((subPackage) => {
+          if (subPackage.type == "object")
+            this.addDependencies(subPackage, collector);
+        });
+      }
+    });
   }
 
   provideCodeLenses(document, token) {
@@ -38,11 +49,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     if (jsonDoc.validationResult.errors.length > 0)
       return [];
 
-    jsonDoc.root.getChildNodes().forEach((node) => {
-      if (this.packageDependencyKeys.indexOf(node.key.value) !== -1) {
-        collector.addRange(node.value.getChildNodes());
-      }
-    });
+    this.addDependencies(jsonDoc.root, collector);
 
     return collector.list;
   }
@@ -60,7 +67,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
         return;
       }
 
-      const queryUrl = `http://code.dlang.org/api/packages/${encodeURIComponent(codeLensItem.packageName)}/latest`;
+      const queryUrl = `http://code.dlang.org/api/packages/${getPackageName(encodeURIComponent(codeLensItem.packageName))}/latest`;
       return this.httpRequest.xhr({ url: queryUrl })
         .then(response => {
           if (response.status != 200)
@@ -93,4 +100,11 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
         });
     }
   }
+}
+
+function getPackageName(dependencyName: string): string {
+  var colonIndex = dependencyName.indexOf(":");
+  if (colonIndex == -1)
+    return dependencyName;
+  return dependencyName
 }
