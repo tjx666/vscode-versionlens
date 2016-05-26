@@ -8,7 +8,7 @@
   },
   "author": "Peter Flannery",
   "license": "MIT",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "publisher": "pflannery",
   "displayName": "Version Lens",
   "icon": "images/logo.png",
@@ -27,7 +27,7 @@
   "activationEvents": [
     "onLanguage:json"
   ],
-  "main": "./out/src/extension",
+  "main": "./out/src/extension.js",
   "scripts": {
     "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
