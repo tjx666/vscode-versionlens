@@ -67,7 +67,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
         return;
       }
 
-      const queryUrl = `http://code.dlang.org/api/packages/${getPackageName(encodeURIComponent(codeLensItem.packageName))}/latest`;
+      const queryUrl = `http://code.dlang.org/api/packages/${encodeURIComponent(codeLensItem.packageName)}/latest`;
       return this.httpRequest.xhr({ url: queryUrl })
         .then(response => {
           if (response.status != 200)
@@ -100,11 +100,4 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
         });
     }
   }
-}
-
-function getPackageName(dependencyName: string): string {
-  var colonIndex = dependencyName.indexOf(":");
-  if (colonIndex == -1)
-    return dependencyName;
-  return dependencyName
 }
