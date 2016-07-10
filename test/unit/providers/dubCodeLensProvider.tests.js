@@ -13,9 +13,9 @@ import {TestFixtureMap} from '../../testUtils';
 import {DubCodeLensProvider} from '../../../src/providers/dubCodeLensProvider';
 import {AppConfiguration} from '../../../src/models/appConfiguration';
 import {PackageCodeLens} from '../../../src/models/packageCodeLens';
+import * as jsonParser from  'vscode-contrib-jsonc';
 
 const jsonExt = vscode.extensions.getExtension('vscode.json');
-const jsonParser = require(jsonExt.extensionPath + '/server/out/jsonParser');
 
 describe("DubCodeLensProvider", () => {
   const testPath = path.join(__dirname, '../../../..', 'test');
