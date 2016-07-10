@@ -32,6 +32,9 @@ Supports
 
 ### Change Log
 
+- 0.5.0
+  - Added npm scoped packages support
+
 - 0.4.3
   - Fixes versionlens for dub sub packages
 

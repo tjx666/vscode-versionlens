@@ -55,7 +55,11 @@
     "sinon": "1.17.3",
     "sizzle": "2.3.0",
     "strip-json-comments": "2.0.0",
-    "testswarm": "1.1.0"
+    "testswarm": "1.1.0",
+    "@types/angularjs": "^1.5.13-alpha",
+    "@types/fs-extra": "0.0.22-alpha",
+    "@types/hammerjs": "^2.0.22-alpha",
+    "@types/jasmine": "^2.2.22-alpha"
   },
   "scripts": {
     "build": "npm install && grunt",

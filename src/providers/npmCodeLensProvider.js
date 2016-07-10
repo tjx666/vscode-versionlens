@@ -50,12 +50,18 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   resolveCodeLens(codeLensItem, token) {
     if (codeLensItem instanceof PackageCodeLens) {
 
-      if (codeLensItem.packageVersion === 'latest') {
+      if (codeLensItem.packageVersion === '*') {
         super.makeLatestCommand(codeLensItem);
         return;
       }
 
-      const queryUrl = `http://registry.npmjs.org/${encodeURIComponent(codeLensItem.packageName)}/latest`;
+      // encode the package name
+      let packageUriComponent = encodeURIComponent(codeLensItem.packageName);
+      // ensure that any scoped packages maintain their @ symbol in the uri
+      if (codeLensItem.packageName[0] === '@')
+        packageUriComponent = packageUriComponent.replace('%40', '@');
+
+      const queryUrl = `http://registry.npmjs.org/${packageUriComponent}/*`;
       return this.httpRequest.xhr({ url: queryUrl })
         .then(response => {
           if (response.status != 200)
