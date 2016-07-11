@@ -98,7 +98,7 @@ describe("NpmCodeLensProvider", () => {
     it("passes url to httpRequest.xhr", done => {
       const codeLens = new PackageCodeLens(null, null, null, 'SomePackage', '1.2.3', false);
       httpRequestMock.xhr = options => {
-        assert.equal(options.url, 'http://registry.npmjs.org/SomePackage/*', "Expected httpRequest.xhr(options.url) but failed.");
+        assert.equal(options.url, 'http://registry.npmjs.org/SomePackage/latest', "Expected httpRequest.xhr(options.url) but failed.");
         done();
         return Promise.resolve({
           status: 200,

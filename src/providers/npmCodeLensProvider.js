@@ -49,8 +49,9 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
   resolveCodeLens(codeLensItem, token) {
     if (codeLensItem instanceof PackageCodeLens) {
+      let requestVersion = 'latest';
 
-      if (codeLensItem.packageVersion === '*') {
+      if (codeLensItem.packageVersion === requestVersion) {
         super.makeLatestCommand(codeLensItem);
         return;
       }
@@ -58,10 +59,13 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       // encode the package name
       let packageUriComponent = encodeURIComponent(codeLensItem.packageName);
       // ensure that any scoped packages maintain their @ symbol in the uri
-      if (codeLensItem.packageName[0] === '@')
+      if (codeLensItem.packageName[0] === '@') {
         packageUriComponent = packageUriComponent.replace('%40', '@');
+        // work around for https://github.com/npm/registry/issues/34#issuecomment-231594567
+        requestVersion = '*';
+      }
 
-      const queryUrl = `http://registry.npmjs.org/${packageUriComponent}/*`;
+      const queryUrl = `http://registry.npmjs.org/${packageUriComponent}/${requestVersion}`;
       return this.httpRequest.xhr({ url: queryUrl })
         .then(response => {
           if (response.status != 200)
