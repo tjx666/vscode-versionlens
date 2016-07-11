@@ -29,7 +29,7 @@
   ],
   "main": "./out/src/extension.js",
   "scripts": {
-    "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+    "vscode:prepublish": "grunt compile",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "clean": "grunt clean:sourceArtifacts",
