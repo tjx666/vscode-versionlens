@@ -3,6 +3,7 @@
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "files.exclude": {
+    ".vscode-test*": true,
     "node_modules": true,
     "out": false // set this to true to hide the "out" folder with the compiled JS files
   },

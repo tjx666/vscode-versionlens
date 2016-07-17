@@ -23,7 +23,7 @@ export class PackageCodeLensList {
       this.document.positionAt(packageEntry.start),
       this.document.positionAt(packageEntry.end)
     );
-    let packageName = packageEntry.name;
+    let packageName = packageEntry.location;
     let packageVersion = packageEntry.value;
     let versionRange = idRange;
 
