@@ -7,11 +7,30 @@ import {PackageCodeLens} from '../models/packageCodeLens';
 import {AbstractCodeLensProvider} from './abstractCodeLensProvider';
 import {PackageCodeLensList} from '../lists/packageCodeLensList'
 
+const JspmDependencyRegex = /^npm:(.*)@(.*)$/;
+
 @inject('jsonParser', 'httpRequest')
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
   constructor(config) {
     super(config);
+
+    this.packageExtensions = {
+      'jspm': node => {
+        const m = JspmDependencyRegex.exec(node.value);
+        if (!m)
+          return undefined;
+
+        const packageName = m[1];
+        return {
+          packageName: packageName,
+          packageVersion: m[2],
+          versionAdapter: (lens, version) => `npm:${packageName}@${version}`
+        }
+      }
+    };
+    this.packageExtensionsKeys = Object.keys(this.packageExtensions);
+
     this.packageDependencyKeys = [
       'dependencies',
       'devDependencies',
@@ -39,8 +58,13 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       return [];
 
     jsonDoc.root.getChildNodes().forEach((node) => {
-      if (this.packageDependencyKeys.indexOf(node.key.value) !== -1) {
+      const pkg = node.key.value;
+      if (this.packageDependencyKeys.indexOf(pkg) !== -1) {
         collector.addRange(node.value.getChildNodes());
+      }
+      if (this.packageExtensionsKeys.indexOf(pkg) !== -1) {
+        const customParser = this.packageExtensions[pkg];
+        node.value.getChildNodes().forEach(n => collector.addRange(n.value.getChildNodes(), customParser));
       }
     });
 
