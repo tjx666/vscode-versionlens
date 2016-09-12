@@ -32,6 +32,9 @@ Supports
 
 ### Change Log
 
+- 0.6.0
+  - Added jspm package support
+
 - 0.5.0
   - Added npm scoped packages support
 
@@ -58,6 +61,7 @@ These are the people that have contributed code to this project:
 
 - [pflannery](https://github.com/pflannery) — [view contributions](https://github.com/vscode-contrib/vscode-versionlens/commits?author=pflannery)
 - [WebFreak001](https://github.com/WebFreak001) — [view contributions](https://github.com/vscode-contrib/vscode-versionlens/commits?author=WebFreak001)
+- [eamodio](https://github.com/eamodio) — [view contributions](https://github.com/vscode-contrib/vscode-versionlens/commits?author=eamodio)
 
 ### License
 

@@ -19,7 +19,7 @@
     "vscode",
     "versions",
     "packages",
-    "npm, bower, dub, dotnet"
+    "npm, bower, dub, dotnet, jspm"
   ],
   "categories": [
     "Other"
