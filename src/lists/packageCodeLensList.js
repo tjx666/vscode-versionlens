@@ -17,19 +17,30 @@ export class PackageCodeLensList {
     this.document = document;
   }
 
-  add(node) {
+  add(node, customParser) {
     const packageEntry = node.value;
     const idRange = new Range(
       this.document.positionAt(packageEntry.start),
       this.document.positionAt(packageEntry.end)
     );
+
     let packageName = packageEntry.name;
     let packageVersion = packageEntry.value;
     let versionRange = idRange;
+    let versionAdapter;
+
+    if (customParser) {
+      let pkg = customParser(packageEntry);
+      if (!pkg)
+        return false;
+      packageName = pkg.packageName;
+      packageVersion = pkg.packageVersion;
+      versionAdapter = pkg.versionAdapter;
+    }
 
     // handle cases where version is stored as a child property.
     if (packageEntry.type === 'object') {
-      const versionInfo = this.getVersionRangeFromParent(node.value);
+      const versionInfo = this.getVersionRangeFromParent(packageEntry);
       // if there isn't any version info then dont add this item
       if (versionInfo === undefined)
         return false;
@@ -44,13 +55,14 @@ export class PackageCodeLensList {
         versionRange,
         Uri.file(this.document.fileName),
         packageName,
-        packageVersion
+        packageVersion,
+        versionAdapter
       )
     );
   }
 
-  addRange(nodes) {
-    nodes.forEach((node) => this.add(node));
+  addRange(nodes, customParser) {
+    nodes.forEach((node) => this.add(node, customParser));
   }
 
   get list() {

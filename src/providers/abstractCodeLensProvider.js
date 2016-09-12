@@ -66,12 +66,18 @@ export abstract class AbstractCodeLensProvider {
   }
 
   makeNewVersionCommand(newerVersion, codeLensItem) {
+    const prefix = this.appConfig.versionPrefix;
+    let replaceWithVersion = codeLensItem.toVersion(newerVersion);
+    if (!replaceWithVersion.startsWith(prefix)) {
+      replaceWithVersion = `${prefix}${replaceWithVersion}`
+    }
+
     codeLensItem.command = {
       title: `&uarr; ${this.appConfig.versionPrefix}${newerVersion}`,
       command: `_${this.appConfig.extentionName}.updateDependencyCommand`,
       arguments: [
         codeLensItem,
-        `"${this.appConfig.versionPrefix}${newerVersion}"`
+        `"${replaceWithVersion}"`
       ]
     };
     return codeLensItem;
