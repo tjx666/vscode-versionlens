@@ -97,12 +97,20 @@ describe("AbstractCodeLensProvider", () => {
       assert.equal(testLens.command.arguments[1], '"^2.8.0"');
     });
 
-    it("when local version has caret and satisfies the server version then codeLens should return SatisfiedCommand", () => {
+    it("when local version has caret and satisfies the server version (and matches) then codeLens should return SatisfiedCommand", () => {
       defaultVersionPrefix = '^';
-      const testLens = testProvider.makeTestVersionCommand('^2.0.0', '2.8.0');
-      assert.equal(testLens.command.title, 'satisfies v2.8.0', "Expected command.title failed.");
+      const testLens = testProvider.makeTestVersionCommand('^2.0.0', '2.0.0');
+      assert.equal(testLens.command.title, 'satisfies v2.0.0', "Expected command.title failed.");
       assert.equal(testLens.command.command, undefined);
       assert.equal(testLens.command.arguments, undefined);
+    });
+
+    it("when local version has caret and satisfies the server version then codeLens should return SatisfiedWithNewerCommand", () => {
+      defaultVersionPrefix = '^';
+      const testLens = testProvider.makeTestVersionCommand('^2.0.0', '2.8.0');
+      assert.equal(testLens.command.title, '&uarr; satisfies v2.8.0', "Expected command.title failed.");
+      assert.equal(testLens.command.command, '_versionlens.updateDependencyCommand');
+      assert.equal(testLens.command.arguments[1], '"^2.8.0"');
     });
 
     it("when local version does not satisfy the server version then codeLens should return NewVersionCommand", () => {

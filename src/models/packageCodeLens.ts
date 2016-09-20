@@ -4,12 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 import {CodeLens, Range, Uri} from 'vscode';
 
+const VersionRegex = /^([^0-9]*)?.*$/;
+const PreserveLeadingChars: Set<string> = new Set(['^', '~', '<', '<=', '>', '>=']);
+
 export class PackageCodeLens extends CodeLens {
   uri: Uri;
   packageName: string;
   packageVersion: string;
   versionRange: Range;
-  versionAdapter: (lens: PackageCodeLens, version: string) => string;
+  versionAdapter: (lens: PackageCodeLens, version: string, adaptedVersion: string) => string;
 
   constructor(
     idRange: Range,
@@ -17,7 +20,7 @@ export class PackageCodeLens extends CodeLens {
     uri: Uri,
     packageName: string,
     packageVersion: string,
-    versionAdapter?: (lens: PackageCodeLens, version: string) => string
+    versionAdapter?: (lens: PackageCodeLens, version: string, adaptedVersion: string) => string
   ) {
     super(idRange);
     this.uri = uri;
@@ -27,7 +30,16 @@ export class PackageCodeLens extends CodeLens {
     this.versionAdapter = versionAdapter;
   }
 
+  private _preserveLeading(newVersion: string) {
+    const m = VersionRegex.exec(this.packageVersion);
+    const leading = m && m[1];
+    if (!leading || !PreserveLeadingChars.has(leading))
+      return newVersion
+    return `${leading}${newVersion}`;
+  }
+
   toVersion(newVersion: string) {
-    return (this.versionAdapter && this.versionAdapter(this, newVersion)) || newVersion;
+    const adaptedVersion = this._preserveLeading(newVersion);
+    return (this.versionAdapter && this.versionAdapter(this, newVersion, adaptedVersion)) || adaptedVersion;
   }
 }

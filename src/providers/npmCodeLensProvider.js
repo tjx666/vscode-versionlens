@@ -25,7 +25,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         return {
           packageName: packageName,
           packageVersion: m[2],
-          versionAdapter: (lens, version) => `npm:${packageName}@${version}`
+          versionAdapter: (lens, version, adaptedVersion) => `npm:${packageName}@${adaptedVersion}`
         }
       }
     };

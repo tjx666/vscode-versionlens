@@ -6,6 +6,8 @@ import {inject} from '../common/di';
 import {assertInstanceOf} from '../common/typeAssertion';
 import {AppConfiguration} from '../models/appConfiguration';
 
+const VersionRegex = /^(?:[^0-9]*)?(.*)$/;
+
 @inject('semver')
 export abstract class AbstractCodeLensProvider {
 
@@ -50,8 +52,18 @@ export abstract class AbstractCodeLensProvider {
       return this.makeLatestCommand(codeLensItem);
 
     if (isLocalValidRange && !isLocalValid) {
-      if (this.semver.satisfies(serverVersion, localVersion))
-        return this.makeSatisfiedCommand(serverVersion, codeLensItem);
+      if (this.semver.satisfies(serverVersion, localVersion)) {
+        try {
+          let m = VersionRegex.exec(localVersion);
+          let cleanLocalVersion = (m && m[1]) || this.semver.clean(localVersion) || localVersion;
+          if (cleanLocalVersion && this.semver.eq(serverVersion, cleanLocalVersion)) {
+            return this.makeSatisfiedCommand(serverVersion, codeLensItem);
+          }
+        } catch (ex) {
+          return this.makeSatisfiedCommand(serverVersion, codeLensItem);
+        }
+        return this.makeSatisfiedWithNewerCommand(serverVersion, codeLensItem);
+      }
       else
         return this.makeNewVersionCommand(serverVersion, codeLensItem)
     }
@@ -88,6 +100,24 @@ export abstract class AbstractCodeLensProvider {
       title: `satisfies v${serverVersion}`,
       command: undefined,
       arguments: undefined
+    };
+    return codeLensItem;
+  }
+
+  makeSatisfiedWithNewerCommand(serverVersion, codeLensItem) {
+    const prefix = this.appConfig.versionPrefix;
+    let replaceWithVersion = codeLensItem.toVersion(serverVersion);
+    if (!replaceWithVersion.startsWith(prefix)) {
+      replaceWithVersion = `${prefix}${replaceWithVersion}`
+    }
+
+    codeLensItem.command = {
+      title: `&uarr; satisfies v${serverVersion}`,
+      command: `_${this.appConfig.extentionName}.updateDependencyCommand`,
+      arguments: [
+        codeLensItem,
+        `"${replaceWithVersion}"`
+      ]
     };
     return codeLensItem;
   }
