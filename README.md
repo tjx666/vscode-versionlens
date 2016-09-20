@@ -10,7 +10,8 @@ Supports
 
 - bower http://bower.io/
 - dotnet http://www.dotnetfoundation.org/
-- dub https://code.dlang.org, and
+- dub https://code.dlang.org/
+- jspm http://jspm.io/, and
 - npm https://www.npmjs.com/
 
 ### Preview
@@ -31,6 +32,9 @@ Supports
 ```
 
 ### Change Log
+
+- 0.7.0
+  - Adds support for preserving some semver operators when updating
 
 - 0.6.0
   - Added jspm package support
