@@ -4,7 +4,9 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "outDir": "out",
-    "noLib": true,
+    "lib": [
+      "es2016"
+    ],
     "sourceMap": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,

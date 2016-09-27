@@ -3,10 +3,11 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {register} from './common/di';
-const semver = require('semver');
-const bower = require('bower');
-const jsonParser = require('vscode-contrib-jsonc');
-const httpRequest = require('request-light');
+import * as semver from 'semver';
+import * as bower from 'bower';
+import * as jsonParser from 'vscode-contrib-jsonc';
+import * as httpRequest from 'request-light';
+
 register('semver', semver);
 register('bower', bower);
 register('jsonParser', jsonParser);
