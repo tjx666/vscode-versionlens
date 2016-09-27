@@ -2,23 +2,11 @@ sudo: false
 
 language: node_js
 node_js:
-  - "5"
+  - "6"
 
 os:
+  - osx
   - linux
-
-env:
-  global:
-    - CODE_TESTS_PATH="$TRAVIS_BUILD_DIR/out/test"
-    - CXX=g++-4.8
-    - CODE_DOWNLOAD_URL=https://go.microsoft.com/fwlink/?LinkID=620884 # 0.10.10 release
-
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
 
 before_install:
   - if [ $TRAVIS_OS_NAME == "linux" ]; then

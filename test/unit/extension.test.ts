@@ -1,6 +1,6 @@
-require('./common/typeAssertion.tests');
-require('./common/di.tests');
-require('./providers/abstractCodeLensProvider.tests');
-require('./providers/npmCodeLensProvider.tests');
-require('./providers/bowerCodeLensProvider.tests');
-require('./providers/dubCodeLensProvider.tests');
+import './common/typeAssertion.tests';
+import './common/di.tests';
+import './providers/abstractCodeLensProvider.tests';
+import './providers/npmCodeLensProvider.tests';
+import './providers/bowerCodeLensProvider.tests';
+import './providers/dubCodeLensProvider.tests';
