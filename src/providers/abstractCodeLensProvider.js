@@ -85,7 +85,7 @@ export abstract class AbstractCodeLensProvider {
     }
 
     codeLensItem.command = {
-      title: `&uarr; ${this.appConfig.versionPrefix}${newerVersion}`,
+      title: `${this.appConfig.updateIndicator} ${this.appConfig.versionPrefix}${newerVersion}`,
       command: `_${this.appConfig.extentionName}.updateDependencyCommand`,
       arguments: [
         codeLensItem,
@@ -112,7 +112,7 @@ export abstract class AbstractCodeLensProvider {
     }
 
     codeLensItem.command = {
-      title: `&uarr; satisfies v${serverVersion}`,
+      title: `${this.appConfig.updateIndicator} satisfies v${serverVersion}`,
       command: `_${this.appConfig.extentionName}.updateDependencyCommand`,
       arguments: [
         codeLensItem,
@@ -133,7 +133,7 @@ export abstract class AbstractCodeLensProvider {
 
   makeUpdateDependenciesCommand(codeLensItem) {
     codeLensItem.command = {
-      title: '&uarr; Update all',
+      title: `${this.appConfig.updateIndicator} Update all`,
       command: `_${this.appConfig.extentionName}.updateDependenciesCommand`,
       arguments: []
     };

@@ -41,12 +41,5 @@ export function activate(context) {
     )
   );
 
-  // disposables.push(
-  //   commands.registerCommand(
-  //     `_${config.extentionName}.updateDependenciesCommand`,
-  //     updateDependenciesCommand
-  //   )
-  // );
-
   context.subscriptions.push(...disposables);
 }

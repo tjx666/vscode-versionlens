@@ -15,4 +15,8 @@ export class AppConfiguration {
     return config.get("versionPrefix", "");
   }
 
+  get updateIndicator() {
+    return '⬆';
+  }
+
 }

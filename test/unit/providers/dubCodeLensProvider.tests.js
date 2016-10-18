@@ -173,7 +173,7 @@ describe("DubCodeLensProvider", () => {
         });
       };
       testProvider.resolveCodeLens(codeLens, null).then(result => {
-        assert.equal(result.command.title, '&uarr; ^3.2.1');
+        assert.equal(result.command.title, '⬆ ^3.2.1');
         assert.equal(result.command.command, '_versionlens.updateDependencyCommand');
         assert.equal(result.command.arguments[1], '"^3.2.1"');
         done();
