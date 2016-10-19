@@ -33,6 +33,9 @@ Supports
 
 ### Change Log
 
+- 0.7.1
+  - Replaces update arrow indicator to be a unicode charachter due to change in vscode 1.7. See https://github.com/Microsoft/vscode/issues/13714 for more info.
+
 - 0.7.0
   - Adds support for preserving some semver operators when updating
 
