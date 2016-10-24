@@ -33,6 +33,9 @@ Supports
 
 ### Change Log
 
+- 0.8.0
+  - Added support for npm private packages
+
 - 0.7.1
   - Replaces update arrow indicator to be a unicode charachter due to change in vscode 1.7. See https://github.com/Microsoft/vscode/issues/13714 for more info.
 
