@@ -9,7 +9,7 @@ import {PackageCodeLensList} from '../lists/packageCodeLensList'
 
 const JspmDependencyRegex = /^npm:(.*)@(.*)$/;
 
-@inject('jsonParser', 'httpRequest')
+@inject('jsonParser', 'npm')
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
   constructor(config) {
@@ -80,46 +80,40 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         return;
       }
 
-      // encode the package name
-      let packageUriComponent = encodeURIComponent(codeLensItem.packageName);
-      // ensure that any scoped packages maintain their @ symbol in the uri
-      if (codeLensItem.packageName[0] === '@') {
-        packageUriComponent = packageUriComponent.replace('%40', '@');
-        // work around for https://github.com/npm/registry/issues/34#issuecomment-231594567
-        requestVersion = '*';
-      }
-
-      const queryUrl = `http://registry.npmjs.org/${packageUriComponent}/${requestVersion}`;
-      return this.httpRequest.xhr({ url: queryUrl })
+      return npmViewVersion(this.npm, codeLensItem.packageName)
         .then(response => {
-          if (response.status != 200)
-            return super.makeErrorCommand(
-              response.status,
-              response.responseText,
-              codeLensItem
-            );
-
-          const serverObj = JSON.parse(response.responseText);
-          if (!serverObj || !serverObj.version)
-            return super.makeErrorCommand(
-              -1,
-              "Invalid object returned from server",
-              codeLensItem
-            );
-
+          let keys = Object.keys(response);
+          let remoteVersion = keys[0];
           return super.makeVersionCommand(
             codeLensItem.packageVersion,
-            serverObj.version,
+            remoteVersion,
             codeLensItem
           );
-        }, response => {
-          const respObj = JSON.parse(response.responseText);
+        }, error => {
           return super.makeErrorCommand(
-            response.status,
-            respObj.error,
+            -1,
+            error,
             codeLensItem
           );
         });
     }
   }
+}
+
+function npmViewVersion(npm, packageName) {
+  return new Promise((resolve, reject) => {
+    npm.load(loadError => {
+      if (loadError) {
+        reject(loadError);
+        return;
+      }
+      npm.view(packageName, 'version', (viewError, viewResult) => {
+        if (viewError) {
+          reject(viewError);
+          return;
+        }
+        resolve(viewResult);
+      });
+    });
+  });
 }
