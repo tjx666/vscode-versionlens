@@ -25,6 +25,8 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
+    "micro-tasks": "pflannery/micro-tasks#wip",
+    "test": "file:../../../src",
     "babel-preset-es2015": "6.3.13",
     "commitplease": "2.3.0",
     "core-js": "2.0.3",
@@ -52,8 +54,6 @@
     "qunit-assert-step": "1.0.3",
     "qunitjs": "1.20.0",
     "requirejs": "2.1.22",
-    "sinon": "1.17.3",
-    "sizzle": "2.3.0",
     "strip-json-comments": "2.0.0",
     "testswarm": "1.1.0",
     "@types/angularjs": "^1.5.13-alpha",

@@ -9,7 +9,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import {register} from '../../../src/common/di';
 import {TestFixtureMap} from '../../testUtils';
-import {BowerCodeLensProvider} from '../../../src/providers/bowerCodeLensProvider';
+import {BowerCodeLensProvider} from '../../../src/providers/bower/bowerCodeLensProvider';
 import {AppConfiguration} from '../../../src/common/appConfiguration';
 import {PackageCodeLens} from '../../../src/common/packageCodeLens';
 

@@ -10,7 +10,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import {register} from '../../../src/common/di';
 import {TestFixtureMap} from '../../testUtils';
-import {NpmCodeLensProvider} from '../../../src/providers/npmCodeLensProvider';
+import {NpmCodeLensProvider} from '../../../src/providers/npm/npmCodeLensProvider';
 import {AppConfiguration} from '../../../src/common/appConfiguration';
 import {PackageCodeLens} from '../../../src/common/packageCodeLens';
 import * as jsonParser from 'vscode-contrib-jsonc';

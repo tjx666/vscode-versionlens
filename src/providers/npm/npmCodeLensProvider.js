@@ -2,12 +2,11 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {inject} from '../common/di';
-import {PackageCodeLens} from '../common/packageCodeLens';
-import {PackageCodeLensList} from '../common/packageCodeLensList';
-import {AbstractCodeLensProvider} from './abstractCodeLensProvider';
-
-const JspmDependencyRegex = /^npm:(.*)@(.*)$/;
+import { inject } from '../../common/di';
+import { PackageCodeLens } from '../../common/packageCodeLens';
+import { PackageCodeLensList } from '../../common/packageCodeLensList';
+import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
+import { npmVersionParser, jspmVersionParser } from './npmVersionParsers';
 
 @inject('jsonParser', 'npm')
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
@@ -16,20 +15,10 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     super(config);
 
     this.packageExtensions = {
-      'jspm': node => {
-        const m = JspmDependencyRegex.exec(node.value);
-        if (!m)
-          return undefined;
-
-        const packageName = m[1];
-        return {
-          packageName: packageName,
-          packageVersion: m[2],
-          versionAdapter: (lens, version, adaptedVersion) => `npm:${packageName}@${adaptedVersion}`
-        }
-      }
+      'jspm': jspmVersionParser
     };
-    this.packageExtensionsKeys = Object.keys(this.packageExtensions);
+
+    this.packageExtensionKeys = Object.keys(this.packageExtensions);
 
     this.packageDependencyKeys = [
       'dependencies',
@@ -49,34 +38,24 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
   provideCodeLenses(document, token) {
     const jsonDoc = this.jsonParser.parse(document.getText());
+    if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
+      return [];
+
     const collector = new PackageCodeLensList(document);
-
-    if (jsonDoc === null || jsonDoc.root === null)
-      return [];
-
-    if (jsonDoc.validationResult.errors.length > 0)
-      return [];
-
-    jsonDoc.root.getChildNodes().forEach((node) => {
-      const pkg = node.key.value;
-      if (this.packageDependencyKeys.indexOf(pkg) !== -1) {
-        collector.addRange(node.value.getChildNodes());
-      }
-      if (this.packageExtensionsKeys.indexOf(pkg) !== -1) {
-        const customParser = this.packageExtensions[pkg];
-        node.value.getChildNodes().forEach(n => collector.addRange(n.value.getChildNodes(), customParser));
-      }
-    });
-
-    return collector.list;
+    this.collectDependencies_(collector, jsonDoc.root, npmVersionParser);
+    this.collectExtensionDependencies_(collector, jsonDoc.root);
+    return collector.collection;
   }
 
   resolveCodeLens(codeLensItem, token) {
     if (codeLensItem instanceof PackageCodeLens) {
-      let requestVersion = 'latest';
-
-      if (codeLensItem.packageVersion === requestVersion) {
+      if (codeLensItem.packageVersion === 'latest') {
         super.makeLatestCommand(codeLensItem);
+        return;
+      }
+
+      if (codeLensItem.commandMeta) {
+        super.makeDoMetaCommand(codeLensItem);
         return;
       }
 
@@ -89,7 +68,8 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
             remoteVersion,
             codeLensItem
           );
-        }, error => {
+        })
+        .catch(error => {
           return super.makeErrorCommand(
             error,
             codeLensItem
@@ -97,6 +77,18 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         });
     }
   }
+
+  collectExtensionDependencies_(collector, rootNode) {
+    rootNode.getChildNodes()
+      .forEach(node => {
+        const testDepProperty = node.key.value;
+        if (this.packageExtensionKeys.includes(testDepProperty)) {
+          const customParser = this.packageExtensions[testDepProperty];
+          this.collectDependencies_(collector, node.value, customParser)
+        }
+      });
+  }
+
 }
 
 function npmViewVersion(npm, packageName) {

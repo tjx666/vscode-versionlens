@@ -2,9 +2,9 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {inject} from '../common/di';
-import {assertInstanceOf} from '../common/typeAssertion';
-import {AppConfiguration} from '../common/appConfiguration';
+import { inject } from '../common/di';
+import { assertInstanceOf } from '../common/typeAssertion';
+import { AppConfiguration } from '../common/appConfiguration';
 
 const VersionRegex = /^(?:[^0-9]*)?(.*)$/;
 
@@ -25,6 +25,15 @@ export abstract class AbstractCodeLensProvider {
     while (this._disposables.length > 0) {
       this._disposables.pop().dispose();
     }
+  }
+
+  collectDependencies_(collector, rootNode, customVersionParser) {
+    rootNode.getChildNodes()
+      .forEach(node => {
+        const testDepProperty = node.key.value;
+        if (this.packageDependencyKeys.includes(testDepProperty))
+          collector.addRange(node.value.getChildNodes(), customVersionParser);
+      });
   }
 
   makeErrorCommand(errorMsg, codeLensItem) {
@@ -136,6 +145,19 @@ export abstract class AbstractCodeLensProvider {
       title: `${this.appConfig.updateIndicator} Update all`,
       command: `_${this.appConfig.extentionName}.updateDependenciesCommand`,
       arguments: []
+    };
+    return codeLensItem;
+  }
+
+  makeDoMetaCommand(codeLensItem) {
+    codeLensItem.command = {
+      title: `${this.appConfig.openNewWindowIndicator} ` + (codeLensItem.commandMeta.type === 'file' ?
+        codeLensItem.packageVersion :
+        codeLensItem.commandMeta.uri),
+      command: `_${this.appConfig.extentionName}.doMetaCommand`,
+      arguments: [
+        codeLensItem
+      ]
     };
     return codeLensItem;
   }

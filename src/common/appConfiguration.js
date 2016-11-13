@@ -19,4 +19,8 @@ export class AppConfiguration {
     return '⬆';
   }
 
+  get openNewWindowIndicator() {
+    return '⧉'
+  }
+
 }

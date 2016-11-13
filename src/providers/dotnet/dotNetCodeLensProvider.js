@@ -2,10 +2,10 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {inject} from '../common/di';
-import {PackageCodeLens} from '../common/packageCodeLens';
-import {PackageCodeLensList} from '../common/packageCodeLensList';
-import {AbstractCodeLensProvider} from './abstractCodeLensProvider';
+import {inject} from '../../common/di';
+import {PackageCodeLens} from '../../common/packageCodeLens';
+import {PackageCodeLensList} from '../../common/packageCodeLensList';
+import {AbstractCodeLensProvider} from '../abstractCodeLensProvider';
 
 // TODO retrieve multiple sources from nuget.config
 const FEED_URL = 'https://api.nuget.org/v3-flatcontainer';
@@ -31,16 +31,12 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 
   provideCodeLenses(document, token) {
     const jsonDoc = this.jsonParser.parse(document.getText());
-    if (jsonDoc === null || jsonDoc.root === null)
-      return [];
-
-    if (jsonDoc.validationResult.errors.length > 0)
+    if (jsonDoc === null || jsonDoc.root === null || jsonDoc.validationResult.errors.length > 0)
       return [];
 
     const collector = new PackageCodeLensList(document);
     this.enumerateAllEntries_(jsonDoc.root, collector);
-
-    return collector.list;
+    return collector.collection;
   }
 
   resolveCodeLens(codeLensItem, token) {

@@ -37,21 +37,22 @@
     "test": "grunt test"
   },
   "devDependencies": {
-    "typescript": "2.0.3",
-    "vscode": "1.0.1",
+    "typescript": "2.0.9",
+    "vscode": "1.0.3",
     "grunt": "1.0.1",
     "grunt-cli": "1.2.0",
     "load-grunt-config": "0.19.2",
     "grunt-contrib-clean": "1.0.0",
-    "grunt-shell": "2.0.0"
+    "grunt-shell": "2.1.0"
   },
   "dependencies": {
-    "bower": "1.7.9",
-    "vscode-contrib-jsonc": "1.0.0-beta.2",
-    "semver": "5.3.0",
-    "vscode-languageclient": "2.6.0",
+    "bower": "1.8.0",
+    "npm": "3.10.9",
+    "opener": "^1.4.2",
     "request-light": "0.1",
-    "npm": "3.10.9"
+    "semver": "5.3.0",
+    "vscode-contrib-jsonc": "1.0.0-beta.2",
+    "vscode-languageclient": "2.6.2"
   },
   "contributes": {
     "configuration": {
