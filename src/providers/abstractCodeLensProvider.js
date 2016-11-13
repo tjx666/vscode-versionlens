@@ -27,9 +27,9 @@ export abstract class AbstractCodeLensProvider {
     }
   }
 
-  makeErrorCommand(statusCode, errorMsg, codeLensItem) {
+  makeErrorCommand(errorMsg, codeLensItem) {
     codeLensItem.command = {
-      title: `Error ${statusCode}. ${errorMsg}`,
+      title: `${errorMsg}`,
       command: undefined,
       arguments: undefined
     };
@@ -43,10 +43,10 @@ export abstract class AbstractCodeLensProvider {
     const isServerValidRange = this.semver.validRange(serverVersion);
 
     if (!isLocalValid && !isLocalValidRange && localVersion !== 'latest')
-      return this.makeErrorCommand(-1, "Invalid semver version entered", codeLensItem);
+      return this.makeErrorCommand("Invalid semver version entered", codeLensItem);
 
     if (!isServerValid && !isServerValidRange && serverVersion !== 'latest')
-      return this.makeErrorCommand(-1, "Invalid semver server version received, " + serverVersion, codeLensItem);
+      return this.makeErrorCommand("Invalid semver server version received, " + serverVersion, codeLensItem);
 
     if (localVersion === 'latest')
       return this.makeLatestCommand(codeLensItem);

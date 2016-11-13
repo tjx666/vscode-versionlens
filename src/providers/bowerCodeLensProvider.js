@@ -53,13 +53,13 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
         this.bower.commands.info(codeLensItem.packageName)
           .on('end', (info) => {
             if (!info || !info.latest) {
-              success(this.makeErrorCommand(-1, "Invalid object returned from server", codeLensItem));
+              success(this.makeErrorCommand("Invalid object returned from server", codeLensItem));
               return;
             }
             success(this.makeVersionCommand(codeLensItem.packageVersion, info.latest.version, codeLensItem));
           })
           .on('error', (err) => {
-            success(this.makeErrorCommand(-1, err.message, codeLensItem));
+            success(this.makeErrorCommand(err.message, codeLensItem));
           });
       });
     }

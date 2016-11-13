@@ -120,7 +120,7 @@ describe("DubCodeLensProvider", () => {
       };
 
       testProvider.resolveCodeLens(codeLens, null).then(result => {
-        assert.equal(result.command.title, 'Error 404. Not found', "Expected command.title failed.");
+        assert.equal(result.command.title, 'Not found', "Expected command.title failed.");
         assert.equal(result.command.command, undefined);
         assert.equal(result.command.arguments, undefined);
         done();
@@ -138,7 +138,7 @@ describe("DubCodeLensProvider", () => {
       };
 
       testProvider.resolveCodeLens(codeLens, null).then(result => {
-        assert.equal(result.command.title, 'Error -1. Invalid object returned from server', "Expected command.title failed.");
+        assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
         assert.equal(result.command.command, undefined);
         assert.equal(result.command.arguments, undefined);
         done();
@@ -157,7 +157,7 @@ describe("DubCodeLensProvider", () => {
       };
 
       testProvider.resolveCodeLens(codeLens, null).then(result => {
-        assert.equal(result.command.title, 'Error -1. Invalid object returned from server', "Expected command.title failed.");
+        assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
         assert.equal(result.command.command, undefined);
         assert.equal(result.command.arguments, undefined);
         done();

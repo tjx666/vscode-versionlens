@@ -2,10 +2,10 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {inject} from '../common/di';
-import {PackageCodeLens} from '../common/packageCodeLens';
-import {PackageCodeLensList} from '../common/packageCodeLensList';
-import {AbstractCodeLensProvider} from './abstractCodeLensProvider';
+import { inject } from '../common/di';
+import { PackageCodeLens } from '../common/packageCodeLens';
+import { PackageCodeLensList } from '../common/packageCodeLensList';
+import { AbstractCodeLensProvider } from './abstractCodeLensProvider';
 
 @inject('jsonParser', 'httpRequest')
 export class DubCodeLensProvider extends AbstractCodeLensProvider {
@@ -72,7 +72,6 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
         .then(response => {
           if (response.status != 200)
             return super.makeErrorCommand(
-              response.status,
               response.responseText,
               codeLensItem
             );
@@ -80,7 +79,6 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
           const verionStr = JSON.parse(response.responseText);
           if (typeof verionStr !== "string")
             return super.makeErrorCommand(
-              -1,
               "Invalid object returned from server",
               codeLensItem
             );
@@ -93,7 +91,6 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
         }, response => {
           const respObj = JSON.parse(response.responseText);
           return super.makeErrorCommand(
-            response.status,
             respObj.statusMessage,
             codeLensItem
           );

@@ -56,7 +56,6 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
         .then(response => {
           if (response.status != 200)
             return super.makeErrorCommand(
-              response.status,
               response.responseText,
               codeLensItem
             );
@@ -65,7 +64,6 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
           const serverVersion = pkg.versions[pkg.versions.length - 1];
           if (!serverVersion)
             return super.makeErrorCommand(
-              -1,
               "Invalid object returned from server",
               codeLensItem
             );
@@ -78,7 +76,6 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 
         }, errResponse => {
           return super.makeErrorCommand(
-            errResponse.status,
             queryUrl,
             codeLensItem
           );

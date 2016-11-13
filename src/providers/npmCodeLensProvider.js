@@ -91,7 +91,6 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
           );
         }, error => {
           return super.makeErrorCommand(
-            -1,
             error,
             codeLensItem
           );
