@@ -1,5 +1,8 @@
+- 0.9.0
+  - Github and local file system packages are now treated as clickable links that browse to their respective destinations. (git urls are not implemented yet)
+
 - 0.8.0
-  - Added support for npm private packages
+  - Added support for npm private packages and private registries
 
 - 0.7.1
   - Replaces update arrow indicator to be a unicode charachter due to change in vscode 1.7. See https://github.com/Microsoft/vscode/issues/13714 for more info.
