@@ -2,9 +2,9 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {inject} from '../common/di';
-import {assertInstanceOf} from '../common/typeAssertion';
-import {AppConfiguration} from '../models/appConfiguration';
+import { inject } from '../common/di';
+import { assertInstanceOf } from '../common/typeAssertion';
+import { AppConfiguration } from '../common/appConfiguration';
 
 const VersionRegex = /^(?:[^0-9]*)?(.*)$/;
 
@@ -27,9 +27,18 @@ export abstract class AbstractCodeLensProvider {
     }
   }
 
-  makeErrorCommand(statusCode, errorMsg, codeLensItem) {
+  collectDependencies_(collector, rootNode, customVersionParser) {
+    rootNode.getChildNodes()
+      .forEach(node => {
+        const testDepProperty = node.key.value;
+        if (this.packageDependencyKeys.includes(testDepProperty))
+          collector.addRange(node.value.getChildNodes(), customVersionParser);
+      });
+  }
+
+  makeErrorCommand(errorMsg, codeLensItem) {
     codeLensItem.command = {
-      title: `Error ${statusCode}. ${errorMsg}`,
+      title: `${errorMsg}`,
       command: undefined,
       arguments: undefined
     };
@@ -43,10 +52,10 @@ export abstract class AbstractCodeLensProvider {
     const isServerValidRange = this.semver.validRange(serverVersion);
 
     if (!isLocalValid && !isLocalValidRange && localVersion !== 'latest')
-      return this.makeErrorCommand(-1, "Invalid semver version entered", codeLensItem);
+      return this.makeErrorCommand("Invalid semver version entered", codeLensItem);
 
     if (!isServerValid && !isServerValidRange && serverVersion !== 'latest')
-      return this.makeErrorCommand(-1, "Invalid semver server version received, " + serverVersion, codeLensItem);
+      return this.makeErrorCommand("Invalid semver server version received, " + serverVersion, codeLensItem);
 
     if (localVersion === 'latest')
       return this.makeLatestCommand(codeLensItem);
@@ -136,6 +145,19 @@ export abstract class AbstractCodeLensProvider {
       title: `${this.appConfig.updateIndicator} Update all`,
       command: `_${this.appConfig.extentionName}.updateDependenciesCommand`,
       arguments: []
+    };
+    return codeLensItem;
+  }
+
+  makeDoMetaCommand(codeLensItem) {
+    codeLensItem.command = {
+      title: `${this.appConfig.openNewWindowIndicator} ` + (codeLensItem.commandMeta.type === 'file' ?
+        codeLensItem.packageVersion :
+        codeLensItem.commandMeta.uri),
+      command: `_${this.appConfig.extentionName}.doMetaCommand`,
+      arguments: [
+        codeLensItem
+      ]
     };
     return codeLensItem;
   }

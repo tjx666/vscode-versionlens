@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "micro-tasks": "pflannery/micro-tasks#wip",
+    "test": "file:../../"
+  }
+}

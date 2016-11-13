@@ -9,9 +9,9 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import {register} from '../../../src/common/di';
 import {TestFixtureMap} from '../../testUtils';
-import {BowerCodeLensProvider} from '../../../src/providers/bowerCodeLensProvider';
-import {AppConfiguration} from '../../../src/models/appConfiguration';
-import {PackageCodeLens} from '../../../src/models/packageCodeLens';
+import {BowerCodeLensProvider} from '../../../src/providers/bower/bowerCodeLensProvider';
+import {AppConfiguration} from '../../../src/common/appConfiguration';
+import {PackageCodeLens} from '../../../src/common/packageCodeLens';
 
 describe("BowerCodeLensProvider", () => {
   const testPath = path.join(__dirname, '../../../..', 'test');
@@ -116,7 +116,7 @@ describe("BowerCodeLensProvider", () => {
       };
 
       testProvider.resolveCodeLens(codeLens, null).then(result => {
-        assert.equal(result.command.title, 'Error -1. Invalid object returned from server', "Expected command.title failed.");
+        assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
         assert.equal(result.command.command, undefined);
         assert.equal(result.command.arguments, undefined);
         done();
@@ -138,7 +138,7 @@ describe("BowerCodeLensProvider", () => {
       };
 
       testProvider.resolveCodeLens(codeLens, null).then(result => {
-        assert.equal(result.command.title, 'Error -1. Invalid object returned from server', "Expected command.title failed.");
+        assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
         assert.equal(result.command.command, undefined);
         assert.equal(result.command.arguments, undefined);
         done();

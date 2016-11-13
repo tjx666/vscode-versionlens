@@ -2,15 +2,14 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {bootstrapLoaded} from './bootstrap';
-import * as vscode from 'vscode';
-import {Disposable, DocumentSelector, languages, commands} from 'vscode';
-import {NpmCodeLensProvider} from './providers/npmCodeLensProvider';
-import {BowerCodeLensProvider} from './providers/bowerCodeLensProvider';
-import {DubCodeLensProvider} from './providers/dubCodeLensProvider';
-import {DotNetCodeLensProvider} from './providers/dotNetCodeLensProvider';
-import {updateDependencyCommand, updateDependenciesCommand} from './commands';
-import {AppConfiguration} from './models/appConfiguration';
+import { bootstrapLoaded } from './bootstrap';
+import { Disposable, DocumentSelector, languages, commands } from 'vscode';
+import { NpmCodeLensProvider } from './providers/npm/npmCodeLensProvider';
+import { BowerCodeLensProvider } from './providers/bower/bowerCodeLensProvider';
+import { DubCodeLensProvider } from './providers/dub/dubCodeLensProvider';
+import { DotNetCodeLensProvider } from './providers/dotnet/dotNetCodeLensProvider';
+import { updateDependencyCommand, updateDependenciesCommand, doMetaCommand } from './commands';
+import { AppConfiguration } from './common/appConfiguration';
 
 export function activate(context) {
   if (bootstrapLoaded === false)
@@ -38,6 +37,10 @@ export function activate(context) {
     commands.registerCommand(
       `_${config.extentionName}.updateDependencyCommand`,
       updateDependencyCommand
+    ),
+    commands.registerCommand(
+      `_${config.extentionName}.doMetaCommand`,
+      doMetaCommand
     )
   );
 

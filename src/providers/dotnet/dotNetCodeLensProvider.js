@@ -2,10 +2,10 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {inject} from '../common/di';
-import {PackageCodeLens} from '../models/packageCodeLens';
-import {AbstractCodeLensProvider} from './abstractCodeLensProvider';
-import {PackageCodeLensList} from '../lists/packageCodeLensList'
+import {inject} from '../../common/di';
+import {PackageCodeLens} from '../../common/packageCodeLens';
+import {PackageCodeLensList} from '../../common/packageCodeLensList';
+import {AbstractCodeLensProvider} from '../abstractCodeLensProvider';
 
 // TODO retrieve multiple sources from nuget.config
 const FEED_URL = 'https://api.nuget.org/v3-flatcontainer';
@@ -16,7 +16,8 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
   constructor(config) {
     super(config);
     this.packageDependencyKeys = [
-      'dependencies'
+      'dependencies',
+      'tools'
     ];
   }
 
@@ -30,16 +31,12 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 
   provideCodeLenses(document, token) {
     const jsonDoc = this.jsonParser.parse(document.getText());
-    if (jsonDoc === null || jsonDoc.root === null)
-      return [];
-
-    if (jsonDoc.validationResult.errors.length > 0)
+    if (jsonDoc === null || jsonDoc.root === null || jsonDoc.validationResult.errors.length > 0)
       return [];
 
     const collector = new PackageCodeLensList(document);
     this.enumerateAllEntries_(jsonDoc.root, collector);
-
-    return collector.list;
+    return collector.collection;
   }
 
   resolveCodeLens(codeLensItem, token) {
@@ -55,7 +52,6 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
         .then(response => {
           if (response.status != 200)
             return super.makeErrorCommand(
-              response.status,
               response.responseText,
               codeLensItem
             );
@@ -64,7 +60,6 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
           const serverVersion = pkg.versions[pkg.versions.length - 1];
           if (!serverVersion)
             return super.makeErrorCommand(
-              -1,
               "Invalid object returned from server",
               codeLensItem
             );
@@ -77,7 +72,6 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 
         }, errResponse => {
           return super.makeErrorCommand(
-            errResponse.status,
             queryUrl,
             codeLensItem
           );
@@ -89,8 +83,7 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
     const childNodes = node.getChildNodes();
     childNodes.forEach(childNode => {
       if (this.packageDependencyKeys.indexOf(childNode.key.value) !== -1)
-        //this.parseDependencies_(childNode.value.getChildNodes(), collector);
-        collector.addRange(childNode.value.getChildNodes());
+         collector.addRange(childNode.value.getChildNodes());
       else if (childNode.value.type === 'object')
         this.enumerateAllEntries_(childNode.value, collector);
     });

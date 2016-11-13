@@ -10,9 +10,9 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import {register} from '../../../src/common/di';
 import {TestFixtureMap} from '../../testUtils';
-import {NpmCodeLensProvider} from '../../../src/providers/npmCodeLensProvider';
-import {AppConfiguration} from '../../../src/models/appConfiguration';
-import {PackageCodeLens} from '../../../src/models/packageCodeLens';
+import {NpmCodeLensProvider} from '../../../src/providers/npm/npmCodeLensProvider';
+import {AppConfiguration} from '../../../src/common/appConfiguration';
+import {PackageCodeLens} from '../../../src/common/packageCodeLens';
 import * as jsonParser from 'vscode-contrib-jsonc';
 
 const jsonExt = vscode.extensions.getExtension('vscode.json');
@@ -113,7 +113,7 @@ describe("NpmCodeLensProvider", () => {
       const codeLens = new PackageCodeLens(null, null, null, '@SomeScope/SomePackage', '1.2.3', false);
       npmMock.view = (testPackageName, arg, cb) => {
         assert.equal(testPackageName, '@SomeScope/SomePackage', "Expected npm.view(packageName) but failed.");
-        let err = null;
+        let err = null
         let resp = { '1.2.3': { version: '1.2.3' } };
         cb(err, resp);
         done();
@@ -130,7 +130,7 @@ describe("NpmCodeLensProvider", () => {
       };
 
       testProvider.resolveCodeLens(codeLens, null).then(result => {
-        assert.equal(result.command.title, 'Error -1. An error occurred', "Expected command.title failed.");
+        assert.equal(result.command.title, 'An error occurred', "Expected command.title failed.");
         assert.equal(result.command.command, undefined);
         assert.equal(result.command.arguments, undefined);
         done();

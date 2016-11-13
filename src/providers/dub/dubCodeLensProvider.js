@@ -2,10 +2,10 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {inject} from '../common/di';
-import {PackageCodeLens} from '../models/packageCodeLens';
-import {AbstractCodeLensProvider} from './abstractCodeLensProvider';
-import {PackageCodeLensList} from '../lists/packageCodeLensList'
+import { inject } from '../../common/di';
+import { PackageCodeLens } from '../../common/packageCodeLens';
+import { PackageCodeLensList } from '../../common/packageCodeLensList';
+import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 
 @inject('jsonParser', 'httpRequest')
 export class DubCodeLensProvider extends AbstractCodeLensProvider {
@@ -25,33 +25,31 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     };
   }
 
-  private addDependencies(root, collector) {
+  collectDependencies_(collector, root) {
     root.getChildNodes().forEach((node) => {
       if (this.packageDependencyKeys.indexOf(node.key.value) !== -1) {
         collector.addRange(node.value.getChildNodes());
+        return;
       }
-      else if (node.key.value == "subPackages") {
-        node.value.items.forEach((subPackage) => {
-          if (subPackage.type == "object")
-            this.addDependencies(subPackage, collector);
-        });
+
+      if (node.key.value == "subPackages") {
+        node.value.items
+          .forEach(subPackage => {
+            if (subPackage.type == "object")
+              this.collectDependencies_(collector, subPackage);
+          });
       }
     });
   }
 
   provideCodeLenses(document, token) {
     const jsonDoc = this.jsonParser.parse(document.getText());
+    if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
+      return [];
+
     const collector = new PackageCodeLensList(document);
-
-    if (jsonDoc === null || jsonDoc.root === null)
-      return [];
-
-    if (jsonDoc.validationResult.errors.length > 0)
-      return [];
-
-    this.addDependencies(jsonDoc.root, collector);
-
-    return collector.list;
+    this.collectDependencies_(collector, jsonDoc.root);
+    return collector.collection;
   }
 
   resolveCodeLens(codeLensItem, token) {
@@ -72,7 +70,6 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
         .then(response => {
           if (response.status != 200)
             return super.makeErrorCommand(
-              response.status,
               response.responseText,
               codeLensItem
             );
@@ -80,7 +77,6 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
           const verionStr = JSON.parse(response.responseText);
           if (typeof verionStr !== "string")
             return super.makeErrorCommand(
-              -1,
               "Invalid object returned from server",
               codeLensItem
             );
@@ -90,10 +86,10 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
             verionStr,
             codeLensItem
           );
-        }, response => {
+        })
+        .catch(response => {
           const respObj = JSON.parse(response.responseText);
           return super.makeErrorCommand(
-            response.status,
             respObj.statusMessage,
             codeLensItem
           );
