@@ -16,7 +16,8 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
   constructor(config) {
     super(config);
     this.packageDependencyKeys = [
-      'dependencies'
+      'dependencies',
+      'tools'
     ];
   }
 
@@ -89,8 +90,7 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
     const childNodes = node.getChildNodes();
     childNodes.forEach(childNode => {
       if (this.packageDependencyKeys.indexOf(childNode.key.value) !== -1)
-        //this.parseDependencies_(childNode.value.getChildNodes(), collector);
-        collector.addRange(childNode.value.getChildNodes());
+         collector.addRange(childNode.value.getChildNodes());
       else if (childNode.value.type === 'object')
         this.enumerateAllEntries_(childNode.value, collector);
     });

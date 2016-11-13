@@ -15,6 +15,15 @@
     "commands/dotnet-new/FSharp_Console/Program.fs",
     "commands/dotnet-new/FSharp_Console/project.json.template"
   ],
+  "tools": {
+    "Microsoft.EntityFrameworkCore.Tools": {
+      "version": "1.0.0-preview2-final",
+      "target": "project"
+    },
+    "Microsoft.DotNet.Watcher.Tools": {
+      "version": "1.0.0-preview2-final"
+    }
+  },
   "dependencies": {
     "Newtonsoft.Json": "7.0.1",
     "Microsoft.Net.Compilers.netcore": "1.3.0-beta1-20160225-02",
