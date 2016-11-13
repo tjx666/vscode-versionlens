@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import {inject} from '../common/di';
 import {assertInstanceOf} from '../common/typeAssertion';
-import {AppConfiguration} from '../models/appConfiguration';
+import {AppConfiguration} from '../common/appConfiguration';
 
 const VersionRegex = /^(?:[^0-9]*)?(.*)$/;
 

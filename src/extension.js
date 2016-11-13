@@ -10,7 +10,7 @@ import {BowerCodeLensProvider} from './providers/bowerCodeLensProvider';
 import {DubCodeLensProvider} from './providers/dubCodeLensProvider';
 import {DotNetCodeLensProvider} from './providers/dotNetCodeLensProvider';
 import {updateDependencyCommand, updateDependenciesCommand} from './commands';
-import {AppConfiguration} from './models/appConfiguration';
+import {AppConfiguration} from './common/appConfiguration';
 
 export function activate(context) {
   if (bootstrapLoaded === false)

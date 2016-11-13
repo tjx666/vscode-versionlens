@@ -11,8 +11,8 @@ import * as vscode from 'vscode';
 import {register} from '../../../src/common/di';
 import {TestFixtureMap} from '../../testUtils';
 import {NpmCodeLensProvider} from '../../../src/providers/npmCodeLensProvider';
-import {AppConfiguration} from '../../../src/models/appConfiguration';
-import {PackageCodeLens} from '../../../src/models/packageCodeLens';
+import {AppConfiguration} from '../../../src/common/appConfiguration';
+import {PackageCodeLens} from '../../../src/common/packageCodeLens';
 import * as jsonParser from 'vscode-contrib-jsonc';
 
 const jsonExt = vscode.extensions.getExtension('vscode.json');

@@ -10,8 +10,8 @@ import * as vscode from 'vscode';
 import {register} from '../../../src/common/di';
 import {TestFixtureMap} from '../../testUtils';
 import {BowerCodeLensProvider} from '../../../src/providers/bowerCodeLensProvider';
-import {AppConfiguration} from '../../../src/models/appConfiguration';
-import {PackageCodeLens} from '../../../src/models/packageCodeLens';
+import {AppConfiguration} from '../../../src/common/appConfiguration';
+import {PackageCodeLens} from '../../../src/common/packageCodeLens';
 
 describe("BowerCodeLensProvider", () => {
   const testPath = path.join(__dirname, '../../../..', 'test');

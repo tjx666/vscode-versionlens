@@ -4,9 +4,9 @@
  * ------------------------------------------------------------------------------------------ */
 import * as assert from 'assert';
 import {register} from '../../../src/common/di';
-import {AppConfiguration} from '../../../src/models/appConfiguration';
+import {AppConfiguration} from '../../../src/common/appConfiguration';
 import {AbstractCodeLensProvider} from '../../../src/providers/abstractCodeLensProvider';
-import {PackageCodeLens} from '../../../src/models/packageCodeLens'
+import {PackageCodeLens} from '../../../src/common/packageCodeLens'
 const semver = require('semver');
 
 describe("AbstractCodeLensProvider", () => {

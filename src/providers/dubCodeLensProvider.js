@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {inject} from '../common/di';
-import {PackageCodeLens} from '../models/packageCodeLens';
+import {PackageCodeLens} from '../common/packageCodeLens';
+import {PackageCodeLensList} from '../common/packageCodeLensList';
 import {AbstractCodeLensProvider} from './abstractCodeLensProvider';
-import {PackageCodeLensList} from '../lists/packageCodeLensList'
 
 @inject('jsonParser', 'httpRequest')
 export class DubCodeLensProvider extends AbstractCodeLensProvider {
@@ -31,7 +31,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
         collector.addRange(node.value.getChildNodes());
       }
       else if (node.key.value == "subPackages") {
-        node.value.items.forEach((subPackage) => {
+        node.value.items.forEach(subPackage => {
           if (subPackage.type == "object")
             this.addDependencies(subPackage, collector);
         });

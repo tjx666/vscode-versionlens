@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {inject} from '../common/di';
-import {PackageCodeLens} from '../models/packageCodeLens';
+import {PackageCodeLens} from '../common/packageCodeLens';
+import {PackageCodeLensList} from '../common/packageCodeLensList';
 import {AbstractCodeLensProvider} from './abstractCodeLensProvider';
-import {PackageCodeLensList} from '../lists/packageCodeLensList'
 
 // TODO retrieve multiple sources from nuget.config
 const FEED_URL = 'https://api.nuget.org/v3-flatcontainer';
