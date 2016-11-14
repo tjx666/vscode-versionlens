@@ -1,9 +1,3 @@
-options:
-  stdout: true
-  stderr: true
-  failOnError: true
-  stdinRawMode: false
-
-compileSource: tsc --outDir <%= config.paths.srcOut %> --sourceMap
+compileSource: tsc --outDir ./out --sourceMap
 
 tests: node ./node_modules/vscode/bin/test
