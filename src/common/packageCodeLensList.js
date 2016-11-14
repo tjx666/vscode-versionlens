@@ -23,11 +23,11 @@ export class PackageCodeLensList {
       this.document.positionAt(packageEntry.start),
       this.document.positionAt(packageEntry.end)
     );
+    const meta = { localURI: Uri.file(this.document.fileName) };
     let packageName = packageEntry.location;
     let packageVersion = packageEntry.value;
     let versionRange = entryRange;
-    let commandMeta;
-    let versionAdapter;
+    let customGenerateVersion;
     let isValidSemver;
 
     // handle cases where version is stored as a child property.
@@ -48,8 +48,8 @@ export class PackageCodeLensList {
         return false;
       packageName = parseResult.packageName;
       packageVersion = parseResult.packageVersion;
-      versionAdapter = parseResult.versionAdapter;
-      commandMeta = parseResult.commandMeta;
+      customGenerateVersion = parseResult.customGenerateVersion;
+      Object.assign(meta, parseResult.meta);
       isValidSemver = parseResult.isValidSemver;
     }
 
@@ -58,12 +58,11 @@ export class PackageCodeLensList {
       new PackageCodeLens(
         entryRange,
         versionRange,
-        Uri.file(this.document.fileName),
         packageName,
         packageVersion,
-        commandMeta,
+        meta,
         isValidSemver,
-        versionAdapter
+        customGenerateVersion
       )
     );
   }

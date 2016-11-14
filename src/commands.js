@@ -9,17 +9,17 @@ import * as opener from 'opener';
 export function updateDependencyCommand(codeLens, packageVersion) {
   const edits = [TextEdit.replace(codeLens.versionRange, packageVersion)];
   const edit = new WorkspaceEdit();
-  edit.set(codeLens.uri, edits);
+  edit.set(codeLens.meta.localURI, edits);
   return workspace.applyEdit(edit);
 }
 
-export function doMetaCommand(codeLens) {
-  if (codeLens.commandMeta.type === 'file') {
-    const filePathToOpen = path.resolve(path.dirname(codeLens.uri.fsPath), codeLens.commandMeta.uri);
+export function linkCommand(codeLens) {
+  if (codeLens.meta.type === 'file') {
+    const filePathToOpen = path.resolve(path.dirname(codeLens.meta.localURI.fsPath), codeLens.meta.remoteURI);
     opener(filePathToOpen);
     return;
   }
-  opener(codeLens.commandMeta.uri);
+  opener(codeLens.meta.remoteURI);
 }
 
 // export function updateDependenciesCommand(codeLens, packageVersion) {

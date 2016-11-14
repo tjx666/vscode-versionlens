@@ -9,40 +9,40 @@ import { NpmCodeLensProvider } from './providers/npm/npmCodeLensProvider';
 import { BowerCodeLensProvider } from './providers/bower/bowerCodeLensProvider';
 import { DubCodeLensProvider } from './providers/dub/dubCodeLensProvider';
 import { DotNetCodeLensProvider } from './providers/dotnet/dotNetCodeLensProvider';
-import { updateDependencyCommand, updateDependenciesCommand, doMetaCommand } from './commands';
+import { updateDependencyCommand, updateDependenciesCommand, linkCommand } from './commands';
 
 export function activate(context) {
-    if (bootstrapLoaded === false)
-        throw ReferenceError("VersionCodelens: didnt execute it's bootstrap.");
+  if (bootstrapLoaded === false)
+    throw ReferenceError("VersionCodelens: didnt execute it's bootstrap.");
 
-    const config = resolve('appConfig');
-    const disposables = [];
-    const providers = [
-        new NpmCodeLensProvider(),
-        new BowerCodeLensProvider(),
-        new DubCodeLensProvider(),
-        new DotNetCodeLensProvider()
-    ];
+  const config = resolve('appConfig');
+  const disposables = [];
+  const providers = [
+    new NpmCodeLensProvider(),
+    new BowerCodeLensProvider(),
+    new DubCodeLensProvider(),
+    new DotNetCodeLensProvider()
+  ];
 
-    providers.forEach(provider => {
-        disposables.push(
-            languages.registerCodeLensProvider(
-                provider.selector,
-                provider
-            )
-        );
-    })
-
+  providers.forEach(provider => {
     disposables.push(
-        commands.registerCommand(
-            `_${config.extentionName}.updateDependencyCommand`,
-            updateDependencyCommand
-        ),
-        commands.registerCommand(
-            `_${config.extentionName}.doMetaCommand`,
-            doMetaCommand
-        )
+      languages.registerCodeLensProvider(
+        provider.selector,
+        provider
+      )
     );
+  })
 
-    context.subscriptions.push(...disposables);
+  disposables.push(
+    commands.registerCommand(
+      `_${config.extentionName}.updateDependencyCommand`,
+      updateDependencyCommand
+    ),
+    commands.registerCommand(
+      `_${config.extentionName}.linkCommand`,
+      linkCommand
+    )
+  );
+
+  context.subscriptions.push(...disposables);
 }

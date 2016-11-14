@@ -6,7 +6,8 @@ import { inject } from '../../common/di';
 import { PackageCodeLens } from '../../common/packageCodeLens';
 import { PackageCodeLensList } from '../../common/packageCodeLensList';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
-import { npmVersionParser, jspmVersionParser } from './npmVersionParsers';
+import { npmVersionParser } from './npmVersionParser';
+import { jspmVersionParser } from './jspmVersionParser';
 
 @inject('jsonParser', 'npm')
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
@@ -52,8 +53,8 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         return;
       }
 
-      if (codeLensItem.commandMeta) {
-        this.commandFactory.makeDoMetaCommand(codeLensItem);
+      if (codeLensItem.meta && ['github', 'file'].includes(codeLensItem.meta.type)) {
+        this.commandFactory.makeLinkCommand(codeLensItem);
         return;
       }
 

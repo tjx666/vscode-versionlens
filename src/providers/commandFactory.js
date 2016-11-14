@@ -58,15 +58,15 @@ export class CommandFactory {
     return this.makeLatestCommand(codeLensItem);
   }
 
-  makeNewVersionCommand(newerVersion, codeLensItem) {
+  makeNewVersionCommand(newVersion, codeLensItem) {
     const prefix = this.appConfig.versionPrefix;
-    let replaceWithVersion = codeLensItem.toVersion(newerVersion);
+    let replaceWithVersion = codeLensItem.generateNewVersion(newVersion);
     if (!replaceWithVersion.startsWith(prefix)) {
       replaceWithVersion = `${prefix}${replaceWithVersion}`
     }
 
     codeLensItem.command = {
-      title: `${this.appConfig.updateIndicator} ${this.appConfig.versionPrefix}${newerVersion}`,
+      title: `${this.appConfig.updateIndicator} ${this.appConfig.versionPrefix}${newVersion}`,
       command: `_${this.appConfig.extentionName}.updateDependencyCommand`,
       arguments: [
         codeLensItem,
@@ -87,7 +87,7 @@ export class CommandFactory {
 
   makeSatisfiedWithNewerCommand(serverVersion, codeLensItem) {
     const prefix = this.appConfig.versionPrefix;
-    let replaceWithVersion = codeLensItem.toVersion(serverVersion);
+    let replaceWithVersion = codeLensItem.generateNewVersion(serverVersion);
     if (!replaceWithVersion.startsWith(prefix)) {
       replaceWithVersion = `${prefix}${replaceWithVersion}`
     }
@@ -130,12 +130,12 @@ export class CommandFactory {
     return codeLensItem;
   }
 
-  makeDoMetaCommand(codeLensItem) {
+  makeLinkCommand(codeLensItem) {
     codeLensItem.command = {
-      title: `${this.appConfig.openNewWindowIndicator} ` + (codeLensItem.commandMeta.type === 'file' ?
+      title: `${this.appConfig.openNewWindowIndicator} ` + (codeLensItem.meta.type === 'file' ?
         codeLensItem.packageVersion :
-        codeLensItem.commandMeta.uri),
-      command: `_${this.appConfig.extentionName}.doMetaCommand`,
+        codeLensItem.meta.remoteURI),
+      command: `_${this.appConfig.extentionName}.linkCommand`,
       arguments: [
         codeLensItem
       ]

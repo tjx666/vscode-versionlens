@@ -12,21 +12,19 @@ export class PackageCodeLens extends CodeLens {
   constructor(
     entryRange,
     versionRange,
-    uri,
     packageName,
     packageVersion,
-    commandMeta,
+    meta,
     isValidSemver,
-    versionAdapter
+    customGenerateVersion
   ) {
     super(entryRange);
-    this.uri = uri;
     this.packageName = packageName;
     this.packageVersion = packageVersion;
     this.versionRange = versionRange || entryRange;
-    this.commandMeta = commandMeta;
+    this.meta = meta;
     this.isValidSemver = isValidSemver;
-    this.versionAdapter = versionAdapter;
+    this.customGenerateVersion = customGenerateVersion;
   }
 
   preserveLeading_(newVersion) {
@@ -37,8 +35,8 @@ export class PackageCodeLens extends CodeLens {
     return `${leading}${newVersion}`;
   }
 
-  toVersion(newVersion) {
+  generateNewVersion(newVersion) {
     const adaptedVersion = this.preserveLeading_(newVersion);
-    return (this.versionAdapter && this.versionAdapter(this, newVersion, adaptedVersion)) || adaptedVersion;
+    return (this.customGenerateVersion && this.customGenerateVersion(this, adaptedVersion)) || adaptedVersion;
   }
 }

@@ -6,7 +6,7 @@ import { inject } from '../../common/di';
 import { PackageCodeLens } from '../../common/packageCodeLens';
 import { PackageCodeLensList } from '../../common/packageCodeLensList';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
-import { bowerVersionParser } from './bowerVersionParsers';
+import { bowerVersionParser } from './bowerVersionParser';
 
 @inject('jsonParser', 'bower')
 export class BowerCodeLensProvider extends AbstractCodeLensProvider {
@@ -40,8 +40,8 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
         return;
       }
 
-      if (codeLensItem.commandMeta) {
-        this.commandFactory.makeDoMetaCommand(codeLensItem);
+      if (codeLensItem.meta && ['github', 'file'].includes(codeLensItem.meta.type)) {
+        this.commandFactory.makeLinkCommand(codeLensItem);
         return;
       }
 

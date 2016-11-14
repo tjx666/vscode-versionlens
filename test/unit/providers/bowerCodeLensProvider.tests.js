@@ -99,7 +99,7 @@ describe("BowerCodeLensProvider", () => {
     describe("resolveCodeLens", () => {
 
         it("when code lens package version is 'latest' codeLens should return LatestCommand", () => {
-            const codeLens = new PackageCodeLens(null, null, null, 'SomePackage', 'latest', null, true, null);
+            const codeLens = new PackageCodeLens(null, null, 'SomePackage', 'latest', null, true, null);
             testProvider.resolveCodeLens(codeLens, null);
             assert.equal(codeLens.command.title, 'latest', "Expected command.title failed.");
             assert.equal(codeLens.command.command, undefined);
@@ -107,7 +107,7 @@ describe("BowerCodeLensProvider", () => {
         });
 
         it("when null info object returned from bower then codeLens should return ErrorCommand", done => {
-            const codeLens = new PackageCodeLens(null, null, null, 'SomePackage', '1.2.3', null, true, null);
+            const codeLens = new PackageCodeLens(null, null, 'SomePackage', '1.2.3', null, true, null);
             bowerMock.commands.info = packageName => {
                 let result;
                 result = {
@@ -129,7 +129,7 @@ describe("BowerCodeLensProvider", () => {
         });
 
         it("when null info.latest object returned from bower then codeLens should return ErrorCommand", done => {
-            const codeLens = new PackageCodeLens(null, null, null, 'SomePackage', '1.2.3', null, true, null);
+            const codeLens = new PackageCodeLens(null, null, 'SomePackage', '1.2.3', null, true, null);
             bowerMock.commands.info = packageName => {
                 let result;
                 result = {
@@ -151,7 +151,7 @@ describe("BowerCodeLensProvider", () => {
         });
 
         it("when valid info.latest object returned from bower then codeLens should return VersionCommand", done => {
-            const codeLens = new PackageCodeLens(null, null, null, 'SomePackage', '1.2.3', null, true, null);
+            const codeLens = new PackageCodeLens(null, null, 'SomePackage', '1.2.3', null, true, null);
             bowerMock.commands.info = packageName => {
                 let result;
                 result = {

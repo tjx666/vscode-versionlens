@@ -24,7 +24,7 @@ describe("CommandFactory", () => {
     defaultVersionPrefix = '^';
     testFactory = new CommandFactory();
     testFactory.makeTestVersionCommand = (localVersion, serverVersion) => {
-      const lens = new PackageCodeLens(null, null, null, null, localVersion);
+      const lens = new PackageCodeLens(null, null, null, localVersion);
       return testFactory.makeVersionCommand(localVersion, serverVersion, lens);
     };
   });

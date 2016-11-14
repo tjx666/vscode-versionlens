@@ -100,7 +100,7 @@ describe("NpmCodeLensProvider", () => {
   describe("resolveCodeLens", () => {
 
     it("passes given package name to npm view", done => {
-      const codeLens = new PackageCodeLens(null, null, null, 'SomePackage', '1.2.3', null, true, null);
+      const codeLens = new PackageCodeLens(null, null, 'SomePackage', '1.2.3', null, true, null);
       npmMock.view = (testPackageName, arg, cb) => {
         assert.equal(testPackageName, 'SomePackage', "Expected npm.view(packageName) but failed.");
         let err = null;
@@ -112,7 +112,7 @@ describe("NpmCodeLensProvider", () => {
     });
 
     it("passes scoped package names with @ symbol to npm.view", done => {
-      const codeLens = new PackageCodeLens(null, null, null, '@SomeScope/SomePackage', '1.2.3', null, true, null);
+      const codeLens = new PackageCodeLens(null, null, '@SomeScope/SomePackage', '1.2.3', null, true, null);
       npmMock.view = (testPackageName, arg, cb) => {
         assert.equal(testPackageName, '@SomeScope/SomePackage', "Expected npm.view(packageName) but failed.");
         let err = null
@@ -124,7 +124,7 @@ describe("NpmCodeLensProvider", () => {
     });
 
     it("when npm view returns an error then codeLens should return ErrorCommand", done => {
-      const codeLens = new PackageCodeLens(null, null, null, 'SomePackage', '1.2.3', null, true, null);
+      const codeLens = new PackageCodeLens(null, null, 'SomePackage', '1.2.3', null, true, null);
       // debugger
       npmMock.view = (testPackageName, arg, cb) => {
         let err = "An error occurred";
@@ -140,7 +140,7 @@ describe("NpmCodeLensProvider", () => {
     });
 
     it("when a valid response returned from npm and package version is 'not latest' then codeLens should return NewVersionCommand", done => {
-      const codeLens = new PackageCodeLens(null, null, null, 'SomePackage', '1.2.3', null, true, null);
+      const codeLens = new PackageCodeLens(null, null, 'SomePackage', '1.2.3', null, true, null);
       npmMock.view = (testPackageName, arg, cb) => {
         assert.equal(testPackageName, 'SomePackage', "Expected npm.view(packageName) but failed.");
         let err = null;
