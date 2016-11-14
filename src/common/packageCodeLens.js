@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { CodeLens, Range, Uri } from 'vscode';
 
-const VersionRegex = /^([^0-9]*)?.*$/;
-const PreserveLeadingChars = new Set(['^', '~', '<', '<=', '>', '>=']);
+const versionRegex = /^([^0-9]*)?.*$/;
+const preserveLeadingChars = ['^', '~', '<', '<=', '>', '>='];
 
 export class PackageCodeLens extends CodeLens {
 
@@ -16,6 +16,7 @@ export class PackageCodeLens extends CodeLens {
     packageName,
     packageVersion,
     commandMeta,
+    isValidSemver,
     versionAdapter
   ) {
     super(entryRange);
@@ -24,13 +25,14 @@ export class PackageCodeLens extends CodeLens {
     this.packageVersion = packageVersion;
     this.versionRange = versionRange || entryRange;
     this.commandMeta = commandMeta;
+    this.isValidSemver = isValidSemver;
     this.versionAdapter = versionAdapter;
   }
 
   preserveLeading_(newVersion) {
-    const m = VersionRegex.exec(this.packageVersion);
-    const leading = m && m[1];
-    if (!leading || !PreserveLeadingChars.has(leading))
+    const regExResult = versionRegex.exec(this.packageVersion);
+    const leading = regExResult && regExResult[1];
+    if (!leading || !preserveLeadingChars.includes(leading))
       return newVersion
     return `${leading}${newVersion}`;
   }

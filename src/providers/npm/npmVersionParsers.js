@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { fileDependencyRegex, gitHubDependencyRegex } from '../../common/utils';
+import * as semver from 'semver';
 
 export function npmVersionParser(node) {
   const { location: packageName, value: packageVersion } = node.value;
@@ -45,10 +46,13 @@ export function npmVersionParser(node) {
   }
 
   // must be a registry version
+  // check if its a valid semver, if not could be a tag
+  const isValidSemver = semver.validRange(packageVersion);
   return {
     packageName,
     packageVersion,
     commandMeta,
+    isValidSemver,
     versionAdapter: null
   };
 }
@@ -65,9 +69,11 @@ export function jspmVersionParser(node) {
 
   const newPackageName = regExpResult[1];
   const newPackageVersion = regExpResult[2];
+  const isValidSemver = semver.validRange(newPackageVersion);
   return {
     packageName: newPackageName,
     packageVersion: newPackageVersion,
+    isValidSemver,
     versionAdapter: (lens, version, adaptedVersion) => `npm:${newPackageName}@${adaptedVersion}`
   };
 }

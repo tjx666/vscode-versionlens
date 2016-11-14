@@ -28,6 +28,7 @@ export class PackageCodeLensList {
     let versionRange = entryRange;
     let commandMeta;
     let versionAdapter;
+    let isValidSemver;
 
     // handle cases where version is stored as a child property.
     if (packageEntry.type === 'object') {
@@ -49,6 +50,7 @@ export class PackageCodeLensList {
       packageVersion = parseResult.packageVersion;
       versionAdapter = parseResult.versionAdapter;
       commandMeta = parseResult.commandMeta;
+      isValidSemver = parseResult.isValidSemver;
     }
 
     // append a new code lens for rendering
@@ -60,6 +62,7 @@ export class PackageCodeLensList {
         packageName,
         packageVersion,
         commandMeta,
+        isValidSemver,
         versionAdapter
       )
     );

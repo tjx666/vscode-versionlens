@@ -59,15 +59,31 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         return;
       }
 
-      return npmViewVersion(this.npm, codeLensItem.packageName)
+      const viewPackageName = codeLensItem.packageName + (
+        !codeLensItem.isValidSemver ?
+          `@${codeLensItem.packageVersion}` :
+          ''
+      );
+
+      return doNpmViewVersion(this.npm, viewPackageName)
         .then(response => {
           let keys = Object.keys(response);
           let remoteVersion = keys[0];
-          return super.makeVersionCommand(
-            codeLensItem.packageVersion,
-            remoteVersion,
-            codeLensItem
-          );
+
+          if (codeLensItem.isValidSemver)
+            return super.makeVersionCommand(
+              codeLensItem.packageVersion,
+              remoteVersion,
+              codeLensItem
+            );
+
+          if (!remoteVersion)
+            return super.makeErrorCommand(
+              `${viewPackageName} gave an invalid response`,
+              codeLensItem
+            );
+
+          return this.makeTagCommand(`${viewPackageName} = v${remoteVersion}`, codeLensItem);
         })
         .catch(error => {
           return super.makeErrorCommand(
@@ -91,7 +107,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
 }
 
-function npmViewVersion(npm, packageName) {
+function doNpmViewVersion(npm, packageName) {
   return new Promise((resolve, reject) => {
     npm.load(loadError => {
       if (loadError) {

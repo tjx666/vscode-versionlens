@@ -25,10 +25,10 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     };
   }
 
-  collectDependencies_(collector, root) {
+  collectDependencies_(collector, root, customVersionParser) {
     root.getChildNodes().forEach((node) => {
       if (this.packageDependencyKeys.indexOf(node.key.value) !== -1) {
-        collector.addRange(node.value.getChildNodes());
+        collector.addRange(node.value.getChildNodes(), customVersionParser);
         return;
       }
 
@@ -36,7 +36,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
         node.value.items
           .forEach(subPackage => {
             if (subPackage.type == "object")
-              this.collectDependencies_(collector, subPackage);
+              this.collectDependencies_(collector, subPackage, customVersionParser);
           });
       }
     });
@@ -48,7 +48,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
       return [];
 
     const collector = new PackageCodeLensList(document);
-    this.collectDependencies_(collector, jsonDoc.root);
+    this.collectDependencies_(collector, jsonDoc.root, null);
     return collector.collection;
   }
 

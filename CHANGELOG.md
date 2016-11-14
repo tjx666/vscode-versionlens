@@ -1,3 +1,6 @@
+- 0.9.1
+  - fixes invalid message when using tags i.e. @next
+
 - 0.9.0
   - Github and local file system packages are now treated as clickable links that browse to their respective destinations. (git urls are not implemented yet)
 

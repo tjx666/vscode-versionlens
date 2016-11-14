@@ -2,10 +2,10 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {inject} from '../../common/di';
-import {PackageCodeLens} from '../../common/packageCodeLens';
-import {PackageCodeLensList} from '../../common/packageCodeLensList';
-import {AbstractCodeLensProvider} from '../abstractCodeLensProvider';
+import { inject } from '../../common/di';
+import { PackageCodeLens } from '../../common/packageCodeLens';
+import { PackageCodeLensList } from '../../common/packageCodeLensList';
+import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 
 // TODO retrieve multiple sources from nuget.config
 const FEED_URL = 'https://api.nuget.org/v3-flatcontainer';
@@ -35,7 +35,7 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
       return [];
 
     const collector = new PackageCodeLensList(document);
-    this.enumerateAllEntries_(jsonDoc.root, collector);
+    this.collectDependencies_(collector, jsonDoc.root, null);
     return collector.collection;
   }
 
@@ -79,13 +79,13 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
     }
   }
 
-  enumerateAllEntries_(node, collector) {
+  collectDependencies_(collector, node, customVersionParser) {
     const childNodes = node.getChildNodes();
     childNodes.forEach(childNode => {
       if (this.packageDependencyKeys.indexOf(childNode.key.value) !== -1)
-         collector.addRange(childNode.value.getChildNodes());
+        collector.addRange(childNode.value.getChildNodes(), customVersionParser);
       else if (childNode.value.type === 'object')
-        this.enumerateAllEntries_(childNode.value, collector);
+        this.collectDependencies_(collector, childNode.value, customVersionParser);
     });
   }
 

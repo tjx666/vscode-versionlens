@@ -140,6 +140,15 @@ export abstract class AbstractCodeLensProvider {
     return codeLensItem;
   }
 
+  makeTagCommand(tag, codeLensItem) {
+    codeLensItem.command = {
+      title: tag,
+      command: undefined,
+      arguments: undefined
+    };
+    return codeLensItem;
+  }
+
   makeUpdateDependenciesCommand(codeLensItem) {
     codeLensItem.command = {
       title: `${this.appConfig.updateIndicator} Update all`,
