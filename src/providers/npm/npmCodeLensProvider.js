@@ -11,9 +11,7 @@ import { npmVersionParser, jspmVersionParser } from './npmVersionParsers';
 @inject('jsonParser', 'npm')
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
-  constructor(config) {
-    super(config);
-
+  constructor() {
     this.packageExtensions = {
       'jspm': jspmVersionParser
     };
@@ -50,12 +48,12 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   resolveCodeLens(codeLensItem, token) {
     if (codeLensItem instanceof PackageCodeLens) {
       if (codeLensItem.packageVersion === 'latest') {
-        super.makeLatestCommand(codeLensItem);
+        this.commandFactory.makeLatestCommand(codeLensItem);
         return;
       }
 
       if (codeLensItem.commandMeta) {
-        super.makeDoMetaCommand(codeLensItem);
+        this.commandFactory.makeDoMetaCommand(codeLensItem);
         return;
       }
 
@@ -71,22 +69,22 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
           let remoteVersion = keys[0];
 
           if (codeLensItem.isValidSemver)
-            return super.makeVersionCommand(
+            return this.commandFactory.makeVersionCommand(
               codeLensItem.packageVersion,
               remoteVersion,
               codeLensItem
             );
 
           if (!remoteVersion)
-            return super.makeErrorCommand(
+            return this.commandFactory.makeErrorCommand(
               `${viewPackageName} gave an invalid response`,
               codeLensItem
             );
 
-          return this.makeTagCommand(`${viewPackageName} = v${remoteVersion}`, codeLensItem);
+          return this.commandFactory.makeTagCommand(`${viewPackageName} = v${remoteVersion}`, codeLensItem);
         })
         .catch(error => {
-          return super.makeErrorCommand(
+          return this.commandFactory.makeErrorCommand(
             error,
             codeLensItem
           );

@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {assertDefined} from './typeAssertion';
+import { assertDefined } from './typeAssertion';
 
 const resolveMap = {};
 
@@ -19,7 +19,14 @@ export function resolve(dependencyKey) {
  * registers dependencies to the resolve map
  */
 export function register(dependencyKey, instance) {
-  resolveMap[dependencyKey] = instance;
+  return resolveMap[dependencyKey] = instance;
+}
+
+/**
+ * clears the resolution map
+ */
+export function clear() {
+  resolveMap = {};
 }
 
 /**
@@ -31,7 +38,7 @@ export function inject() {
     resolvableKeys.push(arguments[index]);
   }
 
-  return function(target, key, desc) {
+  return function (target, key, desc) {
     const prototype = target.prototype;
     if (!prototype.__resolve)
       prototype.__resolve = resolve;

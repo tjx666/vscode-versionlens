@@ -2,18 +2,17 @@
  * Copyright (c) Peter Flannery. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-'use strict';
-const semver = require('semver');
-
 import * as assert from 'assert';
+import * as semver from 'semver';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import {register} from '../../../src/common/di';
-import {TestFixtureMap} from '../../testUtils';
-import {DubCodeLensProvider} from '../../../src/providers/dub/dubCodeLensProvider';
-import {AppConfiguration} from '../../../src/common/appConfiguration';
-import {PackageCodeLens} from '../../../src/common/packageCodeLens';
-import * as jsonParser from  'vscode-contrib-jsonc';
+import { register, clear } from '../../../src/common/di';
+import { TestFixtureMap } from '../../testUtils';
+import { DubCodeLensProvider } from '../../../src/providers/dub/dubCodeLensProvider';
+import { AppConfiguration } from '../../../src/common/appConfiguration';
+import { PackageCodeLens } from '../../../src/common/packageCodeLens';
+import { CommandFactory } from '../../../src/providers/commandFactory';
+import * as jsonParser from 'vscode-contrib-jsonc';
 
 const jsonExt = vscode.extensions.getExtension('vscode.json');
 
@@ -25,18 +24,20 @@ describe("DubCodeLensProvider", () => {
   let testProvider;
   let httpRequestMock = {};
   let appConfigMock = new AppConfiguration();
-  let satisfyOnly;
   let defaultVersionPrefix;
   Object.defineProperty(appConfigMock, 'versionPrefix', { get: () => defaultVersionPrefix })
 
   beforeEach(() => {
+    clear();
     register('semver', semver);
     register('jsonParser', jsonParser);
     register('httpRequest', httpRequestMock);
+    register('appConfig', appConfigMock);
+    register('commandFactory', new CommandFactory());
 
     // mock the config
     defaultVersionPrefix = '^';
-    testProvider = new DubCodeLensProvider(appConfigMock);
+    testProvider = new DubCodeLensProvider();
   });
 
   describe("provideCodeLenses", () => {

@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { CodeLens, Range, Uri } from 'vscode';
+import { extractSymbolFromVersionRegex } from './utils';
 
-const versionRegex = /^([^0-9]*)?.*$/;
 const preserveLeadingChars = ['^', '~', '<', '<=', '>', '>='];
 
 export class PackageCodeLens extends CodeLens {
@@ -30,7 +30,7 @@ export class PackageCodeLens extends CodeLens {
   }
 
   preserveLeading_(newVersion) {
-    const regExResult = versionRegex.exec(this.packageVersion);
+    const regExResult = extractSymbolFromVersionRegex.exec(this.packageVersion);
     const leading = regExResult && regExResult[1];
     if (!leading || !preserveLeadingChars.includes(leading))
       return newVersion
