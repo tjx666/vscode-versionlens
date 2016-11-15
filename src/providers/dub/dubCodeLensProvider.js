@@ -10,8 +10,7 @@ import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 @inject('jsonParser', 'httpRequest')
 export class DubCodeLensProvider extends AbstractCodeLensProvider {
 
-  constructor(config) {
-    super(config);
+  constructor() {
     this.packageDependencyKeys = [
       'dependencies'
     ];
@@ -56,12 +55,12 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     if (codeLensItem instanceof PackageCodeLens) {
 
       if (codeLensItem.packageVersion === 'latest') {
-        super.makeLatestCommand(codeLensItem);
+        this.commandFactory.makeLatestCommand(codeLensItem);
         return;
       }
 
       if (codeLensItem.packageVersion === '~master') {
-        super.makeLatestCommand(codeLensItem);
+        this.commandFactory.makeLatestCommand(codeLensItem);
         return;
       }
 
@@ -69,19 +68,19 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
       return this.httpRequest.xhr({ url: queryUrl })
         .then(response => {
           if (response.status != 200)
-            return super.makeErrorCommand(
+            return this.commandFactory.makeErrorCommand(
               response.responseText,
               codeLensItem
             );
 
           const verionStr = JSON.parse(response.responseText);
           if (typeof verionStr !== "string")
-            return super.makeErrorCommand(
+            return this.commandFactory.makeErrorCommand(
               "Invalid object returned from server",
               codeLensItem
             );
 
-          return super.makeVersionCommand(
+          return this.commandFactory.makeVersionCommand(
             codeLensItem.packageVersion,
             verionStr,
             codeLensItem
@@ -89,7 +88,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
         })
         .catch(response => {
           const respObj = JSON.parse(response.responseText);
-          return super.makeErrorCommand(
+          return this.commandFactory.makeErrorCommand(
             respObj.statusMessage,
             codeLensItem
           );

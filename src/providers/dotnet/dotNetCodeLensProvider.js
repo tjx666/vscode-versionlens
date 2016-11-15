@@ -13,8 +13,7 @@ const FEED_URL = 'https://api.nuget.org/v3-flatcontainer';
 @inject('jsonParser', 'httpRequest')
 export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 
-  constructor(config) {
-    super(config);
+  constructor() {
     this.packageDependencyKeys = [
       'dependencies',
       'tools'
@@ -43,7 +42,7 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
     if (codeLensItem instanceof PackageCodeLens) {
 
       if (codeLensItem.packageVersion === 'latest') {
-        super.makeLatestCommand(codeLensItem);
+        this.commandFactory.makeLatestCommand(codeLensItem);
         return;
       }
 
@@ -51,7 +50,7 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
       return this.httpRequest.xhr({ url: queryUrl })
         .then(response => {
           if (response.status != 200)
-            return super.makeErrorCommand(
+            return this.commandFactory.makeErrorCommand(
               response.responseText,
               codeLensItem
             );
@@ -59,19 +58,19 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
           const pkg = JSON.parse(response.responseText);
           const serverVersion = pkg.versions[pkg.versions.length - 1];
           if (!serverVersion)
-            return super.makeErrorCommand(
+            return this.commandFactory.makeErrorCommand(
               "Invalid object returned from server",
               codeLensItem
             );
 
-          return super.makeVersionCommand(
+          return this.commandFactory.makeVersionCommand(
             codeLensItem.packageVersion,
             serverVersion,
             codeLensItem
           );
 
         }, errResponse => {
-          return super.makeErrorCommand(
+          return this.commandFactory.makeErrorCommand(
             queryUrl,
             codeLensItem
           );

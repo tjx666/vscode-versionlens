@@ -6,13 +6,12 @@ import { inject } from '../../common/di';
 import { PackageCodeLens } from '../../common/packageCodeLens';
 import { PackageCodeLensList } from '../../common/packageCodeLensList';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
-import { bowerVersionParser } from './bowerVersionParsers';
+import { bowerVersionParser } from './bowerVersionParser';
 
 @inject('jsonParser', 'bower')
 export class BowerCodeLensProvider extends AbstractCodeLensProvider {
 
-  constructor(appConfig) {
-    super(appConfig);
+  constructor() {
     this.packageDependencyKeys = ['dependencies', 'devDependencies'];
   }
 
@@ -37,12 +36,12 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
   resolveCodeLens(codeLensItem, token) {
     if (codeLensItem instanceof PackageCodeLens) {
       if (codeLensItem.packageVersion === 'latest') {
-        this.makeLatestCommand(codeLensItem);
+        this.commandFactory.makeLatestCommand(codeLensItem);
         return;
       }
 
-      if (codeLensItem.commandMeta) {
-        super.makeDoMetaCommand(codeLensItem);
+      if (codeLensItem.meta && ['github', 'file'].includes(codeLensItem.meta.type)) {
+        this.commandFactory.makeLinkCommand(codeLensItem);
         return;
       }
 
@@ -50,13 +49,13 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
         this.bower.commands.info(codeLensItem.packageName)
           .on('end', (info) => {
             if (!info || !info.latest) {
-              success(this.makeErrorCommand("Invalid object returned from server", codeLensItem));
+              success(this.commandFactory.makeErrorCommand("Invalid object returned from server", codeLensItem));
               return;
             }
-            success(this.makeVersionCommand(codeLensItem.packageVersion, info.latest.version, codeLensItem));
+            success(this.commandFactory.makeVersionCommand(codeLensItem.packageVersion, info.latest.version, codeLensItem));
           })
           .on('error', (err) => {
-            success(this.makeErrorCommand(err.message, codeLensItem));
+            success(this.commandFactory.makeErrorCommand(err.message, codeLensItem));
           });
       });
     }

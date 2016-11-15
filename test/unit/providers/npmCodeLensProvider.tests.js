@@ -2,17 +2,16 @@
  * Copyright (c) Peter Flannery. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-'use strict';
-const semver = require('semver');
-
 import * as assert from 'assert';
+import * as semver from 'semver';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { register } from '../../../src/common/di';
+import { register, clear } from '../../../src/common/di';
 import { TestFixtureMap } from '../../testUtils';
 import { NpmCodeLensProvider } from '../../../src/providers/npm/npmCodeLensProvider';
 import { AppConfiguration } from '../../../src/common/appConfiguration';
 import { PackageCodeLens } from '../../../src/common/packageCodeLens';
+import { CommandFactory } from '../../../src/providers/commandFactory';
 import * as jsonParser from 'vscode-contrib-jsonc';
 
 const jsonExt = vscode.extensions.getExtension('vscode.json');
@@ -31,12 +30,15 @@ describe("NpmCodeLensProvider", () => {
   Object.defineProperty(appConfigMock, 'versionPrefix', { get: () => defaultVersionPrefix })
 
   beforeEach(() => {
+    clear();
     register('semver', semver);
     register('jsonParser', jsonParser);
     register('npm', npmMock);
+    register('appConfig', appConfigMock);
+    register('commandFactory', new CommandFactory());
     // mock the config
     defaultVersionPrefix = '^';
-    testProvider = new NpmCodeLensProvider(appConfigMock);
+    testProvider = new NpmCodeLensProvider();
   });
 
   describe("provideCodeLenses", () => {
@@ -98,7 +100,7 @@ describe("NpmCodeLensProvider", () => {
   describe("resolveCodeLens", () => {
 
     it("passes given package name to npm view", done => {
-      const codeLens = new PackageCodeLens(null, null, null, 'SomePackage', '1.2.3', null, true, null);
+      const codeLens = new PackageCodeLens(null, null, 'SomePackage', '1.2.3', null, true, null);
       npmMock.view = (testPackageName, arg, cb) => {
         assert.equal(testPackageName, 'SomePackage', "Expected npm.view(packageName) but failed.");
         let err = null;
@@ -110,7 +112,7 @@ describe("NpmCodeLensProvider", () => {
     });
 
     it("passes scoped package names with @ symbol to npm.view", done => {
-      const codeLens = new PackageCodeLens(null, null, null, '@SomeScope/SomePackage', '1.2.3', null, true, null);
+      const codeLens = new PackageCodeLens(null, null, '@SomeScope/SomePackage', '1.2.3', null, true, null);
       npmMock.view = (testPackageName, arg, cb) => {
         assert.equal(testPackageName, '@SomeScope/SomePackage', "Expected npm.view(packageName) but failed.");
         let err = null
@@ -122,7 +124,7 @@ describe("NpmCodeLensProvider", () => {
     });
 
     it("when npm view returns an error then codeLens should return ErrorCommand", done => {
-      const codeLens = new PackageCodeLens(null, null, null, 'SomePackage', '1.2.3', null, true, null);
+      const codeLens = new PackageCodeLens(null, null, 'SomePackage', '1.2.3', null, true, null);
       // debugger
       npmMock.view = (testPackageName, arg, cb) => {
         let err = "An error occurred";
@@ -138,7 +140,7 @@ describe("NpmCodeLensProvider", () => {
     });
 
     it("when a valid response returned from npm and package version is 'not latest' then codeLens should return NewVersionCommand", done => {
-      const codeLens = new PackageCodeLens(null, null, null, 'SomePackage', '1.2.3', null, true, null);
+      const codeLens = new PackageCodeLens(null, null, 'SomePackage', '1.2.3', null, true, null);
       npmMock.view = (testPackageName, arg, cb) => {
         assert.equal(testPackageName, 'SomePackage', "Expected npm.view(packageName) but failed.");
         let err = null;

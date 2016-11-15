@@ -1,6 +1,4 @@
-options:
-  force: true
 npm:
   src: node_modules
 sourceArtifacts:
-  src: <%= config.paths.srcOut %>
+  src: out
