@@ -40,11 +40,11 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 
   resolveCodeLens(codeLensItem, token) {
     if (codeLensItem instanceof PackageCodeLens) {
+      if (codeLensItem.command)
+        return codeLensItem;
 
-      if (codeLensItem.package.version === 'latest') {
-        this.commandFactory.makeLatestCommand(codeLensItem);
-        return;
-      }
+      if (codeLensItem.package.version === 'latest')
+        return this.commandFactory.makeLatestCommand(codeLensItem);
 
       const queryUrl = `${FEED_URL}/${codeLensItem.package.name}/index.json`;
       return this.httpRequest.xhr({ url: queryUrl })
@@ -79,12 +79,24 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
     }
   }
 
-  collectDependencies_(collector, node, customVersionParser) {
-    const childNodes = node.getChildNodes();
+  collectDependencies_(collector, rootNode, customVersionParser) {
+    const childNodes = rootNode.getChildNodes();
     childNodes.forEach(childNode => {
-      if (this.packageDependencyKeys.indexOf(childNode.key.value) !== -1)
-        collector.addRange(childNode.value.getChildNodes(), customVersionParser);
-      else if (childNode.value.type === 'object')
+      if (this.packageDependencyKeys.includes(childNode.key.value)) {
+        const childDeps = childNode.value.getChildNodes();
+        // check if this node has entries and if so add the update all command
+        if (childDeps.length > 0)
+          this.commandFactory.makeUpdateDependenciesCommand(
+            childNode.key.value,
+            collector.addNode(childNode),
+            collector.collection
+          );
+
+        collector.addDependencyNodeRange(childDeps, customVersionParser);
+        return;
+      }
+
+      if (childNode.value.type === 'object')
         this.collectDependencies_(collector, childNode.value, customVersionParser);
     });
   }

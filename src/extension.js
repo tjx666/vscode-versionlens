@@ -39,6 +39,10 @@ export function activate(context) {
       updateDependencyCommand
     ),
     commands.registerCommand(
+      `_${config.extentionName}.updateDependenciesCommand`,
+      updateDependenciesCommand
+    ),
+    commands.registerCommand(
       `_${config.extentionName}.linkCommand`,
       linkCommand
     )

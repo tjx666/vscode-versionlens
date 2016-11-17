@@ -88,11 +88,12 @@ describe("NpmCodeLensProvider", () => {
 
       let codeLens = testProvider.provideCodeLenses(testDocument, null);
       assert.ok(codeLens instanceof Array, "codeLens should be an array.");
-      assert.equal(codeLens.length, 4, "codeLens should be an array containing 4 items.");
+      assert.equal(codeLens.length, 5, "codeLens should be an array containing 5 items inc <update all>.");
 
-      codeLens.forEach((entry, index) => {
-        assert.equal(entry.package.name, `dep${index + 1}`, `dependency name should be dep${index + 1}.`);
-      });
+      codeLens.slice(1)
+        .forEach((entry, index) => {
+          assert.equal(entry.package.name, `dep${index + 1}`, `dependency name should be dep${index + 1}.`);
+        });
     });
 
   });

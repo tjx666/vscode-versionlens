@@ -22,24 +22,24 @@ export class PackageCodeLensList {
     this.appConfig = appConfig;
   }
 
-  add(node, versionParser) {
+  addDependencyNode(node, versionParser) {
     const packageNode = node.value;
     const entryRange = new Range(
       this.document.positionAt(packageNode.start),
       this.document.positionAt(packageNode.end)
     );
+    const documentUrl = Uri.file(this.document.fileName);
     let versionRange = entryRange;
-    let localUrl = Uri.file(this.document.fileName);
     let packageInfo = {
       name: packageNode.location,
       version: packageNode.value,
-      meta: { localUrl },
+      meta: null,
       isValidSemver: null
     };
 
     // handle cases where version is stored as a child property.
     if (packageNode.type === 'object') {
-      const versionInfo = this.getVersionRangeFromParent(packageNode);
+      const versionInfo = this.getVersionRangeFromParent_(packageNode);
       // if there isn't any version info then dont add this item
       if (!versionInfo)
         return;
@@ -48,16 +48,9 @@ export class PackageCodeLensList {
       packageInfo.version = versionInfo.version;
     }
 
-    if(!versionParser) {
+    if (!versionParser) {
       // append a single code lens for rendering
-      this.collection.push(
-        new PackageCodeLens(
-          entryRange,
-          versionRange,
-          packageInfo,
-          null
-        )
-      );
+      this.collection.push(new PackageCodeLens(entryRange, versionRange, packageInfo, documentUrl));
       return;
     }
 
@@ -70,25 +63,32 @@ export class PackageCodeLensList {
       const pkg = {
         name: parseResult.packageName,
         version: parseResult.packageVersion,
-        meta: parseResult.meta && Object.assign(parseResult.meta, { localUrl }),
-        isValidSemver: parseResult.isValidSemver
+        meta: parseResult.meta,
+        isValidSemver: parseResult.isValidSemver,
+        customGenerateVersion: parseResult.customGenerateVersion
       };
-      return new PackageCodeLens(
-        entryRange,
-        versionRange,
-        pkg,
-        parseResult.customGenerateVersion
-      );
+      return new PackageCodeLens(entryRange, versionRange, pkg, documentUrl);
     });
 
-    this.collection.push.apply(this.collection,codeLensToAdd);
+    this.collection.push.apply(this.collection, codeLensToAdd);
   }
 
-  addRange(nodes, versionParser) {
-    nodes.forEach(node => this.add(node, versionParser));
+  addNode(node) {
+    const entryRange = new Range(
+      this.document.positionAt(node.start),
+      this.document.positionAt(node.end)
+    );
+    const documentUrl = Uri.file(this.document.fileName);
+    const newCodeLens = new PackageCodeLens(entryRange, null, null, documentUrl);
+    this.collection.push(newCodeLens);
+    return newCodeLens;
   }
 
-  getVersionRangeFromParent(parentNode) {
+  addDependencyNodeRange(nodes, versionParser) {
+    nodes.forEach(node => this.addDependencyNode(node, versionParser));
+  }
+
+  getVersionRangeFromParent_(parentNode) {
     const childNodes = parentNode.getChildNodes();
     for (var i = 0; i < childNodes.length; i++) {
       var childNode = childNodes[i];

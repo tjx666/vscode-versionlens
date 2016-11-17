@@ -7,22 +7,28 @@ import { extractSymbolFromVersionRegex, formatWithExistingLeading } from './util
 
 export class PackageCodeLens extends CodeLens {
 
-  constructor(
-    entryRange,
-    versionRange,
-    packageInfo,
-    customGenerateVersion
-  ) {
+  constructor(entryRange, versionRange, packageInfo, documentUrl) {
     super(entryRange);
     this.versionRange = versionRange || entryRange;
     this.package = packageInfo;
-    this.customGenerateVersion = customGenerateVersion;
+    this.documentUrl = documentUrl;
+    this.command = null;
   }
 
   generateNewVersion(newVersion) {
-    if(!this.customGenerateVersion) 
+    if (!this.package.customGenerateVersion)
       return formatWithExistingLeading(this.package.version, newVersion);
-    
-    return this.customGenerateVersion.call(this, this.package, newVersion);
+
+    return this.package.customGenerateVersion.call(this, this.package, newVersion);
   }
+
+  setCommand(text, command, args) {
+    this.command = {
+      title: text,
+      command: command || null,
+      arguments: args || null
+    };
+    return this;
+  }
+
 }
