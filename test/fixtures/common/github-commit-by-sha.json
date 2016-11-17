@@ -1,0 +1,89 @@
+{
+  "sha": "b5890e0608ad2262cde4a38e90afa19f1cb5d852",
+  "commit": {
+    "author": {
+      "name": "Mark Otto",
+      "email": "markdotto@gmail.com",
+      "date": "2016-10-19T15:30:27Z"
+    },
+    "committer": {
+      "name": "Mark Otto",
+      "email": "markdotto@gmail.com",
+      "date": "2016-10-19T15:30:27Z"
+    },
+    "message": "hashes",
+    "tree": {
+      "sha": "8820ad86b8cd5899ea1d2c9050881b4ff56c8fee",
+      "url": "https://api.github.com/repos/twbs/bootstrap/git/trees/8820ad86b8cd5899ea1d2c9050881b4ff56c8fee"
+    },
+    "url": "https://api.github.com/repos/twbs/bootstrap/git/commits/b5890e0608ad2262cde4a38e90afa19f1cb5d852",
+    "comment_count": 0
+  },
+  "url": "https://api.github.com/repos/twbs/bootstrap/commits/b5890e0608ad2262cde4a38e90afa19f1cb5d852",
+  "html_url": "https://github.com/twbs/bootstrap/commit/b5890e0608ad2262cde4a38e90afa19f1cb5d852",
+  "comments_url": "https://api.github.com/repos/twbs/bootstrap/commits/b5890e0608ad2262cde4a38e90afa19f1cb5d852/comments",
+  "author": {
+    "login": "mdo",
+    "id": 98681,
+    "avatar_url": "https://avatars.githubusercontent.com/u/98681?v=3",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/mdo",
+    "html_url": "https://github.com/mdo",
+    "followers_url": "https://api.github.com/users/mdo/followers",
+    "following_url": "https://api.github.com/users/mdo/following{/other_user}",
+    "gists_url": "https://api.github.com/users/mdo/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/mdo/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/mdo/subscriptions",
+    "organizations_url": "https://api.github.com/users/mdo/orgs",
+    "repos_url": "https://api.github.com/users/mdo/repos",
+    "events_url": "https://api.github.com/users/mdo/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/mdo/received_events",
+    "type": "User",
+    "site_admin": true
+  },
+  "committer": {
+    "login": "mdo",
+    "id": 98681,
+    "avatar_url": "https://avatars.githubusercontent.com/u/98681?v=3",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/mdo",
+    "html_url": "https://github.com/mdo",
+    "followers_url": "https://api.github.com/users/mdo/followers",
+    "following_url": "https://api.github.com/users/mdo/following{/other_user}",
+    "gists_url": "https://api.github.com/users/mdo/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/mdo/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/mdo/subscriptions",
+    "organizations_url": "https://api.github.com/users/mdo/orgs",
+    "repos_url": "https://api.github.com/users/mdo/repos",
+    "events_url": "https://api.github.com/users/mdo/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/mdo/received_events",
+    "type": "User",
+    "site_admin": true
+  },
+  "parents": [
+    {
+      "sha": "d4d53cad96752ac3adfe717ffbcc6a687c8d316c",
+      "url": "https://api.github.com/repos/twbs/bootstrap/commits/d4d53cad96752ac3adfe717ffbcc6a687c8d316c",
+      "html_url": "https://github.com/twbs/bootstrap/commit/d4d53cad96752ac3adfe717ffbcc6a687c8d316c"
+    }
+  ],
+  "stats": {
+    "total": 4,
+    "additions": 2,
+    "deletions": 2
+  },
+  "files": [
+    {
+      "sha": "c3233433400ca5c42b645b0c415965a35349d9cd",
+      "filename": "_config.yml",
+      "status": "modified",
+      "additions": 2,
+      "deletions": 2,
+      "changes": 4,
+      "blob_url": "https://github.com/twbs/bootstrap/blob/b5890e0608ad2262cde4a38e90afa19f1cb5d852/_config.yml",
+      "raw_url": "https://github.com/twbs/bootstrap/raw/b5890e0608ad2262cde4a38e90afa19f1cb5d852/_config.yml",
+      "contents_url": "https://api.github.com/repos/twbs/bootstrap/contents/_config.yml?ref=b5890e0608ad2262cde4a38e90afa19f1cb5d852",
+      "patch": "@@ -46,9 +46,9 @@ themes:           https://themes.getbootstrap.com\n cdn:\n   # See https://www.srihash.org for info on how to generate the hashes\n   css:            https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css\n-  css_hash:       \"sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj\"\n+  css_hash:       \"sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi\"\n   js:             https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js\n-  js_hash:        \"sha384-VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU\"\n+  js_hash:        \"sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK\"\n   jquery:         https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js\n   jquery_hash:    \"sha384-3ceskX3iaEnIogmQchP8opvBy3Mi7Ce34nWjpBIwVTHfGYWQS9jwHDVRnpKKHJg7\"\n   tether:         https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.7/js/tether.min.js"
+    }
+  ]
+}

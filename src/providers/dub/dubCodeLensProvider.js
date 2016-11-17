@@ -7,7 +7,7 @@ import { PackageCodeLens } from '../../common/packageCodeLens';
 import { PackageCodeLensList } from '../../common/packageCodeLensList';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 
-@inject('jsonParser', 'httpRequest')
+@inject('jsonParser', 'httpRequest', 'appConfig')
 export class DubCodeLensProvider extends AbstractCodeLensProvider {
 
   constructor() {
@@ -46,7 +46,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
       return [];
 
-    const collector = new PackageCodeLensList(document);
+    const collector = new PackageCodeLensList(document, this.appConfig);
     this.collectDependencies_(collector, jsonDoc.root, null);
     return collector.collection;
   }
@@ -54,17 +54,17 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
   resolveCodeLens(codeLensItem, token) {
     if (codeLensItem instanceof PackageCodeLens) {
 
-      if (codeLensItem.packageVersion === 'latest') {
+      if (codeLensItem.package.version === 'latest') {
         this.commandFactory.makeLatestCommand(codeLensItem);
         return;
       }
 
-      if (codeLensItem.packageVersion === '~master') {
+      if (codeLensItem.package.version === '~master') {
         this.commandFactory.makeLatestCommand(codeLensItem);
         return;
       }
 
-      const queryUrl = `http://code.dlang.org/api/packages/${encodeURIComponent(codeLensItem.packageName)}/latest`;
+      const queryUrl = `http://code.dlang.org/api/packages/${encodeURIComponent(codeLensItem.package.name)}/latest`;
       return this.httpRequest.xhr({ url: queryUrl })
         .then(response => {
           if (response.status != 200)
@@ -81,7 +81,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
             );
 
           return this.commandFactory.makeVersionCommand(
-            codeLensItem.packageVersion,
+            codeLensItem.package.version,
             verionStr,
             codeLensItem
           );

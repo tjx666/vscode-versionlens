@@ -1,0 +1,77 @@
+[
+  {
+    "sha": "0913a0bf57886d6df1d4ee78c58dfdf507b896d0",
+    "commit": {
+      "author": {
+        "name": "Patrick H. Lauke",
+        "email": "redux@splintered.co.uk",
+        "date": "2016-11-13T22:55:19Z"
+      },
+      "committer": {
+        "name": "GitHub",
+        "email": "noreply@github.com",
+        "date": "2016-11-13T22:55:19Z"
+      },
+      "message": "Merge pull request #21124 from Daniel15/patch-1\n\nit's → its",
+      "tree": {
+        "sha": "d7e47ae3988d1d64449379fd1cf995a51f4dbe48",
+        "url": "https://api.github.com/repos/twbs/bootstrap/git/trees/d7e47ae3988d1d64449379fd1cf995a51f4dbe48"
+      },
+      "url": "https://api.github.com/repos/twbs/bootstrap/git/commits/0913a0bf57886d6df1d4ee78c58dfdf507b896d0",
+      "comment_count": 0
+    },
+    "url": "https://api.github.com/repos/twbs/bootstrap/commits/0913a0bf57886d6df1d4ee78c58dfdf507b896d0",
+    "html_url": "https://github.com/twbs/bootstrap/commit/0913a0bf57886d6df1d4ee78c58dfdf507b896d0",
+    "comments_url": "https://api.github.com/repos/twbs/bootstrap/commits/0913a0bf57886d6df1d4ee78c58dfdf507b896d0/comments",
+    "author": {
+      "login": "patrickhlauke",
+      "id": 895831,
+      "avatar_url": "https://avatars.githubusercontent.com/u/895831?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/patrickhlauke",
+      "html_url": "https://github.com/patrickhlauke",
+      "followers_url": "https://api.github.com/users/patrickhlauke/followers",
+      "following_url": "https://api.github.com/users/patrickhlauke/following{/other_user}",
+      "gists_url": "https://api.github.com/users/patrickhlauke/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/patrickhlauke/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/patrickhlauke/subscriptions",
+      "organizations_url": "https://api.github.com/users/patrickhlauke/orgs",
+      "repos_url": "https://api.github.com/users/patrickhlauke/repos",
+      "events_url": "https://api.github.com/users/patrickhlauke/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/patrickhlauke/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "committer": {
+      "login": "web-flow",
+      "id": 19864447,
+      "avatar_url": "https://avatars.githubusercontent.com/u/19864447?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/web-flow",
+      "html_url": "https://github.com/web-flow",
+      "followers_url": "https://api.github.com/users/web-flow/followers",
+      "following_url": "https://api.github.com/users/web-flow/following{/other_user}",
+      "gists_url": "https://api.github.com/users/web-flow/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/web-flow/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/web-flow/subscriptions",
+      "organizations_url": "https://api.github.com/users/web-flow/orgs",
+      "repos_url": "https://api.github.com/users/web-flow/repos",
+      "events_url": "https://api.github.com/users/web-flow/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/web-flow/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "parents": [
+      {
+        "sha": "93ba9ac629a29bb8709989ba4be8a26b0b6d87d5",
+        "url": "https://api.github.com/repos/twbs/bootstrap/commits/93ba9ac629a29bb8709989ba4be8a26b0b6d87d5",
+        "html_url": "https://github.com/twbs/bootstrap/commit/93ba9ac629a29bb8709989ba4be8a26b0b6d87d5"
+      },
+      {
+        "sha": "fd184b45f3ce6a9f47924268e81c6a189f8a694a",
+        "url": "https://api.github.com/repos/twbs/bootstrap/commits/fd184b45f3ce6a9f47924268e81c6a189f8a694a",
+        "html_url": "https://github.com/twbs/bootstrap/commit/fd184b45f3ce6a9f47924268e81c6a189f8a694a"
+      }
+    ]
+  }
+]

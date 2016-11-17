@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {workspace} from 'vscode';
+import { workspace } from 'vscode';
 
 export class AppConfiguration {
 
@@ -13,6 +13,11 @@ export class AppConfiguration {
   get versionPrefix() {
     const config = workspace.getConfiguration('versionlens');
     return config.get("versionPrefix", "");
+  }
+
+  get githubCompareOptions() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get('github.compareOptions', ['Release', 'Tag', 'Commit']);
   }
 
   get updateIndicator() {

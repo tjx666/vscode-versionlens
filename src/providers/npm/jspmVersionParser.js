@@ -3,10 +3,11 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as semver from 'semver';
-import { parseFileVersion, parseGitHubVersionLink } from './npmVersionParser';
+import { formatWithExistingLeading } from '../../common/utils';
+import { parseFileVersion, parseGithubVersionLink } from './npmVersionParser';
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;
-export function jspmVersionParser(node) {
+export function jspmVersionParser(node, appConfig) {
   const { location: packageName, value: packageVersion } = node.value;
   const regExpResult = jspmDependencyRegex.exec(packageVersion);
   if (!regExpResult)
@@ -17,13 +18,15 @@ export function jspmVersionParser(node) {
   const newPkgVersion = regExpResult[3];
 
   if (packageManager === 'github') {
-    const result = parseGitHubVersionLink(extractedPkgName, extractedPkgName)
-    result.customGenerateVersion = customGenerateVersion;
-    return result;
+    const results = parseGithubVersionLink(extractedPkgName, `${extractedPkgName}#${newPkgVersion}`, appConfig.githubCompareOptions);
+    return results.map(result => {
+      result.customGenerateVersion = customGenerateVersion;
+      return result;
+    });
   }
 
   const isValidSemver = semver.validRange(newPkgVersion);
-  return {
+  return [{
     packageName: extractedPkgName,
     packageVersion: newPkgVersion,
     isValidSemver,
@@ -31,9 +34,19 @@ export function jspmVersionParser(node) {
       type: 'npm'
     },
     customGenerateVersion
-  };
+  }];
 }
 
-function customGenerateVersion(codeLens, newVersion) {
-  return `codeLens.meta.type:${codeLens.packageName}@${newVersion}`
+export function customGenerateVersion(packageInfo, newVersion) {
+  const existingVersion
+  // test if the newVersion is a valid semver range
+  // if it is then we need to use the commitish for github versions 
+  if (packageInfo.meta.type === 'github' && semver.validRange(newVersion))
+    existingVersion = packageInfo.meta.commitish
+  else
+    existingVersion = packageInfo.version
+
+  // preserve the leading symbol from the existing version
+  const preservedLeadingVersion = formatWithExistingLeading(existingVersion, newVersion)
+  return `${packageInfo.meta.type}:${packageInfo.name}@${preservedLeadingVersion}`
 }

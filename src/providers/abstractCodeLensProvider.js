@@ -6,8 +6,6 @@ import { inject } from '../common/di';
 import { assertInstanceOf } from '../common/typeAssertion';
 import { AppConfiguration } from '../common/appConfiguration';
 
-const VersionRegex = /^(?:[^0-9]*)?(.*)$/;
-
 @inject('semver', 'appConfig', 'commandFactory')
 export abstract class AbstractCodeLensProvider {
 

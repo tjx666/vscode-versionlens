@@ -9,7 +9,7 @@ import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { npmVersionParser } from './npmVersionParser';
 import { jspmVersionParser } from './jspmVersionParser';
 
-@inject('jsonParser', 'npm')
+@inject('jsonParser', 'npm', 'appConfig', 'githubRequest')
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
   constructor() {
@@ -40,7 +40,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
       return [];
 
-    const collector = new PackageCodeLensList(document);
+    const collector = new PackageCodeLensList(document, this.appConfig);
     this.collectDependencies_(collector, jsonDoc.root, npmVersionParser);
     this.collectExtensionDependencies_(collector, jsonDoc.root);
     return collector.collection;
@@ -48,19 +48,20 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
   resolveCodeLens(codeLensItem, token) {
     if (codeLensItem instanceof PackageCodeLens) {
-      if (codeLensItem.packageVersion === 'latest') {
-        this.commandFactory.makeLatestCommand(codeLensItem);
-        return;
+      if (codeLensItem.package.version === 'latest')
+        return this.commandFactory.makeLatestCommand(codeLensItem);
+
+      if (codeLensItem.package.meta) {
+        if (codeLensItem.package.meta.type === 'github')
+          return this.commandFactory.makeGithubCommand(codeLensItem);
+
+        if (codeLensItem.package.meta.type === 'file')
+          return this.commandFactory.makeLinkCommand(codeLensItem);
       }
 
-      if (codeLensItem.meta && ['github', 'file'].includes(codeLensItem.meta.type)) {
-        this.commandFactory.makeLinkCommand(codeLensItem);
-        return;
-      }
-
-      const viewPackageName = codeLensItem.packageName + (
-        !codeLensItem.isValidSemver ?
-          `@${codeLensItem.packageVersion}` :
+      const viewPackageName = codeLensItem.package.name + (
+        !codeLensItem.package.isValidSemver ?
+          `@${codeLensItem.package.version}` :
           ''
       );
 
@@ -69,9 +70,9 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
           let keys = Object.keys(response);
           let remoteVersion = keys[0];
 
-          if (codeLensItem.isValidSemver)
+          if (codeLensItem.package.isValidSemver)
             return this.commandFactory.makeVersionCommand(
-              codeLensItem.packageVersion,
+              codeLensItem.package.version,
               remoteVersion,
               codeLensItem
             );

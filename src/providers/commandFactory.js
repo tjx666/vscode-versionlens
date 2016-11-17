@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { inject } from '../common/di';
-import { stripSymbolFromVersionRegex } from '../common/utils';
+import { stripSymbolFromVersionRegex, semverLeadingChars } from '../common/utils';
 
-@inject('semver', 'appConfig')
+@inject('semver', 'githubRequest', 'appConfig')
 export class CommandFactory {
 
   makeErrorCommand(errorMsg, codeLensItem) {
@@ -132,15 +132,46 @@ export class CommandFactory {
 
   makeLinkCommand(codeLensItem) {
     codeLensItem.command = {
-      title: `${this.appConfig.openNewWindowIndicator} ` + (codeLensItem.meta.type === 'file' ?
-        codeLensItem.packageVersion :
-        codeLensItem.meta.remoteURI),
+      title: `${this.appConfig.openNewWindowIndicator} ` + (codeLensItem.package.meta.type === 'file' ?
+        codeLensItem.package.version :
+        codeLensItem.package.meta.remoteUrl),
       command: `_${this.appConfig.extentionName}.linkCommand`,
       arguments: [
         codeLensItem
       ]
     };
     return codeLensItem;
+  }
+
+  makeGithubCommand(codeLensItem) {
+    const meta = codeLensItem.package.meta;
+
+    return this.githubRequest[`getLatest${meta.category}`](meta.userRepo)
+      .then(entry => {
+        if (!entry)
+          return this.makeTagCommand(`${meta.category}: none`, codeLensItem);
+
+        if (meta.commitish === '' ||
+          (semverLeadingChars.includes(meta.commitish[0]) ? meta.commitish[0] : '') + entry.version === meta.commitish)
+          return this.makeTagCommand(`${meta.category}: latest`, codeLensItem);
+
+        const newVersion = codeLensItem.generateNewVersion(entry.version);
+        codeLensItem.command = {
+          title: `${meta.category}: ${this.appConfig.updateIndicator} ${entry.version}`,
+          command: `_${this.appConfig.extentionName}.updateDependencyCommand`,
+          arguments: [
+            codeLensItem,
+            `"${newVersion}"`
+          ]
+        };
+        return codeLensItem;
+      })
+      .catch(error => {
+        if (error.rateLimitExceeded)
+          return this.makeTagCommand(`Rate limit exceeded`, codeLensItem);
+
+        return Promise.reject(error);
+      });
   }
 
 }

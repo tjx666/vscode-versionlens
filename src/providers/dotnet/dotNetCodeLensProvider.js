@@ -10,7 +10,7 @@ import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 // TODO retrieve multiple sources from nuget.config
 const FEED_URL = 'https://api.nuget.org/v3-flatcontainer';
 
-@inject('jsonParser', 'httpRequest')
+@inject('jsonParser', 'httpRequest', 'appConfig')
 export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 
   constructor() {
@@ -33,7 +33,7 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
     if (jsonDoc === null || jsonDoc.root === null || jsonDoc.validationResult.errors.length > 0)
       return [];
 
-    const collector = new PackageCodeLensList(document);
+    const collector = new PackageCodeLensList(document, this.appConfig);
     this.collectDependencies_(collector, jsonDoc.root, null);
     return collector.collection;
   }
@@ -41,12 +41,12 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
   resolveCodeLens(codeLensItem, token) {
     if (codeLensItem instanceof PackageCodeLens) {
 
-      if (codeLensItem.packageVersion === 'latest') {
+      if (codeLensItem.package.version === 'latest') {
         this.commandFactory.makeLatestCommand(codeLensItem);
         return;
       }
 
-      const queryUrl = `${FEED_URL}/${codeLensItem.packageName}/index.json`;
+      const queryUrl = `${FEED_URL}/${codeLensItem.package.name}/index.json`;
       return this.httpRequest.xhr({ url: queryUrl })
         .then(response => {
           if (response.status != 200)
@@ -64,14 +64,15 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
             );
 
           return this.commandFactory.makeVersionCommand(
-            codeLensItem.packageVersion,
+            codeLensItem.package.version,
             serverVersion,
             codeLensItem
           );
 
-        }, errResponse => {
+        })
+        .catch(errResponse => {
           return this.commandFactory.makeErrorCommand(
-            queryUrl,
+            `${errResponse.status}: ${queryUrl}`,
             codeLensItem
           );
         });
