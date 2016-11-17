@@ -22,15 +22,6 @@ Supports
 
 [How to install vscode extentions](https://code.visualstudio.com/docs/editor/extension-gallery)
 
-### Available Workspace\\User Settings
-
-```js
-{
-  // Inserts this prefix before the version when clicking on the code lens link.
-  "versionlens.versionPrefix": "" // left blank as default
-}
-```
-
 ### Contributors
 
 These are the people that have contributed code to this project:

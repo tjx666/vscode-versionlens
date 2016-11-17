@@ -1,5 +1,14 @@
+- 0.10.0
+  - Added github commitish support for npm, jspm and bower. Doesn't support pre-releases yet.
+
+    ![npm-comittish](https://cloud.githubusercontent.com/assets/1727302/20376535/69a638a8-ac7f-11e6-8408-857759c21106.gif)
+
+    Also supports semver releases\tags 
+
+    ![npm-comittish2](https://cloud.githubusercontent.com/assets/1727302/20376610/1669b59c-ac80-11e6-9415-94ed83066f0b.gif)
+
 - 0.9.1
-  - fixes invalid message when using tags i.e. @next
+  - Fixes invalid message when using tags i.e. @next
 
 - 0.9.0
   - Github and local file system packages are now treated as clickable links that browse to their respective destinations. (git urls are not implemented yet)
@@ -26,8 +35,8 @@
   - Transferred this project over to https://github.com/vscode-contrib/vscode-versionlens
 
 - 0.4.1
-  - replaces internal json module with external
-  - replaces internal request module with external
+  - Replaces internal json module with external
+  - Replaces internal request module with external
 
 - 0.4.0
   - Adds dotnet project.json support
