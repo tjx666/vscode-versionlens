@@ -1,4 +1,0 @@
-npm:
-  src: node_modules
-sourceArtifacts:
-  src: out

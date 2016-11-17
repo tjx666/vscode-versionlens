@@ -29,21 +29,17 @@
   ],
   "main": "./out/src/extension.js",
   "scripts": {
-    "vscode:prepublish": "grunt compile",
+    "vscode:prepublish": "npm run -s compile",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "clean": "grunt clean:sourceArtifacts",
-    "compile": "grunt compile",
-    "test": "grunt test"
+    "clean": "rimraf ./out",
+    "compile": "npm run -s clean && tsc --outDir ./out --sourceMap",
+    "test": "node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
     "typescript": "2.0.10",
     "vscode": "1.0.3",
-    "grunt": "1.0.1",
-    "grunt-cli": "1.2.0",
-    "load-grunt-config": "0.19.2",
-    "grunt-contrib-clean": "1.0.0",
-    "grunt-shell": "2.1.0"
+    "rimraf": "2.5.4"
   },
   "dependencies": {
     "bower": "1.8.0",

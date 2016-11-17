@@ -1,3 +1,0 @@
-compileSource: tsc --outDir ./out --sourceMap
-
-tests: node ./node_modules/vscode/bin/test
