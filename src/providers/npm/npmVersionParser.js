@@ -2,10 +2,10 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { fileDependencyRegex, gitHubDependencyRegex } from '../../common/utils';
+import { fileDependencyRegex, gitHubDependencyRegex, formatWithExistingLeading } from '../../common/utils';
 import * as semver from 'semver';
 
-export function npmVersionParser(node) {
+export function npmVersionParser(node, appConfig) {
   const { location: packageName, value: packageVersion } = node.value;
   let result;
 
@@ -16,19 +16,21 @@ export function npmVersionParser(node) {
   // TODO: implement raw git url support too
 
   // check if we have a github version
-  if (result = parseGitHubVersionLink(packageName, packageVersion))
+  if (result = parseGithubVersionLink(packageName, packageVersion, appConfig.githubCompareOptions))
     return result
 
   // must be a registry version
   // check if its a valid semver, if not could be a tag
   const isValidSemver = semver.validRange(packageVersion);
-  return {
+  return [{
     packageName,
     packageVersion,
-    meta: null,
+    meta: {
+      type: 'npm'
+    },
     isValidSemver,
     customGenerateVersion: null
-  };
+  }];
 }
 
 export function parseFileVersion(packageName, packageVersion) {
@@ -36,33 +38,56 @@ export function parseFileVersion(packageName, packageVersion) {
   if (fileRegExpResult) {
     const meta = {
       type: "file",
-      remoteURI: `${fileRegExpResult[1]}`
+      remoteUrl: `${fileRegExpResult[1]}`
     };
-    return {
+    return [{
       packageName,
       packageVersion,
       meta,
       customGenerateVersion: null
-    };
+    }];
   }
 }
 
-export function parseGitHubVersionLink(packageName, packageVersion) {
+export function parseGithubVersionLink(packageName, packageVersion, githubCompareOptions) {
   const gitHubRegExpResult = gitHubDependencyRegex.exec(packageVersion);
   if (gitHubRegExpResult) {
     const proto = "https";
     const user = gitHubRegExpResult[1];
     const repo = gitHubRegExpResult[3];
-    const commitHash = gitHubRegExpResult[4] ? `/commit/${gitHubRegExpResult[4].substring(1)}` : '';
-    const meta = {
-      type: "github",
-      remoteURI: `${proto}://github.com/${user}/${repo}${commitHash}`
-    };
-    return {
-      packageName,
-      packageVersion,
-      meta,
-      customGenerateVersion: null
-    };
+    const userRepo = `${user}/${repo}`;
+    const commitish = gitHubRegExpResult[4] ? gitHubRegExpResult[4].substring(1) : '';
+    const commitishSlug = commitish ? `/commit/${commitish}` : '';
+    const remoteUrl = `${proto}://github.com/${user}/${repo}${commitishSlug}`;
+
+    return githubCompareOptions.map(category => {
+      const parseResult = {
+        packageName,
+        packageVersion,
+        meta: {
+          category,
+          type: "github",
+          remoteUrl,
+          userRepo,
+          commitish
+        },
+        customGenerateVersion: customGenerateVersion
+      };
+      return parseResult;
+    });
   }
+}
+
+export function customGenerateVersion(packageInfo, newVersion) {
+  const existingVersion
+  // test if the newVersion is a valid semver range
+  // if it is then we need to use the commitish for github versions 
+  if (packageInfo.meta.type === 'github' && semver.validRange(newVersion))
+    existingVersion = packageInfo.meta.commitish
+  else
+    existingVersion = packageInfo.version
+
+  // preserve the leading symbol from the existing version
+  const preservedLeadingVersion = formatWithExistingLeading(existingVersion, newVersion)
+  return `${packageInfo.meta.userRepo}#${preservedLeadingVersion}`
 }

@@ -5,41 +5,52 @@
 import { gitHubDependencyRegex } from '../../common/utils';
 import * as semver from 'semver';
 
-export function bowerVersionParser(node) {
+export function bowerVersionParser(node, appConfig) {
   const { location: packageName, value: packageVersion } = node.value;
-  let meta;
   let result;
 
   // check if we have a github version
-  if (result = parseGitHubVersionLink(packageName, packageVersion))
+  if (result = parseGithubVersionLink(packageName, packageVersion, appConfig.githubCompareOptions))
     return result;
 
   // check if its a valid semver, if not could be a tag
   const isValidSemver = semver.validRange(packageVersion);
-  return {
+  return [{
     packageName,
     packageVersion,
-    meta: null,
+    meta: {
+      type: 'bower'
+    },
     isValidSemver,
     customGenerateVersion: null
-  };
+  }];
 }
 
-function parseGitHubVersionLink(packageName, packageVersion) {
+export function parseGithubVersionLink(packageName, packageVersion, githubCompareOptions) {
   const gitHubRegExpResult = gitHubDependencyRegex.exec(packageVersion);
   if (gitHubRegExpResult) {
     const proto = "https";
     const user = gitHubRegExpResult[1];
     const repo = gitHubRegExpResult[3];
-    const meta = {
-      type: "github",
-      remoteURI: `${proto}://github.com/${user}/${repo}`
-    };
-    return {
-      packageName,
-      packageVersion,
-      meta,
-      customGenerateVersion: null
-    };
+    const userRepo = `${user}/${repo}`;
+    const commitish = gitHubRegExpResult[4] ? gitHubRegExpResult[4].substring(1) : '';
+    const commitishSlug = commitish ? `/commit/${commitish}` : '';
+    const remoteUrl = `${proto}://github.com/${user}/${repo}${commitishSlug}`;
+
+    return githubCompareOptions.map(category => {
+      const parseResult = {
+        packageName,
+        packageVersion,
+        meta: {
+          category,
+          type: "github",
+          remoteUrl,
+          userRepo,
+          commitish
+        },
+        customGenerateVersion: (packageInfo, newVersion) => `${packageInfo.meta.userRepo}#${newVersion}`
+      };
+      return parseResult;
+    });
   }
 }

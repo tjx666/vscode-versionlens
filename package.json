@@ -37,7 +37,7 @@
     "test": "grunt test"
   },
   "devDependencies": {
-    "typescript": "2.0.9",
+    "typescript": "2.0.10",
     "vscode": "1.0.3",
     "grunt": "1.0.1",
     "grunt-cli": "1.2.0",
@@ -56,13 +56,31 @@
   },
   "contributes": {
     "configuration": {
-      "type": "object",
-      "title": "Versionlens options",
+      "title": "Versionlens configuration",
       "properties": {
         "versionlens.versionPrefix": {
           "type": "string",
           "default": "",
           "description": "Inserts this prefix before the version when clicking on the code lens link."
+        },
+        "versionlens.github.compareOptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Release",
+              "Tag",
+              "Commit"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 3,
+          "default": [
+            "Release",
+            "Tag",
+            "Commit"
+          ],
+          "description": "Defines what commit types are used when comparing github packages. *A minumum of one commit type must be specified.*"
         }
       }
     }

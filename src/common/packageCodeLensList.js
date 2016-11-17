@@ -8,63 +8,80 @@ import { PackageCodeLens } from './packageCodeLens';
 
 export class PackageCodeLensList {
 
-  constructor(document) {
+  constructor(document, appConfig) {
     assertDefined(
       document,
       "PackageCodeLensList: document parameter is invalid"
     );
+    assertDefined(
+      appConfig,
+      "PackageCodeLensList: appConfig parameter is invalid"
+    );
     this.collection = [];
     this.document = document;
+    this.appConfig = appConfig;
   }
 
   add(node, versionParser) {
-    const packageEntry = node.value;
+    const packageNode = node.value;
     const entryRange = new Range(
-      this.document.positionAt(packageEntry.start),
-      this.document.positionAt(packageEntry.end)
+      this.document.positionAt(packageNode.start),
+      this.document.positionAt(packageNode.end)
     );
-    const meta = { localURI: Uri.file(this.document.fileName) };
-    let packageName = packageEntry.location;
-    let packageVersion = packageEntry.value;
     let versionRange = entryRange;
-    let customGenerateVersion;
-    let isValidSemver;
+    let localUrl = Uri.file(this.document.fileName);
+    let packageInfo = {
+      name: packageNode.location,
+      version: packageNode.value,
+      meta: { localUrl },
+      isValidSemver: null
+    };
 
     // handle cases where version is stored as a child property.
-    if (packageEntry.type === 'object') {
-      const versionInfo = this.getVersionRangeFromParent(packageEntry);
+    if (packageNode.type === 'object') {
+      const versionInfo = this.getVersionRangeFromParent(packageNode);
       // if there isn't any version info then dont add this item
       if (!versionInfo)
-        return false;
+        return;
       // update the version info
       versionRange = versionInfo.range;
-      packageVersion = versionInfo.value;
+      packageInfo.version = versionInfo.version;
+    }
+
+    if(!versionParser) {
+      // append a single code lens for rendering
+      this.collection.push(
+        new PackageCodeLens(
+          entryRange,
+          versionRange,
+          packageInfo,
+          null
+        )
+      );
+      return;
     }
 
     // execute the custom version parser (if present)
-    if (versionParser) {
-      let parseResult = versionParser(node);
-      if (!parseResult)
-        return false;
-      packageName = parseResult.packageName;
-      packageVersion = parseResult.packageVersion;
-      customGenerateVersion = parseResult.customGenerateVersion;
-      Object.assign(meta, parseResult.meta);
-      isValidSemver = parseResult.isValidSemver;
-    }
+    const parseResults = versionParser(node, this.appConfig);
+    if (!parseResults)
+      return;
 
-    // append a new code lens for rendering
-    this.collection.push(
-      new PackageCodeLens(
+    const codeLensToAdd = parseResults.map(parseResult => {
+      const pkg = {
+        name: parseResult.packageName,
+        version: parseResult.packageVersion,
+        meta: parseResult.meta && Object.assign(parseResult.meta, { localUrl }),
+        isValidSemver: parseResult.isValidSemver
+      };
+      return new PackageCodeLens(
         entryRange,
         versionRange,
-        packageName,
-        packageVersion,
-        meta,
-        isValidSemver,
-        customGenerateVersion
-      )
-    );
+        pkg,
+        parseResult.customGenerateVersion
+      );
+    });
+
+    this.collection.push.apply(this.collection,codeLensToAdd);
   }
 
   addRange(nodes, versionParser) {
@@ -81,7 +98,7 @@ export class PackageCodeLensList {
             this.document.positionAt(childNode.value.start),
             this.document.positionAt(childNode.value.end)
           ),
-          value: childNode.value.value
+          version: childNode.value.value
         };
       }
     }
