@@ -1,3 +1,18 @@
+- 0.11.0
+  - Can now choose to update all packages within a dependency section. i.e. update all beneath devDependencies.
+
+    ![update-all-example](https://cloud.githubusercontent.com/assets/1727302/20415826/c7244f98-ad32-11e6-9c25-ada420828d8c.gif)
+
+    **Note**
+
+      - Because code len's are not generated until they are viewed in the editor then only code len's that have been viewed since opening the document can be updated. 
+        If you have many dependencies that go off the screen then just scroll them all in to view once before running the update all command for maximum coverage.
+      - This functionality ignores github and file package entries.
+
+  - Now checks if an npm `file:` package path exists and provides indication when the resource does not exist.
+
+    ![file-existence](https://cloud.githubusercontent.com/assets/1727302/20415939/7b1843d8-ad33-11e6-8444-bc4ae6d8e555.gif)
+
 - 0.10.0
   - Added github commitish support for npm, jspm and bower. Doesn't support pre-releases yet.
 
