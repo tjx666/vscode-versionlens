@@ -24,21 +24,31 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     };
   }
 
-  collectDependencies_(collector, root, customVersionParser) {
-    root.getChildNodes().forEach((node) => {
-      if (this.packageDependencyKeys.indexOf(node.key.value) !== -1) {
-        collector.addRange(node.value.getChildNodes(), customVersionParser);
-        return;
-      }
+  collectDependencies_(collector, rootNode, customVersionParser) {
+    rootNode.getChildNodes()
+      .forEach(childNode => {
+        if (this.packageDependencyKeys.includes(childNode.key.value)) {
+          const childDeps = childNode.value.getChildNodes();
+          // check if this node has entries and if so add the update all command
+          if (childDeps.length > 0)
+            this.commandFactory.makeUpdateDependenciesCommand(
+              childNode.key.value,
+              collector.addNode(childNode),
+              collector.collection
+            );
 
-      if (node.key.value == "subPackages") {
-        node.value.items
-          .forEach(subPackage => {
-            if (subPackage.type == "object")
-              this.collectDependencies_(collector, subPackage, customVersionParser);
-          });
-      }
-    });
+          collector.addDependencyNodeRange(childDeps, customVersionParser);
+          return;
+        }
+
+        if (childNode.key.value == "subPackages") {
+          childNode.value.items
+            .forEach(subPackage => {
+              if (subPackage.type == "object")
+                this.collectDependencies_(collector, subPackage, customVersionParser);
+            });
+        }
+      });
   }
 
   provideCodeLenses(document, token) {
@@ -53,16 +63,15 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
 
   resolveCodeLens(codeLensItem, token) {
     if (codeLensItem instanceof PackageCodeLens) {
+      if (codeLensItem.command)
+        return codeLensItem;
 
-      if (codeLensItem.package.version === 'latest') {
-        this.commandFactory.makeLatestCommand(codeLensItem);
-        return;
-      }
+      if (codeLensItem.package.version === 'latest') 
+        return this.commandFactory.makeLatestCommand(codeLensItem);
+ 
 
-      if (codeLensItem.package.version === '~master') {
-        this.commandFactory.makeLatestCommand(codeLensItem);
-        return;
-      }
+      if (codeLensItem.package.version === '~master') 
+        return this.commandFactory.makeLatestCommand(codeLensItem);
 
       const queryUrl = `http://code.dlang.org/api/packages/${encodeURIComponent(codeLensItem.package.name)}/latest`;
       return this.httpRequest.xhr({ url: queryUrl })

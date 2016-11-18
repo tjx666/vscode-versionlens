@@ -21,10 +21,21 @@ export abstract class AbstractCodeLensProvider {
 
   collectDependencies_(collector, rootNode, customVersionParser) {
     rootNode.getChildNodes()
-      .forEach(node => {
-        const testDepProperty = node.key.value;
-        if (this.packageDependencyKeys.includes(testDepProperty))
-          collector.addRange(node.value.getChildNodes(), customVersionParser);
+      .forEach(childNode => {
+        if (this.packageDependencyKeys.includes(childNode.key.value) == false)
+          return;
+
+        const childDeps = childNode.value.getChildNodes();
+        // check if this node has entries and if so add the update all command
+        if (childDeps.length > 0)
+          this.commandFactory.makeUpdateDependenciesCommand(
+            childNode.key.value,
+            collector.addNode(childNode),
+            collector.collection
+          );
+
+        // collect all child dependencies
+        collector.addDependencyNodeRange(childDeps, customVersionParser);
       });
   }
 

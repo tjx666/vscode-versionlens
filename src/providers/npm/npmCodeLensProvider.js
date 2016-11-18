@@ -41,6 +41,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       return [];
 
     const collector = new PackageCodeLensList(document, this.appConfig);
+
     this.collectDependencies_(collector, jsonDoc.root, npmVersionParser);
     this.collectExtensionDependencies_(collector, jsonDoc.root);
     return collector.collection;
@@ -48,6 +49,9 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
   resolveCodeLens(codeLensItem, token) {
     if (codeLensItem instanceof PackageCodeLens) {
+      if (codeLensItem.command)
+        return codeLensItem;
+
       if (codeLensItem.package.version === 'latest')
         return this.commandFactory.makeLatestCommand(codeLensItem);
 

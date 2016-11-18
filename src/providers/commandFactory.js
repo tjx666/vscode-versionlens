@@ -5,32 +5,27 @@
 import { inject } from '../common/di';
 import { stripSymbolFromVersionRegex, semverLeadingChars } from '../common/utils';
 
-@inject('semver', 'githubRequest', 'appConfig')
+@inject('fs', 'path', 'semver', 'githubRequest', 'appConfig')
 export class CommandFactory {
 
-  makeErrorCommand(errorMsg, codeLensItem) {
-    codeLensItem.command = {
-      title: `${errorMsg}`,
-      command: undefined,
-      arguments: undefined
-    };
-    return codeLensItem;
+  makeErrorCommand(errorMsg, codeLens) {
+    return codeLens.setCommand(`${errorMsg}`);
   }
 
-  makeVersionCommand(localVersion, serverVersion, codeLensItem) {
+  makeVersionCommand(localVersion, serverVersion, codeLens) {
     const isLocalValid = this.semver.valid(localVersion);
     const isLocalValidRange = this.semver.validRange(localVersion);
     const isServerValid = this.semver.valid(serverVersion);
     const isServerValidRange = this.semver.validRange(serverVersion);
 
     if (!isLocalValid && !isLocalValidRange && localVersion !== 'latest')
-      return this.makeErrorCommand("Invalid semver version entered", codeLensItem);
+      return this.makeErrorCommand("Invalid semver version entered", codeLens);
 
     if (!isServerValid && !isServerValidRange && serverVersion !== 'latest')
-      return this.makeErrorCommand("Invalid semver server version received, " + serverVersion, codeLensItem);
+      return this.makeErrorCommand("Invalid semver server version received, " + serverVersion, codeLens);
 
     if (localVersion === 'latest')
-      return this.makeLatestCommand(codeLensItem);
+      return this.makeLatestCommand(codeLens);
 
     if (isLocalValidRange && !isLocalValid) {
       if (this.semver.satisfies(serverVersion, localVersion)) {
@@ -38,137 +33,112 @@ export class CommandFactory {
           let matches = stripSymbolFromVersionRegex.exec(localVersion);
           let cleanLocalVersion = (matches && matches[1]) || this.semver.clean(localVersion) || localVersion;
           if (cleanLocalVersion && this.semver.eq(serverVersion, cleanLocalVersion)) {
-            return this.makeSatisfiedCommand(serverVersion, codeLensItem);
+            return this.makeSatisfiedCommand(serverVersion, codeLens);
           }
         } catch (ex) {
-          return this.makeSatisfiedCommand(serverVersion, codeLensItem);
+          return this.makeSatisfiedCommand(serverVersion, codeLens);
         }
-        return this.makeSatisfiedWithNewerCommand(serverVersion, codeLensItem);
+        return this.makeSatisfiedWithNewerCommand(serverVersion, codeLens);
       }
       else
-        return this.makeNewVersionCommand(serverVersion, codeLensItem)
+        return this.makeNewVersionCommand(serverVersion, codeLens)
     }
 
     const hasNewerVersion = this.semver.gt(serverVersion, localVersion) === true
       || this.semver.lt(serverVersion, localVersion) === true;
 
     if (serverVersion !== localVersion && hasNewerVersion)
-      return this.makeNewVersionCommand(serverVersion, codeLensItem)
+      return this.makeNewVersionCommand(serverVersion, codeLens)
 
-    return this.makeLatestCommand(codeLensItem);
+    return this.makeLatestCommand(codeLens);
   }
 
-  makeNewVersionCommand(newVersion, codeLensItem) {
+  makeNewVersionCommand(newVersion, codeLens) {
     const prefix = this.appConfig.versionPrefix;
-    let replaceWithVersion = codeLensItem.generateNewVersion(newVersion);
-    if (!replaceWithVersion.startsWith(prefix)) {
+    let replaceWithVersion = codeLens.generateNewVersion(newVersion);
+    if (!replaceWithVersion.startsWith(prefix))
       replaceWithVersion = `${prefix}${replaceWithVersion}`
-    }
 
-    codeLensItem.command = {
-      title: `${this.appConfig.updateIndicator} ${this.appConfig.versionPrefix}${newVersion}`,
-      command: `_${this.appConfig.extentionName}.updateDependencyCommand`,
-      arguments: [
-        codeLensItem,
-        `"${replaceWithVersion}"`
-      ]
-    };
-    return codeLensItem;
+    return codeLens.setCommand(
+      `${this.appConfig.updateIndicator} ${this.appConfig.versionPrefix}${newVersion}`,
+      `_${this.appConfig.extentionName}.updateDependencyCommand`,
+      [codeLens, `"${replaceWithVersion}"`]
+    );
   }
 
-  makeSatisfiedCommand(serverVersion, codeLensItem) {
-    codeLensItem.command = {
-      title: `satisfies v${serverVersion}`,
-      command: undefined,
-      arguments: undefined
-    };
-    return codeLensItem;
+  makeSatisfiedCommand(serverVersion, codeLens) {
+    return codeLens.setCommand(`satisfies v${serverVersion}`);
   }
 
-  makeSatisfiedWithNewerCommand(serverVersion, codeLensItem) {
+  makeSatisfiedWithNewerCommand(serverVersion, codeLens) {
     const prefix = this.appConfig.versionPrefix;
-    let replaceWithVersion = codeLensItem.generateNewVersion(serverVersion);
-    if (!replaceWithVersion.startsWith(prefix)) {
+    let replaceWithVersion = codeLens.generateNewVersion(serverVersion);
+    if (!replaceWithVersion.startsWith(prefix))
       replaceWithVersion = `${prefix}${replaceWithVersion}`
-    }
 
-    codeLensItem.command = {
-      title: `${this.appConfig.updateIndicator} satisfies v${serverVersion}`,
-      command: `_${this.appConfig.extentionName}.updateDependencyCommand`,
-      arguments: [
-        codeLensItem,
-        `"${replaceWithVersion}"`
-      ]
-    };
-    return codeLensItem;
+    return codeLens.setCommand(
+      `${this.appConfig.updateIndicator} satisfies v${serverVersion}`,
+      `_${this.appConfig.extentionName}.updateDependencyCommand`,
+      [codeLens, `"${replaceWithVersion}"`]
+    );
   }
 
-  makeLatestCommand(codeLensItem) {
-    codeLensItem.command = {
-      title: 'latest',
-      command: undefined,
-      arguments: undefined
-    };
-    return codeLensItem;
+  makeLatestCommand(codeLens) {
+    return codeLens.setCommand('latest');
   }
 
-  makeTagCommand(tag, codeLensItem) {
-    codeLensItem.command = {
-      title: tag,
-      command: undefined,
-      arguments: undefined
-    };
-    return codeLensItem;
+  makeTagCommand(tag, codeLens) {
+    return codeLens.setCommand(tag);
   }
 
-  makeUpdateDependenciesCommand(codeLensItem) {
-    codeLensItem.command = {
-      title: `${this.appConfig.updateIndicator} Update all`,
-      command: `_${this.appConfig.extentionName}.updateDependenciesCommand`,
-      arguments: []
-    };
-    return codeLensItem;
+  makeUpdateDependenciesCommand(propertyName, codeLens, codeLenCollection) {
+    return codeLens.setCommand(
+      `${this.appConfig.updateIndicator} Update ${propertyName}`,
+      `_${this.appConfig.extentionName}.updateDependenciesCommand`,
+      [codeLens, codeLenCollection]
+    );
   }
 
-  makeLinkCommand(codeLensItem) {
-    codeLensItem.command = {
-      title: `${this.appConfig.openNewWindowIndicator} ` + (codeLensItem.package.meta.type === 'file' ?
-        codeLensItem.package.version :
-        codeLensItem.package.meta.remoteUrl),
-      command: `_${this.appConfig.extentionName}.linkCommand`,
-      arguments: [
-        codeLensItem
-      ]
-    };
-    return codeLensItem;
+  makeLinkCommand(codeLens) {
+    const isFile = codeLens.package.meta.type === 'file';
+    const title;
+    const cmd = `_${this.appConfig.extentionName}.linkCommand`;
+
+    if (isFile) {
+      const filePath = this.path.resolve(this.path.dirname(codeLens.documentUrl.fsPath), codeLens.package.meta.remoteUrl);
+      const fileExists = this.fs.existsSync(filePath);
+      if(fileExists == false)
+        title = (cmd = null) || 'Specified resource does not exist';
+       else
+        title = `${this.appConfig.openNewWindowIndicator} ${codeLens.package.version}`;
+    } else
+      title = `${this.appConfig.openNewWindowIndicator} ${codeLens.package.meta.remoteUrl}`;
+
+    return codeLens.setCommand(title, cmd, [codeLens]);
   }
 
-  makeGithubCommand(codeLensItem) {
-    const meta = codeLensItem.package.meta;
+  makeGithubCommand(codeLens) {
+    const meta = codeLens.package.meta;
 
     return this.githubRequest[`getLatest${meta.category}`](meta.userRepo)
       .then(entry => {
         if (!entry)
-          return this.makeTagCommand(`${meta.category}: none`, codeLensItem);
+          return this.makeTagCommand(`${meta.category}: none`, codeLens);
 
         if (meta.commitish === '' ||
           (semverLeadingChars.includes(meta.commitish[0]) ? meta.commitish[0] : '') + entry.version === meta.commitish)
-          return this.makeTagCommand(`${meta.category}: latest`, codeLensItem);
+          return this.makeTagCommand(`${meta.category}: latest`, codeLens);
 
-        const newVersion = codeLensItem.generateNewVersion(entry.version);
-        codeLensItem.command = {
-          title: `${meta.category}: ${this.appConfig.updateIndicator} ${entry.version}`,
-          command: `_${this.appConfig.extentionName}.updateDependencyCommand`,
-          arguments: [
-            codeLensItem,
-            `"${newVersion}"`
-          ]
-        };
-        return codeLensItem;
+        const newVersion = codeLens.generateNewVersion(entry.version);
+        return codeLens.setCommand(
+          `${meta.category}: ${this.appConfig.updateIndicator} ${entry.version}`,
+          `_${this.appConfig.extentionName}.updateDependencyCommand`,
+          [codeLens, `"${newVersion}"`]
+        );
       })
       .catch(error => {
         if (error.rateLimitExceeded)
-          return this.makeTagCommand(`Rate limit exceeded`, codeLensItem);
+          return this.makeTagCommand(`Rate limit exceeded`, codeLens);
 
         return Promise.reject(error);
       });
