@@ -5,7 +5,7 @@
 import { inject } from '../common/di';
 import { stripSymbolFromVersionRegex, semverLeadingChars } from '../common/utils';
 
-@inject('semver', 'githubRequest', 'appConfig')
+@inject('fs', 'path', 'semver', 'githubRequest', 'appConfig')
 export class CommandFactory {
 
   makeErrorCommand(errorMsg, codeLens) {
@@ -100,13 +100,21 @@ export class CommandFactory {
   }
 
   makeLinkCommand(codeLens) {
-    return codeLens.setCommand(
-      `${this.appConfig.openNewWindowIndicator} ` + (codeLens.package.meta.type === 'file' ?
-        codeLens.package.version :
-        codeLens.package.meta.remoteUrl),
-      `_${this.appConfig.extentionName}.linkCommand`,
-      [codeLens]
-    );
+    const isFile = codeLens.package.meta.type === 'file';
+    const title;
+    const cmd = `_${this.appConfig.extentionName}.linkCommand`;
+
+    if (isFile) {
+      const filePath = this.path.resolve(this.path.dirname(codeLens.documentUrl.fsPath), codeLens.package.meta.remoteUrl);
+      const fileExists = this.fs.existsSync(filePath);
+      if(fileExists == false)
+        title = (cmd = null) || 'Specified resource does not exist';
+       else
+        title = `${this.appConfig.openNewWindowIndicator} ${codeLens.package.version}`;
+    } else
+      title = `${this.appConfig.openNewWindowIndicator} ${codeLens.package.meta.remoteUrl}`;
+
+    return codeLens.setCommand(title, cmd, [codeLens]);
   }
 
   makeGithubCommand(codeLens) {
