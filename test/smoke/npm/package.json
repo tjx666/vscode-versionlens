@@ -6,7 +6,11 @@
     "bootstrap": "twbs/bootstrap#v3.3.0",
     "test": "file:../../../src",
     "@types/angularjs": "^1.5.14-alpha",
-    "@types/fs-extra": "0.0.34"
+    "@types/fs-extra": "0.0.34",
+    "@angular": ""
+  },
+  "customDependencies": {
+    "@types/hammerjs": "2.0.1"
   },
   "jspm": {
     "directories": {

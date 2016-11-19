@@ -59,6 +59,59 @@
           "default": "",
           "description": "Inserts this prefix before the version when clicking on the code lens link."
         },
+        "versionlens.npm.dependencyProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "minItems": 1,
+          "default": [
+            "dependencies",
+            "devDependencies",
+            "peerDependencies",
+            "optionalDependencies"
+          ],
+          "description": "Defines which properties in package.json should be parsed by this extension"
+        },
+        "versionlens.bower.dependencyProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "minItems": 1,
+          "default": [
+            "dependencies",
+            "devDependencies"
+          ],
+          "description": "Defines which properties in bower.json should be parsed by this extension"
+        },
+        "versionlens.dotnet.dependencyProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "minItems": 1,
+          "default": [
+            "dependencies",
+            "tools"
+          ],
+          "description": "Defines which properties in project.json should be parsed by this extension"
+        },
+        "versionlens.dub.dependencyProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "minItems": 1,
+          "default": [
+            "dependencies"
+          ],
+          "description": "Defines which properties in dub.json should be parsed by this extension"
+        },
         "versionlens.github.compareOptions": {
           "type": "array",
           "items": {
@@ -69,6 +122,7 @@
               "Commit"
             ]
           },
+          "uniqueItems": true,
           "minItems": 1,
           "maxItems": 3,
           "default": [

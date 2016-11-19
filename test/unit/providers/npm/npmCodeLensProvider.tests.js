@@ -8,6 +8,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { register, clear } from '../../../../src/common/di';
 import { TestFixtureMap } from '../../../testUtils';
+import { npmDefaultDependencyProperties } from '../../../../src/providers/npm/config';
 import { NpmCodeLensProvider } from '../../../../src/providers/npm/npmCodeLensProvider';
 import { AppConfiguration } from '../../../../src/common/appConfiguration';
 import { PackageCodeLens } from '../../../../src/common/packageCodeLens';
@@ -25,17 +26,23 @@ describe("NpmCodeLensProvider", () => {
   let npmMock = {
     load: cb => cb()
   };
-  let appConfigMock = new AppConfiguration();
+  let appConfigMock;
   let defaultVersionPrefix;
-  Object.defineProperty(appConfigMock, 'versionPrefix', { get: () => defaultVersionPrefix })
+  let defaultNpmDependencyKeys = npmDefaultDependencyProperties;
 
   beforeEach(() => {
     clear();
+
+    appConfigMock = new AppConfiguration();
+    Object.defineProperty(appConfigMock, 'versionPrefix', { get: () => defaultVersionPrefix })
+    Object.defineProperty(appConfigMock, 'npmDependencyProperties', { get: () => defaultNpmDependencyKeys })
+
     register('semver', semver);
     register('jsonParser', jsonParser);
     register('npm', npmMock);
     register('appConfig', appConfigMock);
     register('commandFactory', new CommandFactory());
+
     // mock the config
     defaultVersionPrefix = '^';
     testProvider = new NpmCodeLensProvider();
