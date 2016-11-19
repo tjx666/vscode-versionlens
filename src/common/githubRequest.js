@@ -10,10 +10,14 @@ export class GithubRequest {
 
   constructor() {
     this.cache = new CacheMap();
+    this.headers = {
+      accept: 'application\/vnd.github.v3+json',
+      'user-agent': 'vscode-contrib/vscode-versionlens'
+    };
   }
 
   getCommitBySha(userRepo, sha) {
-    return this.doRequest(userRepo, `commits/${sha}`, true)
+    return this.httpGet(userRepo, `commits/${sha}`)
       .then(firstEntry => {
         return {
           sha: firstEntry.sha,
@@ -23,7 +27,7 @@ export class GithubRequest {
   }
 
   getLatestCommit(userRepo) {
-    return this.doRequest(userRepo, 'commits', true)
+    return this.httpGet(userRepo, 'commits', { page: 1, per_page: 1 })
       .then(entries => {
         const firstEntry = entries[0];
         return {
@@ -33,8 +37,20 @@ export class GithubRequest {
       });
   }
 
-  getLatestRelease(userRepo, incPreReleases) {
-    return this.doRequest(userRepo, `releases${incPreReleases ? '' : '/latest'}`, incPreReleases)
+  getLatestPreRelease(userRepo) {
+    return this.httpGet(userRepo, 'releases/latest')
+      .then(result => {
+        if (Array.isArray(result))
+          result = result[0];
+        return result && {
+          category: 'prerelease',
+          version: result.tag_name
+        };
+      });
+  }
+
+  getLatestRelease(userRepo) {
+    return this.httpGet(userRepo, 'releases', { page: 1, per_page: 1 })
       .then(result => {
         if (Array.isArray(result))
           result = result[0];
@@ -46,7 +62,7 @@ export class GithubRequest {
   }
 
   getLatestTag(userRepo) {
-    return this.doRequest(userRepo, 'tags', true)
+    return this.httpGet(userRepo, 'tags', { page: 1, per_page: 1 })
       .then(entries => {
         if (!entries || entries.length === 0)
           return null;
@@ -57,22 +73,17 @@ export class GithubRequest {
       })
   }
 
-  doRequest(userRepo, category, paginated) {
-    const url = `https://api.github.com/repos/${userRepo}/${category}${paginated ? '?page=1&per_page=1' : ''}`;
-    const headers = {
-      accept: 'application\/vnd.github.v3+json',
-      'user-agent': 'vscode-contrib/vscode-versionlens'
-    };
+  repoExists(userRepo) {
+    return this.httpHead(userRepo)
+      .then(resp => true)
+      .catch(resp => resp.status !== 403)
+  }
 
-    if (this.cache.expired(url) === false)
-      return Promise.resolve(this.cache.get(url));
-
-    return this.httpRequest.xhr({ url, headers })
-      .then(response => this.cache.set(url, JSON.parse(response.responseText)))
-      .catch(response => {
-        const error = JSON.parse(response.responseText);
+  httpGet(userRepo, category, queryParams) {
+    return this.request('GET', userRepo, category, queryParams)
+      .catch(error => {
         // handles any 404 errors during a request for the latest release
-        if (response.status = 404 && category === 'releases/latest') {
+        if (error.status = 404 && category === 'releases/latest') {
           return this.cache.set(
             url,
             null
@@ -81,14 +92,14 @@ export class GithubRequest {
 
         // check if the request was not found and report back
         error.notFound = (
-          response.status = 404 &&
-          error.message.includes('Not Found')
+          error.status = 404 &&
+          error.data.message.includes('Not Found')
         );
 
         // check if we have exceeded the rate limit
         error.rateLimitExceeded = (
-          response.status = 403 &&
-          error.message.includes('API rate limit exceeded')
+          error.status = 403 &&
+          error.data.message.includes('API rate limit exceeded')
         );
 
         // reject all other errors
@@ -96,5 +107,42 @@ export class GithubRequest {
       });
   }
 
+  httpHead(userRepo) {
+    return this.request('HEAD', userRepo, null, null)
+  }
+
+  request(method, userRepo, category, queryParams) {
+    if (this.appConfig.githubAccessToken) {
+      !queryParams && (queryParams = {});
+      queryParams["access_token"] = this.appConfig.githubAccessToken;
+    }
+
+    const url = generateGithubUrl(userRepo, category, queryParams);
+    const cacheKey = method + '_' + url;
+
+    if (this.cache.expired(url) === false)
+      return Promise.resolve(this.cache.get(cacheKey));
+
+    return this.httpRequest.xhr({ url, type: method, headers: this.headers })
+      .then(response => {
+        return this.cache.set(cacheKey, response.responseText && JSON.parse(response.responseText))
+      })
+      .catch(response => {
+        return Promise.reject({
+          status: response.status,
+          data: this.cache.set(cacheKey, JSON.parse(response.responseText))
+        });
+      });
+  }
+
 }
 
+function generateGithubUrl(userRepo, path, queryParams) {
+  let query = '';
+  if (queryParams)
+    query = '?' + Object.keys(queryParams)
+      .map(key => `${key}=${queryParams[key]}`)
+      .join('&');
+
+  return `https://api.github.com/repos/${userRepo}/${path}${query}`;
+}

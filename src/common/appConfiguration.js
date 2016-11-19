@@ -20,6 +20,11 @@ export class AppConfiguration {
     return config.get('github.compareOptions', ['Release', 'Tag', 'Commit']);
   }
 
+  get githubAccessToken() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get('github.accessToken', null);
+  }
+
   get updateIndicator() {
     return '⬆';
   }
