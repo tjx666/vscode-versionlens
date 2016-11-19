@@ -8,12 +8,12 @@
   },
   "author": "Peter Flannery",
   "license": "MIT",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "publisher": "pflannery",
   "displayName": "Version Lens",
   "icon": "images/logo.png",
   "engines": {
-    "vscode": "0.10.x"
+    "vscode": "^1.3.0"
   },
   "keywords": [
     "vscode",

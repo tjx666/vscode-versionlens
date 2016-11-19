@@ -1,3 +1,28 @@
+- 0.12.0
+
+  - Adds ability to provide github access token to avoid github api rate limiting
+
+    Tokens can be provided by setting `versionlens.github.accessToken` in your user settings. To generate a token see https://help.github.com/articles/creating-an-access-token-for-command-line-use/#creating-a-token
+
+    When no token is provided then access to the api will be rate limited to 60 requests every 10 minutes or so.
+
+  - Adds indication for github packages that dont exist
+
+  - Project dependency properties can now be customised via vscode settings. The default settings keep the previoussetup so nothing will break.
+
+    ```json
+    // vscode settings.json example
+    {
+      "versionlens.npm.dependencyProperties": [
+        "dependencies",
+        "devDependencies",
+        "peerDependencies",
+        "optionalDependencies",
+        "myCustomDependencies"
+      ]
+    }
+    ```
+
 - 0.11.0
   - Can now choose to update all packages within a dependency section. i.e. update all beneath devDependencies.
 
