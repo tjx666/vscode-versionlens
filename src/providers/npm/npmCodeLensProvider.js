@@ -9,22 +9,13 @@ import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { npmVersionParser } from './npmVersionParser';
 import { jspmVersionParser } from './jspmVersionParser';
 
-@inject('jsonParser', 'npm', 'appConfig', 'githubRequest')
+@inject('jsonParser', 'npm')
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
   constructor() {
     this.packageExtensions = {
       'jspm': jspmVersionParser
     };
-
-    this.packageExtensionKeys = Object.keys(this.packageExtensions);
-
-    this.packageDependencyKeys = [
-      'dependencies',
-      'devDependencies',
-      'peerDependencies',
-      'optionalDependencies'
-    ];
   }
 
   get selector() {
@@ -35,15 +26,19 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     }
   };
 
+  getPackageDependencyKeys() {
+    return this.appConfig.npmDependencyProperties;
+  }
+
   provideCodeLenses(document, token) {
     const jsonDoc = this.jsonParser.parse(document.getText());
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
       return [];
 
     const collector = new PackageCodeLensList(document, this.appConfig);
-
     this.collectDependencies_(collector, jsonDoc.root, npmVersionParser);
     this.collectExtensionDependencies_(collector, jsonDoc.root);
+
     return collector.collection;
   }
 
@@ -99,10 +94,11 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   collectExtensionDependencies_(collector, rootNode) {
+    const packageDependencyKeys = this.getPackageDependencyKeys();
     rootNode.getChildNodes()
       .forEach(node => {
         const testDepProperty = node.key.value;
-        if (this.packageExtensionKeys.includes(testDepProperty)) {
+        if (packageDependencyKeys.includes(testDepProperty)) {
           const customParser = this.packageExtensions[testDepProperty];
           this.collectDependencies_(collector, node.value, customParser)
         }

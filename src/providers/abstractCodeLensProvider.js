@@ -22,7 +22,7 @@ export abstract class AbstractCodeLensProvider {
   collectDependencies_(collector, rootNode, customVersionParser) {
     rootNode.getChildNodes()
       .forEach(childNode => {
-        if (this.packageDependencyKeys.includes(childNode.key.value) == false)
+        if (this.getPackageDependencyKeys().includes(childNode.key.value) == false)
           return;
 
         const childDeps = childNode.value.getChildNodes();

@@ -7,14 +7,8 @@ import { PackageCodeLens } from '../../common/packageCodeLens';
 import { PackageCodeLensList } from '../../common/packageCodeLensList';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 
-@inject('jsonParser', 'httpRequest', 'appConfig')
+@inject('jsonParser', 'httpRequest')
 export class DubCodeLensProvider extends AbstractCodeLensProvider {
-
-  constructor() {
-    this.packageDependencyKeys = [
-      'dependencies'
-    ];
-  }
 
   get selector() {
     return {
@@ -24,10 +18,15 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     };
   }
 
+  getPackageDependencyKeys() {
+    return this.appConfig.dubDependencyProperties;
+  }
+
   collectDependencies_(collector, rootNode, customVersionParser) {
+    const packageDependencyKeys = this.getPackageDependencyKeys();
     rootNode.getChildNodes()
       .forEach(childNode => {
-        if (this.packageDependencyKeys.includes(childNode.key.value)) {
+        if (packageDependencyKeys.includes(childNode.key.value)) {
           const childDeps = childNode.value.getChildNodes();
           // check if this node has entries and if so add the update all command
           if (childDeps.length > 0)

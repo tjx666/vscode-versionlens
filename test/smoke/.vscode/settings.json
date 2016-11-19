@@ -1,0 +1,10 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+  "versionlens.npm.dependencyProperties": [
+    "dependencies",
+    "devDependencies",
+    "peerDependencies",
+    "optionalDependencies",
+    "customDependencies"
+  ]
+}

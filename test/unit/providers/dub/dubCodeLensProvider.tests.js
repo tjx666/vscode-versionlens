@@ -9,6 +9,7 @@ import * as vscode from 'vscode';
 import { register, clear } from '../../../../src/common/di';
 import { TestFixtureMap } from '../../../testUtils';
 import { DubCodeLensProvider } from '../../../../src/providers/dub/dubCodeLensProvider';
+import { dubDefaultDependencyProperties } from '../../../../src/providers/dub/config';
 import { AppConfiguration } from '../../../../src/common/appConfiguration';
 import { PackageCodeLens } from '../../../../src/common/packageCodeLens';
 import { CommandFactory } from '../../../../src/providers/commandFactory';
@@ -23,12 +24,17 @@ describe("DubCodeLensProvider", () => {
 
   let testProvider;
   let httpRequestMock = {};
-  let appConfigMock = new AppConfiguration();
+  let appConfigMock;
   let defaultVersionPrefix;
-  Object.defineProperty(appConfigMock, 'versionPrefix', { get: () => defaultVersionPrefix })
+  let defaultDubDependencyKeys = dubDefaultDependencyProperties;
 
   beforeEach(() => {
     clear();
+
+    appConfigMock = new AppConfiguration();
+    Object.defineProperty(appConfigMock, 'versionPrefix', { get: () => defaultVersionPrefix })
+    Object.defineProperty(appConfigMock, 'dubDependencyProperties', { get: () => defaultDubDependencyKeys })
+
     register('semver', semver);
     register('jsonParser', jsonParser);
     register('httpRequest', httpRequestMock);

@@ -10,15 +10,8 @@ import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 // TODO retrieve multiple sources from nuget.config
 const FEED_URL = 'https://api.nuget.org/v3-flatcontainer';
 
-@inject('jsonParser', 'httpRequest', 'appConfig')
+@inject('jsonParser', 'httpRequest')
 export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
-
-  constructor() {
-    this.packageDependencyKeys = [
-      'dependencies',
-      'tools'
-    ];
-  }
 
   get selector() {
     return {
@@ -26,7 +19,11 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
       scheme: 'file',
       pattern: '**/project.json'
     }
-  };
+  }
+
+  getPackageDependencyKeys() {
+    return this.appConfig.dotnetDependencyProperties;
+  }
 
   provideCodeLenses(document, token) {
     const jsonDoc = this.jsonParser.parse(document.getText());
@@ -80,25 +77,26 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   collectDependencies_(collector, rootNode, customVersionParser) {
-    const childNodes = rootNode.getChildNodes();
-    childNodes.forEach(childNode => {
-      if (this.packageDependencyKeys.includes(childNode.key.value)) {
-        const childDeps = childNode.value.getChildNodes();
-        // check if this node has entries and if so add the update all command
-        if (childDeps.length > 0)
-          this.commandFactory.makeUpdateDependenciesCommand(
-            childNode.key.value,
-            collector.addNode(childNode),
-            collector.collection
-          );
+    const packageDependencyKeys = this.getPackageDependencyKeys();
+    rootNode.getChildNodes()
+      .forEach(childNode => {
+        if (packageDependencyKeys.includes(childNode.key.value)) {
+          const childDeps = childNode.value.getChildNodes();
+          // check if this node has entries and if so add the update all command
+          if (childDeps.length > 0)
+            this.commandFactory.makeUpdateDependenciesCommand(
+              childNode.key.value,
+              collector.addNode(childNode),
+              collector.collection
+            );
 
-        collector.addDependencyNodeRange(childDeps, customVersionParser);
-        return;
-      }
+          collector.addDependencyNodeRange(childDeps, customVersionParser);
+          return;
+        }
 
-      if (childNode.value.type === 'object')
-        this.collectDependencies_(collector, childNode.value, customVersionParser);
-    });
+        if (childNode.value.type === 'object')
+          this.collectDependencies_(collector, childNode.value, customVersionParser);
+      });
   }
 
   createRequestUrl_(baseUrl, packageId) {

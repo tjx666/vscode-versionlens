@@ -8,12 +8,8 @@ import { PackageCodeLensList } from '../../common/packageCodeLensList';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { bowerVersionParser } from './bowerVersionParser';
 
-@inject('jsonParser', 'bower', 'appConfig')
+@inject('jsonParser', 'bower')
 export class BowerCodeLensProvider extends AbstractCodeLensProvider {
-
-  constructor() {
-    this.packageDependencyKeys = ['dependencies', 'devDependencies'];
-  }
 
   get selector() {
     return {
@@ -21,7 +17,11 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
       scheme: 'file',
       pattern: '**/bower.json'
     }
-  };
+  }
+
+  getPackageDependencyKeys() {
+    return this.appConfig.bowerDependencyProperties;
+  }
 
   provideCodeLenses(document, token) {
     const jsonDoc = this.jsonParser.parse(document.getText());

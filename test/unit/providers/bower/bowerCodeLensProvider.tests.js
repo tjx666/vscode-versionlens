@@ -10,6 +10,7 @@ import * as jsonParser from 'vscode-contrib-jsonc';
 import { register, clear } from '../../../../src/common/di';
 import { TestFixtureMap } from '../../../testUtils';
 import { BowerCodeLensProvider } from '../../../../src/providers/bower/bowerCodeLensProvider';
+import { bowerDefaultDependencyProperties } from '../../../../src/providers/bower/config';
 import { AppConfiguration } from '../../../../src/common/appConfiguration';
 import { CommandFactory } from '../../../../src/providers/commandFactory';
 import { PackageCodeLens } from '../../../../src/common/packageCodeLens';
@@ -22,6 +23,10 @@ describe("BowerCodeLensProvider", () => {
   let bowerMock;
   let testProvider;
 
+  let appConfigMock;
+  let defaultVersionPrefix = '^';
+  let bowerDependencyProperties = bowerDefaultDependencyProperties;
+
   beforeEach(() => {
     bowerMock = {
       commands: {
@@ -30,15 +35,17 @@ describe("BowerCodeLensProvider", () => {
     };
 
     clear();
+
+    appConfigMock = new AppConfiguration();
+    Object.defineProperty(appConfigMock, 'versionPrefix', { get: () => defaultVersionPrefix })
+    Object.defineProperty(appConfigMock, 'bowerDependencyProperties', { get: () => bowerDependencyProperties })
+
     register('bower', bowerMock);
     register('semver', semver);
     register('jsonParser', jsonParser);
-
-    // mock the config
-    const appConfig = register('appConfig', new AppConfiguration());
-    Object.defineProperty(appConfig, 'versionPrefix', { get: () => '^' })
-
+    register('appConfig', appConfigMock);
     register('commandFactory', new CommandFactory());
+
     testProvider = new BowerCodeLensProvider();
   });
 
