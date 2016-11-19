@@ -3,7 +3,7 @@
   "title": "smoke test",
   "dependencies": {},
   "devDependencies": {
-    "micro-tasks": "pflannery/micro-tasks#f43a971",
+    "bootstrap": "twbs/bootstrap#v3.3.0",
     "test": "file:../../../src",
     "@types/angularjs": "^1.5.14-alpha",
     "@types/fs-extra": "0.0.34"

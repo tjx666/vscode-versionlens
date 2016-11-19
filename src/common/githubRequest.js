@@ -72,17 +72,23 @@ export class GithubRequest {
       .catch(response => {
         const error = JSON.parse(response.responseText);
         // handles any 404 errors during a request for the latest release
-        if (response.status = 404 && category == "releases/latest") {
+        if (response.status = 404 && category === 'releases/latest') {
           return this.cache.set(
             url,
             null
           );
         }
 
+        // check if the request was not found and report back
+        error.notFound = (
+          response.status = 404 &&
+          error.message.includes('Not Found')
+        );
+
         // check if we have exceeded the rate limit
         error.rateLimitExceeded = (
           response.status = 403 &&
-          error.message.indexOf('API rate limit exceeded') > -1
+          error.message.includes('API rate limit exceeded')
         );
 
         // reject all other errors

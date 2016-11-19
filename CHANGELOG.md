@@ -5,7 +5,7 @@
 
     **Note**
 
-      - Because code len's are not generated until they are viewed in the editor then only code len's that have been viewed since opening the document can be updated. 
+      - Because code lenses are not generated until they are viewed in the editor then only code lenses that have been viewed since opening the document can be updated. 
         If you have many dependencies that go off the screen then just scroll them all in to view once before running the update all command for maximum coverage.
       - This functionality ignores github and file package entries.
 

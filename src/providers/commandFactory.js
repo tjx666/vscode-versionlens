@@ -119,8 +119,9 @@ export class CommandFactory {
 
   makeGithubCommand(codeLens) {
     const meta = codeLens.package.meta;
+    const fnName = `getLatest${meta.category}`;
 
-    return this.githubRequest[`getLatest${meta.category}`](meta.userRepo)
+    return this.githubRequest[fnName](meta.userRepo)
       .then(entry => {
         if (!entry)
           return this.makeTagCommand(`${meta.category}: none`, codeLens);
@@ -138,7 +139,10 @@ export class CommandFactory {
       })
       .catch(error => {
         if (error.rateLimitExceeded)
-          return this.makeTagCommand(`Rate limit exceeded`, codeLens);
+          return this.makeTagCommand('Rate limit exceeded', codeLens);
+
+        if (error.notFound)
+          return this.makeTagCommand('Resource not found', codeLens);
 
         return Promise.reject(error);
       });
