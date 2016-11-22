@@ -1,3 +1,6 @@
+- 0.12.1
+  - Fixes an issue where code lenses were not showing for jspm in package.json
+  
 - 0.12.0
 
   - Adds ability to provide github access token to avoid github api rate limiting
