@@ -2,17 +2,14 @@
  * Copyright (c) Peter Flannery. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
+import * as proxyquire from 'proxyquire';
 import * as assert from 'assert';
 import * as semver from 'semver';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as jsonParser from 'vscode-contrib-jsonc';
-import { register, clear } from '../../../../src/common/di';
+
 import { TestFixtureMap } from '../../../testUtils';
-import { BowerCodeLensProvider } from '../../../../src/providers/bower/bowerCodeLensProvider';
 import { bowerDefaultDependencyProperties } from '../../../../src/providers/bower/config';
-import { AppConfiguration } from '../../../../src/common/appConfiguration';
-import { CommandFactory } from '../../../../src/providers/commandFactory';
 import { PackageCodeLens } from '../../../../src/common/packageCodeLens';
 
 describe("BowerCodeLensProvider", () => {
@@ -20,71 +17,96 @@ describe("BowerCodeLensProvider", () => {
   const fixturePath = path.join(testPath, 'fixtures');
   const fixtureMap = new TestFixtureMap(fixturePath);
 
-  let bowerMock;
+  const bowerMock = {
+    commands: {
+      info: null
+    }
+  };
+
+  const bowerDependencyProperties = bowerDefaultDependencyProperties;
+  const appConfigMock = {
+    get bowerDependencyProperties() {
+      return bowerDependencyProperties;
+    },
+    get githubCompareOptions() {
+      return ['Releases'];
+    }
+  };
+
+  const BowerCodeLensProviderModule = proxyquire('../../../../src/providers/bower/bowerCodeLensProvider', {
+    'bower': bowerMock,
+    '../../common/appConfiguration': {
+      appConfig: appConfigMock
+    }
+  });
+
   let testProvider;
 
-  let appConfigMock;
-  let defaultVersionPrefix = '^';
-  let bowerDependencyProperties = bowerDefaultDependencyProperties;
-
   beforeEach(() => {
-    bowerMock = {
-      commands: {
-        info: null
-      }
+    testProvider = new BowerCodeLensProviderModule.BowerCodeLensProvider();
+
+    bowerMock.commands.info = name => {
+      return {
+        on: (eventName, callback) => {
+          if (eventName === 'end')
+            callback({ latest: { version: '3.2.1' } });
+        }
+      };
     };
 
-    clear();
-
-    appConfigMock = new AppConfiguration();
-    Object.defineProperty(appConfigMock, 'versionPrefix', { get: () => defaultVersionPrefix })
-    Object.defineProperty(appConfigMock, 'bowerDependencyProperties', { get: () => bowerDependencyProperties })
-
-    register('bower', bowerMock);
-    register('semver', semver);
-    register('jsonParser', jsonParser);
-    register('appConfig', appConfigMock);
-    register('commandFactory', new CommandFactory());
-
-    testProvider = new BowerCodeLensProvider();
   });
 
   describe("provideCodeLenses", () => {
 
-    it("returns empty array when the document json is invalid", () => {
+    it("returns empty array when the document json is invalid", done => {
       let fixture = fixtureMap.read('package-invalid.json');
 
       let testDocument = {
         getText: range => fixture.content
       };
 
-      let codeLens = testProvider.provideCodeLenses(testDocument, null);
-      assert.ok(codeLens instanceof Array, "codeLens should be an array.");
-      assert.ok(codeLens.length === 0, "codeLens should be an empty array.");
+      let codeLenses = testProvider.provideCodeLenses(testDocument, null);
+      Promise.resolve(codeLenses)
+        .then(collection => {
+          assert.ok(collection instanceof Array, "codeLens should be an array.");
+          assert.ok(collection.length === 0, "codeLens should be an empty array.");
+          done();
+        })
+        .catch(console.error.bind(this));
     });
 
-    it("returns empty array when the document text is empty", () => {
+    it("returns empty array when the document text is empty", done => {
       let testDocument = {
         getText: range => ''
       };
 
-      let codeLens = testProvider.provideCodeLenses(testDocument, null);
-      assert.ok(codeLens instanceof Array, "codeLens should be an array.");
-      assert.ok(codeLens.length === 0, "codeLens should be an empty array.");
+      let codeLenses = testProvider.provideCodeLenses(testDocument, null);
+      Promise.resolve(codeLenses)
+        .then(collection => {
+          assert.ok(collection instanceof Array, "codeLens should be an array.");
+          assert.ok(collection.length === 0, "codeLens should be an empty array.");
+          done();
+        })
+        .catch(console.error.bind(this));
     });
 
-    it("returns empty array when the package has no dependencies", () => {
+    it("returns empty array when the package has no dependencies", done => {
       let fixture = fixtureMap.read('package-no-deps.json');
       let testDocument = {
         getText: range => fixture.content
       };
 
-      let codeLens = testProvider.provideCodeLenses(testDocument, null);
-      assert.ok(codeLens instanceof Array, "codeLens should be an array.");
-      assert.ok(codeLens.length === 0, "codeLens should be an empty array.");
+      let codeLenses = testProvider.provideCodeLenses(testDocument, null);
+      Promise.resolve(codeLenses)
+        .then(collection => {
+          assert.ok(collection instanceof Array, "codeLens should be an array.");
+          assert.ok(collection.length === 0, "codeLens should be an empty array.");
+          done();
+        })
+        .catch(console.error.bind(this));
     });
 
-    it("returns array of given dependencies to be resolved", () => {
+    it("returns array of given dependencies to be resolved", done => {
       let fixture = fixtureMap.read('package-with-deps.json');
 
       let testDocument = {
@@ -93,22 +115,28 @@ describe("BowerCodeLensProvider", () => {
         fileName: fixture.basename
       };
 
-      let codeLens = testProvider.provideCodeLenses(testDocument, null);
-      assert.ok(codeLens instanceof Array, "codeLens should be an array.");
-      assert.equal(codeLens.length, 5, "codeLens should be an array containing 5 items inc <update all>.");
+      let codeLenses = testProvider.provideCodeLenses(testDocument, null);
+      Promise.resolve(codeLenses)
+        .then(collection => {
+          assert.ok(collection instanceof Array, "codeLens should be an array.");
+          assert.equal(collection.length, 5, "codeLens should be an array containing 5 items inc <update all>.");
 
-      codeLens.slice(1)
-        .forEach((entry, index) => {
-          assert.equal(entry.package.name, `dep${index + 1}`, `dependency name should be dep${index + 1}.`);
-        });
+          collection.slice(1)
+            .forEach((entry, index) => {
+              assert.equal(entry.package.name, `dep${index + 1}`, `dependency name should be dep${index + 1}.`);
+            });
+
+          done();
+        })
+        .catch(console.error.bind(this));
     });
   });
 
-  describe("resolveCodeLens", () => {
+  describe("evaluateCodeLens", () => {
 
     it("when code lens package version is 'latest' codeLens should return LatestCommand", () => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: 'latest', isValidSemver: true }, null);
-      testProvider.resolveCodeLens(codeLens, null);
+      testProvider.evaluateCodeLens(codeLens, null);
       assert.equal(codeLens.command.title, 'latest', "Expected command.title failed.");
       assert.equal(codeLens.command.command, undefined);
       assert.equal(codeLens.command.arguments, undefined);
@@ -128,7 +156,7 @@ describe("BowerCodeLensProvider", () => {
         return result;
       };
 
-      testProvider.resolveCodeLens(codeLens, null).then(result => {
+      testProvider.evaluateCodeLens(codeLens, null).then(result => {
         assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
         assert.equal(result.command.command, undefined);
         assert.equal(result.command.arguments, undefined);
@@ -150,7 +178,7 @@ describe("BowerCodeLensProvider", () => {
         return result;
       };
 
-      testProvider.resolveCodeLens(codeLens, null).then(result => {
+      testProvider.evaluateCodeLens(codeLens, null).then(result => {
         assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
         assert.equal(result.command.command, undefined);
         assert.equal(result.command.arguments, undefined);
@@ -172,10 +200,10 @@ describe("BowerCodeLensProvider", () => {
         return result;
       };
 
-      testProvider.resolveCodeLens(codeLens, null).then(result => {
-        assert.equal(result.command.title, '⬆ ^3.2.1');
+      testProvider.evaluateCodeLens(codeLens, null).then(result => {
+        assert.equal(result.command.title, '⬆ 3.2.1');
         assert.equal(result.command.command, '_versionlens.updateDependencyCommand');
-        assert.equal(result.command.arguments[1], '"^3.2.1"');
+        assert.equal(result.command.arguments[1], '"3.2.1"');
         done();
       });
     });

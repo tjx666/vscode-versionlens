@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import './common/typeAssertion.tests';
-import './common/di.tests';
 import './common/cacheMap.tests';
 import './common/githubRequest.tests';
 import './providers/commandFactory.tests';

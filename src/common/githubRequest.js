@@ -2,11 +2,11 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { inject } from './di';
+import * as httpRequest from 'request-light';
 import { CacheMap } from './cacheMap';
+import { appConfig } from './appConfiguration';
 
-@inject('httpRequest', 'appConfig')
-export class GithubRequest {
+class GithubRequest {
 
   constructor() {
     this.cache = new CacheMap();
@@ -102,6 +102,12 @@ export class GithubRequest {
           error.data.message.includes('API rate limit exceeded')
         );
 
+        // check if bad credentials were given
+        error.badCredentials = (
+          error.status = 403 &&
+          error.data.message.includes('Bad credentials')
+        );
+
         // reject all other errors
         return Promise.reject(error);
       });
@@ -112,9 +118,9 @@ export class GithubRequest {
   }
 
   request(method, userRepo, category, queryParams) {
-    if (this.appConfig.githubAccessToken) {
+    if (appConfig.githubAccessToken) {
       !queryParams && (queryParams = {});
-      queryParams["access_token"] = this.appConfig.githubAccessToken;
+      queryParams["access_token"] = appConfig.githubAccessToken;
     }
 
     const url = generateGithubUrl(userRepo, category, queryParams);
@@ -123,7 +129,7 @@ export class GithubRequest {
     if (this.cache.expired(url) === false)
       return Promise.resolve(this.cache.get(cacheKey));
 
-    return this.httpRequest.xhr({ url, type: method, headers: this.headers })
+    return httpRequest.xhr({ url, type: method, headers: this.headers })
       .then(response => {
         return this.cache.set(cacheKey, response.responseText && JSON.parse(response.responseText))
       })
@@ -146,3 +152,5 @@ function generateGithubUrl(userRepo, path, queryParams) {
 
   return `https://api.github.com/repos/${userRepo}/${path}${query}`;
 }
+
+export const githubRequest = new GithubRequest();

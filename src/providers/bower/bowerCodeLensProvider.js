@@ -2,13 +2,15 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { inject } from '../../common/di';
+import * as bower from 'bower';
+import * as jsonParser from 'vscode-contrib-jsonc';
 import { PackageCodeLens } from '../../common/packageCodeLens';
 import { PackageCodeLensList } from '../../common/packageCodeLensList';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { bowerVersionParser } from './bowerVersionParser';
+import { appConfig } from '../../common/appConfiguration';
+import * as CommandFactory from '../commandFactory';
 
-@inject('jsonParser', 'bower')
 export class BowerCodeLensProvider extends AbstractCodeLensProvider {
 
   get selector() {
@@ -20,48 +22,55 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   getPackageDependencyKeys() {
-    return this.appConfig.bowerDependencyProperties;
+    return appConfig.bowerDependencyProperties;
   }
 
   provideCodeLenses(document, token) {
-    const jsonDoc = this.jsonParser.parse(document.getText());
+    const jsonDoc = jsonParser.parse(document.getText());
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
       return [];
 
-    const collector = new PackageCodeLensList(document, this.appConfig);
+    const collector = new PackageCodeLensList(document, appConfig);
     this.collectDependencies_(collector, jsonDoc.root, bowerVersionParser);
-    return collector.collection;
+    if (collector.collection.length === 0)
+      return [];
+
+    return collector.collection
   }
 
-  resolveCodeLens(codeLensItem, token) {
-    if (codeLensItem instanceof PackageCodeLens) {
-      if (codeLensItem.package.version === 'latest') {
-        this.commandFactory.makeLatestCommand(codeLensItem);
-        return;
-      }
+  resolveCodeLens(codeLens, token) {
+    if (codeLens instanceof PackageCodeLens)
+      return this.evaluateCodeLens(codeLens);
+  }
 
-      if (codeLensItem.package.meta) {
-        if (codeLensItem.package.meta.type === 'github')
-          return this.commandFactory.makeGithubCommand(codeLensItem);
+  evaluateCodeLens(codeLens) {
+    if (codeLens.command && codeLens.command.command.includes('updateDependenciesCommand'))
+      return codeLens;
 
-        if (codeLensItem.package.meta.type === 'file')
-          return this.commandFactory.makeLinkCommand(codeLensItem);
-      }
+    if (codeLens.package.version === 'latest')
+      return CommandFactory.makeLatestCommand(codeLens);
 
-      return new Promise(success => {
-        this.bower.commands.info(codeLensItem.package.name)
-          .on('end', info => {
-            if (!info || !info.latest) {
-              success(this.commandFactory.makeErrorCommand("Invalid object returned from server", codeLensItem));
-              return;
-            }
-            success(this.commandFactory.makeVersionCommand(codeLensItem.package.version, info.latest.version, codeLensItem));
-          })
-          .on('error', (err) => {
-            success(this.commandFactory.makeErrorCommand(err.message, codeLensItem));
-          });
-      });
+    if (codeLens.package.meta) {
+      if (codeLens.package.meta.type === 'github')
+        return CommandFactory.makeGithubCommand(codeLens);
+
+      if (codeLens.package.meta.type === 'file')
+        return CommandFactory.makeLinkCommand(codeLens);
     }
+
+    return new Promise(success => {
+      bower.commands.info(codeLens.package.name)
+        .on('end', info => {
+          if (!info || !info.latest) {
+            success(CommandFactory.makeErrorCommand("Invalid object returned from server", codeLens));
+            return;
+          }
+          success(CommandFactory.makeVersionCommand(codeLens.package.version, info.latest.version, codeLens));
+        })
+        .on('error', err => {
+          success(CommandFactory.makeErrorCommand(err.message, codeLens));
+        });
+    });
   }
 
 }

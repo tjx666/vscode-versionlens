@@ -8,12 +8,8 @@ import { bowerDefaultDependencyProperties } from '../providers/bower/config';
 import { dotnetDefaultDependencyProperties } from '../providers/dotnet/config';
 import { dubDefaultDependencyProperties } from '../providers/dub/config';
 
-export class AppConfiguration {
-
-  get extentionName() {
-    return "versionlens";
-  }
-
+class AppConfiguration {
+  
   get versionPrefix() {
     const config = workspace.getConfiguration('versionlens');
     return config.get("versionPrefix", "");
@@ -49,12 +45,6 @@ export class AppConfiguration {
     return config.get('github.accessToken', null);
   }
 
-  get updateIndicator() {
-    return '⬆';
-  }
-
-  get openNewWindowIndicator() {
-    return '⧉'
-  }
-
 }
+
+export const appConfig = new AppConfiguration()

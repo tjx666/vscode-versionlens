@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import * as semver from 'semver';
 import { formatWithExistingLeading } from '../../common/utils';
-import { parseFileVersion, parseGithubVersionLink } from './npmVersionParser';
+import { parseFileVersion, parseGithubVersionLink } from '../npm/npmVersionParser';
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;
 export function jspmVersionParser(node, appConfig) {

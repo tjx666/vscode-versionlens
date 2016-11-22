@@ -39,7 +39,8 @@
   "devDependencies": {
     "typescript": "2.0.10",
     "vscode": "1.0.3",
-    "rimraf": "2.5.4"
+    "rimraf": "2.5.4",
+    "proxyquire": "1.7.10"
   },
   "dependencies": {
     "bower": "1.8.0",

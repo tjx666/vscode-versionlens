@@ -24,12 +24,12 @@ export class PackageCodeLensList {
 
   addDependencyNode(node, versionParser) {
     const packageNode = node.value;
-    const entryRange = new Range(
+    const commandRange = new Range(
       this.document.positionAt(packageNode.start),
       this.document.positionAt(packageNode.end)
     );
     const documentUrl = Uri.file(this.document.fileName);
-    let versionRange = entryRange;
+    let replaceRange = commandRange;
     let packageInfo = {
       name: packageNode.location,
       version: packageNode.value,
@@ -44,13 +44,13 @@ export class PackageCodeLensList {
       if (!versionInfo)
         return;
       // update the version info
-      versionRange = versionInfo.range;
+      replaceRange = versionInfo.range;
       packageInfo.version = versionInfo.version;
     }
 
     if (!versionParser) {
       // append a single code lens for rendering
-      this.collection.push(new PackageCodeLens(entryRange, versionRange, packageInfo, documentUrl));
+      this.collection.push(new PackageCodeLens(commandRange, replaceRange, packageInfo, documentUrl));
       return;
     }
 
@@ -67,7 +67,7 @@ export class PackageCodeLensList {
         isValidSemver: parseResult.isValidSemver,
         customGenerateVersion: parseResult.customGenerateVersion
       };
-      return new PackageCodeLens(entryRange, versionRange, pkg, documentUrl);
+      return new PackageCodeLens(commandRange, replaceRange, pkg, documentUrl);
     });
 
     this.collection.push.apply(this.collection, codeLensToAdd);

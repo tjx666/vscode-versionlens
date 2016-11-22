@@ -5,26 +5,11 @@
   "devDependencies": {
     "bootstrap": "twbs/bootstrap#v3.3.0",
     "test": "file:../../../src",
-    "@types/angularjs": "^1.5.14-alpha",
-    "@types/fs-extra": "0.0.34",
-    "@angular": ""
+    "@types/angularjs": "^1.2.14-alpha",
+    "@types/fs-extra": "0.0.24",
+    "@angular/core": "2.2.1"
   },
   "customDependencies": {
-    "@types/hammerjs": "2.0.1"
-  },
-  "jspm": {
-    "directories": {
-      "baseURL": "wwwroot"
-    },
-    "dependencies": {
-      "bluebird": "npm:bluebird@^3.4.6",
-      "bootstrap": "github:twbs/bootstrap@v3.3.7",
-      "css": "npm:systemjs-plugin-css@^0.1.27",
-      "es6-shim": "github:es-shims/es6-shim@0.35.1"
-   
-    },
-    "devDependencies": {
-      "core-js": "npm:core-js@^2.4.1"
-    }
+    "@types/hammerjs": "2.0.33"
   }
 }

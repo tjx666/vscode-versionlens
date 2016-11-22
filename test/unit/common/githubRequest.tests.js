@@ -2,35 +2,36 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import * as proxyquire from 'proxyquire';
 import * as assert from 'assert';
 import * as path from 'path';
-import { GithubRequest } from '../../../src/common/githubRequest';
+import * as httpRequest from 'request-light';
 import { TestFixtureMap } from '../../testUtils';
-import { register, clear } from '../../../src/common/di';
-import { AppConfiguration } from '../../../src/common/appConfiguration';
 
 describe('GithubRequest', () => {
   const testPath = path.join(__dirname, '../../../..', 'test');
   const fixturePath = path.join(testPath, 'fixtures');
   const fixtureMap = new TestFixtureMap(fixturePath);
 
-  const httpRequestMock = {};
-
-  let appConfigMock;
-  let testGithubRequest;
   let githubAccessTokenMock = null;
+  const httpRequestMock = {};
+  const appConfigMock = {
+    get githubAccessToken() {
+      return githubAccessTokenMock;
+    }
+  };
+  const GithubRequestModule = proxyquire('../../../src/common/githubRequest', {
+    'request-light': httpRequestMock,
+    './appConfiguration': {
+      appConfig: appConfigMock
+    }
+  });
+
+  let testGithubRequest;
 
   beforeEach(() => {
-    clear();
-    appConfigMock = new AppConfiguration();
     githubAccessTokenMock = null
-    Object.defineProperty(appConfigMock, 'githubAccessToken', { get: () => githubAccessTokenMock })
-
-    register('httpRequest', httpRequestMock);
-    register('appConfig', appConfigMock);
-
-    // mock the config
-    testGithubRequest = new GithubRequest();
+    testGithubRequest = GithubRequestModule.githubRequest;
   });
 
   describe('.httpGet(userRepo, category)', () => {

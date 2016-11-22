@@ -2,8 +2,8 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { fileDependencyRegex, gitHubDependencyRegex, formatWithExistingLeading } from '../../common/utils';
 import * as semver from 'semver';
+import { fileDependencyRegex, gitHubDependencyRegex, formatWithExistingLeading } from '../../common/utils';
 
 export function npmVersionParser(node, appConfig) {
   const { location: packageName, value: packageVersion } = node.value;

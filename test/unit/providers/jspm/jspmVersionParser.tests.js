@@ -3,20 +3,19 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as assert from 'assert';
-import { register, clear } from '../../../../src/common/di';
-import { jspmVersionParser, customGenerateVersion } from '../../../../src/providers/npm/jspmVersionParser';
+import { jspmVersionParser, customGenerateVersion } from '../../../../src/providers/jspm/jspmVersionParser';
 
 describe('jspmVersionParser(node, appConfig)', () => {
   const githubCompareOptions
   const appConfigMock
 
   beforeEach(() => {
-    clear();
-
     githubCompareOptions = ['Release', 'Tag', 'Commit'];
-    appConfigMock = {};
-    Object.defineProperty(appConfigMock, 'githubCompareOptions', { get: () => githubCompareOptions })
-    register('appConfig', appConfigMock);
+    appConfigMock = {
+      get githubCompareOptions() {
+        return githubCompareOptions;
+      }
+    };
   });
 
   it('returns the expected object for npm semver versions', () => {

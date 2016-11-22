@@ -2,23 +2,20 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { bootstrapLoaded } from './bootstrap';
-import { register, resolve } from './common/di';
 import { Disposable, DocumentSelector, languages, commands } from 'vscode';
 import { NpmCodeLensProvider } from './providers/npm/npmCodeLensProvider';
+import { JspmCodeLensProvider } from './providers/jspm/jspmCodeLensProvider';
 import { BowerCodeLensProvider } from './providers/bower/bowerCodeLensProvider';
 import { DubCodeLensProvider } from './providers/dub/dubCodeLensProvider';
 import { DotNetCodeLensProvider } from './providers/dotnet/dotNetCodeLensProvider';
 import { updateDependencyCommand, updateDependenciesCommand, linkCommand } from './commands';
+import { appGlobals } from './common/appGlobals';
 
 export function activate(context) {
-  if (bootstrapLoaded === false)
-    throw ReferenceError("VersionCodelens: didnt execute it's bootstrap.");
-
-  const config = resolve('appConfig');
   const disposables = [];
   const providers = [
     new NpmCodeLensProvider(),
+    new JspmCodeLensProvider(),
     new BowerCodeLensProvider(),
     new DubCodeLensProvider(),
     new DotNetCodeLensProvider()
@@ -35,15 +32,15 @@ export function activate(context) {
 
   disposables.push(
     commands.registerCommand(
-      `_${config.extentionName}.updateDependencyCommand`,
+      `_${appGlobals.extentionName}.updateDependencyCommand`,
       updateDependencyCommand
     ),
     commands.registerCommand(
-      `_${config.extentionName}.updateDependenciesCommand`,
+      `_${appGlobals.extentionName}.updateDependenciesCommand`,
       updateDependenciesCommand
     ),
     commands.registerCommand(
-      `_${config.extentionName}.linkCommand`,
+      `_${appGlobals.extentionName}.linkCommand`,
       linkCommand
     )
   );

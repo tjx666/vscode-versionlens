@@ -3,18 +3,15 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as assert from 'assert';
-import { register, clear } from '../../../../src/common/di';
 import { bowerVersionParser } from '../../../../src/providers/bower/bowerVersionParser';
 
 describe('bowerVersionParser(node, appConfig)', () => {
   const githubCompareOptions = ['Release', 'Tag', 'Commit'];
-  const appConfigMock = {};
-  Object.defineProperty(appConfigMock, 'githubCompareOptions', { get: () => githubCompareOptions })
-
-  beforeEach(() => {
-    clear();
-    register('appConfig', appConfigMock);
-  });
+  const appConfigMock = {
+    get githubCompareOptions() {
+      return githubCompareOptions;
+    }
+  };
 
   it('returns the expected object for semver versions', () => {
     let nodeMock = {

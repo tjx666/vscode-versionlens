@@ -7,9 +7,9 @@ import { extractSymbolFromVersionRegex, formatWithExistingLeading } from './util
 
 export class PackageCodeLens extends CodeLens {
 
-  constructor(entryRange, versionRange, packageInfo, documentUrl) {
-    super(entryRange);
-    this.versionRange = versionRange || entryRange;
+  constructor(commandRange, replaceRange, packageInfo, documentUrl) {
+    super(commandRange);
+    this.replaceRange = replaceRange || commandRange;
     this.package = packageInfo;
     this.documentUrl = documentUrl;
     this.command = null;

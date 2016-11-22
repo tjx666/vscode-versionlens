@@ -7,10 +7,11 @@ import * as path from 'path';
 import * as opener from 'opener';
 
 export function updateDependencyCommand(codeLens, packageVersion) {
-  const edits = [TextEdit.replace(codeLens.versionRange, packageVersion)];
+  const edits = [TextEdit.replace(codeLens.replaceRange, packageVersion)];
   const edit = new WorkspaceEdit();
   edit.set(codeLens.documentUrl, edits);
-  return workspace.applyEdit(edit);
+  workspace.applyEdit(edit);
+  codeLens.pendingEval = true;
 }
 
 export function linkCommand(codeLens) {
@@ -29,9 +30,9 @@ export function updateDependenciesCommand(rootCodeLens, codeLenCollection) {
     .filter(codeLens => codeLens.command && codeLens.command.arguments)
     .filter(codeLens => codeLens.package)
     .filter(codeLens => !codeLens.package.meta || (codeLens.package.meta.type !== 'github' && codeLens.package.meta.type !== 'file'))
-    .map(codeLens => TextEdit.replace(codeLens.versionRange, codeLens.command.arguments[1]));
+    .map(codeLens => TextEdit.replace(codeLens.replaceRange, codeLens.command.arguments[1]));
 
   const edit = new WorkspaceEdit();
   edit.set(rootCodeLens.documentUrl, edits);
-  return workspace.applyEdit(edit);
+  workspace.applyEdit(edit);
 }
