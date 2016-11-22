@@ -16,6 +16,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     this.packageExtensions = {
       'jspm': jspmVersionParser
     };
+    this.packageExtensionKeys = Object.keys(this.packageExtensions);
   }
 
   get selector() {
@@ -94,7 +95,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   collectExtensionDependencies_(collector, rootNode) {
-    const packageDependencyKeys = this.getPackageDependencyKeys();
+    const packageDependencyKeys = this.packageExtensionKeys;
     rootNode.getChildNodes()
       .forEach(node => {
         const testDepProperty = node.key.value;
