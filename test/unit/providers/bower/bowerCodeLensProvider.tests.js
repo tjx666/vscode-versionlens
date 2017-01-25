@@ -53,7 +53,6 @@ describe("BowerCodeLensProvider", () => {
         }
       };
     };
-
   });
 
   describe("provideCodeLenses", () => {
@@ -204,6 +203,26 @@ describe("BowerCodeLensProvider", () => {
         assert.equal(result.command.title, '⬆ 3.2.1');
         assert.equal(result.command.command, '_versionlens.updateDependencyCommand');
         assert.equal(result.command.arguments[1], '"3.2.1"');
+        done();
+      });
+    });
+
+    it("when bower info returns an error then codeLens should return ErrorCommand", done => {
+      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', isValidSemver: true }, null);
+      bowerMock.commands.info = name => {
+        let result;
+        result = {
+          on: (eventName, callback) => {
+            if (eventName === 'error')
+              callback("bower info error");
+            return result;
+          }
+        };
+        return result;
+      };
+
+      testProvider.evaluateCodeLens(codeLens, null).then(result => {
+        assert.equal(result.command.title, 'An error occurred retrieving this package.');
         done();
       });
     });

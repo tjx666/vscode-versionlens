@@ -156,12 +156,12 @@ describe("NpmCodeLensProvider", () => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', isValidSemver: true }, null);
       // debugger
       npmMock.view = (testPackageName, arg, cb) => {
-        let err = "An error occurred";
+        let err = "npm.view failed";
         cb(err);
       };
 
       testProvider.evaluateCodeLens(codeLens, null).then(result => {
-        assert.equal(result.command.title, 'An error occurred', "Expected command.title failed.");
+        assert.equal(result.command.title, 'An error occurred retrieving this package.', "Expected command.title failed.");
         assert.equal(result.command.command, undefined);
         assert.equal(result.command.arguments, undefined);
         done();

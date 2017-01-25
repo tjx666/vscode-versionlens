@@ -77,8 +77,9 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
       })
       .catch(response => {
         const respObj = JSON.parse(response.responseText);
+        console.error(respObj.statusMessage);
         return CommandFactory.makeErrorCommand(
-          respObj.statusMessage,
+          "An error occurred retrieving this package.",
           codeLens
         );
       });

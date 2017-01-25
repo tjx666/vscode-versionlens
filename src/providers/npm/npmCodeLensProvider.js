@@ -82,8 +82,9 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         return CommandFactory.makeTagCommand(`${viewPackageName} = v${remoteVersion}`, codeLens);
       })
       .catch(error => {
+        console.error(error);
         return CommandFactory.makeErrorCommand(
-          error,
+          "An error occurred retrieving this package.",
           codeLens
         );
       });

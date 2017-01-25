@@ -68,7 +68,13 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
           success(CommandFactory.makeVersionCommand(codeLens.package.version, info.latest.version, codeLens));
         })
         .on('error', err => {
-          success(CommandFactory.makeErrorCommand(err.message, codeLens));
+          console.error(err);
+          success(
+            CommandFactory.makeErrorCommand(
+              "An error occurred retrieving this package.",
+              codeLens
+            )
+          );
         });
     });
   }

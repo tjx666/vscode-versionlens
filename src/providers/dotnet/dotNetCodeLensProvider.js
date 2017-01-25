@@ -77,8 +77,9 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 
       })
       .catch(errResponse => {
+        console.error(`${errResponse.status}: ${queryUrl}`);
         return CommandFactory.makeErrorCommand(
-          `${errResponse.status}: ${queryUrl}`,
+          "An error occurred retrieving this package.",
           codeLens
         );
       });
