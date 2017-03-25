@@ -8,7 +8,7 @@
   },
   "author": "Peter Flannery",
   "license": "MIT",
-  "version": "0.12.1",
+  "version": "0.12.2",
   "publisher": "pflannery",
   "displayName": "Version Lens",
   "icon": "images/logo.png",
@@ -29,6 +29,7 @@
   ],
   "main": "./out/src/extension.js",
   "scripts": {
+    "teardown": "npm run -s clean && rimraf ./node_modules",
     "vscode:prepublish": "npm run -s compile",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
@@ -38,18 +39,18 @@
   },
   "devDependencies": {
     "typescript": "2.0.10",
-    "vscode": "1.0.3",
-    "rimraf": "2.5.4",
-    "proxyquire": "1.7.10"
+    "vscode": "1.1.0",
+    "rimraf": "2.6.1",
+    "proxyquire": "1.7.11"
   },
   "dependencies": {
     "bower": "1.8.0",
-    "npm": "4.0.2",
-    "opener": "1.4.2",
-    "request-light": "0.1",
+    "npm": "4.4.4",
+    "opener": "1.4.3",
+    "request-light": "0.2.0",
     "semver": "5.3.0",
     "vscode-contrib-jsonc": "1.0.0-beta.2",
-    "vscode-languageclient": "2.6.3"
+    "vscode-languageclient": "3.2.0"
   },
   "contributes": {
     "configuration": {

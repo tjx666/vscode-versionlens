@@ -13,7 +13,7 @@ describe('npmVersionParser(node, appConfig)', () => {
     }
   };
 
-  it('returns the expected object for semver versions', () => {
+  it('returns the expected object for non ranged semver versions', () => {
     let nodeMock = {
       value: {
         location: 'bootstrap',
@@ -23,9 +23,27 @@ describe('npmVersionParser(node, appConfig)', () => {
 
     let results = npmVersionParser(nodeMock, appConfigMock);
     assert.equal(results[0].packageName, 'bootstrap', "Expected packageName");
-    assert.equal(results[0].packageVersion, '1.2.3', "Expected packageName");
+    assert.equal(results[0].packageVersion, '1.2.3', "Expected packageVersion");
     assert.equal(results[0].meta.type, 'npm', "Expected meta.type");
     assert.ok(!!results[0].isValidSemver, "Expected isValidSemver");
+    assert.ok(!results[0].hasRangeSymbol, "Expected hasRangeSymbol");
+    assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
+  });
+
+  it('returns the expected object for ranged semver versions', () => {
+    let nodeMock = {
+      value: {
+        location: 'bootstrap',
+        value: '~1.2.3'
+      }
+    };
+
+    let results = npmVersionParser(nodeMock, appConfigMock);
+    assert.equal(results[0].packageName, 'bootstrap', "Expected packageName");
+    assert.equal(results[0].packageVersion, '~1.2.3', "Expected packageVersion");
+    assert.equal(results[0].meta.type, 'npm', "Expected meta.type");
+    assert.ok(!!results[0].isValidSemver, "Expected isValidSemver");
+    assert.ok(results[0].hasRangeSymbol, "Expected hasRangeSymbol");
     assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
   });
 
@@ -67,7 +85,7 @@ describe('npmVersionParser(node, appConfig)', () => {
 
   });
 
-  it('customGenerateVersion preserves leading symbol for github semver tags', () => {
+  it('customGenerateVersion preserves leading range symbol for github semver tags', () => {
     let packageMock = {
       name: 'bootstrap',
       version: 'twbs/bootstrap#^4.0.0-alpha.4',
@@ -85,7 +103,7 @@ describe('npmVersionParser(node, appConfig)', () => {
     );
   });
 
-  it('customGenerateVersion ignores leading symbol for github commit sha', () => {
+  it('customGenerateVersion ignores leading range symbol for github commit sha', () => {
     let packageMock = {
       name: 'bootstrap',
       version: 'twbs/bootstrap#^4.0.0-alpha.4',

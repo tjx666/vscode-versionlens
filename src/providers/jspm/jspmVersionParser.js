@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as semver from 'semver';
-import { formatWithExistingLeading } from '../../common/utils';
+import { hasRangeSymbols, formatWithExistingLeading } from '../../common/utils';
 import { parseFileVersion, parseGithubVersionLink } from '../npm/npmVersionParser';
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;
@@ -26,10 +26,15 @@ export function jspmVersionParser(node, appConfig) {
   }
 
   const isValidSemver = semver.validRange(newPkgVersion);
+
+  // check if the version has a range symbol
+  const hasRangeSymbol = hasRangeSymbols(packageVersion);
+
   return [{
     packageName: extractedPkgName,
     packageVersion: newPkgVersion,
     isValidSemver,
+    hasRangeSymbol,
     meta: {
       type: 'npm'
     },

@@ -5,8 +5,8 @@
   "devDependencies": {
     "bootstrap": "twbs/bootstrap#v3.3.0",
     "test": "file:../../../src",
-    "@types/angularjs": "^1.2.14-alpha",
-    "@types/fs-extra": "0.0.24",
+    "@types/angular": "~1.5",
+    "@types/node": "6.x",
     "@angular/core": "2.2.1"
   },
   "customDependencies": {

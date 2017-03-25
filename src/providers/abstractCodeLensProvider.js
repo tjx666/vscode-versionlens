@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import * as CommandFactory from './commandFactory';
 
-export abstract class AbstractCodeLensProvider {
+export class AbstractCodeLensProvider {
 
   constructor() {
     this._disposables = [];

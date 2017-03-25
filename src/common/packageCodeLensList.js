@@ -65,6 +65,7 @@ export class PackageCodeLensList {
         version: parseResult.packageVersion,
         meta: parseResult.meta,
         isValidSemver: parseResult.isValidSemver,
+        hasRangeSymbol: parseResult.hasRangeSymbol,
         customGenerateVersion: parseResult.customGenerateVersion
       };
       return new PackageCodeLens(commandRange, replaceRange, pkg, documentUrl);

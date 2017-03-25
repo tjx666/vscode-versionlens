@@ -1,3 +1,7 @@
+- 0.12.2
+  - Fixes an issue where ranged versions (i.e. 1.x) were showing the incorrect update verion for npm and jspm
+  - Moved error messages to the console. They should no longer appear as a code lens
+
 - 0.12.1
   - Fixes an issue where code lenses were not showing for jspm in package.json
   

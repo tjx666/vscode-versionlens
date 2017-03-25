@@ -56,15 +56,19 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     }
 
     const viewPackageName = codeLens.package.name + (
-      !codeLens.package.isValidSemver ?
+      (!codeLens.package.isValidSemver || codeLens.package.hasRangeSymbol) ?
         `@${codeLens.package.version}` :
         ''
     );
 
     return doNpmViewVersion(viewPackageName)
-      .then(response => {
-        let keys = Object.keys(response);
-        let remoteVersion = keys[0];
+      .then(remoteVersion => {
+        // check that a version was returned by npm view
+        if (remoteVersion === '')
+          return CommandFactory.makeErrorCommand(
+            `'npm view ${viewPackageName} version' did not return any results`,
+            codeLens
+          );
 
         if (codeLens.package.isValidSemver)
           return CommandFactory.makeVersionCommand(
@@ -99,12 +103,20 @@ function doNpmViewVersion(packageName) {
         reject(loadError);
         return;
       }
-      npm.view(packageName, 'version', (viewError, viewResult) => {
+
+      npm.view(packageName, 'version', (viewError, response) => {
         if (viewError) {
           reject(viewError);
           return;
         }
-        resolve(viewResult);
+
+        // get the keys from the object returned
+        let keys = Object.keys(response);
+
+        // take the last and most recent version key
+        let lastKey = keys.length > 0 ? keys[keys.length - 1] : '';
+
+        resolve(lastKey);
       });
     });
   });

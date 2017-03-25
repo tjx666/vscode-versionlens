@@ -3,7 +3,12 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as semver from 'semver';
-import { fileDependencyRegex, gitHubDependencyRegex, formatWithExistingLeading } from '../../common/utils';
+import {
+  fileDependencyRegex,
+  gitHubDependencyRegex,
+  hasRangeSymbols,
+  formatWithExistingLeading
+} from '../../common/utils';
 
 export function npmVersionParser(node, appConfig) {
   const { location: packageName, value: packageVersion } = node.value;
@@ -22,6 +27,10 @@ export function npmVersionParser(node, appConfig) {
   // must be a registry version
   // check if its a valid semver, if not could be a tag
   const isValidSemver = semver.validRange(packageVersion);
+
+  // check if the version has a range symbol
+  const hasRangeSymbol = hasRangeSymbols(packageVersion);
+
   return [{
     packageName,
     packageVersion,
@@ -29,6 +38,7 @@ export function npmVersionParser(node, appConfig) {
       type: 'npm'
     },
     isValidSemver,
+    hasRangeSymbol,
     customGenerateVersion: null
   }];
 }
