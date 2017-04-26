@@ -13,32 +13,7 @@ import * as CommandFactory from '../commandFactory';
 // TODO retrieve multiple sources from nuget.config
 const FEED_URL = 'https://api.nuget.org/v3-flatcontainer';
 
-export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
-
-  get selector() {
-    return {
-      language: 'json',
-      scheme: 'file',
-      pattern: '**/project.json'
-    }
-  }
-
-  getPackageDependencyKeys() {
-    return appConfig.dotnetDependencyProperties;
-  }
-
-  provideCodeLenses(document, token) {
-    const jsonDoc = jsonParser.parse(document.getText());
-    if (jsonDoc === null || jsonDoc.root === null || jsonDoc.validationResult.errors.length > 0)
-      return [];
-
-    const collector = new PackageCodeLensList(document, appConfig);
-    this.collectDependencies_(collector, jsonDoc.root, null);
-    if (collector.collection.length === 0)
-      return [];
-
-    return collector.collection;
-  }
+export class DotNetAbstractCodeLensProvider extends AbstractCodeLensProvider {
 
   resolveCodeLens(codeLens, token) {
     if (codeLens instanceof PackageCodeLens)
@@ -82,31 +57,7 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
           "An error occurred retrieving this package.",
           codeLens
         );
-      });
-
-  }
-
-  collectDependencies_(collector, rootNode, customVersionParser) {
-    const packageDependencyKeys = this.getPackageDependencyKeys();
-    rootNode.getChildNodes()
-      .forEach(childNode => {
-        if (packageDependencyKeys.includes(childNode.key.value)) {
-          const childDeps = childNode.value.getChildNodes();
-          // check if this node has entries and if so add the update all command
-          if (childDeps.length > 0)
-            CommandFactory.makeUpdateDependenciesCommand(
-              childNode.key.value,
-              collector.addNode(childNode),
-              collector.collection
-            );
-
-          collector.addDependencyNodeRange(childDeps, customVersionParser);
-          return;
-        }
-
-        if (childNode.value.type === 'object')
-          this.collectDependencies_(collector, childNode.value, customVersionParser);
-      });
+      })
   }
 
   createRequestUrl_(baseUrl, packageId) {
@@ -122,5 +73,4 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
   getPackageSources_() {
     return [''];
   }
-
 }
