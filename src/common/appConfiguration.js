@@ -5,11 +5,11 @@
 import { workspace } from 'vscode';
 import { npmDefaultDependencyProperties } from '../providers/npm/config';
 import { bowerDefaultDependencyProperties } from '../providers/bower/config';
-import { dotnetDefaultDependencyProperties } from '../providers/dotnet/config';
+import { dotnetCSProjDefaultDependencyProperties, dotnetProjectJsonDefaultDependencyProperties } from '../providers/dotnet/config';
 import { dubDefaultDependencyProperties } from '../providers/dub/config';
 
 class AppConfiguration {
-  
+
   get versionPrefix() {
     const config = workspace.getConfiguration('versionlens');
     return config.get("versionPrefix", "");
@@ -25,9 +25,17 @@ class AppConfiguration {
     return config.get("bower.dependencyProperties", bowerDefaultDependencyProperties);
   }
 
-  get dotnetDependencyProperties() {
+  get dotnetCSProjDependencyProperties() {
     const config = workspace.getConfiguration('versionlens');
-    return config.get("dotnet.dependencyProperties", dotnetDefaultDependencyProperties);
+    return config.get("dotnet-csproj.dependencyProperties", dotnetCSProjDefaultDependencyProperties);
+  }
+
+  get dotnetProjectJsonDependencyProperties() {
+    const config = workspace.getConfiguration('versionlens');
+    const props = config.get("dotnet-project-json.dependencyProperties", undefined);
+    if (props !== undefined) return props;
+
+    return config.get("dotnet.dependencyProperties", dotnetProjectJsonDefaultDependencyProperties);
   }
 
   get dubDependencyProperties() {

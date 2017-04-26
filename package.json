@@ -25,7 +25,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguage:json"
+    "onLanguage:json",
+    "onLanguage:xml"
   ],
   "main": "./out/src/extension.js",
   "scripts": {
@@ -50,7 +51,8 @@
     "request-light": "0.2.0",
     "semver": "5.3.0",
     "vscode-contrib-jsonc": "1.0.0-beta.2",
-    "vscode-languageclient": "3.2.0"
+    "vscode-languageclient": "3.2.0",
+    "xmldoc": "1.0.0"
   },
   "contributes": {
     "configuration": {
