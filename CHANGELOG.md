@@ -1,3 +1,6 @@
+- 0.13
+  - Added dotnet core csproj file support. Thanks to [@eamodio](https://github.com/eamodio)
+
 - 0.12.2
   - Fixes an issue where ranged versions (i.e. 1.x) were showing the incorrect update verion for npm and jspm
   - Moved error messages to the console. They should no longer appear as a code lens
