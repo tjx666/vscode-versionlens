@@ -30,8 +30,12 @@ describe("NpmCodeLensProvider", () => {
     }
   }
 
+  const NpmApiModule = proxyquire('../../../../src/providers/npm/npmAPI', {
+    'npm': npmMock
+  });
+
   const NpmCodeLensProviderModule = proxyquire('../../../../src/providers/npm/npmCodeLensProvider', {
-    'npm': npmMock,
+    'NpmViewVersion': NpmApiModule.NpmViewVersion,
     '../../common/appConfiguration': {
       appConfig: appConfigMock
     }
