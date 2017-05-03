@@ -1,3 +1,6 @@
+- 0.14.1
+  - Fixed a case where npm view doesn't return latest tag as the first entry.
+
 - 0.14.0
   - Added ability to view versions associated with dist tags for npm and jspm.
 
