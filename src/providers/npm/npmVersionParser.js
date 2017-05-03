@@ -43,51 +43,24 @@ export function parseNpmRegistryVersion(node, name, version, appConfig, customGe
 
   return npmViewDistTags(name)
     .then(distTags => {
-      // if there is only one dist tag (i.e. latest tag) then return it
-      if (distTags.length === 1)
-        return distTags;
-
-      // if there is more than one dist tag 
-      // and npmShowDistTags then return the first distTag (i.e. latest tag)
-      if (distTags.length > 1 && appConfig.npmShowDistTags === false)
-        return [distTags[0]];
-
-      // just show all distTags if no filters found
-      if (!appConfig.npmDistTagFilter)
-        return distTags;
-
-      // get the dist tag filter from the config
-      const tagFilters = appConfig.npmDistTagFilter.map(entry => entry.toLowerCase()); // make sure the filters are all lower case
-
-      // if that is not dist tag filter then return all of them
-      if (tagFilters.length === 0)
-        return distTags;
-
-      // return the filtered tags
-      return distTags.filter(distTag => {
-        const checkTagName = distTag.name.toLowerCase();
-        return checkTagName === 'latest' || tagFilters.includes(checkTagName);
-      });
-
-    })
-    .then(filteredDistTags => {
-      return filteredDistTags.map(distTag => {
-        return {
-          node,
-          package: {
-            name,
-            version,
-            meta: {
-              type: 'npm',
-              distTag
-            },
-            isValidSemver,
-            hasRangeSymbol,
-            isDistTag: (distTag.name != 'latest'),
-            customGenerateVersion
+      return filterDistTags(distTags, appConfig)
+        .map(distTag => {
+          return {
+            node,
+            package: {
+              name,
+              version,
+              meta: {
+                type: 'npm',
+                distTag
+              },
+              isValidSemver,
+              hasRangeSymbol,
+              isDistTag: (distTag.name != 'latest'),
+              customGenerateVersion
+            }
           }
-        }
-      });
+        });
     });
 }
 
@@ -154,4 +127,32 @@ export function customGenerateVersion(packageInfo, newVersion) {
   // preserve the leading symbol from the existing version
   const preservedLeadingVersion = formatWithExistingLeading(existingVersion, newVersion)
   return `${packageInfo.meta.userRepo}#${preservedLeadingVersion}`
+}
+
+function filterDistTags(distTags, appConfig) {
+  // if there is only one dist tag (i.e. latest tag) then return it
+  if (distTags.length === 1)
+    return distTags;
+
+  // if there is more than one dist tag 
+  // and npmShowDistTags then return the first distTag (i.e. latest tag)
+  if (distTags.length > 1 && appConfig.npmShowDistTags === false)
+    return [distTags[0]];
+
+  // just show all distTags if no filters found
+  if (!appConfig.npmDistTagFilter)
+    return distTags;
+
+  // get the dist tag filter from the config
+  const tagFilters = appConfig.npmDistTagFilter.map(entry => entry.toLowerCase()); // make sure the filters are all lower case
+
+  // if that is not dist tag filter then return all of them
+  if (tagFilters.length === 0)
+    return distTags;
+
+  // return the filtered tags
+  return distTags.filter(distTag => {
+    const checkTagName = distTag.name.toLowerCase();
+    return checkTagName === 'latest' || tagFilters.includes(checkTagName);
+  });
 }
