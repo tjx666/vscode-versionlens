@@ -13,7 +13,8 @@ export function generateCodeLenses(packageCollection, document) {
       results.forEach(entryOrEntries => {
         if (Array.isArray(entryOrEntries)) {
           entryOrEntries.forEach(
-            entry => {
+            (entry, order) => {
+              entry.package.order = order;
               codeLenses.push(createCodeLensFromEntry(entry, document, documentUrl));
             }
           );
@@ -24,7 +25,7 @@ export function generateCodeLenses(packageCollection, document) {
           createCodeLensFromEntry(
             {
               node: entryOrEntries.node,
-              package: createPackageFromEntry(entryOrEntries.node)
+              package: createPackageFromNode(entryOrEntries.node)
             },
             document,
             documentUrl
@@ -32,25 +33,26 @@ export function generateCodeLenses(packageCollection, document) {
         );
 
       });
-      console.log(codeLenses)
+
       return codeLenses;
     });
 }
 
-function createPackageFromEntry(node) {
+function createPackageFromNode(node) {
   return {
     name: node.name,
     version: node.replaceInfo.value || node.value,
     meta: {
       tag: 'latest'
     },
-    isValidSemver: null
+    isValidSemver: null,
+    order: 0
   };
 }
 
 function createCodeLensFromEntry(entry, document, documentUrl) {
   const commandRange = new Range(
-    document.positionAt(entry.node.start),
+    document.positionAt(entry.node.start + entry.package.order),
     document.positionAt(entry.node.end)
   );
   const replaceRange = new Range(
