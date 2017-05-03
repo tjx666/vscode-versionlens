@@ -32,7 +32,7 @@ export function generateCodeLenses(packageCollection, document) {
         );
 
       });
-
+      console.log(codeLenses)
       return codeLenses;
     });
 }

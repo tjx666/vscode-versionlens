@@ -6,5 +6,10 @@
     "peerDependencies",
     "optionalDependencies",
     "customDependencies"
+  ],
+  "versionlens.npm.showDistTags": true,
+  "versionlens.npm.distTagFilter": [
+    "beta",
+    "legacy"
   ]
 }

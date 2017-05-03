@@ -79,6 +79,21 @@
           ],
           "description": "Defines which properties in package.json should be parsed by this extension"
         },
+        "versionlens.npm.showDistTags": {
+          "type": "boolean",
+          "default": false,
+          "description": "Shows dist tags i.e. alpha, beta or next."
+        },
+        "versionlens.npm.distTagFilter": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "minItems": 0,
+          "default": [],
+          "description": "Define which common dist tags you want to see. i.e. [alpha, beta]. If you don't specify any dist tags then all the dist-tags for a package will be shown. versionlens.npm.showDistTags must be enabled for this to take affect."
+        },
         "versionlens.bower.dependencyProperties": {
           "type": "array",
           "items": {

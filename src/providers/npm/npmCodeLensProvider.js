@@ -8,7 +8,7 @@ import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { npmVersionParser } from './npmVersionParser';
 import { appConfig } from '../../common/appConfiguration';
 import * as CommandFactory from '../commandFactory';
-import { NpmViewVersion } from './npmAPI';
+import { npmViewVersion } from './npmAPI';
 import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 
@@ -64,7 +64,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         ''
     );
 
-    return NpmViewVersion(viewPackageName)
+    return npmViewVersion(viewPackageName)
       .then(remoteVersion => {
         // check that a version was returned by npm view
         if (remoteVersion === '')
@@ -72,6 +72,11 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
             `'npm view ${viewPackageName} version' did not return any results`,
             codeLens
           );
+
+        // check if this is a dist tag other than 'latest'
+        if (codeLens.isDistTag()) {
+          return CommandFactory.makeNewVersionCommand(codeLens.getDistTagVersion(), codeLens)
+        }
 
         if (codeLens.package.isValidSemver)
           return CommandFactory.makeVersionCommand(

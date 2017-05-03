@@ -57,27 +57,27 @@ export function makeVersionCommand(localVersion, serverVersion, codeLens) {
 export function makeNewVersionCommand(newVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(newVersion);
   return codeLens.setCommand(
-    `${appGlobals.updateIndicator} ${newVersion}`,
+    `${codeLens.getDistTagPrefix()}${appGlobals.updateIndicator} ${newVersion}`,
     `_${appGlobals.extentionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
 }
 
 export function makeSatisfiedCommand(serverVersion, codeLens) {
-  return codeLens.setCommand(`satisfies v${serverVersion}`);
+  return codeLens.setCommand(`${codeLens.getDistTagPrefix()}Matches v${serverVersion}`);
 }
 
 export function makeSatisfiedWithNewerCommand(serverVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(serverVersion);
   return codeLens.setCommand(
-    `${appGlobals.updateIndicator} satisfies v${serverVersion}`,
+    `${codeLens.getDistTagPrefix()}Matches ${appGlobals.updateIndicator} v${serverVersion}`,
     `_${appGlobals.extentionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
 }
 
 export function makeLatestCommand(codeLens) {
-  return codeLens.setCommand('latest');
+  return codeLens.setCommand('Matches latest');
 }
 
 export function makeTagCommand(tag, codeLens) {
@@ -86,7 +86,7 @@ export function makeTagCommand(tag, codeLens) {
 
 export function makeUpdateDependenciesCommand(propertyName, codeLens, codeLenCollection) {
   return codeLens.setCommand(
-    `${appGlobals.updateIndicator} Update ${propertyName}`,
+    `${codeLens.getDistTagPrefix()}${appGlobals.updateIndicator} Update ${propertyName}`,
     `_${appGlobals.extentionName}.updateDependenciesCommand`,
     [codeLens, codeLenCollection]
   );

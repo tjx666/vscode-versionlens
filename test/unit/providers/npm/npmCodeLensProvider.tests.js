@@ -21,6 +21,7 @@ describe("NpmCodeLensProvider", () => {
     load: cb => cb(),
     view: x => x
   };
+
   const appConfigMock = {
     get npmDependencyProperties() {
       return defaultNpmDependencyKeys;
@@ -30,12 +31,20 @@ describe("NpmCodeLensProvider", () => {
     }
   }
 
-  const NpmApiModule = proxyquire('../../../../src/providers/npm/npmAPI', {
+  const NpmAPIModule = proxyquire('../../../../src/providers/npm/npmAPI', {
     'npm': npmMock
   });
 
+  NpmAPIModule.npmViewDistTags = packageName => {
+    return Promise.resolve(['latest'])
+  }
+
+  const NpmVersionParserModule = proxyquire('../../../../src/providers/npm/npmVersionParser', {
+    './npmAPI': NpmAPIModule
+  });
+
   const NpmCodeLensProviderModule = proxyquire('../../../../src/providers/npm/npmCodeLensProvider', {
-    'NpmViewVersion': NpmApiModule.NpmViewVersion,
+    './npmVersionParser': NpmVersionParserModule,
     '../../common/appConfiguration': {
       appConfig: appConfigMock
     }

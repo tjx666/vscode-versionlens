@@ -22,6 +22,21 @@ export class PackageCodeLens extends CodeLens {
     return this.package.customGenerateVersion.call(this, this.package, newVersion);
   }
 
+  getDistTagPrefix() {
+    if (this.package.isDistTag)
+      return this.package.meta.distTag.name + ': ';
+
+    return '';
+  }
+
+  isDistTag() {
+    return this.package.isDistTag;
+  }
+
+  getDistTagVersion() {
+    return this.package.meta.distTag.version;
+  }
+
   setCommand(text, command, args) {
     this.command = {
       title: text,

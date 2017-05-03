@@ -4,7 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 import * as semver from 'semver';
 import { hasRangeSymbols, formatWithExistingLeading } from '../../common/utils';
-import { parseFileVersion, parseGithubVersionLink } from '../npm/npmVersionParser';
+import {
+  parseNpmRegistryVersion,
+  parseFileVersion,
+  parseGithubVersionLink
+} from '../npm/npmVersionParser';
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;
 export function jspmVersionParser(node, appConfig) {
@@ -25,25 +29,13 @@ export function jspmVersionParser(node, appConfig) {
     });
   }
 
-  const isValidSemver = semver.validRange(newPkgVersion);
-
-  // check if the version has a range symbol
-  const hasRangeSymbol = hasRangeSymbols(version);
-
-  return [{
+  return parseNpmRegistryVersion(
     node,
-    package: {
-      name: extractedPkgName,
-      version: newPkgVersion,
-      isValidSemver,
-      hasRangeSymbol,
-      meta: {
-        tag: 'latest',
-        type: 'npm'
-      },
-      customGenerateVersion
-    }
-  }];
+    extractedPkgName,
+    newPkgVersion,
+    appConfig,
+    customGenerateVersion
+  );
 }
 
 export function customGenerateVersion(packageInfo, newVersion) {

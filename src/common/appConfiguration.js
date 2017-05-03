@@ -20,6 +20,16 @@ class AppConfiguration {
     return config.get("npm.dependencyProperties", npmDefaultDependencyProperties);
   }
 
+  get npmShowDistTags() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get("npm.showDistTags", false);
+  }
+
+  get npmDistTagFilter() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get("npm.distTagFilter", []);
+  }
+
   get bowerDependencyProperties() {
     const config = workspace.getConfiguration('versionlens');
     return config.get("bower.dependencyProperties", bowerDefaultDependencyProperties);
@@ -28,14 +38,6 @@ class AppConfiguration {
   get dotnetCSProjDependencyProperties() {
     const config = workspace.getConfiguration('versionlens');
     return config.get("dotnet-csproj.dependencyProperties", dotnetCSProjDefaultDependencyProperties);
-  }
-
-  get dotnetProjectJsonDependencyProperties() {
-    const config = workspace.getConfiguration('versionlens');
-    const props = config.get("dotnet-project-json.dependencyProperties", undefined);
-    if (props !== undefined) return props;
-
-    return config.get("dotnet.dependencyProperties", dotnetProjectJsonDefaultDependencyProperties);
   }
 
   get dubDependencyProperties() {
@@ -55,4 +57,4 @@ class AppConfiguration {
 
 }
 
-export const appConfig = new AppConfiguration()
+export const appConfig = new AppConfiguration();

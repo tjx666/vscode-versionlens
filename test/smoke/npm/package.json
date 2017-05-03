@@ -7,7 +7,8 @@
     "test": "file:../../../src",
     "@types/angular": "~1.5",
     "@types/node": "6.x",
-    "@angular/core": "2.2.1"
+    "@angular/core": "2.2.1",
+    "webpack": "2.4.1"
   },
   "customDependencies": {
     "@types/hammerjs": "2.0.33"

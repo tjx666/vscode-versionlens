@@ -9,6 +9,7 @@ import {
   hasRangeSymbols,
   formatWithExistingLeading
 } from '../../common/utils';
+import { npmViewDistTags } from './npmAPI'
 
 export function npmVersionParser(node, appConfig) {
   const { name, value: version } = node;
@@ -25,26 +26,69 @@ export function npmVersionParser(node, appConfig) {
     return result
 
   // must be a registry version
+  return parseNpmRegistryVersion(
+    node,
+    name,
+    version,
+    appConfig
+  );
+}
+
+export function parseNpmRegistryVersion(node, name, version, appConfig, customGenerateVersion = null) {
   // check if its a valid semver, if not could be a tag
   const isValidSemver = semver.validRange(version);
 
   // check if the version has a range symbol
   const hasRangeSymbol = hasRangeSymbols(version);
 
-  return [{
-    node,
-    package: {
-      name,
-      version,
-      meta: {
-        type: 'npm',
-        tag: 'latest'
-      },
-      isValidSemver,
-      hasRangeSymbol,
-      customGenerateVersion: null
-    }
-  }];
+  return npmViewDistTags(name)
+    .then(distTags => {
+      // if there is only one dist tag (i.e. latest tag) then return it
+      if (distTags.length === 1)
+        return distTags;
+
+      // if there is more than one dist tag 
+      // and npmShowDistTags then return the first distTag (i.e. latest tag)
+      if (distTags.length > 1 && appConfig.npmShowDistTags === false)
+        return [distTags[0]];
+
+      // just show all distTags if no filters found
+      if (!appConfig.npmDistTagFilter)
+        return distTags;
+
+      // get the dist tag filter from the config
+      const tagFilters = appConfig.npmDistTagFilter.map(entry => entry.toLowerCase()); // make sure the filters are all lower case
+
+      // if that is not dist tag filter then return all of them
+      if (tagFilters.length === 0)
+        return distTags;
+
+      // return the filtered tags
+      return distTags.filter(distTag => {
+        const checkTagName = distTag.name.toLowerCase();
+        return checkTagName === 'latest' || tagFilters.includes(checkTagName);
+      });
+
+    })
+    .then(filteredDistTags => {
+      return filteredDistTags.map(distTag => {
+        return {
+          node,
+          package: {
+            name,
+            version,
+            meta: {
+              type: 'npm',
+              distTag
+            },
+            isValidSemver,
+            hasRangeSymbol,
+            isDistTag: (distTag.name != 'latest'),
+            customGenerateVersion
+          }
+        }
+      });
+    });
 }
 
 export function parseFileVersion(node, name, version) {
