@@ -8,7 +8,6 @@ import { JspmCodeLensProvider } from './providers/jspm/jspmCodeLensProvider';
 import { BowerCodeLensProvider } from './providers/bower/bowerCodeLensProvider';
 import { DubCodeLensProvider } from './providers/dub/dubCodeLensProvider';
 import { DotNetCSProjCodeLensProvider } from './providers/dotnet/dotnetCSProjCodeLensProvider';
-import { DotNetProjectJsonCodeLensProvider } from './providers/dotnet/dotnetProjectJsonCodeLensProvider';
 import { updateDependencyCommand, updateDependenciesCommand, linkCommand } from './commands';
 import { appGlobals } from './common/appGlobals';
 
@@ -19,8 +18,7 @@ export function activate(context) {
     new JspmCodeLensProvider(),
     new BowerCodeLensProvider(),
     new DubCodeLensProvider(),
-    new DotNetCSProjCodeLensProvider(),
-    new DotNetProjectJsonCodeLensProvider()
+    new DotNetCSProjCodeLensProvider()
   ];
 
   providers.forEach(provider => {
