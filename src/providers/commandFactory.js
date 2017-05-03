@@ -143,3 +143,22 @@ export function makeGithubCommand(codeLens) {
       return Promise.reject(error);
     });
 }
+
+export function makeDistTagCommand(codeLens) {
+  const distTagVersion = codeLens.getDistTagVersion();
+  const version = codeLens.package.version;
+
+  // check for any leading semver symbols in the version
+  // strip before compare if they exist
+  const versionLeading = version && version[0];
+  if (versionLeading && semverLeadingChars.includes(versionLeading))
+    version = version.slice(1);
+
+  if (version === distTagVersion)
+    return makeTagCommand(`${codeLens.getDistTagPrefix()} ${distTagVersion}`, codeLens);
+
+  return makeNewVersionCommand(
+    codeLens.getDistTagVersion(),
+    codeLens
+  );
+}
