@@ -3,11 +3,8 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as httpRequest from 'request-light';
-import * as jsonParser from 'vscode-contrib-jsonc';
 import { PackageCodeLens } from '../../common/packageCodeLens';
-import { PackageCodeLensList } from '../../common/packageCodeLensList';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
-import { appConfig } from '../../common/appConfiguration';
 import * as CommandFactory from '../commandFactory';
 
 // TODO retrieve multiple sources from nuget.config

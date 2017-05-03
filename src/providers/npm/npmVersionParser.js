@@ -11,56 +11,63 @@ import {
 } from '../../common/utils';
 
 export function npmVersionParser(node, appConfig) {
-  const { location: packageName, value: packageVersion } = node.value;
+  const { name, value: version } = node;
   let result;
 
   // check if we have a local file version
-  if (result = parseFileVersion(packageName, packageVersion))
+  if (result = parseFileVersion(node, name, version))
     return result
 
   // TODO: implement raw git url support too
 
   // check if we have a github version
-  if (result = parseGithubVersionLink(packageName, packageVersion, appConfig.githubCompareOptions))
+  if (result = parseGithubVersionLink(node, name, version, appConfig.githubCompareOptions))
     return result
 
   // must be a registry version
   // check if its a valid semver, if not could be a tag
-  const isValidSemver = semver.validRange(packageVersion);
+  const isValidSemver = semver.validRange(version);
 
   // check if the version has a range symbol
-  const hasRangeSymbol = hasRangeSymbols(packageVersion);
+  const hasRangeSymbol = hasRangeSymbols(version);
 
   return [{
-    packageName,
-    packageVersion,
-    meta: {
-      type: 'npm'
-    },
-    isValidSemver,
-    hasRangeSymbol,
-    customGenerateVersion: null
+    node,
+    package: {
+      name,
+      version,
+      meta: {
+        type: 'npm',
+        tag: 'latest'
+      },
+      isValidSemver,
+      hasRangeSymbol,
+      customGenerateVersion: null
+    }
   }];
 }
 
-export function parseFileVersion(packageName, packageVersion) {
-  const fileRegExpResult = fileDependencyRegex.exec(packageVersion);
+export function parseFileVersion(node, name, version) {
+  const fileRegExpResult = fileDependencyRegex.exec(version);
   if (fileRegExpResult) {
     const meta = {
       type: "file",
       remoteUrl: `${fileRegExpResult[1]}`
     };
     return [{
-      packageName,
-      packageVersion,
-      meta,
-      customGenerateVersion: null
+      node,
+      package: {
+        name,
+        version,
+        meta,
+        customGenerateVersion: null
+      }
     }];
   }
 }
 
-export function parseGithubVersionLink(packageName, packageVersion, githubCompareOptions) {
-  const gitHubRegExpResult = gitHubDependencyRegex.exec(packageVersion);
+export function parseGithubVersionLink(node, name, version, githubCompareOptions) {
+  const gitHubRegExpResult = gitHubDependencyRegex.exec(version);
   if (gitHubRegExpResult) {
     const proto = "https";
     const user = gitHubRegExpResult[1];
@@ -72,16 +79,19 @@ export function parseGithubVersionLink(packageName, packageVersion, githubCompar
 
     return githubCompareOptions.map(category => {
       const parseResult = {
-        packageName,
-        packageVersion,
-        meta: {
-          category,
-          type: "github",
-          remoteUrl,
-          userRepo,
-          commitish
-        },
-        customGenerateVersion: customGenerateVersion
+        node,
+        package: {
+          name,
+          version,
+          meta: {
+            category,
+            type: "github",
+            remoteUrl,
+            userRepo,
+            commitish
+          },
+          customGenerateVersion: customGenerateVersion
+        }
       };
       return parseResult;
     });

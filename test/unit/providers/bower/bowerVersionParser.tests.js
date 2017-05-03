@@ -15,38 +15,34 @@ describe('bowerVersionParser(node, appConfig)', () => {
 
   it('returns the expected object for semver versions', () => {
     let nodeMock = {
-      value: {
-        location: 'jquery-mousewheel',
-        value: '3.1.12'
-      }
+      name: 'jquery-mousewheel',
+      value: '3.1.12'
     };
 
     let results = bowerVersionParser(nodeMock, appConfigMock);
-    assert.equal(results[0].packageName, 'jquery-mousewheel', "Expected packageName");
-    assert.equal(results[0].packageVersion, '3.1.12', "Expected packageName");
-    assert.equal(results[0].meta.type, 'bower', "Expected meta.type");
-    assert.ok(!!results[0].isValidSemver, "Expected isValidSemver");
+    assert.equal(results[0].package.name, 'jquery-mousewheel', "Expected packageName");
+    assert.equal(results[0].package.version, '3.1.12', "Expected packageName");
+    assert.equal(results[0].package.meta.type, 'bower', "Expected meta.type");
+    assert.ok(!!results[0].package.isValidSemver, "Expected isValidSemver");
     assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
   });
 
   it('returns the expected object for github versions', () => {
     let nodeMock = {
-      value: {
-        location: 'masonry',
-        value: 'desandro/masonry#^4.1.1'
-      }
+      name: 'masonry',
+      value: 'desandro/masonry#^4.1.1'
     };
 
     let results = bowerVersionParser(nodeMock, appConfigMock);
     results.forEach((result, index) => {
-      assert.equal(result.packageName, 'masonry', "Expected packageName");
-      assert.equal(result.packageVersion, 'desandro/masonry#^4.1.1', "Expected packageName");
-      assert.equal(result.meta.category, githubCompareOptions[index], "Expected meta.category");
-      assert.equal(result.meta.type, 'github', "Expected meta.type");
-      assert.equal(result.meta.remoteUrl, `https://github.com/${result.meta.userRepo}/commit/${result.meta.commitish}`, "Expected meta.remoteUrl");
-      assert.equal(result.meta.userRepo, 'desandro/masonry', "Expected meta.userRepo");
-      assert.equal(result.meta.commitish, '^4.1.1', "Expected meta.commitish");
-      assert.ok(!!result.customGenerateVersion, "Expected meta.customGenerateVersion");
+      assert.equal(result.package.packageName, 'masonry', "Expected packageName");
+      assert.equal(result.package.packageVersion, 'desandro/masonry#^4.1.1', "Expected packageName");
+      assert.equal(result.package.meta.category, githubCompareOptions[index], "Expected meta.category");
+      assert.equal(result.package.meta.type, 'github', "Expected meta.type");
+      assert.equal(result.package.meta.remoteUrl, `https://github.com/${result.package.meta.userRepo}/commit/${result.package.meta.commitish}`, "Expected meta.remoteUrl");
+      assert.equal(result.package.meta.userRepo, 'desandro/masonry', "Expected meta.userRepo");
+      assert.equal(result.package.meta.commitish, '^4.1.1', "Expected meta.commitish");
+      assert.ok(!!result.package.customGenerateVersion, "Expected customGenerateVersion");
     })
 
   });

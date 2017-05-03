@@ -20,37 +20,33 @@ describe('jspmVersionParser(node, appConfig)', () => {
 
   it('returns the expected object for npm semver versions', () => {
     let nodeMock = {
-      value: {
-        location: 'bluebird',
-        value: 'npm:bluebird@3.4.6'
-      }
+      name: 'bluebird',
+      value: 'npm:bluebird@3.4.6'
     };
 
     let results = jspmVersionParser(nodeMock, appConfigMock);
-    assert.equal(results[0].packageName, 'bluebird', "Expected packageName");
-    assert.equal(results[0].packageVersion, '3.4.6', "Expected packageName");
-    assert.equal(results[0].meta.type, 'npm', "Expected meta.type");
-    assert.ok(!!results[0].isValidSemver, "Expected isValidSemver");
-    assert.ok(!!results[0].customGenerateVersion, "Expected customGenerateVersion");
+    assert.equal(results[0].package.name, 'bluebird', "Expected packageName");
+    assert.equal(results[0].package.version, '3.4.6', "Expected packageName");
+    assert.equal(results[0].package.meta.type, 'npm', "Expected meta.type");
+    assert.ok(!!results[0].package.isValidSemver, "Expected isValidSemver");
+    assert.ok(!!results[0].package.customGenerateVersion, "Expected customGenerateVersion");
   });
 
   it('returns the expected object for github versions', () => {
     let nodeMock = {
-      value: {
-        location: 'bootstrap',
-        value: 'github:twbs/bootstrap@4.0.0-alpha.4'
-      }
+      name: 'bootstrap',
+      value: 'github:twbs/bootstrap@4.0.0-alpha.4'
     };
 
     let results = jspmVersionParser(nodeMock, appConfigMock);
     results.forEach((result, index) => {
-      assert.equal(result.packageName, 'twbs/bootstrap', "Expected packageName");
-      assert.equal(result.packageVersion, 'twbs/bootstrap#4.0.0-alpha.4', "Expected packageName");
-      assert.equal(result.meta.category, githubCompareOptions[index], "Expected meta.category");
-      assert.equal(result.meta.type, 'github', "Expected meta.type");
-      assert.equal(result.meta.remoteUrl, `https://github.com/${result.meta.userRepo}/commit/${result.meta.commitish}`, "Expected meta.remoteUrl");
-      assert.equal(result.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");
-      assert.equal(result.meta.commitish, '4.0.0-alpha.4', "Expected meta.commitish");
+      assert.equal(result.package.name, 'twbs/bootstrap', "Expected packageName");
+      assert.equal(result.package.version, 'twbs/bootstrap#4.0.0-alpha.4', "Expected packageName");
+      assert.equal(result.package.meta.category, githubCompareOptions[index], "Expected meta.category");
+      assert.equal(result.package.meta.type, 'github', "Expected meta.type");
+      assert.equal(result.package.meta.remoteUrl, `https://github.com/${result.package.meta.userRepo}/commit/${result.package.meta.commitish}`, "Expected meta.remoteUrl");
+      assert.equal(result.package.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");
+      assert.equal(result.package.meta.commitish, '4.0.0-alpha.4', "Expected meta.commitish");
       assert.ok(!!result.customGenerateVersion, "Expected meta.customGenerateVersion");
     })
 
@@ -59,7 +55,7 @@ describe('jspmVersionParser(node, appConfig)', () => {
   it('customGenerateVersion preserves leading symbol for github semver tags', () => {
     let packageMock = {
       name: 'bootstrap',
-      version: 'github:twbs/bootstrap@^4.0.0-alpha.4',
+      value: 'github:twbs/bootstrap@^4.0.0-alpha.4',
       meta: {
         type: 'github',
         commitish: '^4.0.0-alpha.4'

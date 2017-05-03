@@ -3,10 +3,11 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as jsonParser from 'vscode-contrib-jsonc';
-import { PackageCodeLensList } from '../../common/packageCodeLensList';
 import { NpmCodeLensProvider } from '../npm/npmCodeLensProvider';
 import { jspmVersionParser } from './jspmVersionParser';
 import { appConfig } from '../../common/appConfiguration';
+import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
+import { generateCodeLenses } from '../../common/codeLensGeneration';
 
 export class JspmCodeLensProvider extends NpmCodeLensProvider {
 
@@ -15,21 +16,33 @@ export class JspmCodeLensProvider extends NpmCodeLensProvider {
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
       return [];
 
-    const collector = new PackageCodeLensList(document, appConfig);
-    this.collectJspmDependencies_(collector, jsonDoc.root);
-    if (collector.collection.length === 0)
-      return [];
+    const jspmRootNode = this.getJspmRootNode_(jsonDoc.root);
+    if (jspmRootNode === null)
+      return;
 
-    return collector.collection;
+    const dependencyNodes = extractDependencyNodes(
+      jspmRootNode,
+      appConfig.npmDependencyProperties
+    );
+
+    const packageCollection = parseDependencyNodes(
+      dependencyNodes,
+      appConfig,
+      jspmVersionParser
+    );
+
+    return generateCodeLenses(packageCollection, document);
   }
 
-  collectJspmDependencies_(collector, rootNode) {
-    const packageDependencyKeys = this.packageExtensionKeys;
-    rootNode.getChildNodes()
-      .forEach(node => {
-        if (node.key.value === 'jspm')
-          super.collectDependencies_(collector, node.value, jspmVersionParser)
-      });
+  getJspmRootNode_(rootNode) {
+    const children = rootNode.getChildNodes();
+    for (let i = 0; i < children.length; i++) {
+      const node = children[i];
+      if (node.key.value === 'jspm')
+        return node.value;
+    }
+
+    return null;
   }
 
 }

@@ -8,8 +8,8 @@ import { parseFileVersion, parseGithubVersionLink } from '../npm/npmVersionParse
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;
 export function jspmVersionParser(node, appConfig) {
-  const { location: packageName, value: packageVersion } = node.value;
-  const regExpResult = jspmDependencyRegex.exec(packageVersion);
+  const { name, value: version } = node;
+  const regExpResult = jspmDependencyRegex.exec(version);
   if (!regExpResult)
     return;
 
@@ -18,7 +18,7 @@ export function jspmVersionParser(node, appConfig) {
   const newPkgVersion = regExpResult[3];
 
   if (packageManager === 'github') {
-    const results = parseGithubVersionLink(extractedPkgName, `${extractedPkgName}#${newPkgVersion}`, appConfig.githubCompareOptions);
+    const results = parseGithubVersionLink(node, extractedPkgName, `${extractedPkgName}#${newPkgVersion}`, appConfig.githubCompareOptions);
     return results.map(result => {
       result.customGenerateVersion = customGenerateVersion;
       return result;
@@ -28,17 +28,21 @@ export function jspmVersionParser(node, appConfig) {
   const isValidSemver = semver.validRange(newPkgVersion);
 
   // check if the version has a range symbol
-  const hasRangeSymbol = hasRangeSymbols(packageVersion);
+  const hasRangeSymbol = hasRangeSymbols(version);
 
   return [{
-    packageName: extractedPkgName,
-    packageVersion: newPkgVersion,
-    isValidSemver,
-    hasRangeSymbol,
-    meta: {
-      type: 'npm'
-    },
-    customGenerateVersion
+    node,
+    package: {
+      name: extractedPkgName,
+      version: newPkgVersion,
+      isValidSemver,
+      hasRangeSymbol,
+      meta: {
+        tag: 'latest',
+        type: 'npm'
+      },
+      customGenerateVersion
+    }
   }];
 }
 

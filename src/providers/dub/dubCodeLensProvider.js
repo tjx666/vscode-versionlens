@@ -4,12 +4,16 @@
  *--------------------------------------------------------------------------------------------*/
 import * as jsonParser from 'vscode-contrib-jsonc';
 import * as httpRequest from 'request-light';
-
 import { PackageCodeLens } from '../../common/packageCodeLens';
-import { PackageCodeLensList } from '../../common/packageCodeLensList';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { appConfig } from '../../common/appConfiguration';
 import * as CommandFactory from '../commandFactory';
+import {
+  extractDependencyNodes,
+  parseDependencyNodes,
+  createDependencyNode
+} from '../../common/dependencyParser';
+import { generateCodeLenses } from '../../common/codeLensGeneration';
 
 export class DubCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -21,21 +25,25 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     };
   }
 
-  getPackageDependencyKeys() {
-    return appConfig.dubDependencyProperties;
-  }
-
   provideCodeLenses(document, token) {
     const jsonDoc = jsonParser.parse(document.getText());
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
       return [];
 
-    const collector = new PackageCodeLensList(document, appConfig);
-    this.collectDependencies_(collector, jsonDoc.root, null);
-    if (collector.collection.length === 0)
-      return [];
+    const dependencyNodes = extractDependencyNodes(
+      jsonDoc.root,
+      appConfig.dubDependencyProperties
+    );
 
-    return collector.collection;
+    const subObjectNodes = this.extractCustomDependencyNodes(jsonDoc.root);
+    dependencyNodes.push(...subObjectNodes)
+
+    const packageCollection = parseDependencyNodes(
+      dependencyNodes,
+      appConfig
+    );
+
+    return generateCodeLenses(packageCollection, document);
   }
 
   resolveCodeLens(codeLens, token) {
@@ -85,32 +93,22 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
       });
   }
 
-  collectDependencies_(collector, rootNode, customVersionParser) {
-    const packageDependencyKeys = this.getPackageDependencyKeys();
+  extractCustomDependencyNodes(rootNode, customVersionParser) {
+    const nodes = [];
     rootNode.getChildNodes()
       .forEach(childNode => {
-        if (packageDependencyKeys.includes(childNode.key.value)) {
-          const childDeps = childNode.value.getChildNodes();
-          // check if this node has entries and if so add the update all command
-          if (childDeps.length > 0)
-            CommandFactory.makeUpdateDependenciesCommand(
-              childNode.key.value,
-              collector.addNode(childNode),
-              collector.collection
-            );
-
-          collector.addDependencyNodeRange(childDeps, customVersionParser);
-          return;
-        }
-
         if (childNode.key.value == "subPackages") {
-          childNode.value.items
-            .forEach(subPackage => {
-              if (subPackage.type == "object")
-                this.collectDependencies_(collector, subPackage, customVersionParser);
-            });
+          childNode.value.items.forEach(subPackage => {
+            if (subPackage.type == "object") {
+              subPackage.properties.forEach(
+                property => nodes.push(createDependencyNode(property))
+              );
+            }
+          });
+
         }
       });
+    return nodes;
   }
 
 }

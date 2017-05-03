@@ -5,11 +5,12 @@
 import * as bower from 'bower';
 import * as jsonParser from 'vscode-contrib-jsonc';
 import { PackageCodeLens } from '../../common/packageCodeLens';
-import { PackageCodeLensList } from '../../common/packageCodeLensList';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { bowerVersionParser } from './bowerVersionParser';
 import { appConfig } from '../../common/appConfiguration';
 import * as CommandFactory from '../commandFactory';
+import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
+import { generateCodeLenses } from '../../common/codeLensGeneration';
 
 export class BowerCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -21,21 +22,23 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
     }
   }
 
-  getPackageDependencyKeys() {
-    return appConfig.bowerDependencyProperties;
-  }
-
   provideCodeLenses(document, token) {
     const jsonDoc = jsonParser.parse(document.getText());
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
       return [];
 
-    const collector = new PackageCodeLensList(document, appConfig);
-    this.collectDependencies_(collector, jsonDoc.root, bowerVersionParser);
-    if (collector.collection.length === 0)
-      return [];
+    const dependencyNodes = extractDependencyNodes(
+      jsonDoc.root,
+      appConfig.bowerDependencyProperties
+    );
 
-    return collector.collection
+    const packageCollection = parseDependencyNodes(
+      dependencyNodes,
+      appConfig,
+      bowerVersionParser
+    );
+
+    return generateCodeLenses(packageCollection, document);
   }
 
   resolveCodeLens(codeLens, token) {

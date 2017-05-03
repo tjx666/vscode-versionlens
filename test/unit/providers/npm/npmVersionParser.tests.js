@@ -15,72 +15,64 @@ describe('npmVersionParser(node, appConfig)', () => {
 
   it('returns the expected object for non ranged semver versions', () => {
     let nodeMock = {
-      value: {
-        location: 'bootstrap',
-        value: '1.2.3'
-      }
+      name: 'bootstrap',
+      value: '1.2.3'
     };
 
     let results = npmVersionParser(nodeMock, appConfigMock);
-    assert.equal(results[0].packageName, 'bootstrap', "Expected packageName");
-    assert.equal(results[0].packageVersion, '1.2.3', "Expected packageVersion");
-    assert.equal(results[0].meta.type, 'npm', "Expected meta.type");
-    assert.ok(!!results[0].isValidSemver, "Expected isValidSemver");
-    assert.ok(!results[0].hasRangeSymbol, "Expected hasRangeSymbol");
+    assert.equal(results[0].package.name, 'bootstrap', "Expected packageName");
+    assert.equal(results[0].package.version, '1.2.3', "Expected packageVersion");
+    assert.equal(results[0].package.meta.type, 'npm', "Expected meta.type");
+    assert.ok(!!results[0].package.isValidSemver, "Expected isValidSemver");
+    assert.ok(!results[0].package.hasRangeSymbol, "Expected hasRangeSymbol");
     assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
   });
 
   it('returns the expected object for ranged semver versions', () => {
     let nodeMock = {
-      value: {
-        location: 'bootstrap',
-        value: '~1.2.3'
-      }
+      name: 'bootstrap',
+      value: '~1.2.3'
     };
 
     let results = npmVersionParser(nodeMock, appConfigMock);
-    assert.equal(results[0].packageName, 'bootstrap', "Expected packageName");
-    assert.equal(results[0].packageVersion, '~1.2.3', "Expected packageVersion");
-    assert.equal(results[0].meta.type, 'npm', "Expected meta.type");
-    assert.ok(!!results[0].isValidSemver, "Expected isValidSemver");
-    assert.ok(results[0].hasRangeSymbol, "Expected hasRangeSymbol");
+    assert.equal(results[0].package.name, 'bootstrap', "Expected packageName");
+    assert.equal(results[0].package.version, '~1.2.3', "Expected packageVersion");
+    assert.equal(results[0].package.meta.type, 'npm', "Expected meta.type");
+    assert.ok(!!results[0].package.isValidSemver, "Expected isValidSemver");
+    assert.ok(results[0].package.hasRangeSymbol, "Expected hasRangeSymbol");
     assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
   });
 
   it('returns the expected object for file versions', () => {
     let nodeMock = {
-      value: {
-        location: 'another-project',
-        value: 'file:../another-project'
-      }
+      name: 'another-project',
+      value: 'file:../another-project'
     };
 
     let results = npmVersionParser(nodeMock, appConfigMock);
-    assert.equal(results[0].packageName, 'another-project', "Expected packageName");
-    assert.equal(results[0].packageVersion, 'file:../another-project', "Expected packageName");
-    assert.equal(results[0].meta.type, 'file', "Expected meta.type");
-    assert.equal(results[0].meta.remoteUrl, '../another-project', "Expected meta.remoteUrl");
+    assert.equal(results[0].package.name, 'another-project', "Expected packageName");
+    assert.equal(results[0].package.version, 'file:../another-project', "Expected packageName");
+    assert.equal(results[0].package.meta.type, 'file', "Expected meta.type");
+    assert.equal(results[0].package.meta.remoteUrl, '../another-project', "Expected meta.remoteUrl");
     assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
   });
 
   it('returns the expected object for github versions', () => {
     let nodeMock = {
-      value: {
-        location: 'bootstrap',
-        value: 'twbs/bootstrap#v10.2.3-alpha'
-      }
+      name: 'bootstrap',
+      value: 'twbs/bootstrap#v10.2.3-alpha'
     };
 
     let results = npmVersionParser(nodeMock, appConfigMock);
     results.forEach((result, index) => {
-      assert.equal(result.packageName, 'bootstrap', "Expected packageName");
-      assert.equal(result.packageVersion, 'twbs/bootstrap#v10.2.3-alpha', "Expected packageName");
-      assert.equal(result.meta.category, githubCompareOptions[index], "Expected meta.category");
-      assert.equal(result.meta.type, 'github', "Expected meta.type");
-      assert.equal(result.meta.remoteUrl, `https://github.com/${result.meta.userRepo}/commit/${result.meta.commitish}`, "Expected meta.remoteUrl");
-      assert.equal(result.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");
-      assert.equal(result.meta.commitish, 'v10.2.3-alpha', "Expected meta.commitish");
-      assert.ok(!!result.customGenerateVersion, "Expected meta.customGenerateVersion");
+      assert.equal(result.package.name, 'bootstrap', "Expected packageName");
+      assert.equal(result.package.version, 'twbs/bootstrap#v10.2.3-alpha', "Expected packageName");
+      assert.equal(result.package.meta.category, githubCompareOptions[index], "Expected meta.category");
+      assert.equal(result.package.meta.type, 'github', "Expected meta.type");
+      assert.equal(result.package.meta.remoteUrl, `https://github.com/${result.package.meta.userRepo}/commit/${result.package.meta.commitish}`, "Expected meta.remoteUrl");
+      assert.equal(result.package.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");
+      assert.equal(result.package.meta.commitish, 'v10.2.3-alpha', "Expected meta.commitish");
+      assert.ok(!!result.package.customGenerateVersion, "Expected package.customGenerateVersion");
     });
 
   });

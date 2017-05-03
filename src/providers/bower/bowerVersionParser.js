@@ -6,32 +6,36 @@ import * as semver from 'semver';
 import { gitHubDependencyRegex, hasRangeSymbols } from '../../common/utils';
 
 export function bowerVersionParser(node, appConfig) {
-  const { location: packageName, value: packageVersion } = node.value;
+  const { name, value: version } = node;
   let result;
 
   // check if we have a github version
-  if (result = parseGithubVersionLink(packageName, packageVersion, appConfig.githubCompareOptions))
+  if (result = parseGithubVersionLink(node, name, version, appConfig.githubCompareOptions))
     return result;
 
   // check if its a valid semver, if not could be a tag
-  const isValidSemver = semver.validRange(packageVersion);
+  const isValidSemver = semver.validRange(version);
 
   // check if the version has a range symbol
-  const hasRangeSymbol = hasRangeSymbols(packageVersion);
+  const hasRangeSymbol = hasRangeSymbols(version);
 
   return [{
-    packageName,
-    packageVersion,
-    meta: {
-      type: 'bower'
-    },
-    isValidSemver,
-    hasRangeSymbol,
-    customGenerateVersion: null
+    node,
+    package: {
+      name,
+      version,
+      meta: {
+        tag: 'latest',
+        type: 'bower'
+      },
+      isValidSemver,
+      hasRangeSymbol,
+      customGenerateVersion: null
+    }
   }];
 }
 
-export function parseGithubVersionLink(packageName, packageVersion, githubCompareOptions) {
+export function parseGithubVersionLink(node, packageName, packageVersion, githubCompareOptions) {
   const gitHubRegExpResult = gitHubDependencyRegex.exec(packageVersion);
   if (gitHubRegExpResult) {
     const proto = "https";
@@ -44,16 +48,18 @@ export function parseGithubVersionLink(packageName, packageVersion, githubCompar
 
     return githubCompareOptions.map(category => {
       const parseResult = {
-        packageName,
-        packageVersion,
-        meta: {
-          category,
-          type: "github",
-          remoteUrl,
-          userRepo,
-          commitish
-        },
-        customGenerateVersion: (packageInfo, newVersion) => `${packageInfo.meta.userRepo}#${newVersion}`
+        node, package: {
+          packageName,
+          packageVersion,
+          meta: {
+            category,
+            type: "github",
+            remoteUrl,
+            userRepo,
+            commitish
+          },
+          customGenerateVersion: (packageInfo, newVersion) => `${packageInfo.meta.userRepo}#${newVersion}`
+        }
       };
       return parseResult;
     });

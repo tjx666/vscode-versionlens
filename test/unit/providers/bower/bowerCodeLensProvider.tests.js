@@ -92,7 +92,8 @@ describe("BowerCodeLensProvider", () => {
     it("returns empty array when the package has no dependencies", done => {
       let fixture = fixtureMap.read('package-no-deps.json');
       let testDocument = {
-        getText: range => fixture.content
+        getText: range => fixture.content,
+        fileName: 'filename.json'
       };
 
       let codeLenses = testProvider.provideCodeLenses(testDocument, null);
@@ -118,12 +119,11 @@ describe("BowerCodeLensProvider", () => {
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
-          assert.equal(collection.length, 5, "codeLens should be an array containing 5 items inc <update all>.");
+          assert.equal(collection.length, 4, "codeLens should be an array containing 4 items.");
 
-          collection.slice(1)
-            .forEach((entry, index) => {
-              assert.equal(entry.package.name, `dep${index + 1}`, `dependency name should be dep${index + 1}.`);
-            });
+          collection.forEach((entry, index) => {
+            assert.equal(entry.package.name, `dep${index + 1}`, `dependency name should be dep${index + 1}.`);
+          });
 
           done();
         })
