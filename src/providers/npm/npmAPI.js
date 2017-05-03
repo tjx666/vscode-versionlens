@@ -55,8 +55,17 @@ export function npmViewDistTags(packageName) {
             .map(key => ({ name: key, version: distTags[key] }));
         } else {
           tags = [
-            { "latest": "latest" }
+            { name: key, version: "latest" }
           ];
+        }
+
+        // fixes a case where npm doesn't publish latest as the first dist-tags
+        const latestIndex = tags.findIndex(item => item.name === 'latest');
+        if (latestIndex > 0) {
+          // extract the entry
+          const latestEntry = tags.splice(latestIndex, 1);
+          // re insert the entry at the start
+          tags.splice(0, 0, latestEntry[0]);
         }
 
         resolve(tags);
