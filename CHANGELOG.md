@@ -1,4 +1,22 @@
-- 0.13
+- 0.14.0
+  - Added ability to view versions associated with dist tags for npm and jspm.
+
+    Example:
+
+    ![image](https://cloud.githubusercontent.com/assets/1727302/25671395/c913e674-3027-11e7-910e-51a17905215c.png)
+
+    - To enable set `versionlens.npm.showDistTags: true`
+    - To filter out packages that have many unwanted dist tags you can set a preferred list using `versionlens.npm.distTagFilter`.
+
+      Example: `versionlens.npm.distTagFilter: ['alpha', 'beta', 'legacy', 'next']` will only show and order the dist tags as 'alpha', 'beta', 'legacy' and 'next'
+
+  - Renamed 'statisfies' to 'Matches'
+  - Fixed the ordering of github versions to always be ordered as releases, tags then commits
+  - Removed ability to update all packages. 
+    Sometimes this feature never worked because you first had to scroll all the packages in to view.
+    Will work on a better method for this feature in the future.
+
+- 0.13.0
   - Added dotnet core csproj file support. Thanks to [@eamodio](https://github.com/eamodio)
 
 - 0.12.2
