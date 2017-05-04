@@ -15,9 +15,9 @@ class AppConfiguration {
     return config.get("showVersionLensesAtStartup", true);
   }
 
-  get showDistTagsAtStartup() {
+  get showTaggedVersionsAtStartup() {
     const config = workspace.getConfiguration('versionlens');
-    return config.get("showDistTagsAtStartup", false);
+    return config.get("showTaggedVersionsAtStartup", false);
   }
 
   get versionPrefix() {

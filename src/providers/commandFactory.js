@@ -57,20 +57,20 @@ export function makeVersionCommand(localVersion, serverVersion, codeLens) {
 export function makeNewVersionCommand(newVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(newVersion);
   return codeLens.setCommand(
-    `${codeLens.getDistTagPrefix()}${appSettings.updateIndicator} ${newVersion}`,
+    `${codeLens.getTaggedVersionPrefix()}${appSettings.updateIndicator} ${newVersion}`,
     `_${appSettings.extensionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
 }
 
 export function makeSatisfiedCommand(serverVersion, codeLens) {
-  return codeLens.setCommand(`${codeLens.getDistTagPrefix()}Matches v${serverVersion}`);
+  return codeLens.setCommand(`${codeLens.getTaggedVersionPrefix()}Matches v${serverVersion}`);
 }
 
 export function makeSatisfiedWithNewerCommand(serverVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(serverVersion);
   return codeLens.setCommand(
-    `${codeLens.getDistTagPrefix()}Matches ${appSettings.updateIndicator} v${serverVersion}`,
+    `${codeLens.getTaggedVersionPrefix()}Matches ${appSettings.updateIndicator} v${serverVersion}`,
     `_${appSettings.extensionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
@@ -86,7 +86,7 @@ export function makeTagCommand(tag, codeLens) {
 
 export function makeUpdateDependenciesCommand(propertyName, codeLens, codeLenCollection) {
   return codeLens.setCommand(
-    `${codeLens.getDistTagPrefix()}${appSettings.updateIndicator} Update ${propertyName}`,
+    `${codeLens.getTaggedVersionPrefix()}${appSettings.updateIndicator} Update ${propertyName}`,
     `_${appSettings.extensionName}.updateDependenciesCommand`,
     [codeLens, codeLenCollection]
   );
@@ -145,7 +145,7 @@ export function makeGithubCommand(codeLens) {
 }
 
 export function makeDistTagCommand(codeLens) {
-  const distTagVersion = codeLens.getDistTagVersion();
+  const distTagVersion = codeLens.getTaggedVersion();
   const version = codeLens.package.version;
 
   // check for any leading semver symbols in the version
@@ -155,10 +155,10 @@ export function makeDistTagCommand(codeLens) {
     version = version.slice(1);
 
   if (version === distTagVersion)
-    return makeTagCommand(`${codeLens.getDistTagPrefix()} ${distTagVersion}`, codeLens);
+    return makeTagCommand(`${codeLens.getTaggedVersionPrefix()} ${distTagVersion}`, codeLens);
 
   return makeNewVersionCommand(
-    codeLens.getDistTagVersion(),
+    codeLens.getTaggedVersion(),
     codeLens
   );
 }

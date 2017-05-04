@@ -13,7 +13,7 @@ Provides editor toolbar icons for
 - Showing or hiding versions (Shown by default but can be changed with `showVersionLensesAtStartup` in your settings)
 
   ![Screenshot](images/toggle-show-preview.gif)
-- Showing or hiding tagged versions. i.e. alpha or beta (Hidden by default but can be changed with `showDistTagsAtStartup` in your settings)
+- Showing or hiding tagged versions. i.e. alpha or beta (Hidden by default but can be changed with `showTaggedVersionsAtStartup` in your settings)
 
   ![Screenhot](images/toggle-dist-tags-preview.gif)
 

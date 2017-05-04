@@ -59,7 +59,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "versionlens.showDistTags",
+        "command": "versionlens.showTaggedVersions",
         "title": "Show tagged dependency versions",
         "category": "VersionLens",
         "icon": {
@@ -68,7 +68,7 @@
         }
       },
       {
-        "command": "versionlens.hideDistTags",
+        "command": "versionlens.hideTaggedVersions",
         "title": "Hide tagged dependency versions",
         "category": "VersionLens",
         "icon": {
@@ -98,13 +98,13 @@
     "menus": {
       "editor/title": [
         {
-          "command": "versionlens.showDistTags",
-          "when": "versionlens.showDistTags == false && versionlens.show && versionlens.isActive",
+          "command": "versionlens.showTaggedVersions",
+          "when": "versionlens.showTaggedVersions == false && versionlens.show && versionlens.isActive",
           "group": "navigation@2"
         },
         {
-          "command": "versionlens.hideDistTags",
-          "when": "versionlens.showDistTags && versionlens.show && versionlens.isActive",
+          "command": "versionlens.hideTaggedVersions",
+          "when": "versionlens.showTaggedVersions && versionlens.show && versionlens.isActive",
           "group": "navigation@2"
         },
         {
@@ -132,7 +132,7 @@
           "default": true,
           "description": "Show dependency versions by default. You can use the editor toolbar to show/hide versions at any time."
         },
-        "versionlens.showDistTagsAtStartup": {
+        "versionlens.showTaggedVersionsAtStartup": {
           "type": "boolean",
           "default": false,
           "description": "Show dist tags by default when vscode starts. You can use the editor toolbar to show/hide dist tags at any time."

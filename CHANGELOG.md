@@ -8,11 +8,11 @@
 
     - You can show or hide tagged versions.
     
-      `versionlens.showDistTagsAtStartup` defaults to `false`
+      `versionlens.showTaggedVersionsAtStartup` defaults to `false`
 
       ![Image](https://github.com/vscode-contrib/vscode-versionlens/raw/master/images/toggle-dist-tags-preview.gif)
 
-    - `versionlens.npm.showDistTags` has been dropped in favour of this new change
+    - `versionlens.npm.showTaggedVersions` has been dropped in favour of this new change
 
 - 0.14.1
   - Fixed a case where npm view doesn't return latest tag as the first entry.
@@ -24,7 +24,7 @@
 
     ![image](https://cloud.githubusercontent.com/assets/1727302/25671395/c913e674-3027-11e7-910e-51a17905215c.png)
 
-    - To enable set `versionlens.npm.showDistTags: true`
+    - To enable set `versionlens.npm.showTaggedVersions: true`
     - To filter out packages that have many unwanted dist tags you can set a preferred list using `versionlens.npm.distTagFilter`.
 
       Example: `versionlens.npm.distTagFilter: ['alpha', 'beta', 'legacy', 'next']` will only show and order the dist tags as 'alpha', 'beta', 'legacy' and 'next'

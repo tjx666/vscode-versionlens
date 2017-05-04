@@ -39,13 +39,13 @@ export function updateDependenciesCommand(rootCodeLens, codeLenCollection) {
   workspace.applyEdit(edit);
 }
 
-export function showDistTagsCommand(file) {
-  appSettings.showDistTags = true;
+export function showTaggedVersionsCommand(file) {
+  appSettings.showTaggedVersions = true;
   utils.refreshCodeLens();
 }
 
-export function hideDistTagsCommand(file) {
-  appSettings.showDistTags = false;
+export function hideTaggedVersionsCommand(file) {
+  appSettings.showTaggedVersions = false;
   utils.refreshCodeLens();
 }
 

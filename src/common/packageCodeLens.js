@@ -22,18 +22,18 @@ export class PackageCodeLens extends CodeLens {
     return this.package.customGenerateVersion.call(this, this.package, newVersion);
   }
 
-  getDistTagPrefix() {
-    if (this.package && this.package.meta && this.package.meta.isDistTag)
+  getTaggedVersionPrefix() {
+    if (this.package && this.package.meta && this.package.meta.isTaggedVersion)
       return this.package.meta.distTag.name + ': ';
 
     return '';
   }
 
-  isDistTag() {
-    return this.package && this.package.meta && this.package.meta.isDistTag;
+  isTaggedVersion() {
+    return this.package && this.package.meta && this.package.meta.isTaggedVersion;
   }
 
-  getDistTagVersion() {
+  getTaggedVersion() {
     return this.package.meta.distTag.version;
   }
 

@@ -44,7 +44,7 @@ export function parseNpmRegistryVersion(node, name, version, appConfig, customGe
 
   return npmViewDistTags(name)
     .then(distTags => {
-      if (appSettings.showDistTags === false) {
+      if (appSettings.showTaggedVersions === false) {
         distTags = [
           distTags[0]
         ];
@@ -57,7 +57,7 @@ export function parseNpmRegistryVersion(node, name, version, appConfig, customGe
             hasRangeSymbol,
             isValidSemver,
             distTag,
-            isDistTag: (distTag.name != 'latest')
+            isTaggedVersion: (distTag.name != 'latest')
           };
 
           return {
@@ -104,7 +104,7 @@ export function parseGithubVersion(node, name, version, githubCompareOptions) {
     const commitishSlug = commitish ? `/commit/${commitish}` : '';
     const remoteUrl = `${proto}://github.com/${user}/${repo}${commitishSlug}`;
 
-    if (appSettings.showDistTags === false)
+    if (appSettings.showTaggedVersions === false)
       githubCompareOptions = [githubCompareOptions[0]];
 
     return githubCompareOptions.map(category => {
@@ -151,8 +151,8 @@ function filterDistTags(distTags, appConfig) {
     return distTags;
 
   // if there is more than one dist tag 
-  // and npmShowDistTags then return the first distTag (i.e. latest tag)
-  if (distTags.length > 1 && appConfig.npmShowDistTags === false)
+  // and npmshowTaggedVersions then return the first distTag (i.e. latest tag)
+  if (distTags.length > 1 && appConfig.npmshowTaggedVersions === false)
     return [distTags[0]];
 
   // just show all distTags if no filters found

@@ -47,7 +47,7 @@ export function parseGithubVersionLink(node, packageName, packageVersion, github
     const commitishSlug = commitish ? `/commit/${commitish}` : '';
     const remoteUrl = `${proto}://github.com/${user}/${repo}${commitishSlug}`;
 
-    if (appSettings.showDistTags === false)
+    if (appSettings.showTaggedVersions === false)
       githubCompareOptions = [githubCompareOptions[0]];
 
     return githubCompareOptions.map(category => {

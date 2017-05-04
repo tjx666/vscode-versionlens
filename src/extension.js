@@ -45,12 +45,12 @@ export function activate(context) {
       VersionLensCommands.linkCommand
     ),
     commands.registerCommand(
-      `${appSettings.extensionName}.showDistTags`,
-      VersionLensCommands.showDistTagsCommand
+      `${appSettings.extensionName}.showTaggedVersions`,
+      VersionLensCommands.showTaggedVersionsCommand
     ),
     commands.registerCommand(
-      `${appSettings.extensionName}.hideDistTags`,
-      VersionLensCommands.hideDistTagsCommand
+      `${appSettings.extensionName}.hideTaggedVersions`,
+      VersionLensCommands.hideTaggedVersionsCommand
     ),
     commands.registerCommand(
       `${appSettings.extensionName}.showVersionLenses`,

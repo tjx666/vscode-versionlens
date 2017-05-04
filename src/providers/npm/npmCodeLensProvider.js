@@ -78,7 +78,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
           );
 
         // check if this is a dist tag other than 'latest'
-        if (codeLens.isDistTag()) {
+        if (codeLens.isTaggedVersion()) {
           return CommandFactory.makeDistTagCommand(codeLens);
         }
 

@@ -2,7 +2,7 @@ import { commands } from 'vscode';
 import { appConfig } from './appConfiguration';
 
 let _isActive = false;
-let _showDistTags = false;
+let _showTaggedVersions = false;
 let _showVersionLenses = false;
 
 const config = {
@@ -22,15 +22,15 @@ const config = {
     );
   },
 
-  get showDistTags() {
-    return _showDistTags;
+  get showTaggedVersions() {
+    return _showTaggedVersions;
   },
-  set showDistTags(newValue) {
-    _showDistTags = newValue;
+  set showTaggedVersions(newValue) {
+    _showTaggedVersions = newValue;
     commands.executeCommand(
       'setContext',
-      `${this.extensionName}.showDistTags`,
-      _showDistTags
+      `${this.extensionName}.showTaggedVersions`,
+      _showTaggedVersions
     );
   },
 
@@ -49,7 +49,7 @@ const config = {
 };
 
 // ensure the context is set to the defaults
-config.showDistTags = appConfig.showDistTagsAtStartup === true;
+config.showTaggedVersions = appConfig.showTaggedVersionsAtStartup === true;
 config.showVersionLenses = appConfig.showVersionLensesAtStartup === true;
 
 export default config;
