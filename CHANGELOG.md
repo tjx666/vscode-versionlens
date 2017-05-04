@@ -1,3 +1,19 @@
+- 0.15.0
+  - Added two new icon tools to the the editor toolbar
+    - You can show or hide versions. 
+    
+      `versionlens.showVersionLensesAtStartup` defaults to `true`
+
+      ![Image](https://github.com/vscode-contrib/vscode-versionlens/raw/master/images/toggle-show-preview.gif)
+
+    - You can show or hide tagged versions.
+    
+      `versionlens.showDistTagsAtStartup` defaults to `false`
+
+      ![Image](https://github.com/vscode-contrib/vscode-versionlens/raw/master/images/toggle-dist-tags-preview.gif)
+
+    - `versionlens.npm.showDistTags` has been dropped in favour of this new change
+
 - 0.14.1
   - Fixed a case where npm view doesn't return latest tag as the first entry.
 
