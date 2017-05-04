@@ -58,7 +58,7 @@ export function makeNewVersionCommand(newVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(newVersion);
   return codeLens.setCommand(
     `${codeLens.getDistTagPrefix()}${appSettings.updateIndicator} ${newVersion}`,
-    `_${appSettings.extentionName}.updateDependencyCommand`,
+    `_${appSettings.extensionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
 }
@@ -71,7 +71,7 @@ export function makeSatisfiedWithNewerCommand(serverVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(serverVersion);
   return codeLens.setCommand(
     `${codeLens.getDistTagPrefix()}Matches ${appSettings.updateIndicator} v${serverVersion}`,
-    `_${appSettings.extentionName}.updateDependencyCommand`,
+    `_${appSettings.extensionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
 }
@@ -87,7 +87,7 @@ export function makeTagCommand(tag, codeLens) {
 export function makeUpdateDependenciesCommand(propertyName, codeLens, codeLenCollection) {
   return codeLens.setCommand(
     `${codeLens.getDistTagPrefix()}${appSettings.updateIndicator} Update ${propertyName}`,
-    `_${appSettings.extentionName}.updateDependenciesCommand`,
+    `_${appSettings.extensionName}.updateDependenciesCommand`,
     [codeLens, codeLenCollection]
   );
 }
@@ -95,7 +95,7 @@ export function makeUpdateDependenciesCommand(propertyName, codeLens, codeLenCol
 export function makeLinkCommand(codeLens) {
   const isFile = codeLens.package.meta.type === 'file';
   const title;
-  const cmd = `_${appSettings.extentionName}.linkCommand`;
+  const cmd = `_${appSettings.extensionName}.linkCommand`;
 
   if (isFile) {
     const filePath = path.resolve(path.dirname(codeLens.documentUrl.fsPath), codeLens.package.meta.remoteUrl);
@@ -126,7 +126,7 @@ export function makeGithubCommand(codeLens) {
       const newVersion = codeLens.generateNewVersion(entry.version);
       return codeLens.setCommand(
         `${meta.category}: ${appSettings.updateIndicator} ${entry.version}`,
-        `_${appSettings.extentionName}.updateDependencyCommand`,
+        `_${appSettings.extensionName}.updateDependencyCommand`,
         [codeLens, `"${newVersion}"`]
       );
     })

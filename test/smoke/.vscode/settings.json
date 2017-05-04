@@ -1,6 +1,7 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-  "versionlens.showDistTagsAtStartup": true,
+  "versionlens.showVersionLensesAtStartup": true,
+  "versionlens.showDistTagsAtStartup": false,
   "versionlens.npm.dependencyProperties": [
     "dependencies",
     "devDependencies",

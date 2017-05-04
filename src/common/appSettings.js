@@ -6,7 +6,7 @@ let _showDistTags = false;
 let _showVersionLenses = false;
 
 const config = {
-  extentionName: "versionlens",
+  extensionName: "versionlens",
   updateIndicator: '⬆',
   openNewWindowIndicator: '⧉',
 
@@ -17,7 +17,7 @@ const config = {
     _isActive = newValue;
     commands.executeCommand(
       'setContext',
-      `${this.extentionName}.isActive`,
+      `${this.extensionName}.isActive`,
       _isActive
     );
   },
@@ -29,7 +29,7 @@ const config = {
     _showDistTags = newValue;
     commands.executeCommand(
       'setContext',
-      `${this.extentionName}.showDistTags`,
+      `${this.extensionName}.showDistTags`,
       _showDistTags
     );
   },
@@ -41,7 +41,7 @@ const config = {
     _showVersionLenses = newValue;
     commands.executeCommand(
       'setContext',
-      `${this.extentionName}.show`,
+      `${this.extensionName}.show`,
       _showVersionLenses
     );
   }

@@ -33,31 +33,31 @@ export function activate(context) {
 
   disposables.push(
     commands.registerCommand(
-      `_${appSettings.extentionName}.updateDependencyCommand`,
+      `_${appSettings.extensionName}.updateDependencyCommand`,
       VersionLensCommands.updateDependencyCommand
     ),
     commands.registerCommand(
-      `_${appSettings.extentionName}.updateDependenciesCommand`,
+      `_${appSettings.extensionName}.updateDependenciesCommand`,
       VersionLensCommands.updateDependenciesCommand
     ),
     commands.registerCommand(
-      `_${appSettings.extentionName}.linkCommand`,
+      `_${appSettings.extensionName}.linkCommand`,
       VersionLensCommands.linkCommand
     ),
     commands.registerCommand(
-      `${appSettings.extentionName}.showDistTags`,
+      `${appSettings.extensionName}.showDistTags`,
       VersionLensCommands.showDistTagsCommand
     ),
     commands.registerCommand(
-      `${appSettings.extentionName}.hideDistTags`,
+      `${appSettings.extensionName}.hideDistTags`,
       VersionLensCommands.hideDistTagsCommand
     ),
     commands.registerCommand(
-      `${appSettings.extentionName}.showVersionLenses`,
+      `${appSettings.extensionName}.showVersionLenses`,
       VersionLensCommands.showVersionLenses
     ),
     commands.registerCommand(
-      `${appSettings.extentionName}.hideVersionLenses`,
+      `${appSettings.extensionName}.hideVersionLenses`,
       VersionLensCommands.hideVersionLenses
     )
   );

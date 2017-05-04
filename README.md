@@ -29,7 +29,7 @@ Supports
 
 ## Install
 
-[How to install vscode extentions](https://code.visualstudio.com/docs/editor/extension-gallery)
+[How to install vscode extensions](https://code.visualstudio.com/docs/editor/extension-gallery)
 
 ### Contributors
 
