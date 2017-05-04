@@ -60,7 +60,7 @@
     "commands": [
       {
         "command": "versionlens.showDistTags",
-        "title": "Show dependency tagged versions",
+        "title": "Show tagged dependency versions",
         "category": "VersionLens",
         "icon": {
           "dark": "images/icons/tag-dark.svg",
@@ -69,7 +69,7 @@
       },
       {
         "command": "versionlens.hideDistTags",
-        "title": "Hide dependency tagged versions",
+        "title": "Hide tagged dependency versions",
         "category": "VersionLens",
         "icon": {
           "dark": "images/icons/tag-active.svg",
