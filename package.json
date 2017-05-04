@@ -200,25 +200,23 @@
           ],
           "description": "Defines which properties in dub.json should be parsed by this extension"
         },
-        "versionlens.github.compareOptions": {
+        "versionlens.github.taggedCommits": {
           "type": "array",
           "items": {
             "type": "string",
             "enum": [
               "Release",
-              "Tag",
-              "Commit"
+              "Tag"
             ]
           },
           "uniqueItems": true,
           "minItems": 1,
-          "maxItems": 3,
+          "maxItems": 2,
           "default": [
             "Release",
-            "Tag",
-            "Commit"
+            "Tag"
           ],
-          "description": "Defines what commit types are used when comparing github packages. *A minumum of one commit type must be specified.*"
+          "description": "Defines what tags to include when comparing github package versions."
         },
         "versionlens.github.accessToken": {
           "type": "string",

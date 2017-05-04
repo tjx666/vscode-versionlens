@@ -23,7 +23,7 @@ export function npmVersionParser(node, appConfig) {
   // TODO: implement raw git url support too
 
   // check if we have a github version
-  if (result = parseGithubVersion(node, name, version, appConfig.githubCompareOptions))
+  if (result = parseGithubVersion(node, name, version, appConfig.githubTaggedCommits))
     return result;
 
   // must be a registry version
@@ -93,7 +93,7 @@ export function parseFileVersion(node, name, version) {
   }
 }
 
-export function parseGithubVersion(node, name, version, githubCompareOptions) {
+export function parseGithubVersion(node, name, version, githubTaggedVersions) {
   const gitHubRegExpResult = gitHubDependencyRegex.exec(version);
   if (gitHubRegExpResult) {
     const proto = "https";
@@ -104,10 +104,12 @@ export function parseGithubVersion(node, name, version, githubCompareOptions) {
     const commitishSlug = commitish ? `/commit/${commitish}` : '';
     const remoteUrl = `${proto}://github.com/${user}/${repo}${commitishSlug}`;
 
-    if (appSettings.showTaggedVersions === false)
-      githubCompareOptions = [githubCompareOptions[0]];
+    githubTaggedVersions.splice(0, 0, 'Commit');
 
-    return githubCompareOptions.map(category => {
+    if (appSettings.showTaggedVersions === false)
+      githubTaggedVersions = [githubTaggedVersions[0]];
+
+    return githubTaggedVersions.map(category => {
       const packageInfo = {
         category,
         type: "github",

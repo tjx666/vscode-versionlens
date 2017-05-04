@@ -6,7 +6,7 @@ import * as proxyquire from 'proxyquire';
 import * as assert from 'assert';
 
 describe('jspmVersionParser(node, appConfig)', () => {
-  const githubCompareOptions
+  const githubTaggedCommits
   const appConfigMock
 
   const npmAPIMock = {
@@ -24,10 +24,10 @@ describe('jspmVersionParser(node, appConfig)', () => {
   });
 
   beforeEach(() => {
-    githubCompareOptions = ['Release', 'Tag', 'Commit'];
+    githubTaggedCommits = ['Release', 'Tag'];
     appConfigMock = {
       get githubCompareOptions() {
-        return githubCompareOptions;
+        return githubTaggedCommits;
       }
     };
   });
@@ -64,7 +64,7 @@ describe('jspmVersionParser(node, appConfig)', () => {
         results.forEach((result, index) => {
           assert.equal(result.package.name, 'twbs/bootstrap', "Expected packageName");
           assert.equal(result.package.version, 'twbs/bootstrap#4.0.0-alpha.4', "Expected packageName");
-          assert.equal(result.package.meta.category, githubCompareOptions[index], "Expected meta.category");
+          assert.equal(result.package.meta.category, githubTaggedCommits[index], "Expected meta.category");
           assert.equal(result.package.meta.type, 'github', "Expected meta.type");
           assert.equal(result.package.meta.remoteUrl, `https://github.com/${result.package.meta.userRepo}/commit/${result.package.meta.commitish}`, "Expected meta.remoteUrl");
           assert.equal(result.package.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");

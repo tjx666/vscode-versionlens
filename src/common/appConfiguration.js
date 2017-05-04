@@ -50,9 +50,9 @@ class AppConfiguration {
     return config.get("dub.dependencyProperties", dubDefaultDependencyProperties);
   }
 
-  get githubCompareOptions() {
+  get githubTaggedCommits() {
     const config = workspace.getConfiguration('versionlens');
-    return config.get('github.compareOptions', ['Release', 'Tag', 'Commit']);
+    return config.get('github.taggedCommits', ['Release', 'Tag']);
   }
 
   get githubAccessToken() {

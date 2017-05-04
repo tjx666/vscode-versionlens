@@ -6,10 +6,10 @@ import * as assert from 'assert';
 import { bowerVersionParser } from '../../../../src/providers/bower/bowerVersionParser';
 
 describe('bowerVersionParser(node, appConfig)', () => {
-  const githubCompareOptions = ['Release', 'Tag', 'Commit'];
+  const githubTaggedCommits = ['Release', 'Tag'];
   const appConfigMock = {
-    get githubCompareOptions() {
-      return githubCompareOptions;
+    get githubTaggedCommits() {
+      return githubTaggedCommits;
     }
   };
 
@@ -37,7 +37,7 @@ describe('bowerVersionParser(node, appConfig)', () => {
     results.forEach((result, index) => {
       assert.equal(result.package.packageName, 'masonry', "Expected packageName");
       assert.equal(result.package.packageVersion, 'desandro/masonry#^4.1.1', "Expected packageName");
-      assert.equal(result.package.meta.category, githubCompareOptions[index], "Expected meta.category");
+      assert.equal(result.package.meta.category, githubTaggedCommits[index], "Expected meta.category");
       assert.equal(result.package.meta.type, 'github', "Expected meta.type");
       assert.equal(result.package.meta.remoteUrl, `https://github.com/${result.package.meta.userRepo}/commit/${result.package.meta.commitish}`, "Expected meta.remoteUrl");
       assert.equal(result.package.meta.userRepo, 'desandro/masonry', "Expected meta.userRepo");

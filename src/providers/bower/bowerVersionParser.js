@@ -11,7 +11,7 @@ export function bowerVersionParser(node, appConfig) {
   let result;
 
   // check if we have a github version
-  if (result = parseGithubVersionLink(node, name, version, appConfig.githubCompareOptions))
+  if (result = parseGithubVersion(node, name, version, appConfig.githubTaggedCommits))
     return result;
 
   // check if its a valid semver, if not could be a tag
@@ -36,7 +36,7 @@ export function bowerVersionParser(node, appConfig) {
   }];
 }
 
-export function parseGithubVersionLink(node, packageName, packageVersion, githubCompareOptions) {
+export function parseGithubVersion(node, packageName, packageVersion, githubTaggedVersions) {
   const gitHubRegExpResult = gitHubDependencyRegex.exec(packageVersion);
   if (gitHubRegExpResult) {
     const proto = "https";
@@ -47,10 +47,12 @@ export function parseGithubVersionLink(node, packageName, packageVersion, github
     const commitishSlug = commitish ? `/commit/${commitish}` : '';
     const remoteUrl = `${proto}://github.com/${user}/${repo}${commitishSlug}`;
 
-    if (appSettings.showTaggedVersions === false)
-      githubCompareOptions = [githubCompareOptions[0]];
+    githubTaggedVersions.splice(0, 0, 'Commit');
 
-    return githubCompareOptions.map(category => {
+    if (appSettings.showTaggedVersions === false)
+      githubTaggedVersions = [githubTaggedVersions[0]];
+
+    return githubTaggedVersions.map(category => {
       const parseResult = {
         node, package: {
           packageName,

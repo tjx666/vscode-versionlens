@@ -16,10 +16,10 @@ describe('npmVersionParser(node, appConfig)', () => {
     './npmAPI': npmAPIMock
   });
 
-  const githubCompareOptions = ['Release', 'Tag', 'Commit'];
+  const githubTaggedCommits = ['Release', 'Tag'];
   const appConfigMock = {
     get githubCompareOptions() {
-      return githubCompareOptions;
+      return githubTaggedCommits;
     }
   };
 
@@ -94,7 +94,7 @@ describe('npmVersionParser(node, appConfig)', () => {
         results.forEach((result, index) => {
           assert.equal(result.package.name, 'bootstrap', "Expected packageName");
           assert.equal(result.package.version, 'twbs/bootstrap#v10.2.3-alpha', "Expected packageName");
-          assert.equal(result.package.meta.category, githubCompareOptions[index], "Expected meta.category");
+          assert.equal(result.package.meta.category, githubTaggedCommits[index], "Expected meta.category");
           assert.equal(result.package.meta.type, 'github', "Expected meta.type");
           assert.equal(result.package.meta.remoteUrl, `https://github.com/${result.package.meta.userRepo}/commit/${result.package.meta.commitish}`, "Expected meta.remoteUrl");
           assert.equal(result.package.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");
