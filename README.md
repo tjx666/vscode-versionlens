@@ -10,10 +10,12 @@ Shows package version information for npm, jspm, bower, dub and dotnet core in t
 
 Provides editor toolbar icons for 
 
-  - showing and hiding versions, and 
-  - showing and hiding tagged versions. i.e. alpha or beta
+- Show or hide versions (Shown by default but can be changed with `showVersionLensesAtStartup` in your settings)
 
-![Screenshot](images/toggle-show-preview.gif)
+  ![Screenshot](images/toggle-show-preview.gif)
+- Show or hide tagged versions. i.e. alpha or beta (Hidden by default but can be changed with `showDistTagsAtStartup` in your settings)
+
+  ![Screenhot](images/toggle-dist-tags-preview.gif)
 
 **Note:** Replaces the version text but does not automatically install packages when clicking a code lens link. 
 
