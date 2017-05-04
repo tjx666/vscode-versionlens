@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import * as semver from 'semver';
 import { gitHubDependencyRegex, hasRangeSymbols } from '../../common/utils';
+import appSettings from '../../common/appSettings';
 
 export function bowerVersionParser(node, appConfig) {
   const { name, value: version } = node;
@@ -25,11 +26,11 @@ export function bowerVersionParser(node, appConfig) {
       name,
       version,
       meta: {
-        tag: 'latest',
-        type: 'bower'
+        distTag: 'latest',
+        type: 'bower',
+        isValidSemver,
+        hasRangeSymbol
       },
-      isValidSemver,
-      hasRangeSymbol,
       customGenerateVersion: null
     }
   }];
@@ -45,6 +46,9 @@ export function parseGithubVersionLink(node, packageName, packageVersion, github
     const commitish = gitHubRegExpResult[4] ? gitHubRegExpResult[4].substring(1) : '';
     const commitishSlug = commitish ? `/commit/${commitish}` : '';
     const remoteUrl = `${proto}://github.com/${user}/${repo}${commitishSlug}`;
+
+    if (appSettings.showDistTags === false)
+      githubCompareOptions = [githubCompareOptions[0]];
 
     return githubCompareOptions.map(category => {
       const parseResult = {

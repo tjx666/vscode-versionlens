@@ -5,6 +5,8 @@
 import { workspace, TextEdit, WorkspaceEdit } from 'vscode';
 import * as path from 'path';
 import * as opener from 'opener';
+import appSettings from './common/appSettings';
+import * as utils from './common/utils';
 
 export function updateDependencyCommand(codeLens, packageVersion) {
   const edits = [TextEdit.replace(codeLens.replaceRange, packageVersion)];
@@ -35,4 +37,14 @@ export function updateDependenciesCommand(rootCodeLens, codeLenCollection) {
   const edit = new WorkspaceEdit();
   edit.set(rootCodeLens.documentUrl, edits);
   workspace.applyEdit(edit);
+}
+
+export function showDistTagsCommand(file) {
+  appSettings.showDistTags = true;
+  utils.refreshCodeLens();
+}
+
+export function hideDistTagsCommand(file) {
+  appSettings.showDistTags = false;
+  utils.refreshCodeLens();
 }

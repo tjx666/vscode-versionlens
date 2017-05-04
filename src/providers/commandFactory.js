@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as semver from 'semver';
 import { stripSymbolFromVersionRegex, semverLeadingChars } from '../common/utils';
 import { githubRequest } from '../common/githubRequest';
-import { appGlobals } from '../common/appGlobals';
+import appSettings from '../common/appSettings';
 
 export function makeErrorCommand(errorMsg, codeLens) {
   return codeLens.setCommand(`${errorMsg}`);
@@ -57,8 +57,8 @@ export function makeVersionCommand(localVersion, serverVersion, codeLens) {
 export function makeNewVersionCommand(newVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(newVersion);
   return codeLens.setCommand(
-    `${codeLens.getDistTagPrefix()}${appGlobals.updateIndicator} ${newVersion}`,
-    `_${appGlobals.extentionName}.updateDependencyCommand`,
+    `${codeLens.getDistTagPrefix()}${appSettings.updateIndicator} ${newVersion}`,
+    `_${appSettings.extentionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
 }
@@ -70,8 +70,8 @@ export function makeSatisfiedCommand(serverVersion, codeLens) {
 export function makeSatisfiedWithNewerCommand(serverVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(serverVersion);
   return codeLens.setCommand(
-    `${codeLens.getDistTagPrefix()}Matches ${appGlobals.updateIndicator} v${serverVersion}`,
-    `_${appGlobals.extentionName}.updateDependencyCommand`,
+    `${codeLens.getDistTagPrefix()}Matches ${appSettings.updateIndicator} v${serverVersion}`,
+    `_${appSettings.extentionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
 }
@@ -86,8 +86,8 @@ export function makeTagCommand(tag, codeLens) {
 
 export function makeUpdateDependenciesCommand(propertyName, codeLens, codeLenCollection) {
   return codeLens.setCommand(
-    `${codeLens.getDistTagPrefix()}${appGlobals.updateIndicator} Update ${propertyName}`,
-    `_${appGlobals.extentionName}.updateDependenciesCommand`,
+    `${codeLens.getDistTagPrefix()}${appSettings.updateIndicator} Update ${propertyName}`,
+    `_${appSettings.extentionName}.updateDependenciesCommand`,
     [codeLens, codeLenCollection]
   );
 }
@@ -95,7 +95,7 @@ export function makeUpdateDependenciesCommand(propertyName, codeLens, codeLenCol
 export function makeLinkCommand(codeLens) {
   const isFile = codeLens.package.meta.type === 'file';
   const title;
-  const cmd = `_${appGlobals.extentionName}.linkCommand`;
+  const cmd = `_${appSettings.extentionName}.linkCommand`;
 
   if (isFile) {
     const filePath = path.resolve(path.dirname(codeLens.documentUrl.fsPath), codeLens.package.meta.remoteUrl);
@@ -103,9 +103,9 @@ export function makeLinkCommand(codeLens) {
     if (fileExists == false)
       title = (cmd = null) || 'Specified resource does not exist';
     else
-      title = `${appGlobals.openNewWindowIndicator} ${codeLens.package.version}`;
+      title = `${appSettings.openNewWindowIndicator} ${codeLens.package.version}`;
   } else
-    title = `${appGlobals.openNewWindowIndicator} ${codeLens.package.meta.remoteUrl}`;
+    title = `${appSettings.openNewWindowIndicator} ${codeLens.package.meta.remoteUrl}`;
 
   return codeLens.setCommand(title, cmd, [codeLens]);
 }
@@ -125,8 +125,8 @@ export function makeGithubCommand(codeLens) {
 
       const newVersion = codeLens.generateNewVersion(entry.version);
       return codeLens.setCommand(
-        `${meta.category}: ${appGlobals.updateIndicator} ${entry.version}`,
-        `_${appGlobals.extentionName}.updateDependencyCommand`,
+        `${meta.category}: ${appSettings.updateIndicator} ${entry.version}`,
+        `_${appSettings.extentionName}.updateDependencyCommand`,
         [codeLens, `"${newVersion}"`]
       );
     })

@@ -35,8 +35,8 @@ describe('npmVersionParser(node, appConfig)', () => {
         assert.equal(results[0].package.name, 'bootstrap', "Expected packageName");
         assert.equal(results[0].package.version, '1.2.3', "Expected packageVersion");
         assert.equal(results[0].package.meta.type, 'npm', "Expected meta.type");
-        assert.ok(!!results[0].package.isValidSemver, "Expected isValidSemver");
-        assert.ok(!results[0].package.hasRangeSymbol, "Expected hasRangeSymbol");
+        assert.ok(!!results[0].package.meta.isValidSemver, "Expected meta.isValidSemver");
+        assert.ok(!results[0].package.meta.hasRangeSymbol, "Expected meta.hasRangeSymbol");
         assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
         done();
       })
@@ -55,8 +55,8 @@ describe('npmVersionParser(node, appConfig)', () => {
         assert.equal(results[0].package.name, 'bootstrap', "Expected packageName");
         assert.equal(results[0].package.version, '~1.2.3', "Expected packageVersion");
         assert.equal(results[0].package.meta.type, 'npm', "Expected meta.type");
-        assert.ok(!!results[0].package.isValidSemver, "Expected isValidSemver");
-        assert.ok(results[0].package.hasRangeSymbol, "Expected hasRangeSymbol");
+        assert.ok(!!results[0].package.meta.isValidSemver, "Expected meta.isValidSemver");
+        assert.ok(results[0].package.meta.hasRangeSymbol, "Expected meta.hasRangeSymbol");
         assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
         done();
       })

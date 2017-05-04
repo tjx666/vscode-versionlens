@@ -143,7 +143,7 @@ describe("NpmCodeLensProvider", () => {
   describe("evaluateCodeLens", () => {
 
     it("passes given package name to npm view", done => {
-      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', isValidSemver: true }, null);
+      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: { isValidSemver: true } }, null);
       npmMock.view = (testPackageName, arg, cb) => {
         assert.equal(testPackageName, 'SomePackage', "Expected npm.view(name) but failed.");
         let err = null;
@@ -157,7 +157,7 @@ describe("NpmCodeLensProvider", () => {
     it("passes scoped package names with @ symbol to npm.view", done => {
       const packageName = '@SomeScope/SomePackage';
       const packageVersion = '1.2.3';
-      const codeLens = new PackageCodeLens(null, null, { name: packageName, version: packageVersion, isValidSemver: true }, null);
+      const codeLens = new PackageCodeLens(null, null, { name: packageName, version: packageVersion, meta: { isValidSemver: true } }, null);
       npmMock.view = (testPackageName, arg, cb) => {
         const expected = `${packageName}`;
         assert.equal(testPackageName, expected, `Expected 'npm.view ${expected}' but got ${testPackageName}`);
@@ -172,7 +172,7 @@ describe("NpmCodeLensProvider", () => {
     it("passes ranged version to npm.view", done => {
       const packageName = '@SomeScope/SomePackage';
       const packageVersion = '~1.2.3';
-      const codeLens = new PackageCodeLens(null, null, { name: packageName, version: packageVersion, isValidSemver: true, hasRangeSymbol: true }, null);
+      const codeLens = new PackageCodeLens(null, null, { name: packageName, version: packageVersion, meta: { isValidSemver: true, hasRangeSymbol: true } }, null);
       npmMock.view = (testPackageName, arg, cb) => {
         const expected = `${packageName}@${packageVersion}`;
         assert.equal(testPackageName, expected, `Expected 'npm.view ${expected}' but got ${testPackageName}`);
@@ -185,7 +185,7 @@ describe("NpmCodeLensProvider", () => {
     });
 
     it("when npm view returns an error then codeLens should return ErrorCommand", done => {
-      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', isValidSemver: true }, null);
+      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: { isValidSemver: true } }, null);
       // debugger
       npmMock.view = (testPackageName, arg, cb) => {
         let err = "npm.view failed";
@@ -201,7 +201,7 @@ describe("NpmCodeLensProvider", () => {
     });
 
     it("when a valid response returned from npm and package version is 'not latest' then codeLens should return NewVersionCommand", done => {
-      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', isValidSemver: true }, null);
+      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: { isValidSemver: true } }, null);
       npmMock.view = (testPackageName, arg, cb) => {
         assert.equal(testPackageName, 'SomePackage', "Expected npm.view(name) but failed.");
         let err = null;

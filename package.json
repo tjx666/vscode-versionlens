@@ -39,7 +39,7 @@
     "test": "node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
-    "typescript": "2.2.2",
+    "typescript": "2.3.2",
     "vscode": "1.1.0",
     "rimraf": "2.6.1",
     "proxyquire": "1.7.11",
@@ -52,10 +52,44 @@
     "request-light": "0.2.0",
     "semver": "5.3.0",
     "vscode-contrib-jsonc": "1.0.0-beta.2",
-    "vscode-languageclient": "3.2.0",
-    "xmldoc": "1.0.0"
+    "vscode-languageclient": "3.2.1",
+    "xmldoc": "1.1.0"
   },
   "contributes": {
+    "commands": [
+      {
+        "command": "versionlens.showDistTags",
+        "title": "Show Dist Tag Versions",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/tag-dark.svg",
+          "light": "images/icons/tag-light.svg"
+        }
+      },
+      {
+        "command": "versionlens.hideDistTags",
+        "title": "Hide Dist Tag Versions",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/tag-active.svg",
+          "light": "images/icons/tag-active.svg"
+        }
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "versionlens.showDistTags",
+          "when": "versionlens.showDistTags == false && versionlens.isActive",
+          "group": "navigation@1"
+        },
+        {
+          "command": "versionlens.hideDistTags",
+          "when": "versionlens.showDistTags && versionlens.isActive",
+          "group": "navigation@1"
+        }
+      ]
+    },
     "configuration": {
       "title": "Versionlens configuration",
       "properties": {
@@ -63,6 +97,11 @@
           "type": "string",
           "default": "",
           "description": "Inserts this prefix before the version when clicking on the code lens link."
+        },
+        "versionlens.showDistTagsAtStartup": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show dist tags by default when vscode starts. You can use the editor toolbar to show/hide dist tags at any time."
         },
         "versionlens.npm.dependencyProperties": {
           "type": "array",
@@ -79,11 +118,6 @@
           ],
           "description": "Defines which properties in package.json should be parsed by this extension"
         },
-        "versionlens.npm.showDistTags": {
-          "type": "boolean",
-          "default": false,
-          "description": "Shows dist tags i.e. alpha, beta or next."
-        },
         "versionlens.npm.distTagFilter": {
           "type": "array",
           "items": {
@@ -92,7 +126,7 @@
           "uniqueItems": true,
           "minItems": 0,
           "default": [],
-          "description": "Define which common dist tags you want to see. i.e. [alpha, beta]. If you don't specify any dist tags then all the dist-tags for a package will be shown. versionlens.npm.showDistTags must be enabled for this to take affect."
+          "description": "Define which common dist tags you want to see. i.e. [alpha, beta]. If you don't specify any dist tags then all the dist-tags for a package will be shown."
         },
         "versionlens.bower.dependencyProperties": {
           "type": "array",

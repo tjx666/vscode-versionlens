@@ -7,7 +7,7 @@ import { hasRangeSymbols, formatWithExistingLeading } from '../../common/utils';
 import {
   parseNpmRegistryVersion,
   parseFileVersion,
-  parseGithubVersionLink
+  parseGithubVersion
 } from '../npm/npmVersionParser';
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;
@@ -22,7 +22,7 @@ export function jspmVersionParser(node, appConfig) {
   const newPkgVersion = regExpResult[3];
 
   if (packageManager === 'github') {
-    const results = parseGithubVersionLink(node, extractedPkgName, `${extractedPkgName}#${newPkgVersion}`, appConfig.githubCompareOptions);
+    const results = parseGithubVersion(node, extractedPkgName, `${extractedPkgName}#${newPkgVersion}`, appConfig.githubCompareOptions);
     return results.map(result => {
       result.customGenerateVersion = customGenerateVersion;
       return result;

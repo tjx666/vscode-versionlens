@@ -10,6 +10,11 @@ import { dubDefaultDependencyProperties } from '../providers/dub/config';
 
 class AppConfiguration {
 
+  get showDistTagsAtStartup() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get("showDistTagsAtStartup", false);
+  }
+
   get versionPrefix() {
     const config = workspace.getConfiguration('versionlens');
     return config.get("versionPrefix", "");
@@ -18,11 +23,6 @@ class AppConfiguration {
   get npmDependencyProperties() {
     const config = workspace.getConfiguration('versionlens');
     return config.get("npm.dependencyProperties", npmDefaultDependencyProperties);
-  }
-
-  get npmShowDistTags() {
-    const config = workspace.getConfiguration('versionlens');
-    return config.get("npm.showDistTags", false);
   }
 
   get npmDistTagFilter() {

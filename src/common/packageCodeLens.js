@@ -23,14 +23,14 @@ export class PackageCodeLens extends CodeLens {
   }
 
   getDistTagPrefix() {
-    if (this.package.isDistTag)
+    if (this.package && this.package.meta && this.package.meta.isDistTag)
       return this.package.meta.distTag.name + ': ';
 
     return '';
   }
 
   isDistTag() {
-    return this.package.isDistTag;
+    return this.package && this.package.meta && this.package.meta.isDistTag;
   }
 
   getDistTagVersion() {

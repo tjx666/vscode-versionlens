@@ -9,6 +9,7 @@ import {
   hasRangeSymbols,
   formatWithExistingLeading
 } from '../../common/utils';
+import appSettings from '../../common/appSettings';
 import { npmViewDistTags } from './npmAPI'
 
 export function npmVersionParser(node, appConfig) {
@@ -17,13 +18,13 @@ export function npmVersionParser(node, appConfig) {
 
   // check if we have a local file version
   if (result = parseFileVersion(node, name, version))
-    return result
+    return result;
 
   // TODO: implement raw git url support too
 
   // check if we have a github version
-  if (result = parseGithubVersionLink(node, name, version, appConfig.githubCompareOptions))
-    return result
+  if (result = parseGithubVersion(node, name, version, appConfig.githubCompareOptions))
+    return result;
 
   // must be a registry version
   return parseNpmRegistryVersion(
@@ -43,23 +44,31 @@ export function parseNpmRegistryVersion(node, name, version, appConfig, customGe
 
   return npmViewDistTags(name)
     .then(distTags => {
+      if (appSettings.showDistTags === false) {
+        distTags = [
+          distTags[0]
+        ];
+      }
+
       return filterDistTags(distTags, appConfig)
         .map(distTag => {
+          const packageInfo = {
+            type: 'npm',
+            hasRangeSymbol,
+            isValidSemver,
+            distTag,
+            isDistTag: (distTag.name != 'latest')
+          };
+
           return {
             node,
-            package: {
+            package: generatePackage(
               name,
               version,
-              meta: {
-                type: 'npm',
-                distTag
-              },
-              isValidSemver,
-              hasRangeSymbol,
-              isDistTag: (distTag.name != 'latest'),
+              packageInfo,
               customGenerateVersion
-            }
-          }
+            )
+          };
         });
     });
 }
@@ -67,23 +76,24 @@ export function parseNpmRegistryVersion(node, name, version, appConfig, customGe
 export function parseFileVersion(node, name, version) {
   const fileRegExpResult = fileDependencyRegex.exec(version);
   if (fileRegExpResult) {
-    const meta = {
+    const packageInfo = {
       type: "file",
       remoteUrl: `${fileRegExpResult[1]}`
     };
+
     return [{
       node,
-      package: {
+      package: generatePackage(
         name,
         version,
-        meta,
-        customGenerateVersion: null
-      }
+        packageInfo,
+        customGenerateVersion
+      )
     }];
   }
 }
 
-export function parseGithubVersionLink(node, name, version, githubCompareOptions) {
+export function parseGithubVersion(node, name, version, githubCompareOptions) {
   const gitHubRegExpResult = gitHubDependencyRegex.exec(version);
   if (gitHubRegExpResult) {
     const proto = "https";
@@ -94,22 +104,28 @@ export function parseGithubVersionLink(node, name, version, githubCompareOptions
     const commitishSlug = commitish ? `/commit/${commitish}` : '';
     const remoteUrl = `${proto}://github.com/${user}/${repo}${commitishSlug}`;
 
+    if (appSettings.showDistTags === false)
+      githubCompareOptions = [githubCompareOptions[0]];
+
     return githubCompareOptions.map(category => {
+      const packageInfo = {
+        category,
+        type: "github",
+        remoteUrl,
+        userRepo,
+        commitish
+      };
+
       const parseResult = {
         node,
-        package: {
+        package: generatePackage(
           name,
           version,
-          meta: {
-            category,
-            type: "github",
-            remoteUrl,
-            userRepo,
-            commitish
-          },
-          customGenerateVersion: customGenerateVersion
-        }
+          packageInfo,
+          customGenerateVersion
+        )
       };
+
       return parseResult;
     });
   }
@@ -155,4 +171,13 @@ function filterDistTags(distTags, appConfig) {
     const checkTagName = distTag.name.toLowerCase();
     return checkTagName === 'latest' || tagFilters.includes(checkTagName);
   });
+}
+
+function generatePackage(name, version, info, customGenerateVersion) {
+  return {
+    name,
+    version,
+    meta: info,
+    customGenerateVersion
+  };
 }

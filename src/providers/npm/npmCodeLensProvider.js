@@ -59,7 +59,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     }
 
     const viewPackageName = codeLens.package.name + (
-      (!codeLens.package.isValidSemver || codeLens.package.hasRangeSymbol) ?
+      (!codeLens.package.meta.isValidSemver || codeLens.package.meta.hasRangeSymbol) ?
         `@${codeLens.package.version}` :
         ''
     );
@@ -78,7 +78,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
           return CommandFactory.makeDistTagCommand(codeLens);
         }
 
-        if (codeLens.package.isValidSemver)
+        if (codeLens.package.meta.isValidSemver)
           return CommandFactory.makeVersionCommand(
             codeLens.package.version,
             remoteVersion,
