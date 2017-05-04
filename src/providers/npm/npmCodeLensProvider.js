@@ -11,6 +11,7 @@ import * as CommandFactory from '../commandFactory';
 import { npmViewVersion } from './npmAPI';
 import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
+import appSettings from '../../common/appSettings';
 
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -23,6 +24,9 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   provideCodeLenses(document, token) {
+    if(appSettings.showVersionLenses === false)
+      return;
+
     const jsonDoc = jsonParser.parse(document.getText());
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
       return [];

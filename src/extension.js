@@ -51,6 +51,14 @@ export function activate(context) {
     commands.registerCommand(
       `${appSettings.extentionName}.hideDistTags`,
       VersionLensCommands.hideDistTagsCommand
+    ),
+    commands.registerCommand(
+      `${appSettings.extentionName}.showVersionLenses`,
+      VersionLensCommands.showVersionLenses
+    ),
+    commands.registerCommand(
+      `${appSettings.extentionName}.hideVersionLenses`,
+      VersionLensCommands.hideVersionLenses
     )
   );
 

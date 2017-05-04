@@ -8,10 +8,14 @@ import { jspmVersionParser } from './jspmVersionParser';
 import { appConfig } from '../../common/appConfiguration';
 import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
+import appSettings from '../../common/appSettings';
 
 export class JspmCodeLensProvider extends NpmCodeLensProvider {
 
   provideCodeLenses(document, token) {
+    if(appSettings.showVersionLenses === false)
+      return;
+
     const jsonDoc = jsonParser.parse(document.getText());
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
       return [];

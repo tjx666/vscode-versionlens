@@ -8,6 +8,7 @@ import { appConfig } from '../../common/appConfiguration';
 import * as xmldoc from 'xmldoc';
 import { parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
+import appSettings from '../../common/appSettings';
 
 export class DotNetCSProjCodeLensProvider extends DotNetAbstractCodeLensProvider {
 
@@ -20,6 +21,9 @@ export class DotNetCSProjCodeLensProvider extends DotNetAbstractCodeLensProvider
   }
 
   provideCodeLenses(document, token) {
+    if(appSettings.showVersionLenses === false)
+      return;
+
     const xmlDocument = new xmldoc.XmlDocument(document.getText());
 
     const dependencyNodes = this.extractDependencyNodes(

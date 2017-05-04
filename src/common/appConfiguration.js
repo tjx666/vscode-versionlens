@@ -10,6 +10,11 @@ import { dubDefaultDependencyProperties } from '../providers/dub/config';
 
 class AppConfiguration {
 
+  get showVersionLensesAtStartup() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get("showVersionLensesAtStartup", true);
+  }
+
   get showDistTagsAtStartup() {
     const config = workspace.getConfiguration('versionlens');
     return config.get("showDistTagsAtStartup", false);

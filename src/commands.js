@@ -48,3 +48,13 @@ export function hideDistTagsCommand(file) {
   appSettings.showDistTags = false;
   utils.refreshCodeLens();
 }
+
+export function showVersionLenses(file) {
+  appSettings.showVersionLenses = true;
+  utils.refreshCodeLens();
+}
+
+export function hideVersionLenses(file) {
+  appSettings.showVersionLenses = false;
+  utils.refreshCodeLens();
+}

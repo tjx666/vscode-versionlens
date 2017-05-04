@@ -3,6 +3,7 @@ import { appConfig } from './appConfiguration';
 
 let _isActive = false;
 let _showDistTags = false;
+let _showVersionLenses = false;
 
 const config = {
   extentionName: "versionlens",
@@ -31,11 +32,23 @@ const config = {
       `${this.extentionName}.showDistTags`,
       _showDistTags
     );
-  }
+  },
 
+  get showVersionLenses() {
+    return _showVersionLenses;
+  },
+  set showVersionLenses(newValue) {
+    _showVersionLenses = newValue;
+    commands.executeCommand(
+      'setContext',
+      `${this.extentionName}.show`,
+      _showVersionLenses
+    );
+  }
 };
 
 // ensure the context is set to the defaults
 config.showDistTags = appConfig.showDistTagsAtStartup === true;
+config.showVersionLenses = appConfig.showVersionLensesAtStartup === true;
 
 export default config;

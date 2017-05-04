@@ -59,7 +59,7 @@
     "commands": [
       {
         "command": "versionlens.showDistTags",
-        "title": "Show Dist Tag Versions",
+        "title": "Show dependency tagged versions",
         "category": "VersionLens",
         "icon": {
           "dark": "images/icons/tag-dark.svg",
@@ -68,11 +68,29 @@
       },
       {
         "command": "versionlens.hideDistTags",
-        "title": "Hide Dist Tag Versions",
+        "title": "Hide dependency tagged versions",
         "category": "VersionLens",
         "icon": {
           "dark": "images/icons/tag-active.svg",
           "light": "images/icons/tag-active.svg"
+        }
+      },
+      {
+        "command": "versionlens.showVersionLenses",
+        "title": "Show dependency versions",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/toggle-dark.svg",
+          "light": "images/icons/toggle-light.svg"
+        }
+      },
+      {
+        "command": "versionlens.hideVersionLenses",
+        "title": "Hide dependency versions",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/toggle-active.svg",
+          "light": "images/icons/toggle-active.svg"
         }
       }
     ],
@@ -80,12 +98,22 @@
       "editor/title": [
         {
           "command": "versionlens.showDistTags",
-          "when": "versionlens.showDistTags == false && versionlens.isActive",
-          "group": "navigation@1"
+          "when": "versionlens.showDistTags == false && versionlens.show && versionlens.isActive",
+          "group": "navigation@2"
         },
         {
           "command": "versionlens.hideDistTags",
-          "when": "versionlens.showDistTags && versionlens.isActive",
+          "when": "versionlens.showDistTags && versionlens.show && versionlens.isActive",
+          "group": "navigation@2"
+        },
+        {
+          "command": "versionlens.showVersionLenses",
+          "when": "versionlens.show == false && versionlens.isActive",
+          "group": "navigation@1"
+        },
+        {
+          "command": "versionlens.hideVersionLenses",
+          "when": "versionlens.show && versionlens.isActive",
           "group": "navigation@1"
         }
       ]
@@ -97,6 +125,11 @@
           "type": "string",
           "default": "",
           "description": "Inserts this prefix before the version when clicking on the code lens link."
+        },
+        "versionlens.showVersionLensesAtStartup": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show dependency versions by default. You can use the editor toolbar to show/hide versions at any time."
         },
         "versionlens.showDistTagsAtStartup": {
           "type": "boolean",

@@ -11,6 +11,7 @@ import { appConfig } from '../../common/appConfiguration';
 import * as CommandFactory from '../commandFactory';
 import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
+import appSettings from '../../common/appSettings';
 
 export class BowerCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -23,6 +24,9 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   provideCodeLenses(document, token) {
+    if(appSettings.showVersionLenses === false)
+      return;
+
     const jsonDoc = jsonParser.parse(document.getText());
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
       return [];
