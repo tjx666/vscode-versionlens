@@ -14,6 +14,10 @@
 
     - `versionlens.npm.showTaggedVersions` has been dropped in favour of this new change
 
+    - `github.compareOptions` is now called `github.taggedCommits`. 
+    
+      `latest` will always be the latest `commit`. This field now only accepts ['Release', 'Tag'] which is the default filter
+
 - 0.14.1
   - Fixed a case where npm view doesn't return latest tag as the first entry.
 
