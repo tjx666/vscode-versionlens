@@ -45,6 +45,7 @@ const config = {
       _showVersionLenses
     );
   }
+
 };
 
 // ensure the context is set to the defaults

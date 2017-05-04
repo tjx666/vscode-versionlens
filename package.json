@@ -48,6 +48,7 @@
   "dependencies": {
     "bower": "1.8.0",
     "npm": "4.5.0",
+    "minimatch": "3.0.3",
     "opener": "1.4.3",
     "request-light": "0.2.0",
     "semver": "5.3.0",
