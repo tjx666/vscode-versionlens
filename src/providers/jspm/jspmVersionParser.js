@@ -22,7 +22,7 @@ export function jspmVersionParser(node, appConfig) {
   const newPkgVersion = regExpResult[3];
 
   if (packageManager === 'github') {
-    const results = parseGithubVersion(node, extractedPkgName, `${extractedPkgName}#${newPkgVersion}`, appConfig.githubCompareOptions);
+    const results = parseGithubVersion(node, extractedPkgName, `${extractedPkgName}#${newPkgVersion}`, appConfig.githubTaggedCommits);
     return results.map(result => {
       result.customGenerateVersion = customGenerateVersion;
       return result;
