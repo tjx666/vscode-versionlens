@@ -104,12 +104,17 @@ export function parseGithubVersion(node, name, version, githubTaggedVersions) {
     const commitishSlug = commitish ? `/commit/${commitish}` : '';
     const remoteUrl = `${proto}://github.com/${user}/${repo}${commitishSlug}`;
 
-    githubTaggedVersions.splice(0, 0, 'Commit');
+    // take a copy of the app config tagged versions
+    const taggedVersions = githubTaggedVersions.slice();
 
+    // ensure that commits are the first and the latest entries to be shown
+    taggedVersions.splice(0, 0, 'Commit');
+
+    // only show commits of showTaggedVersions is false
     if (appSettings.showTaggedVersions === false)
-      githubTaggedVersions = [githubTaggedVersions[0]];
+      taggedVersions = [taggedVersions[0]];
 
-    return githubTaggedVersions.map(category => {
+    return taggedVersions.map(category => {
       const packageInfo = {
         category,
         type: "github",
