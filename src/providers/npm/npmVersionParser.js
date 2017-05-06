@@ -48,16 +48,17 @@ export function parseNpmRegistryVersion(node, name, version, appConfig, customGe
         distTags = [
           distTags[0]
         ];
-      }
+      } else
+        distTags.splice(1, 0, distTags[0]);
 
       return filterDistTags(distTags, appConfig)
-        .map(distTag => {
+        .map((distTag, index) => {
           const packageInfo = {
             type: 'npm',
             hasRangeSymbol,
             isValidSemver,
             distTag,
-            isTaggedVersion: (distTag.name != 'latest')
+            isTaggedVersion: index !== 0
           };
 
           return {
