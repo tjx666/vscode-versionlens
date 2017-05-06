@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as npm from 'npm';
+import * as semver from 'semver';
 
 export function npmViewVersion(packageName) {
   return new Promise((resolve, reject) => {
@@ -20,6 +21,14 @@ export function npmViewVersion(packageName) {
 
         // get the keys from the object returned
         let keys = Object.keys(response);
+        keys.sort((a, b) => {
+          if (semver.gt(a, b))
+            return 1;
+          else if (semver.lt(a, b))
+            return -1;
+
+          return 0;
+        });
 
         // take the last and most recent version key
         let lastKey = keys.length > 0 ? keys[keys.length - 1] : '';
