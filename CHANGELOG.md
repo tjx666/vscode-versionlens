@@ -1,3 +1,8 @@
+- 0.16.0 (WIP)
+  - Added fsharp project extensions for dotnet core
+  - Added 'latest' to the dist tags for npm and jspm. This gives the ability to always see the latest version regardless of what version criteria is specified in the package.
+  - Fixes an edge case where npm view doesn't return the list of versions in chronological order. THe only edge case found so far is when "x" is sepcified as the version
+
 - 0.15.0
   - Added two new icon tools to the the editor toolbar
     - You can show or hide versions. 
