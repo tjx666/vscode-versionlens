@@ -5,8 +5,8 @@
 import { workspace, TextEdit, WorkspaceEdit } from 'vscode';
 import * as path from 'path';
 import * as opener from 'opener';
-import appSettings from './common/appSettings';
-import * as utils from './common/utils';
+import appSettings from '../common/appSettings';
+import * as utils from '../common/utils';
 
 export function updateDependencyCommand(codeLens, packageVersion) {
   const edits = [TextEdit.replace(codeLens.replaceRange, packageVersion)];
@@ -25,26 +25,12 @@ export function linkCommand(codeLens) {
   opener(codeLens.package.meta.remoteUrl);
 }
 
-export function updateDependenciesCommand(rootCodeLens, codeLenCollection) {
-  const edits = codeLenCollection
-    .filter(codeLens => codeLens != rootCodeLens)
-    .filter(codeLens => rootCodeLens.range.contains(codeLens.range))
-    .filter(codeLens => codeLens.command && codeLens.command.arguments)
-    .filter(codeLens => codeLens.package)
-    .filter(codeLens => !codeLens.package.meta || (codeLens.package.meta.type !== 'github' && codeLens.package.meta.type !== 'file'))
-    .map(codeLens => TextEdit.replace(codeLens.replaceRange, codeLens.command.arguments[1]));
-
-  const edit = new WorkspaceEdit();
-  edit.set(rootCodeLens.documentUrl, edits);
-  workspace.applyEdit(edit);
-}
-
-export function showTaggedVersionsCommand(file) {
+export function showTaggedVersions(file) {
   appSettings.showTaggedVersions = true;
   utils.refreshCodeLens();
 }
 
-export function hideTaggedVersionsCommand(file) {
+export function hideTaggedVersions(file) {
   appSettings.showTaggedVersions = false;
   utils.refreshCodeLens();
 }

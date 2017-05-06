@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as minimatch from 'minimatch';
-import appSettings from './common/appSettings';
+import appSettings from '../common/appSettings';
 
 export function onActiveEditorChanged(editor, providers) {
   if (!editor || !editor.document) {
