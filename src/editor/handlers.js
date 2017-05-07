@@ -27,20 +27,22 @@ export function onActiveEditorChanged(editor, providers) {
 // update the decorators if the changed line affects them
 export function onChangeTextDocument(changeEvent) {
   const foundDecorations = [];
-
   const { contentChanges } = changeEvent;
-  contentChanges.forEach(change => {
-    const lineDecorations = getDecorationsByLine(change.range.start.line);
-    if (lineDecorations.length > 0)
-      foundDecorations.push(...lineDecorations);
 
-    lineDecorations = getDecorationsByLine(change.range.end.line);
-    if (lineDecorations.length > 0)
-      foundDecorations.push(...lineDecorations);
+  // get all decorations for all the lines that have changed
+  contentChanges.forEach(change => {
+    const startLine = change.range.start.line;
+    const endLine = change.range.end.line;
+    for (let line = startLine; line <= endLine; line++) {
+      const lineDecorations = getDecorationsByLine(line);
+      if (lineDecorations.length > 0)
+        foundDecorations.push(...lineDecorations);
+    }
   })
 
   if (foundDecorations.length === 0)
     return;
 
+  // remove all decorations that have changed
   removeDecorations(foundDecorations);
 }
