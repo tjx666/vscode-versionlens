@@ -13,6 +13,8 @@
 
     ![image](https://cloud.githubusercontent.com/assets/1727302/25782857/eafb2d9a-3349-11e7-981a-5447bed61210.png)
 
+  - Stopped editor toolbar icons showing in diff mode
+
 # 0.15.0
   - Added two new icon tools to the the editor toolbar
 
