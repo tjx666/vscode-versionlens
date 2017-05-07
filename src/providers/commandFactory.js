@@ -29,27 +29,28 @@ export function makeVersionCommand(localVersion, serverVersion, codeLens) {
     return makeLatestCommand(codeLens);
 
   if (isLocalValidRange && !isLocalValid) {
-    if (semver.satisfies(serverVersion, localVersion)) {
-      try {
-        let matches = stripSymbolFromVersionRegex.exec(localVersion);
-        let cleanLocalVersion = (matches && matches[1]) || semver.clean(localVersion) || localVersion;
-        if (cleanLocalVersion && semver.eq(serverVersion, cleanLocalVersion)) {
-          return makeSatisfiedCommand(serverVersion, codeLens);
-        }
-      } catch (ex) {
+
+    if (!semver.satisfies(serverVersion, localVersion))
+      return makeNewVersionCommand(serverVersion, codeLens);
+
+    try {
+      let matches = stripSymbolFromVersionRegex.exec(localVersion);
+      let cleanLocalVersion = (matches && matches[1]) || semver.clean(localVersion) || localVersion;
+      if (cleanLocalVersion && semver.eq(serverVersion, cleanLocalVersion)) {
         return makeSatisfiedCommand(serverVersion, codeLens);
       }
-      return makeSatisfiedWithNewerCommand(serverVersion, codeLens);
+    } catch (ex) {
+      return makeSatisfiedCommand(serverVersion, codeLens);
     }
-    else
-      return makeNewVersionCommand(serverVersion, codeLens)
+
+    return makeSatisfiedWithNewerCommand(serverVersion, codeLens);
   }
 
   const hasNewerVersion = semver.gt(serverVersion, localVersion) === true
     || semver.lt(serverVersion, localVersion) === true;
 
   if (serverVersion !== localVersion && hasNewerVersion)
-    return makeNewVersionCommand(serverVersion, codeLens)
+    return makeNewVersionCommand(serverVersion, codeLens);
 
   return makeLatestCommand(codeLens);
 }
@@ -57,20 +58,20 @@ export function makeVersionCommand(localVersion, serverVersion, codeLens) {
 export function makeNewVersionCommand(newVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(newVersion);
   return codeLens.setCommand(
-    `${codeLens.getTaggedVersionPrefix()}${appSettings.updateIndicator} ${newVersion}`,
+    `${appSettings.updateIndicator} ${newVersion}`,
     `${appSettings.extensionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
 }
 
 export function makeSatisfiedCommand(serverVersion, codeLens) {
-  return codeLens.setCommand(`${codeLens.getTaggedVersionPrefix()}Matches v${serverVersion}`);
+  return codeLens.setCommand(`Matches v${serverVersion}`);
 }
 
 export function makeSatisfiedWithNewerCommand(serverVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(serverVersion);
   return codeLens.setCommand(
-    `${codeLens.getTaggedVersionPrefix()}Matches ${appSettings.updateIndicator} v${serverVersion}`,
+    `Matches ${appSettings.updateIndicator} v${serverVersion}`,
     `${appSettings.extensionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
@@ -86,7 +87,7 @@ export function makeTagCommand(tag, codeLens) {
 
 export function makeUpdateDependenciesCommand(propertyName, codeLens, codeLenCollection) {
   return codeLens.setCommand(
-    `${codeLens.getTaggedVersionPrefix()}${appSettings.updateIndicator} Update ${propertyName}`,
+    `${appSettings.updateIndicator} Update ${propertyName}`,
     `${appSettings.extensionName}.updateDependenciesCommand`,
     [codeLens, codeLenCollection]
   );

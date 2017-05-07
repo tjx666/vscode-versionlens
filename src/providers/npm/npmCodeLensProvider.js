@@ -100,7 +100,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         // check that a version was returned by npm view
         if (remoteVersion === '')
           return CommandFactory.makeErrorCommand(
-            `'npm view ${viewPackageName} version' did not return any results`,
+            `'${viewPackageName}' not found`,
             codeLens
           );
 
