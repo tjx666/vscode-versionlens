@@ -91,7 +91,30 @@ export function npmViewDistTags(packageName) {
   });
 }
 
-export function npmViewOutdated(packageName, npmLocalPath) {
+export function npmGetOutdated(npmLocalPath) {
+  return new Promise((resolve, reject) => {
+    npm.load(loadError => {
+      if (loadError) {
+        reject(loadError);
+        return;
+      }
+
+      npm.localPrefix = npmLocalPath;
+      npm.config.set('json', true);
+      npm.outdated((err, response) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        const outdated = parseOutdatedResponse(response);
+        resolve(outdated);
+      });
+    });
+  });
+}
+
+export function npmGetLocalPackageStatus(packageName, npmLocalPath) {
   return new Promise((resolve, reject) => {
     npm.load(loadError => {
       if (loadError) {
@@ -107,22 +130,26 @@ export function npmViewOutdated(packageName, npmLocalPath) {
           return;
         }
 
-        let outdated = [];
-        if (response.length > 0) {
-          outdated = response.map(
-            entry => ({
-              path: entry[0],
-              name: entry[1],
-              current: entry[2],
-              willInstall: entry[3],
-              latest: entry[4],
-              wanted: entry[5]
-            })
-          );
-        }
-
+        const outdated = parseOutdatedResponse(response);
         resolve(outdated);
       });
     });
   });
+}
+
+function parseOutdatedResponse(response) {
+  let outdated = [];
+  if (response.length > 0) {
+    outdated = response.map(
+      entry => ({
+        path: entry[0],
+        name: entry[1],
+        current: entry[2],
+        willInstall: entry[3],
+        latest: entry[4],
+        wanted: entry[5]
+      })
+    );
+  }
+  return outdated;
 }

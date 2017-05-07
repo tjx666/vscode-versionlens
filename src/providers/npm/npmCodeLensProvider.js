@@ -8,7 +8,12 @@ import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { npmVersionParser } from './npmVersionParser';
 import { appConfig } from '../../common/appConfiguration';
 import * as CommandFactory from '../commandFactory';
-import { npmViewVersion, npmViewOutdated, npmPackageDirExists } from './npmAPI';
+import {
+  npmViewVersion,
+  npmGetOutdated,
+  npmGetLocalPackageStatus,
+  npmPackageDirExists
+} from './npmAPI';
 import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
@@ -17,6 +22,9 @@ import { createRenderOptions, updateDecoration } from '../../editor/decorations'
 import * as path from 'path';
 
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
+
+  _outdatedCache = [];
+  _documentPath = '';
 
   get selector() {
     return {
@@ -30,7 +38,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     if (appSettings.showVersionLenses === false)
       return;
 
-    this.document = document;
+    this._documentPath = path.dirname(document.uri.fsPath);
 
     const jsonDoc = jsonParser.parse(document.getText());
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
@@ -47,12 +55,17 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       npmVersionParser
     );
 
-    return generateCodeLenses(packageCollection, document);
+    return generateCodeLenses(packageCollection, document)
+      .then(codeLenses => {
+        // get the outdated packages and cache them
+        this.updateOutdated();
+        return codeLenses;
+      });
   }
 
   resolveCodeLens(codeLens, token) {
     if (codeLens instanceof PackageCodeLens) {
-      this.generateDecoration(codeLens, this.document);
+      this.generateDecoration(codeLens);
       return this.evaluateCodeLens(codeLens);
     }
   }
@@ -84,7 +97,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
             codeLens
           );
 
-        // check if this is a dist tag other than 'latest'
+        // check if this is a dist tag
         if (codeLens.isTaggedVersion())
           return CommandFactory.makeDistTagCommand(codeLens);
 
@@ -112,9 +125,14 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       });
   }
 
-  generateDecoration(codeLens, document) {
+  updateOutdated() {
+    return npmGetOutdated(this._documentPath)
+      .then(results => this._outdatedCache = results);
+  }
+
+  generateDecoration(codeLens) {
     const activeEditor = window.activeTextEditor;
-    const documentPath = path.dirname(document.uri.fsPath);
+    const documentPath = this._documentPath;
     const currentPackageName = codeLens.package.name;
 
     const packageDirExists = npmPackageDirExists(documentPath, currentPackageName);
@@ -123,7 +141,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       return;
     }
 
-    npmViewOutdated(currentPackageName, documentPath)
+    Promise.resolve(this._outdatedCache)
       .then(outdated => {
         const findIndex = outdated.findIndex(
           entry => entry.name === currentPackageName
@@ -144,7 +162,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
   }
 
-}
+} // End NpmCodeLensProvider
 
 function createMissingDecoration(codeLens) {
   return {
@@ -154,7 +172,7 @@ function createMissingDecoration(codeLens) {
     ),
     hoverMessage: null,
     renderOptions: {
-      after: createRenderOptions(' ▪ missing', 'rgba(255,0,0,0.5)')
+      after: createRenderOptions(' ▪ missing install', 'rgba(255,0,0,0.5)')
     }
   };
 }
@@ -167,7 +185,7 @@ function createInstalledDecoration(codeLens) {
     ),
     hoverMessage: null,
     renderOptions: {
-      after: createRenderOptions(' ▪ installed', 'rgba(0,255,0,0.5)')
+      after: createRenderOptions(' ▪ latest installed', 'rgba(0,255,0,0.5)')
     }
   };
 }
@@ -180,7 +198,7 @@ function createOutdatedDecoration(codeLens, installedVersion) {
     ),
     hoverMessage: null,
     renderOptions: {
-      after: createRenderOptions(' ▪ ' + installedVersion, 'rgba(255,255,0,0.5)')
+      after: createRenderOptions(` ▪ ${installedVersion} installed`, 'rgba(255,255,0,0.5)')
     }
   };
 }
