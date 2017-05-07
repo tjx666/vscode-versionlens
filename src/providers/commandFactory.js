@@ -58,7 +58,7 @@ export function makeVersionCommand(localVersion, serverVersion, codeLens) {
 export function makeNewVersionCommand(newVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(newVersion);
   return codeLens.setCommand(
-    `${appSettings.updateIndicator} ${newVersion}`,
+    `${codeLens.getTaggedVersionPrefix()}${appSettings.updateIndicator} ${newVersion}`,
     `${appSettings.extensionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
@@ -87,7 +87,7 @@ export function makeTagCommand(tag, codeLens) {
 
 export function makeUpdateDependenciesCommand(propertyName, codeLens, codeLenCollection) {
   return codeLens.setCommand(
-    `${appSettings.updateIndicator} Update ${propertyName}`,
+    `${codeLens.getTaggedVersionPrefix()}${appSettings.updateIndicator} Update ${propertyName}`,
     `${appSettings.extensionName}.updateDependenciesCommand`,
     [codeLens, codeLenCollection]
   );
