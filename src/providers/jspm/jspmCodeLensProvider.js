@@ -13,7 +13,7 @@ import appSettings from '../../common/appSettings';
 export class JspmCodeLensProvider extends NpmCodeLensProvider {
 
   provideCodeLenses(document, token) {
-    if(appSettings.showVersionLenses === false)
+    if (appSettings.showVersionLenses === false)
       return;
 
     const jsonDoc = jsonParser.parse(document.getText());

@@ -4,6 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 import * as npm from 'npm';
 import * as semver from 'semver';
+import * as path from 'path';
+import * as fs from 'fs';
+
+export function npmPackageDirExists(packageJsonPath, packageName) {
+  npm.localPrefix = packageJsonPath;
+  const npmFormattedPath = path.join(npm.dir, packageName);
+  return fs.existsSync(npmFormattedPath);
+}
 
 export function npmViewVersion(packageName) {
   return new Promise((resolve, reject) => {
@@ -78,6 +86,42 @@ export function npmViewDistTags(packageName) {
         }
 
         resolve(tags);
+      });
+    });
+  });
+}
+
+export function npmViewOutdated(packageName, npmLocalPath) {
+  return new Promise((resolve, reject) => {
+    npm.load(loadError => {
+      if (loadError) {
+        reject(loadError);
+        return;
+      }
+
+      npm.localPrefix = npmLocalPath;
+      npm.config.set('json', true);
+      npm.outdated(packageName, true, (err, response) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        let outdated = [];
+        if (response.length > 0) {
+          outdated = response.map(
+            entry => ({
+              path: entry[0],
+              name: entry[1],
+              current: entry[2],
+              willInstall: entry[3],
+              latest: entry[4],
+              wanted: entry[5]
+            })
+          );
+        }
+
+        resolve(outdated);
       });
     });
   });

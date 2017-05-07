@@ -8,10 +8,13 @@ import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { npmVersionParser } from './npmVersionParser';
 import { appConfig } from '../../common/appConfiguration';
 import * as CommandFactory from '../commandFactory';
-import { npmViewVersion } from './npmAPI';
+import { npmViewVersion, npmViewOutdated, npmPackageDirExists } from './npmAPI';
 import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
+import { window, Range, Position } from 'vscode';
+import { createRenderOptions, updateDecoration } from '../../editor/decorations';
+import * as path from 'path';
 
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -24,8 +27,10 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   provideCodeLenses(document, token) {
-    if(appSettings.showVersionLenses === false)
+    if (appSettings.showVersionLenses === false)
       return;
+
+    this.document = document;
 
     const jsonDoc = jsonParser.parse(document.getText());
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
@@ -46,8 +51,10 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   resolveCodeLens(codeLens, token) {
-    if (codeLens instanceof PackageCodeLens)
+    if (codeLens instanceof PackageCodeLens) {
+      this.generateDecoration(codeLens, this.document);
       return this.evaluateCodeLens(codeLens);
+    }
   }
 
   evaluateCodeLens(codeLens) {
@@ -78,9 +85,8 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
           );
 
         // check if this is a dist tag other than 'latest'
-        if (codeLens.isTaggedVersion()) {
+        if (codeLens.isTaggedVersion())
           return CommandFactory.makeDistTagCommand(codeLens);
-        }
 
         if (codeLens.package.meta.isValidSemver)
           return CommandFactory.makeVersionCommand(
@@ -106,4 +112,75 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       });
   }
 
+  generateDecoration(codeLens, document) {
+    const activeEditor = window.activeTextEditor;
+    const documentPath = path.dirname(document.uri.fsPath);
+    const currentPackageName = codeLens.package.name;
+
+    const packageDirExists = npmPackageDirExists(documentPath, currentPackageName);
+    if (!packageDirExists) {
+      updateDecoration(createMissingDecoration(codeLens));
+      return;
+    }
+
+    npmViewOutdated(currentPackageName, documentPath)
+      .then(outdated => {
+        const findIndex = outdated.findIndex(
+          entry => entry.name === currentPackageName
+        );
+
+        if (findIndex === -1) {
+          updateDecoration(createInstalledDecoration(codeLens));
+          return;
+        }
+
+        if (!outdated[findIndex].current) {
+          updateDecoration(createMissingDecoration(codeLens));
+          return;
+        }
+
+        updateDecoration(createOutdatedDecoration(codeLens, outdated[findIndex].current));
+      });
+
+  }
+
+}
+
+function createMissingDecoration(codeLens) {
+  return {
+    range: new Range(
+      codeLens.range.start,
+      new Position(codeLens.range.end.line, codeLens.range.end.character + 1)
+    ),
+    hoverMessage: null,
+    renderOptions: {
+      after: createRenderOptions(' ▪ missing', 'rgba(255,0,0,0.5)')
+    }
+  };
+}
+
+function createInstalledDecoration(codeLens) {
+  return {
+    range: new Range(
+      codeLens.range.start,
+      new Position(codeLens.range.end.line, codeLens.range.end.character + 1)
+    ),
+    hoverMessage: null,
+    renderOptions: {
+      after: createRenderOptions(' ▪ installed', 'rgba(0,255,0,0.5)')
+    }
+  };
+}
+
+function createOutdatedDecoration(codeLens, installedVersion) {
+  return {
+    range: new Range(
+      codeLens.range.start,
+      new Position(codeLens.range.end.line, codeLens.range.end.character + 1)
+    ),
+    hoverMessage: null,
+    renderOptions: {
+      after: createRenderOptions(' ▪ ' + installedVersion, 'rgba(255,255,0,0.5)')
+    }
+  };
 }

@@ -19,8 +19,8 @@ export function activate(context) {
     );
   });
 
-  versionLensCommands.forEach(command =>{
-     disposables.push(command);
+  versionLensCommands.forEach(command => {
+    disposables.push(command);
   });
 
   context.subscriptions.push(...disposables);
