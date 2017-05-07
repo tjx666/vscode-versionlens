@@ -3,18 +3,22 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as jsonParser from 'vscode-contrib-jsonc';
+import { PackageCodeLens } from '../../common/packageCodeLens';
 import { NpmCodeLensProvider } from '../npm/npmCodeLensProvider';
 import { jspmVersionParser } from './jspmVersionParser';
 import { appConfig } from '../../common/appConfiguration';
 import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
+import * as path from 'path';
 
 export class JspmCodeLensProvider extends NpmCodeLensProvider {
 
   provideCodeLenses(document, token) {
     if (appSettings.showVersionLenses === false)
       return;
+
+    this._documentPath = path.dirname(document.uri.fsPath);
 
     const jsonDoc = jsonParser.parse(document.getText());
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
@@ -36,6 +40,11 @@ export class JspmCodeLensProvider extends NpmCodeLensProvider {
     );
 
     return generateCodeLenses(packageCollection, document);
+  }
+
+  resolveCodeLens(codeLens, token) {
+    if (codeLens instanceof PackageCodeLens)
+      return this.evaluateCodeLens(codeLens);
   }
 
   getJspmRootNode_(rootNode) {
