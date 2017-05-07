@@ -67,7 +67,10 @@ describe("NpmCodeLensProvider", () => {
       let fixture = fixtureMap.read('package-invalid.json');
 
       let testDocument = {
-        getText: range => fixture.content
+        getText: range => fixture.content,
+        uri: {
+          fsPath: ''
+        }
       };
 
       let codeLenses = testProvider.provideCodeLenses(testDocument, null);
@@ -82,7 +85,10 @@ describe("NpmCodeLensProvider", () => {
 
     it("returns empty array when the document text is empty", done => {
       let testDocument = {
-        getText: range => ''
+        getText: range => '',
+        uri: {
+          fsPath: ''
+        }
       };
 
       let codeLenses = testProvider.provideCodeLenses(testDocument, null);
@@ -100,7 +106,10 @@ describe("NpmCodeLensProvider", () => {
 
       let testDocument = {
         getText: range => fixture.content,
-        fileName: "filename.json"
+        fileName: "filename.json",
+        uri: {
+          fsPath: ''
+        }
       };
 
       let codeLenses = testProvider.provideCodeLenses(testDocument, null);
@@ -119,7 +128,10 @@ describe("NpmCodeLensProvider", () => {
       let testDocument = {
         getText: range => fixture.content,
         positionAt: offset => new vscode.Position(0, 0),
-        fileName: fixture.basename
+        fileName: fixture.basename,
+        uri: {
+          fsPath: ''
+        }
       };
 
       let codeLenses = testProvider.provideCodeLenses(testDocument, null);
