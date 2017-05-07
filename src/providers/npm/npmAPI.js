@@ -13,7 +13,7 @@ export function npmPackageDirExists(packageJsonPath, packageName) {
   return fs.existsSync(npmFormattedPath);
 }
 
-export function npmViewVersion(packageName) {
+export function npmViewVersion(packageJsonPath, packageName) {
   return new Promise((resolve, reject) => {
     npm.load(loadError => {
       if (loadError) {
@@ -21,6 +21,7 @@ export function npmViewVersion(packageName) {
         return;
       }
 
+      npm.localPrefix = packageJsonPath;
       npm.view(packageName, 'version', (viewError, response) => {
         if (viewError) {
           reject(viewError);
