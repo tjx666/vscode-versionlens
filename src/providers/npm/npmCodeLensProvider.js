@@ -93,16 +93,16 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
     return npmViewVersion(this._documentPath, viewPackageName)
       .then(remoteVersion => {
+        // check if this is a dist tag
+        if (codeLens.isTaggedVersion())
+          return CommandFactory.makeDistTagCommand(codeLens);
+
         // check that a version was returned by npm view
         if (remoteVersion === '')
           return CommandFactory.makeErrorCommand(
             `'npm view ${viewPackageName} version' did not return any results`,
             codeLens
           );
-
-        // check if this is a dist tag
-        if (codeLens.isTaggedVersion())
-          return CommandFactory.makeDistTagCommand(codeLens);
 
         if (codeLens.package.meta.isValidSemver)
           return CommandFactory.makeVersionCommand(
@@ -120,11 +120,17 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         return CommandFactory.makeTagCommand(`${viewPackageName} = v${remoteVersion}`, codeLens);
       })
       .catch(error => {
+        // dont show errors for tagged versions
+        // otherwise it will render multiple times in the codelens
+        if (codeLens.isTaggedVersion())
+          return;
+
         console.error(error);
         return CommandFactory.makeErrorCommand(
           "An error occurred retrieving this package.",
           codeLens
         );
+
       });
   }
 
