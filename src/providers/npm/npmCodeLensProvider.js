@@ -27,7 +27,7 @@ import * as path from 'path';
 
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
-  _outdatedCache = null;
+  _outdatedCache = [];
   _documentPath = '';
 
   get selector() {
@@ -61,9 +61,12 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
     return generateCodeLenses(packageCollection, document)
       .then(codeLenses => {
-        this.updateOutdated();
+        this.updateOutdated()
+          .catch(console.error);
+
         return codeLenses;
-      });
+      })
+      .catch(console.error);
   }
 
   resolveCodeLens(codeLens, token) {
@@ -137,7 +140,8 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   // get the outdated packages and cache them
   updateOutdated() {
     return npmGetOutdated(this._documentPath)
-      .then(results => this._outdatedCache = results);
+      .then(results => this._outdatedCache = results)
+      .catch(console.error);
   }
 
   generateDecoration(codeLens) {
@@ -173,7 +177,8 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
             outdated[findIndex].current
           )
         );
-      });
+      })
+      .catch(console.error);
 
   }
 
