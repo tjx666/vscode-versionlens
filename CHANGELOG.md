@@ -1,27 +1,32 @@
-- 0.16.0 (WIP)
+- 0.16.0
+  - Added outdated information for npm
+
+    ![image](https://cloud.githubusercontent.com/assets/1727302/25782781/c6352e30-3348-11e7-8cbe-f056140cce8a.png)
+
   - Added fsharp project extensions for dotnet core
-  - Added 'latest' to the dist tags for npm and jspm. This gives the ability to always see the latest version regardless of what version criteria is specified in the package.
-  - Fixes an edge case where npm view doesn't return the list of versions in chronological order. THe only edge case found so far is when "x" is sepcified as the version
+
+    ![image](https://cloud.githubusercontent.com/assets/1727302/25782857/eafb2d9a-3349-11e7-981a-5447bed61210.png)
+
+  - Added 'latest' to the dist tags for npm and jspm. This gives the ability to always see the latest version regardless of what version is matched in the package.
+
+    ![image](https://cloud.githubusercontent.com/assets/1727302/25782884/46d11af8-334a-11e7-9a6d-b47e6f0f5f7d.png)
+
+  - Fixes an edge case where npm view doesn't return the list of versions in chronological order. The only edge case found so far is when "x" is sepcified as the version
 
 - 0.15.0
   - Added two new icon tools to the the editor toolbar
+
+    ![image](https://cloud.githubusercontent.com/assets/1727302/25782819/75ec2f86-3349-11e7-8e38-a4e3d5b7c2d7.png)
+
     - You can show or hide versions. 
-    
       `versionlens.showVersionLensesAtStartup` defaults to `true`
-
-      ![Image](https://github.com/vscode-contrib/vscode-versionlens/raw/master/images/toggle-show-preview.gif)
-
     - You can show or hide tagged versions.
-    
       `versionlens.showTaggedVersionsAtStartup` defaults to `false`
-
-      ![Image](https://github.com/vscode-contrib/vscode-versionlens/raw/master/images/toggle-dist-tags-preview.gif)
-
     - `versionlens.npm.showTaggedVersions` has been dropped in favour of this new change
 
-    - `github.compareOptions` is now called `github.taggedCommits`. 
-    
-      `latest` will always be the latest `commit`. This field now only accepts ['Release', 'Tag'] which is the default filter
+  - `github.compareOptions` is now called `github.taggedCommits`. 
+  
+    `latest` will always be the latest `commit`. This field now only accepts ['Release', 'Tag'] which is the default filter
 
 - 0.14.1
   - Fixed a case where npm view doesn't return latest tag as the first entry.
