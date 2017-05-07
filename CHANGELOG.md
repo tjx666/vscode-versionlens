@@ -1,4 +1,4 @@
-- 0.16.0
+# 0.16.0
   - Added outdated information for npm
 
     ![image](https://cloud.githubusercontent.com/assets/1727302/25782781/c6352e30-3348-11e7-8cbe-f056140cce8a.png)
@@ -13,7 +13,7 @@
 
   - Fixes an edge case where npm view doesn't return the list of versions in chronological order. The only edge case found so far is when "x" is sepcified as the version
 
-- 0.15.0
+# 0.15.0
   - Added two new icon tools to the the editor toolbar
 
     ![image](https://cloud.githubusercontent.com/assets/1727302/25782819/75ec2f86-3349-11e7-8e38-a4e3d5b7c2d7.png)
@@ -28,10 +28,10 @@
   
     `latest` will always be the latest `commit`. This field now only accepts ['Release', 'Tag'] which is the default filter
 
-- 0.14.1
+# 0.14.1
   - Fixed a case where npm view doesn't return latest tag as the first entry.
 
-- 0.14.0
+# 0.14.0
   - Added ability to view versions associated with dist tags for npm and jspm.
 
     Example:
@@ -49,17 +49,17 @@
     Sometimes this feature never worked because you first had to scroll all the packages in to view.
     Will work on a better method for this feature in the future.
 
-- 0.13.0
+# 0.13.0
   - Added dotnet core csproj file support. Thanks to [@eamodio](https://github.com/eamodio)
 
-- 0.12.2
+# 0.12.2
   - Fixes an issue where ranged versions (i.e. 1.x) were showing the incorrect update verion for npm and jspm
   - Moved error messages to the console. They should no longer appear as a code lens
 
-- 0.12.1
+# 0.12.1
   - Fixes an issue where code lenses were not showing for jspm in package.json
   
-- 0.12.0
+# 0.12.0
 
   - Adds ability to provide github access token to avoid github api rate limiting
 
@@ -84,7 +84,7 @@
     }
     ```
 
-- 0.11.0
+# 0.11.0
   - Can now choose to update all packages within a dependency section. i.e. update all beneath devDependencies.
 
     ![update-all-example](https://cloud.githubusercontent.com/assets/1727302/20415826/c7244f98-ad32-11e6-9c25-ada420828d8c.gif)
@@ -99,7 +99,7 @@
 
     ![file-existence](https://cloud.githubusercontent.com/assets/1727302/20415939/7b1843d8-ad33-11e6-8444-bc4ae6d8e555.gif)
 
-- 0.10.0
+# 0.10.0
   - Added github commitish support for npm, jspm and bower. Doesn't support pre-releases yet.
 
     ![npm-comittish](https://cloud.githubusercontent.com/assets/1727302/20376535/69a638a8-ac7f-11e6-8408-857759c21106.gif)
@@ -108,40 +108,40 @@
 
     ![npm-comittish2](https://cloud.githubusercontent.com/assets/1727302/20376610/1669b59c-ac80-11e6-9415-94ed83066f0b.gif)
 
-- 0.9.1
+# 0.9.1
   - Fixes invalid message when using tags i.e. @next
 
-- 0.9.0
+# 0.9.0
   - Github and local file system packages are now treated as clickable links that browse to their respective destinations. (git urls are not implemented yet)
 
-- 0.8.0
+# 0.8.0
   - Added support for npm private packages and private registries
 
-- 0.7.1
+# 0.7.1
   - Replaces update arrow indicator to be a unicode charachter due to change in vscode 1.7. See https://github.com/Microsoft/vscode/issues/13714 for more info.
 
-- 0.7.0
+# 0.7.0
   - Adds support for preserving some semver operators when updating
 
-- 0.6.0
+# 0.6.0
   - Added jspm package support
 
-- 0.5.0
+# 0.5.0
   - Added npm scoped packages support
 
-- 0.4.3
+# 0.4.3
   - Fixes versionlens for dub sub packages
 
-- 0.4.2
+# 0.4.2
   - Transferred this project over to https://github.com/vscode-contrib/vscode-versionlens
 
-- 0.4.1
+# 0.4.1
   - Replaces internal json module with external
   - Replaces internal request module with external
 
-- 0.4.0
+# 0.4.0
   - Adds dotnet project.json support
   - Fixes issue when a child version entry is not present
 
-- 0.3.0
+# 0.3.0
   - Adds dub dub.json support
