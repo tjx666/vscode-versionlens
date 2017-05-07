@@ -3,15 +3,15 @@
 
     ![image](https://cloud.githubusercontent.com/assets/1727302/25782781/c6352e30-3348-11e7-8cbe-f056140cce8a.png)
 
-  - Added fsharp project extensions for dotnet core
-
-    ![image](https://cloud.githubusercontent.com/assets/1727302/25782857/eafb2d9a-3349-11e7-981a-5447bed61210.png)
-
   - Added 'latest' to the dist tags for npm and jspm. This gives the ability to always see the latest version regardless of what version is matched in the package.
 
     ![image](https://cloud.githubusercontent.com/assets/1727302/25782884/46d11af8-334a-11e7-9a6d-b47e6f0f5f7d.png)
 
   - Fixes an edge case where npm view doesn't return the list of versions in chronological order. The only edge case found so far is when "x" is sepcified as the version
+
+  - Added fsharp project extensions for dotnet core
+
+    ![image](https://cloud.githubusercontent.com/assets/1727302/25782857/eafb2d9a-3349-11e7-981a-5447bed61210.png)
 
 # 0.15.0
   - Added two new icon tools to the the editor toolbar
