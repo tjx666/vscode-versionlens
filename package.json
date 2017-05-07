@@ -8,7 +8,7 @@
   },
   "author": "Peter Flannery",
   "license": "MIT",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "publisher": "pflannery",
   "displayName": "Version Lens",
   "icon": "images/logo.png",
@@ -20,7 +20,8 @@
     "versions",
     "packages",
     "dependencies",
-    "npm, bower, dub, dotnet, jspm"
+    "references",
+    "npm, bower, dub, dotnet, jspm, csharp, fsharp, c#, f#"
   ],
   "categories": [
     "Languages",
@@ -45,12 +46,12 @@
     "vscode": "1.1.0",
     "rimraf": "2.6.1",
     "proxyquire": "1.7.11",
-    "@types/node": "~6.0.70"
+    "@types/node": "~6.0.73"
   },
   "dependencies": {
     "bower": "1.8.0",
     "npm": "4.5.0",
-    "minimatch": "3.0.3",
+    "minimatch": "3.0.4",
     "opener": "1.4.3",
     "request-light": "0.2.0",
     "semver": "5.3.0",
@@ -101,22 +102,22 @@
       "editor/title": [
         {
           "command": "versionlens.showTaggedVersions",
-          "when": "versionlens.showTaggedVersions == false && versionlens.show && versionlens.isActive",
+          "when": "versionlens.showTaggedVersions == false && versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
           "group": "navigation@2"
         },
         {
           "command": "versionlens.hideTaggedVersions",
-          "when": "versionlens.showTaggedVersions && versionlens.show && versionlens.isActive",
+          "when": "versionlens.showTaggedVersions && versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
           "group": "navigation@2"
         },
         {
           "command": "versionlens.showVersionLenses",
-          "when": "versionlens.show == false && versionlens.isActive",
+          "when": "versionlens.show == false && versionlens.isActive && textCompareEditorVisible == false",
           "group": "navigation@1"
         },
         {
           "command": "versionlens.hideVersionLenses",
-          "when": "versionlens.show && versionlens.isActive",
+          "when": "versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
           "group": "navigation@1"
         }
       ]
