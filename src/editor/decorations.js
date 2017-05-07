@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { window } from 'vscode';
+import { window, Range, Position } from 'vscode';
 import appSettings from '../common/appSettings';
 
 export function createRenderOptions(contentText, color) {
@@ -63,7 +63,7 @@ export function getDecorationsByLine(lineToFilterBy) {
 
 export function updateDecoration(newDecoration) {
   const foundIndex = _decorations.findIndex(
-    entry => entry.range._start._line === newDecoration.range._start._line
+    entry => entry.range.start.line === newDecoration.range.start.line
   );
 
   if (foundIndex > -1) {
@@ -73,4 +73,44 @@ export function updateDecoration(newDecoration) {
   }
 
   setDecorations(_decorations);
+}
+
+
+export function createMissingDecoration(range) {
+  return {
+    range: new Range(
+      range.start,
+      new Position(range.end.line, range.end.character + 1)
+    ),
+    hoverMessage: null,
+    renderOptions: {
+      after: createRenderOptions(' ▪ missing install', 'rgba(255,0,0,0.5)')
+    }
+  };
+}
+
+export function createInstalledDecoration(range) {
+  return {
+    range: new Range(
+      range.start,
+      new Position(range.end.line, range.end.character + 1)
+    ),
+    hoverMessage: null,
+    renderOptions: {
+      after: createRenderOptions(' ▪ latest installed', 'rgba(0,255,0,0.5)')
+    }
+  };
+}
+
+export function createOutdatedDecoration(range, installedVersion) {
+  return {
+    range: new Range(
+      range.start,
+      new Position(range.end.line, range.end.character + 1)
+    ),
+    hoverMessage: null,
+    renderOptions: {
+      after: createRenderOptions(` ▪ ${installedVersion} installed`, 'rgba(255,255,0,0.5)')
+    }
+  };
 }

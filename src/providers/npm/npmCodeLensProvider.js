@@ -11,14 +11,18 @@ import * as CommandFactory from '../commandFactory';
 import {
   npmViewVersion,
   npmGetOutdated,
-  npmGetLocalPackageStatus,
   npmPackageDirExists
 } from './npmAPI';
 import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
 import { window, Range, Position } from 'vscode';
-import { createRenderOptions, updateDecoration } from '../../editor/decorations';
+import {
+  createMissingDecoration,
+  createInstalledDecoration,
+  createOutdatedDecoration,
+  updateDecoration
+} from '../../editor/decorations';
 import * as path from 'path';
 
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
@@ -88,7 +92,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         ''
     );
 
-    return npmViewVersion(viewPackageName)
+    return npmViewVersion(this._documentPath, viewPackageName)
       .then(remoteVersion => {
         // check that a version was returned by npm view
         if (remoteVersion === '')
@@ -137,7 +141,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
     const packageDirExists = npmPackageDirExists(documentPath, currentPackageName);
     if (!packageDirExists) {
-      updateDecoration(createMissingDecoration(codeLens));
+      updateDecoration(createMissingDecoration(codeLens.range));
       return;
     }
 
@@ -148,57 +152,23 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         );
 
         if (findIndex === -1) {
-          updateDecoration(createInstalledDecoration(codeLens));
+          updateDecoration(createInstalledDecoration(codeLens.range));
           return;
         }
 
         if (!outdated[findIndex].current) {
-          updateDecoration(createMissingDecoration(codeLens));
+          updateDecoration(createMissingDecoration(codeLens.range));
           return;
         }
 
-        updateDecoration(createOutdatedDecoration(codeLens, outdated[findIndex].current));
+        updateDecoration(
+          createOutdatedDecoration(
+            codeLens.range,
+            outdated[findIndex].current
+          )
+        );
       });
 
   }
 
 } // End NpmCodeLensProvider
-
-function createMissingDecoration(codeLens) {
-  return {
-    range: new Range(
-      codeLens.range.start,
-      new Position(codeLens.range.end.line, codeLens.range.end.character + 1)
-    ),
-    hoverMessage: null,
-    renderOptions: {
-      after: createRenderOptions(' ▪ missing install', 'rgba(255,0,0,0.5)')
-    }
-  };
-}
-
-function createInstalledDecoration(codeLens) {
-  return {
-    range: new Range(
-      codeLens.range.start,
-      new Position(codeLens.range.end.line, codeLens.range.end.character + 1)
-    ),
-    hoverMessage: null,
-    renderOptions: {
-      after: createRenderOptions(' ▪ latest installed', 'rgba(0,255,0,0.5)')
-    }
-  };
-}
-
-function createOutdatedDecoration(codeLens, installedVersion) {
-  return {
-    range: new Range(
-      codeLens.range.start,
-      new Position(codeLens.range.end.line, codeLens.range.end.character + 1)
-    ),
-    hoverMessage: null,
-    renderOptions: {
-      after: createRenderOptions(` ▪ ${installedVersion} installed`, 'rgba(255,255,0,0.5)')
-    }
-  };
-}
