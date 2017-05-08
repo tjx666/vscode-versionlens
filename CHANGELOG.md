@@ -1,3 +1,6 @@
+# 0.16.1
+  - fixes a bug where decorations could leak in to wrong documents
+
 # 0.16.0
   - Added outdated information for npm
 
