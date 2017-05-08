@@ -1,6 +1,6 @@
 # 0.16.2
   - Fixes issue where dependency decorations were being stuck on the wrong line after a mutli line edit.
-  - Made dependency colours configurable in user settings. Will helps if the default colours are difficult to see for a specific theme (CSS colours are valid entries)
+  - Made dependency colours configurable in user settings. Will help if the default colours are difficult to see for a specific theme (CSS colours are valid entries)
     - `versionlens.missingDependencyColour: Default 'red'`
     - `versionlens.outdatedDependencyColour: Default 'orange'`
     - `versionlens.installedDependencyColour: Default 'green'`

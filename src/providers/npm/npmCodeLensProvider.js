@@ -59,12 +59,10 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       npmVersionParser
     );
 
-    return generateCodeLenses(packageCollection, document)
-      .then(codeLenses => {
-        this.updateOutdated()
-
-        return codeLenses;
-      })
+    return this.updateOutdated()
+      .then(_ => {
+        return generateCodeLenses(packageCollection, document)
+      });
   }
 
   resolveCodeLens(codeLens, token) {
