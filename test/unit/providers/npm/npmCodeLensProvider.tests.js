@@ -43,6 +43,8 @@ describe("NpmCodeLensProvider", () => {
     return Promise.resolve(['latest'])
   }
 
+  NpmAPIModule.npmGetOutdated = _ => Promise.resolve([]);
+
   const NpmVersionParserModule = proxyquire('../../../../src/providers/npm/npmVersionParser', {
     './npmAPI': NpmAPIModule
   });
