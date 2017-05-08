@@ -224,6 +224,21 @@
           "type": "string",
           "default": "",
           "description": "Used for making basic read only github api requests. To generate a token see https://help.github.com/articles/creating-an-access-token-for-command-line-use/#creating-a-token. When no token is provided then access to the github api is rate limited to 60 requests every 10 minutes or so."
+        },
+        "versionlens.missingDependencyColour": {
+          "type": "string",
+          "default": "red",
+          "description": "The colour used to show missing dependencies. Accept's valid CSS colours"
+        },
+        "versionlens.installedDependencyColour": {
+          "type": "string",
+          "default": "green",
+          "description": "The colour used to show installed dependencies. Accept's valid CSS colours"
+        },
+        "versionlens.outdatedDependencyColour": {
+          "type": "string",
+          "default": "orange",
+          "description": "The colour used to show outdated dependencies. Accept's valid CSS colours"
         }
       }
     }

@@ -60,6 +60,21 @@ class AppConfiguration {
     return config.get('github.accessToken', null);
   }
 
+  get missingDependencyColour() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get('missingDependencyColour', 'red');
+  }
+
+  get installedDependencyColour() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get('installedDependencyColour', 'green');
+  }
+
+  get outdatedDependencyColour() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get('outdatedDependencyColour', 'orange');
+  }
+
 }
 
 export const appConfig = new AppConfiguration();

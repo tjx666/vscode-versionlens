@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { window, Range, Position } from 'vscode';
 import appSettings from '../common/appSettings';
+import { appConfig } from '../common/appConfiguration';
 
 let _decorations = [];
 const _decorationTypeKey = window.createTextEditorDecorationType({
@@ -95,7 +96,10 @@ export function createMissingDecoration(range) {
     ),
     hoverMessage: null,
     renderOptions: {
-      after: createRenderOptions(' ▪ missing install', 'red')
+      after: createRenderOptions(
+        ' ▪ missing install',
+        appConfig.missingDependencyColour
+      )
     }
   };
 }
@@ -108,7 +112,10 @@ export function createInstalledDecoration(range) {
     ),
     hoverMessage: null,
     renderOptions: {
-      after: createRenderOptions(' ▪ latest installed', 'green')
+      after: createRenderOptions(
+        ' ▪ latest installed',
+        appConfig.installedDependencyColour
+      )
     }
   };
 }
@@ -121,7 +128,10 @@ export function createOutdatedDecoration(range, installedVersion) {
     ),
     hoverMessage: null,
     renderOptions: {
-      after: createRenderOptions(` ▪ ${installedVersion} installed`, 'orange')
+      after: createRenderOptions(
+        ` ▪ ${installedVersion} installed`,
+        appConfig.outdatedDependencyColour
+      )
     }
   };
 }
