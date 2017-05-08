@@ -71,6 +71,20 @@ export function parseNpmRegistryVersion(node, name, version, appConfig, customGe
             )
           };
         });
+    })
+    .catch(error => {
+      if (error.code === 'E404')
+        return [{
+          node,
+          package: generatePackage(
+            name,
+            'E404',
+            { type: 'npm' },
+            null
+          )
+        }];
+
+      console.error(error);
     });
 }
 

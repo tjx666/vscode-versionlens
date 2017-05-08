@@ -19,7 +19,11 @@ describe("NpmCodeLensProvider", () => {
   let defaultNpmDependencyKeys = npmDefaultDependencyProperties;
   const npmMock = {
     load: cb => cb(),
-    view: x => x
+    view: x => x,
+    outdated: (err, response) => { },
+    config: {
+      set: (key, value) => { }
+    }
   };
 
   const appConfigMock = {
@@ -196,7 +200,23 @@ describe("NpmCodeLensProvider", () => {
       testProvider.evaluateCodeLens(codeLens, null);
     });
 
-    it("when npm view returns an error then codeLens should return ErrorCommand", done => {
+    it("when npm view returns a 404 codeLens when E404 is set", done => {
+      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: 'E404', meta: { isValidSemver: true } }, null);
+      // debugger
+      npmMock.view = (testPackageName, arg, cb) => {
+        let err = "npm.view 404";
+        cb(err);
+      };
+
+      testProvider.evaluateCodeLens(codeLens, null).then(result => {
+        assert.equal(result.command.title, 'SomePackage could not be found', "Expected command.title failed.");
+        assert.equal(result.command.command, undefined);
+        assert.equal(result.command.arguments, undefined);
+        done();
+      });
+    });
+
+    it("when npm view returns an unhandled error then codeLens should return ErrorCommand", done => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: { isValidSemver: true } }, null);
       // debugger
       npmMock.view = (testPackageName, arg, cb) => {

@@ -62,11 +62,9 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     return generateCodeLenses(packageCollection, document)
       .then(codeLenses => {
         this.updateOutdated()
-          .catch(console.error);
 
         return codeLenses;
       })
-      .catch(console.error);
   }
 
   resolveCodeLens(codeLens, token) {
@@ -128,6 +126,13 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         if (codeLens.isTaggedVersion())
           return;
 
+        if (codeLens.package.version == 'E404') {
+          return CommandFactory.makeErrorCommand(
+            `${codeLens.package.name} could not be found`,
+            codeLens
+          );
+        }
+
         console.error(error);
         return CommandFactory.makeErrorCommand(
           "An error occurred retrieving this package.",
@@ -141,7 +146,6 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   updateOutdated() {
     return npmGetOutdated(this._documentPath)
       .then(results => this._outdatedCache = results)
-      .catch(console.error);
   }
 
   generateDecoration(codeLens) {

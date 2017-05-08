@@ -52,7 +52,7 @@ describe('jspmVersionParser(node, appConfig)', () => {
 
   });
 
-  it('returns the expected object for github versions', () => {
+  it('returns the expected object for github versions', done => {
     let nodeMock = {
       name: 'bootstrap',
       value: 'github:twbs/bootstrap@4.0.0-alpha.4'
