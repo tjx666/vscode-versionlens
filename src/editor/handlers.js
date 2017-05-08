@@ -26,6 +26,10 @@ export function onActiveEditorChanged(editor, providers) {
 
 // update the decorators if the changed line affects them
 export function onChangeTextDocument(changeEvent) {
+  // ensure version lens is active
+  if (appSettings.isActive === false)
+    return;
+
   const foundDecorations = [];
   const { contentChanges } = changeEvent;
 
