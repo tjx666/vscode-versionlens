@@ -84,7 +84,7 @@ export function createMissingDecoration(range) {
     ),
     hoverMessage: null,
     renderOptions: {
-      after: createRenderOptions(' ▪ missing install', 'rgba(255,0,0,0.5)')
+      after: createRenderOptions(' ▪ missing install', 'rgba(255,0,0,0.3)')
     }
   };
 }
@@ -97,7 +97,7 @@ export function createInstalledDecoration(range) {
     ),
     hoverMessage: null,
     renderOptions: {
-      after: createRenderOptions(' ▪ latest installed', 'rgba(0,255,0,0.5)')
+      after: createRenderOptions(' ▪ latest installed', 'rgba(0,255,0,0.3)')
     }
   };
 }
@@ -110,7 +110,7 @@ export function createOutdatedDecoration(range, installedVersion) {
     ),
     hoverMessage: null,
     renderOptions: {
-      after: createRenderOptions(` ▪ ${installedVersion} installed`, 'rgba(255,255,0,0.5)')
+      after: createRenderOptions(` ▪ ${installedVersion} installed`, 'rgba(255,255,0,0.3)')
     }
   };
 }
