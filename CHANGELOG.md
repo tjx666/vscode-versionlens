@@ -1,5 +1,12 @@
+# 0.16.2
+  - Fixes issue where dependency decorations were being stuck on the wrong line after a mutli line edit.
+  - Made dependency colours configurable in user settings. Will helps if the default colours are difficult to see for a specific theme (CSS colours are valid entries)
+    - `versionlens.missingDependencyColour: Default 'red'`
+    - `versionlens.outdatedDependencyColour: Default 'orange'`
+    - `versionlens.installedDependencyColour: Default 'green'`
+
 # 0.16.1
-  - fixes a bug where decorations could leak in to wrong documents
+  - Fixes a bug where dependency decorations could leak in to wrong documents
 
 # 0.16.0
   - Added outdated information for npm
