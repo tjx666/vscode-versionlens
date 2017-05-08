@@ -5,16 +5,10 @@
 import { window, Range, Position } from 'vscode';
 import appSettings from '../common/appSettings';
 
-export function createRenderOptions(contentText, color) {
-  return {
-    contentText,
-    color,
-    margin: '0 .2em 0 0'
-  };
-}
-
-const _decorations = [];
-const _decorationTypeKey = window.createTextEditorDecorationType({});
+let _decorations = [];
+const _decorationTypeKey = window.createTextEditorDecorationType({
+  margin: '0 .2em 0 0'
+});
 
 export function clearDecorations() {
   _decorations = [];
@@ -49,6 +43,17 @@ export function removeDecorations(removeDecorationList) {
   );
 }
 
+export function removeDecorationsFromLine(lineNum) {
+  const results = [];
+  for (let i = 0; i < _decorations.length; i++) {
+    const entry = _decorations[i];
+    if (entry.range.start.line > lineNum) {
+      results.push(entry);
+    }
+  }
+  removeDecorations(results);
+}
+
 export function getDecorationsByLine(lineToFilterBy) {
   const results = [];
   for (let i = 0; i < _decorations.length; i++) {
@@ -75,6 +80,12 @@ export function updateDecoration(newDecoration) {
   setDecorations(_decorations);
 }
 
+export function createRenderOptions(contentText, color) {
+  return {
+    contentText,
+    color
+  };
+}
 
 export function createMissingDecoration(range) {
   return {
@@ -84,7 +95,7 @@ export function createMissingDecoration(range) {
     ),
     hoverMessage: null,
     renderOptions: {
-      after: createRenderOptions(' ▪ missing install', 'rgba(255,0,0,0.3)')
+      after: createRenderOptions(' ▪ missing install', 'red')
     }
   };
 }
@@ -97,7 +108,7 @@ export function createInstalledDecoration(range) {
     ),
     hoverMessage: null,
     renderOptions: {
-      after: createRenderOptions(' ▪ latest installed', 'rgba(0,255,0,0.3)')
+      after: createRenderOptions(' ▪ latest installed', 'green')
     }
   };
 }
@@ -110,7 +121,7 @@ export function createOutdatedDecoration(range, installedVersion) {
     ),
     hoverMessage: null,
     renderOptions: {
-      after: createRenderOptions(` ▪ ${installedVersion} installed`, 'rgba(255,255,0,0.3)')
+      after: createRenderOptions(` ▪ ${installedVersion} installed`, 'orange')
     }
   };
 }

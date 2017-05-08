@@ -5,11 +5,17 @@
 import * as path from 'path';
 import * as minimatch from 'minimatch';
 import appSettings from '../common/appSettings';
-import { getDecorationsByLine, removeDecorations } from './decorations';
+import {
+  getDecorationsByLine,
+  removeDecorations,
+  clearDecorations,
+  removeDecorationsFromLine
+} from './decorations';
 
 export function onActiveEditorChanged(editor, providers) {
   if (!editor || !editor.document) {
     appSettings.isActive = false;
+    clearDecorations();
     return;
   }
 
@@ -22,6 +28,7 @@ export function onActiveEditorChanged(editor, providers) {
   }
 
   appSettings.isActive = false;
+  clearDecorations();
 }
 
 // update the decorators if the changed line affects them
@@ -36,7 +43,13 @@ export function onChangeTextDocument(changeEvent) {
   // get all decorations for all the lines that have changed
   contentChanges.forEach(change => {
     const startLine = change.range.start.line;
-    const endLine = change.range.end.line;
+    let endLine = change.range.end.line;
+
+    if (change.text.charAt(0) == '\n' || endLine > startLine) {
+      removeDecorationsFromLine(startLine)
+      return;
+    }
+
     for (let line = startLine; line <= endLine; line++) {
       const lineDecorations = getDecorationsByLine(line);
       if (lineDecorations.length > 0)
