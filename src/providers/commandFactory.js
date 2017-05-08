@@ -136,7 +136,7 @@ export function makeGithubCommand(codeLens) {
         return makeTagCommand('Rate limit exceeded', codeLens);
 
       if (error.notFound)
-        return makeTagCommand('Resource not found', codeLens);
+        return makeTagCommand('Git resource not found', codeLens);
 
       if (error.badCredentials)
         return makeTagCommand('Bad credentials', codeLens);

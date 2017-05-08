@@ -69,7 +69,7 @@ describe('jspmVersionParser(node, appConfig)', () => {
           assert.equal(result.package.meta.remoteUrl, `https://github.com/${result.package.meta.userRepo}/commit/${result.package.meta.commitish}`, "Expected meta.remoteUrl");
           assert.equal(result.package.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");
           assert.equal(result.package.meta.commitish, '4.0.0-alpha.4', "Expected meta.commitish");
-          assert.ok(!!result.customGenerateVersion, "Expected meta.customGenerateVersion");
+          assert.ok(!!result.package.customGenerateVersion, "Expected package.customGenerateVersion");
         });
         done();
       })

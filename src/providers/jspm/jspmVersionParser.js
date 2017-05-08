@@ -24,7 +24,7 @@ export function jspmVersionParser(node, appConfig) {
   if (packageManager === 'github') {
     const results = parseGithubVersion(node, extractedPkgName, `${extractedPkgName}#${newPkgVersion}`, appConfig.githubTaggedCommits);
     return results.map(result => {
-      result.customGenerateVersion = customGenerateVersion;
+      result.package.customGenerateVersion = customGenerateVersion;
       return result;
     });
   }
