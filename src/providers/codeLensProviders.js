@@ -6,14 +6,14 @@ import { NpmCodeLensProvider } from './npm/npmCodeLensProvider';
 import { JspmCodeLensProvider } from './jspm/jspmCodeLensProvider';
 import { BowerCodeLensProvider } from './bower/bowerCodeLensProvider';
 import { DubCodeLensProvider } from './dub/dubCodeLensProvider';
-import { DotNetCSProjCodeLensProvider } from './dotnet/dotnetCSProjCodeLensProvider';
+import { DotNetCodeLensProvider } from './dotnet/dotnetCodeLensProvider';
 
 const codeLensProviders = [
   new NpmCodeLensProvider,
   new JspmCodeLensProvider,
   new BowerCodeLensProvider,
   new DubCodeLensProvider,
-  new DotNetCSProjCodeLensProvider
+  new DotNetCodeLensProvider
 ];
 
 export default codeLensProviders;
