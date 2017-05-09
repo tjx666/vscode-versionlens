@@ -42,11 +42,6 @@ export class JspmCodeLensProvider extends NpmCodeLensProvider {
     return generateCodeLenses(packageCollection, document);
   }
 
-  resolveCodeLens(codeLens, token) {
-    if (codeLens instanceof PackageCodeLens)
-      return this.evaluateCodeLens(codeLens);
-  }
-
   getJspmRootNode_(rootNode) {
     const children = rootNode.getChildNodes();
     for (let i = 0; i < children.length; i++) {

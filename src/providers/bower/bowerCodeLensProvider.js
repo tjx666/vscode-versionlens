@@ -24,7 +24,7 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   provideCodeLenses(document, token) {
-    if(appSettings.showVersionLenses === false)
+    if (appSettings.showVersionLenses === false)
       return;
 
     const jsonDoc = jsonParser.parse(document.getText());
@@ -43,11 +43,6 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
     );
 
     return generateCodeLenses(packageCollection, document);
-  }
-
-  resolveCodeLens(codeLens, token) {
-    if (codeLens instanceof PackageCodeLens)
-      return this.evaluateCodeLens(codeLens);
   }
 
   evaluateCodeLens(codeLens) {

@@ -6,6 +6,7 @@ import { commands } from 'vscode';
 import { appConfig } from './appConfiguration';
 
 let _isActive = false;
+let _inProgress = false;
 let _showTaggedVersions = false;
 let _showVersionLenses = false;
 
@@ -48,7 +49,19 @@ const config = {
       `${this.extensionName}.show`,
       _showVersionLenses
     );
-  }
+  },
+
+  get inProgress() {
+    return _inProgress;
+  },
+  set inProgress(newValue) {
+    _inProgress = newValue;
+    commands.executeCommand(
+      'setContext',
+      `${this.extensionName}.inProgress`,
+      _inProgress
+    );
+  },
 
 };
 

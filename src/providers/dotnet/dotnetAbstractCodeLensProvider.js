@@ -12,11 +12,6 @@ const FEED_URL = 'https://api.nuget.org/v3-flatcontainer';
 
 export class DotNetAbstractCodeLensProvider extends AbstractCodeLensProvider {
 
-  resolveCodeLens(codeLens, token) {
-    if (codeLens instanceof PackageCodeLens)
-      return this.evaluateCodeLens(codeLens);
-  }
-
   evaluateCodeLens(codeLens) {
     if (codeLens.command && codeLens.command.command.includes('updateDependenciesCommand'))
       return codeLens;

@@ -95,6 +95,15 @@
           "dark": "images/icons/toggle-active.svg",
           "light": "images/icons/toggle-active.svg"
         }
+      },
+      {
+        "command": "versionlens.showingProgress",
+        "title": "Analyzing dependencies...",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/toggle-active-progress.svg",
+          "light": "images/icons/toggle-active-progress.svg"
+        }
       }
     ],
     "menus": {
@@ -116,7 +125,12 @@
         },
         {
           "command": "versionlens.hideVersionLenses",
-          "when": "versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
+          "when": "versionlens.show && versionlens.isActive && versionlens.inProgress == false && textCompareEditorVisible == false",
+          "group": "navigation@1"
+        },
+        {
+          "command": "versionlens.showingProgress",
+          "when": "versionlens.show && versionlens.isActive && versionlens.inProgress && textCompareEditorVisible == false",
           "group": "navigation@1"
         }
       ]

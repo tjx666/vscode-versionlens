@@ -50,11 +50,6 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     return generateCodeLenses(packageCollection, document);
   }
 
-  resolveCodeLens(codeLens, token) {
-    if (codeLens instanceof PackageCodeLens)
-      return this.evaluateCodeLens(codeLens);
-  }
-
   evaluateCodeLens(codeLens) {
     if (codeLens.command && codeLens.command.command.includes('updateDependenciesCommand'))
       return codeLens;

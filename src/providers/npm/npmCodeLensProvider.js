@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as jsonParser from 'vscode-contrib-jsonc';
-import { PackageCodeLens } from '../../common/packageCodeLens';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { npmVersionParser } from './npmVersionParser';
 import { appConfig } from '../../common/appConfiguration';
@@ -59,17 +58,12 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       npmVersionParser
     );
 
+    appSettings.inProgress = true;
     return this.updateOutdated()
       .then(_ => {
+        appSettings.inProgress = false;
         return generateCodeLenses(packageCollection, document)
       });
-  }
-
-  resolveCodeLens(codeLens, token) {
-    if (codeLens instanceof PackageCodeLens) {
-      this.generateDecoration(codeLens);
-      return this.evaluateCodeLens(codeLens);
-    }
   }
 
   evaluateCodeLens(codeLens) {

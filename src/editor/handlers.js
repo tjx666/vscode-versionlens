@@ -13,7 +13,12 @@ import {
 } from './decorations';
 
 export function onActiveEditorChanged(editor, providers) {
-  if (!editor || !editor.document) {
+  if (!editor) {
+    appSettings.isActive = false;
+    return;
+  }
+
+  if (!editor.document) {
     appSettings.isActive = false;
     clearDecorations();
     return;

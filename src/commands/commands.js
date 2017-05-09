@@ -44,3 +44,7 @@ export function hideVersionLenses(file) {
   appSettings.showVersionLenses = false;
   utils.refreshCodeLens();
 }
+
+export function showingProgress(file) {
+  // currenlty do nothing
+}
