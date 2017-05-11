@@ -36,28 +36,36 @@ export function npmVersionParser(node, appConfig) {
 }
 
 export function parseNpmRegistryVersion(node, name, version, appConfig, customGenerateVersion = null) {
-  // check if its a valid semver, if not could be a tag
+  // check if its a valid semver, if not could be a tag like 'latest'
   const isValidSemver = semver.validRange(version);
+
+  // check if this is a fixed version
+  let isFixedVersion = false;
+  if (isValidSemver) {
+    const testRange = new semver.Range(version);
+    isFixedVersion = testRange.set[0][0].operator === "";
+  }
 
   // check if the version has a range symbol
   const hasRangeSymbol = hasRangeSymbols(version);
 
   return npmViewDistTags(name)
-    .then(distTags => {
+    .then(tags => {
       if (appSettings.showTaggedVersions === false) {
-        distTags = [
-          distTags[0]
+        tags = [
+          tags[0]
         ];
       } else
-        distTags.splice(1, 0, distTags[0]);
+        tags.splice(1, 0, tags[0]);
 
-      return filterDistTags(distTags, appConfig)
-        .map((distTag, index) => {
+      return filterDistTags(tags, appConfig)
+        .map((tag, index) => {
           const packageInfo = {
             type: 'npm',
             hasRangeSymbol,
             isValidSemver,
-            distTag,
+            isFixedVersion,
+            tag,
             isTaggedVersion: index !== 0
           };
 

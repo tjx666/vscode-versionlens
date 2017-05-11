@@ -26,7 +26,7 @@ export function bowerVersionParser(node, appConfig) {
       name,
       version,
       meta: {
-        distTag: 'latest',
+        tag: { name: 'latest', version: 'latest' },
         type: 'bower',
         isValidSemver,
         hasRangeSymbol

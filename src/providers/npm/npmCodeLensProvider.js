@@ -88,7 +88,11 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       .then(remoteVersion => {
         // check if this is a dist tag
         if (codeLens.isTaggedVersion())
-          return CommandFactory.makeDistTagCommand(codeLens);
+          return CommandFactory.makeTaggedVersionCommand(codeLens);
+
+        // check if this is a fixed version
+        if (codeLens.isFixedVersion())
+          return CommandFactory.makeFixedVersionCommand(codeLens);
 
         // check that a version was returned by npm view
         if (remoteVersion === '')

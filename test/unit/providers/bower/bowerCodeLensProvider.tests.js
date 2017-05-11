@@ -164,7 +164,7 @@ describe("BowerCodeLensProvider", () => {
     });
 
     it("when null info.latest object returned from bower then codeLens should return ErrorCommand", done => {
-      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: {isValidSemver: true} }, null);
+      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: { isValidSemver: true } }, null);
       bowerMock.commands.info = name => {
         let result;
         result = {
@@ -186,7 +186,7 @@ describe("BowerCodeLensProvider", () => {
     });
 
     it("when valid info.latest object returned from bower then codeLens should return VersionCommand", done => {
-      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: {isValidSemver: true} }, null);
+      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: { isValidSemver: true } }, null);
       bowerMock.commands.info = name => {
         let result;
         result = {
@@ -208,7 +208,7 @@ describe("BowerCodeLensProvider", () => {
     });
 
     it("when bower info returns an error then codeLens should return ErrorCommand", done => {
-      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: {isValidSemver: true} }, null);
+      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: { isValidSemver: true } }, null);
       bowerMock.commands.info = name => {
         let result;
         result = {

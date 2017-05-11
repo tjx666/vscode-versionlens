@@ -12,7 +12,7 @@ let _showVersionLenses = false;
 
 const config = {
   extensionName: "versionlens",
-  updateIndicator: '⬆',
+  updateIndicator: '⮬',
   openNewWindowIndicator: '⧉',
 
   get isActive() {

@@ -24,7 +24,7 @@ export class PackageCodeLens extends CodeLens {
 
   getTaggedVersionPrefix() {
     if (this.package && this.package.meta && this.package.meta.isTaggedVersion)
-      return this.package.meta.distTag.name + ': ';
+      return this.package.meta.tag.name + ': ';
 
     return '';
   }
@@ -33,8 +33,12 @@ export class PackageCodeLens extends CodeLens {
     return this.package && this.package.meta && this.package.meta.isTaggedVersion;
   }
 
+  isFixedVersion() {
+    return this.package && this.package.meta && this.package.meta.isFixedVersion;
+  }
+
   getTaggedVersion() {
-    return this.package.meta.distTag.version;
+    return this.package.meta.tag.version;
   }
 
   setCommand(text, command, args) {

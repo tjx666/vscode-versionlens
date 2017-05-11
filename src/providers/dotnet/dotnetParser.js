@@ -12,6 +12,14 @@ export function dotnetVersionParser(node, appConfig) {
   // check if its a valid semver, if not could be a tag like latest
   const isValidSemver = semver.validRange(requestedVersion);
 
+  // check if this is a fixed version
+  let isFixedVersion = false;
+  if (isValidSemver) {
+    const testRange = new semver.Range(requestedVersion);
+    isFixedVersion = testRange.set[0][0].operator === "";
+  }
+
+
   return nugetGetPackageVersions(name)
     .then(versions => {
       const versionMap = mapVersions(versions, requestedVersion);
@@ -19,7 +27,8 @@ export function dotnetVersionParser(node, appConfig) {
 
       if (appSettings.showTaggedVersions === false)
         taggedNames = [
-          taggedNames[0]
+          taggedNames[0],
+          taggedNames[1]
         ];
 
       return taggedNames
@@ -32,7 +41,8 @@ export function dotnetVersionParser(node, appConfig) {
           const packageInfo = {
             type: 'nuget',
             isValidSemver,
-            distTag: {
+            isFixedVersion,
+            tag: {
               name: tagName,
               version: isTaggedVersion ? latestTagVersion : latestVersion
             },
@@ -113,7 +123,6 @@ function stripNumbersFromName(tagName) {
 }
 
 function stripNonSemverVersions(versions) {
-
   const semverVersions = [];
   versions.forEach(version => {
     if (semver.validRange(version))

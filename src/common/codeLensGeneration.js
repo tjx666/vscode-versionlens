@@ -43,7 +43,7 @@ function createPackageFromNode(node) {
     name: node.name,
     version: node.replaceInfo.value || node.value,
     meta: {
-      distTag: 'latest',
+      tag: { name: 'latest', version: 'latest' },
       isValidSemver: null
     },
     order: 0

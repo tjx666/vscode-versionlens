@@ -45,13 +45,17 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
   evaluateCodeLens(codeLens) {
     // check if this is a tagged version
     if (codeLens.isTaggedVersion())
-      return CommandFactory.makeDistTagCommand(codeLens);
+      return CommandFactory.makeTaggedVersionCommand(codeLens);
+
+    // check if this is a fixed version
+    if (codeLens.isFixedVersion())
+      return CommandFactory.makeFixedVersionCommand(codeLens);
 
     // check if this is set to the latest version
     if (codeLens.package.version === 'latest')
       return CommandFactory.makeLatestCommand(codeLens);
 
-    const latestVersion = codeLens.package.meta.distTag.version;
+    const latestVersion = codeLens.package.meta.tag.version;
     return CommandFactory.makeVersionCommand(
       codeLens.package.version,
       latestVersion,

@@ -74,7 +74,7 @@ export function makeSatisfiedCommand(serverVersion, codeLens) {
 export function makeSatisfiedWithNewerCommand(serverVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(serverVersion);
   return codeLens.setCommand(
-    `Matches ${appSettings.updateIndicator} v${serverVersion}`,
+    `Matches ${appSettings.updateIndicator} ${serverVersion}`,
     `${appSettings.extensionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
@@ -86,14 +86,6 @@ export function makeLatestCommand(codeLens) {
 
 export function makeTagCommand(tag, codeLens) {
   return codeLens.setCommand(tag);
-}
-
-export function makeUpdateDependenciesCommand(propertyName, codeLens, codeLenCollection) {
-  return codeLens.setCommand(
-    `${codeLens.getTaggedVersionPrefix()}${appSettings.updateIndicator} Update ${propertyName}`,
-    `${appSettings.extensionName}.updateDependenciesCommand`,
-    [codeLens, codeLenCollection]
-  );
 }
 
 export function makeLinkCommand(codeLens) {
@@ -148,8 +140,8 @@ export function makeGithubCommand(codeLens) {
     });
 }
 
-export function makeDistTagCommand(codeLens) {
-  const distTagVersion = codeLens.getTaggedVersion();
+export function makeTaggedVersionCommand(codeLens) {
+  const taggedVersion = codeLens.getTaggedVersion();
   const version = codeLens.package.version;
 
   // check for any leading semver symbols in the version
@@ -158,11 +150,16 @@ export function makeDistTagCommand(codeLens) {
   if (versionLeading && semverLeadingChars.includes(versionLeading))
     version = version.slice(1);
 
-  if (version === distTagVersion)
-    return makeTagCommand(`${codeLens.getTaggedVersionPrefix()} ${distTagVersion}`, codeLens);
+  if (version === taggedVersion)
+    return makeTagCommand(`${codeLens.getTaggedVersionPrefix()} ${taggedVersion}`, codeLens);
 
   return makeNewVersionCommand(
     codeLens.getTaggedVersion(),
     codeLens
   );
+}
+
+export function makeFixedVersionCommand(codeLens) {
+  const version = codeLens.package.version;
+  return makeTagCommand(`Matches ${version}`, codeLens);
 }
