@@ -6,10 +6,10 @@ import * as semver from 'semver';
 import {
   fileDependencyRegex,
   gitHubDependencyRegex,
-  hasRangeSymbols,
   formatWithExistingLeading
 } from '../../common/utils';
 import appSettings from '../../common/appSettings';
+import { tagFilter } from '../../common/versions';
 import { npmViewDistTags } from './npmAPI'
 
 export function npmVersionParser(node, appConfig) {
@@ -46,23 +46,32 @@ export function parseNpmRegistryVersion(node, name, version, appConfig, customGe
     isFixedVersion = testRange.set[0][0].operator === "";
   }
 
-  // check if the version has a range symbol
-  const hasRangeSymbol = hasRangeSymbols(version);
-
+  // get all the tag entries
   return npmViewDistTags(name)
     .then(tags => {
-      if (appSettings.showTaggedVersions === false) {
-        tags = [
-          tags[0]
-        ];
-      } else
-        tags.splice(1, 0, tags[0]);
+      // insert the matches entry before all other tagged entries
+      const matchesEntry = { name: 'Matches', version: null };
+      tags.splice(0, 0, matchesEntry);
 
-      return filterDistTags(tags, appConfig)
+      // only show matches and latest entries when showTaggedVersions is false
+      // otherwise filter by the appConfig.dotnetTagFilter
+      let tagsToProcess;
+      if (appSettings.showTaggedVersions === false)
+        tagsToProcess = [
+          tags[0], // matches entry
+          tags[1]  // latest entry
+        ];
+      else if (appConfig.npmDistTagFilter.length > 0)
+        tagsToProcess = tagFilter(tags, ['Matches', 'Latest', ...appConfig.npmDistTagFilter]);
+      else
+        tagsToProcess = tags;
+
+      // map the tags to packages
+      return tagsToProcess
         .map((tag, index) => {
+          // generate the package data for each tag
           const packageInfo = {
             type: 'npm',
-            hasRangeSymbol,
             isValidSemver,
             isFixedVersion,
             tag,
@@ -81,6 +90,7 @@ export function parseNpmRegistryVersion(node, name, version, appConfig, customGe
         });
     })
     .catch(error => {
+      // show the 404 to the user; otherwise throw the error
       if (error.code === 'E404')
         return [{
           node,
@@ -173,34 +183,6 @@ export function customGenerateVersion(packageInfo, newVersion) {
   // preserve the leading symbol from the existing version
   const preservedLeadingVersion = formatWithExistingLeading(existingVersion, newVersion)
   return `${packageInfo.meta.userRepo}#${preservedLeadingVersion}`
-}
-
-function filterDistTags(distTags, appConfig) {
-  // if there is only one dist tag (i.e. latest tag) then return it
-  if (distTags.length === 1)
-    return distTags;
-
-  // if there is more than one dist tag 
-  // and npmshowTaggedVersions then return the first distTag (i.e. latest tag)
-  if (distTags.length > 1 && appConfig.npmshowTaggedVersions === false)
-    return [distTags[0]];
-
-  // just show all distTags if no filters found
-  if (!appConfig.npmDistTagFilter)
-    return distTags;
-
-  // get the dist tag filter from the config
-  const tagFilters = appConfig.npmDistTagFilter.map(entry => entry.toLowerCase()); // make sure the filters are all lower case
-
-  // if that is not dist tag filter then return all of them
-  if (tagFilters.length === 0)
-    return distTags;
-
-  // return the filtered tags
-  return distTags.filter(distTag => {
-    const checkTagName = distTag.name.toLowerCase();
-    return checkTagName === 'latest' || tagFilters.includes(checkTagName);
-  });
 }
 
 function generatePackage(name, version, info, customGenerateVersion) {

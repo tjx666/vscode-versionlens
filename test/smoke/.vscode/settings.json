@@ -13,5 +13,8 @@
     "beta",
     "next",
     "legacy"
+  ],
+  "versionlens.dotnet.tagFilter": [
+    "beta"
   ]
 }

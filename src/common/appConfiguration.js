@@ -45,6 +45,11 @@ class AppConfiguration {
     return config.get("dotnet-csproj.dependencyProperties", dotnetCSProjDefaultDependencyProperties);
   }
 
+  get dotnetTagFilter() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get("dotnet.tagFilter", []);
+  }
+
   get dubDependencyProperties() {
     const config = workspace.getConfiguration('versionlens');
     return config.get("dub.dependencyProperties", dubDefaultDependencyProperties);

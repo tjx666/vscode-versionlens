@@ -5,6 +5,7 @@
 import * as semver from 'semver';
 import appSettings from '../../common/appSettings';
 import { nugetGetPackageVersions } from './nugetAPI.js';
+import { tagFilter } from '../../common/versions';
 
 export function dotnetVersionParser(node, appConfig) {
   const { name, value: requestedVersion } = node;
@@ -19,99 +20,104 @@ export function dotnetVersionParser(node, appConfig) {
     isFixedVersion = testRange.set[0][0].operator === "";
   }
 
-
   return nugetGetPackageVersions(name)
     .then(versions => {
-      const versionMap = mapVersions(versions, requestedVersion);
-      const taggedNames = Object.keys(versionMap.taggedVersions);
+      // get all the tag entries
+      let tags = mapVersions(versions, requestedVersion);
 
+      // only show matches and latest entries when showTaggedVersions is false
+      // otherwise filter by the appConfig.dotnetTagFilter
+      let tagsToProcess;
       if (appSettings.showTaggedVersions === false)
-        taggedNames = [
-          taggedNames[0],
-          taggedNames[1]
+        tagsToProcess = [
+          tags[0], // matches entry
+          tags[1]  // latest entry
         ];
+      else if (appConfig.dotnetTagFilter.length > 0)
+        tagsToProcess = tagFilter(tags, ['Matches', 'Latest', ...appConfig.dotnetTagFilter]);
+      else
+        tagsToProcess = tags;
 
-      return taggedNames
-        .map((tagName, index) => {
-          const taggedVersions = versionMap.taggedVersions[tagName];
-          const latestVersion = versionMap.versions[0];
-          const latestTagVersion = taggedVersions[0];
-          const isTaggedVersion = index !== 0;
+      // map the tags to packages
+      return tagsToProcess.map((tag, index) => {
+        const isTaggedVersion = index !== 0;
 
-          const packageInfo = {
-            type: 'nuget',
-            isValidSemver,
-            isFixedVersion,
-            tag: {
-              name: tagName,
-              version: isTaggedVersion ? latestTagVersion : latestVersion
-            },
-            isTaggedVersion
-          };
+        const packageInfo = {
+          type: 'nuget',
+          isValidSemver,
+          isFixedVersion,
+          tag,
+          isTaggedVersion
+        };
 
-          return {
-            node,
-            package: {
-              name,
-              version: requestedVersion,
-              meta: packageInfo
-            }
-          };
+        return {
+          node,
+          package: {
+            name,
+            version: requestedVersion,
+            meta: packageInfo
+          }
+        };
 
-        });
+      });
 
     });
 }
 
 function mapVersions(versions, requestedVersion) {
-  const mapped = {
-    taggedVersions: {
-      __matches: [],
-      // add the latest as a tagged version
-      latest: []
-    },
-    versions: []
-  };
+  const taggedVersionMap = {};
+  const releases = [];
 
   versions.forEach(version => {
     const components = semver.prerelease(version);
 
-    // check if this has any prerelease components
+    // if no prerelease components then add to releases
     if (!components || components.length === 0) {
-      mapped.versions.push(version);
+      releases.push(version);
       return;
     }
 
+    // process pre-release
     const taggedVersionName = components[0];
-    const strippedName = stripNumbersFromName(taggedVersionName);
 
-    if (!mapped.taggedVersions[strippedName])
-      mapped.taggedVersions[strippedName] = [];
+    // format the tag name so it groups things like alpha1, alpha2 to become alpha etc..
+    const formattedTagName = stripNumbersFromName(taggedVersionName);
+    if (!taggedVersionMap[formattedTagName])
+      taggedVersionMap[formattedTagName] = [];
 
-    mapped.taggedVersions[strippedName].push(version);
+    taggedVersionMap[formattedTagName].push(version);
   });
 
-  const latestVersion = mapped.versions[0];
+  // see which version the requested version satisfies
   let matchedVersion = requestedVersion;
-
   try {
     matchedVersion = semver.maxSatisfying(
-      stripNonSemverVersions(mapped.versions),
+      stripNonSemverVersions(releases),
       requestedVersion
     );
     if (!matchedVersion)
       matchedVersion = requestedVersion;
     else if (matchedVersion == requestedVersion) {
-      matchedVersion = latestVersion;
+      matchedVersion = releases[0];
     }
   } catch (err) {
   }
 
-  mapped.taggedVersions.__matches.push(matchedVersion);
-  mapped.taggedVersions.latest.push(latestVersion);
-
-  return mapped;
+  // return an Array<TaggedVersion>
+  return [
+    { name: "Matches", version: matchedVersion },
+    { name: "Latest", version: releases[0] },
+    // concat any the tagged versions
+    ...Object.keys(taggedVersionMap)
+      .map((name, index) => {
+        return {
+          name,
+          version: taggedVersionMap[name][0]
+        }
+      })
+  ];
 }
+
 
 function stripNumbersFromName(tagName) {
   let pos = tagName.length - 1;

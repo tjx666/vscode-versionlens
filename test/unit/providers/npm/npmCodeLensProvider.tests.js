@@ -40,7 +40,13 @@ describe("NpmCodeLensProvider", () => {
   });
 
   NpmAPIModule.npmViewDistTags = packageName => {
-    return Promise.resolve(['latest'])
+    return Promise.resolve([{
+      name: 'latest',
+      version: 'latest'
+    }, {
+      name: 'beta',
+      version: 'beta'
+    }]);
   }
 
   NpmAPIModule.npmGetOutdated = _ => Promise.resolve([]);
@@ -144,12 +150,31 @@ describe("NpmCodeLensProvider", () => {
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
-          assert.equal(collection.length, 4, "codeLens should be an array containing 4 items.");
+          assert.equal(collection.length, 8, "codeLens should be an array containing 8 items.");
 
-          collection
-            .forEach((entry, index) => {
-              assert.equal(entry.package.name, `dep${index + 1}`, `dependency name should be dep${index + 1}.`);
-            });
+          assert.equal(
+            collection[0].package.name,
+            `dep1`,
+            `dependency name should be dep1`
+          );
+
+          assert.equal(
+            collection[2].package.name,
+            `dep2`,
+            `dependency name should be dep2`
+          );
+
+          assert.equal(
+            collection[4].package.name,
+            `dep3`,
+            `dependency name should be dep3`
+          );
+
+          assert.equal(
+            collection[6].package.name,
+            `dep4`,
+            `dependency name should be dep4`
+          );
 
           done();
         })
@@ -190,7 +215,7 @@ describe("NpmCodeLensProvider", () => {
     it("passes ranged version to npm.view", done => {
       const packageName = '@SomeScope/SomePackage';
       const packageVersion = '~1.2.3';
-      const codeLens = new PackageCodeLens(null, null, { name: packageName, version: packageVersion, meta: { isValidSemver: true, hasRangeSymbol: true } }, null);
+      const codeLens = new PackageCodeLens(null, null, { name: packageName, version: packageVersion, meta: { isValidSemver: true, isFixedVersion: false } }, null);
       npmMock.view = (testPackageName, arg, cb) => {
         const expected = `${packageName}@${packageVersion}`;
         assert.equal(testPackageName, expected, `Expected 'npm.view ${expected}' but got ${testPackageName}`);
@@ -244,7 +269,7 @@ describe("NpmCodeLensProvider", () => {
       };
 
       testProvider.evaluateCodeLens(codeLens, null).then(result => {
-        assert.equal(result.command.title, '⬆ 3.2.1');
+        assert.equal(result.command.title, '⮬ 3.2.1');
         assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
         assert.equal(result.command.arguments[1], '"3.2.1"');
         done();

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as semver from 'semver';
-import { hasRangeSymbols, formatWithExistingLeading } from '../../common/utils';
+import { formatWithExistingLeading } from '../../common/utils';
 import {
   parseNpmRegistryVersion,
   parseFileVersion,

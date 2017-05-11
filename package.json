@@ -204,6 +204,16 @@
           ],
           "description": "Defines which properties in project.json should be parsed by this extension"
         },
+        "versionlens.dotnet.tagFilter": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "minItems": 0,
+          "default": [],
+          "description": "Define which common tagged versions you want to see. i.e. [alpha, beta]. If you don't specify any dist tags then all the dist-tags for a package will be shown."
+        },
         "versionlens.dub.dependencyProperties": {
           "type": "array",
           "items": {

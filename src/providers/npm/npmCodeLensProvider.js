@@ -79,7 +79,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     }
 
     const viewPackageName = codeLens.package.name + (
-      (!codeLens.package.meta.isValidSemver || codeLens.package.meta.hasRangeSymbol) ?
+      (!codeLens.package.meta.isValidSemver || codeLens.package.meta.isFixedVersion == false) ?
         `@${codeLens.package.version}` :
         ''
     );

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as semver from 'semver';
-import { gitHubDependencyRegex, hasRangeSymbols } from '../../common/utils';
+import { gitHubDependencyRegex } from '../../common/utils';
 import appSettings from '../../common/appSettings';
 
 export function bowerVersionParser(node, appConfig) {
@@ -17,9 +17,6 @@ export function bowerVersionParser(node, appConfig) {
   // check if its a valid semver, if not could be a tag
   const isValidSemver = semver.validRange(version);
 
-  // check if the version has a range symbol
-  const hasRangeSymbol = hasRangeSymbols(version);
-
   return [{
     node,
     package: {
@@ -28,8 +25,7 @@ export function bowerVersionParser(node, appConfig) {
       meta: {
         tag: { name: 'latest', version: 'latest' },
         type: 'bower',
-        isValidSemver,
-        hasRangeSymbol
+        isValidSemver
       },
       customGenerateVersion: null
     }
