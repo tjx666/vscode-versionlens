@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as httpRequest from 'request-light';
+import * as semver from 'semver';
 import * as xmldoc from 'xmldoc';
 import * as CommandFactory from '../commandFactory';
 import appSettings from '../../common/appSettings';
@@ -62,19 +63,34 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
           );
 
         const pkg = JSON.parse(response.responseText);
-        const serverVersion = pkg.versions[pkg.versions.length - 1];
-        if (!serverVersion)
-          return CommandFactory.makeErrorCommand(
-            "Invalid object returned from server",
-            codeLens
+        let latestServerVersion = undefined;
+        for (const serverVersion of pkg.versions.reverse()) {
+          if (!serverVersion)
+            return CommandFactory.makeErrorCommand(
+              "Invalid object returned from server",
+              codeLens
+            );
+
+          if (semver.prerelease(serverVersion) !== null &&
+              semver.prerelease(codeLens.package.version) === null) {
+            if (latestServerVersion === undefined)
+              latestServerVersion = serverVersion
+            continue;
+          }
+
+          return CommandFactory.makeVersionCommand(
+            codeLens.package.version,
+            serverVersion,
+            codeLens,
+            latestServerVersion
           );
+        }
 
         return CommandFactory.makeVersionCommand(
           codeLens.package.version,
-          serverVersion,
+          latestServerVersion,
           codeLens
         );
-
       })
       .catch(errResponse => {
         console.error(`${errResponse.status}: ${queryUrl}`);

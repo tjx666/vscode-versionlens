@@ -13,7 +13,7 @@ export function makeErrorCommand(errorMsg, codeLens) {
   return codeLens.setCommand(`${errorMsg}`);
 }
 
-export function makeVersionCommand(localVersion, serverVersion, codeLens) {
+export function makeVersionCommand(localVersion, serverVersion, codeLens, latestServerVersion) {
   const isLocalValid = semver.valid(localVersion);
   const isLocalValidRange = semver.validRange(localVersion);
   const isServerValid = semver.valid(serverVersion);
@@ -52,13 +52,16 @@ export function makeVersionCommand(localVersion, serverVersion, codeLens) {
   if (serverVersion !== localVersion && hasNewerVersion)
     return makeNewVersionCommand(serverVersion, codeLens);
 
+  if (latestServerVersion !== undefined)
+    return makeNewVersionCommand(latestServerVersion, codeLens, 'Matches latest | ');
+
   return makeLatestCommand(codeLens);
 }
 
-export function makeNewVersionCommand(newVersion, codeLens) {
+export function makeNewVersionCommand(newVersion, codeLens, prefix = '') {
   const replaceWithVersion = codeLens.generateNewVersion(newVersion);
   return codeLens.setCommand(
-    `${codeLens.getTaggedVersionPrefix()}${appSettings.updateIndicator} ${newVersion}`,
+    `${codeLens.getTaggedVersionPrefix() || prefix}${appSettings.updateIndicator} ${newVersion}`,
     `${appSettings.extensionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
