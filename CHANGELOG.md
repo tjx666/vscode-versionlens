@@ -1,3 +1,6 @@
+# 0.17.1
+  - Fixed edge case where many tagged versions caused decorations to appear on wrong line
+
 # 0.17.0
   - Added tagged version support to dotnet projects (i.e. 1.2.3-beta.1, 1.2.3-rc.1)
 
