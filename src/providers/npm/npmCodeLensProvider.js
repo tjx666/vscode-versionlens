@@ -20,7 +20,8 @@ import {
   createMissingDecoration,
   createInstalledDecoration,
   createOutdatedDecoration,
-  updateDecoration
+  updateDecoration,
+  clearDecorations
 } from '../../editor/decorations';
 import * as path from 'path';
 
@@ -38,6 +39,8 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   provideCodeLenses(document, token) {
+    clearDecorations();
+
     if (appSettings.showVersionLenses === false)
       return;
 

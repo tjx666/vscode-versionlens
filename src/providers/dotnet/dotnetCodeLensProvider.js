@@ -11,6 +11,7 @@ import { appConfig } from '../../common/appConfiguration';
 import { parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import { dotnetVersionParser } from './dotnetParser.js';
+import { clearDecorations } from '../../editor/decorations';
 
 export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -23,6 +24,8 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   provideCodeLenses(document, token) {
+    clearDecorations();
+
     if (appSettings.showVersionLenses === false)
       return;
 

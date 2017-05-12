@@ -12,6 +12,7 @@ import * as CommandFactory from '../commandFactory';
 import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
+import { clearDecorations } from '../../editor/decorations';
 
 export class BowerCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -24,6 +25,8 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   provideCodeLenses(document, token) {
+    clearDecorations();
+
     if (appSettings.showVersionLenses === false)
       return;
 

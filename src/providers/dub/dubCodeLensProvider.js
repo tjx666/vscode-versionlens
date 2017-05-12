@@ -15,6 +15,7 @@ import {
 } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
+import { clearDecorations } from '../../editor/decorations';
 
 export class DubCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -27,7 +28,9 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   provideCodeLenses(document, token) {
-    if(appSettings.showVersionLenses === false)
+    clearDecorations();
+
+    if (appSettings.showVersionLenses === false)
       return;
 
     const jsonDoc = jsonParser.parse(document.getText());

@@ -11,10 +11,13 @@ import { extractDependencyNodes, parseDependencyNodes } from '../../common/depen
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
 import * as path from 'path';
+import { clearDecorations } from '../../editor/decorations';
 
 export class JspmCodeLensProvider extends NpmCodeLensProvider {
 
   provideCodeLenses(document, token) {
+    clearDecorations();
+
     if (appSettings.showVersionLenses === false)
       return;
 
