@@ -130,7 +130,7 @@ describe("DubCodeLensProvider", () => {
     it("passes url to httpRequest.xhr", done => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: { isValidSemver: true } }, null);
       httpRequestMock.xhr = options => {
-        assert.equal(options.url, 'http://code.dlang.org/api/packages/SomePackage/latest', "Expected httpRequest.xhr(options.url) but failed.");
+        assert.equal(options.url, 'https://code.dlang.org/api/packages/SomePackage/latest', "Expected httpRequest.xhr(options.url) but failed.");
         done();
         return Promise.resolve({
           status: 200,
