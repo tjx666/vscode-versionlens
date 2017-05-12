@@ -1,5 +1,5 @@
 # 0.17.1
-  - Fixed issue where tagged versions shown where older then the required version entered. (NPM and DotNet)
+  - Fixed issue where tagged versions shown were older than the required version entered. (NPM and DotNet)
 
     Old horror before this fix
 
