@@ -12,6 +12,9 @@ const _decorationTypeKey = window.createTextEditorDecorationType({
 });
 
 export function clearDecorations() {
+  if (!window || !window.activeTextEditor)
+    return;
+
   _decorations = [];
   window.activeTextEditor.setDecorations(
     _decorationTypeKey,
