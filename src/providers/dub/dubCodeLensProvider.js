@@ -15,7 +15,15 @@ import {
 } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
-import { clearDecorations } from '../../editor/decorations';
+import {
+  createMissingDecoration,
+  createInstalledDecoration,
+  createOutdatedDecoration,
+  updateDecoration,
+  clearDecorations
+} from '../../editor/decorations';
+import * as fs from 'fs';
+import { formatWithExistingLeading } from '../../common/utils';
 
 export class DubCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -36,6 +44,25 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     const jsonDoc = jsonParser.parse(document.getText());
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
       return [];
+
+    const dubJson = document.uri.fsPath;
+
+    if (dubJson.endsWith(".json")) {
+      // dub.json -> dub.selections.json
+      const dubSelections = dubJson.slice(0, -4) + "selections.json";
+      this.selectionsJson = undefined;
+      if (fs.existsSync(dubSelections)) {
+        fs.readFile(dubSelections, "utf-8", (err, data) => {
+          if (err) {
+            updateDecoration(createMissingDecoration(codeLens.range));
+            return;
+          }
+          this.selectionsJson = JSON.parse(data.toString());
+          if (this.selectionsJson.fileVersion != 1)
+            console.warn("Unknown dub.selections.json version " + this.selectionsJson.fileVersion);
+        });
+      }
+    }
 
     const dependencyNodes = extractDependencyNodes(
       jsonDoc.root,
@@ -62,6 +89,9 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
 
     if (codeLens.package.version === '~master')
       return CommandFactory.makeLatestCommand(codeLens);
+
+    // generate decoration
+    this.generateDecoration(codeLens);
 
     const queryUrl = `http://code.dlang.org/api/packages/${encodeURIComponent(codeLens.package.name)}/latest`;
     return httpRequest.xhr({ url: queryUrl })
@@ -113,4 +143,31 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     return nodes;
   }
 
+  generateDecoration(codeLens) {
+    const currentPackageName = codeLens.package.name;
+    const currentPackageVersion = codeLens.package.version;
+
+    if (!this.selectionsJson) {
+      updateDecoration(createMissingDecoration(codeLens.range));
+      return;
+    }
+
+    var currentVersion = this.selectionsJson.versions[currentPackageName];
+    if (!currentVersion) {
+      updateDecoration(createMissingDecoration(codeLens.range));
+      return;
+    }
+
+    if (formatWithExistingLeading(currentPackageVersion, currentVersion) == currentPackageVersion) {
+      updateDecoration(createInstalledDecoration(codeLens.range));
+      return;
+    }
+
+    updateDecoration(
+      createOutdatedDecoration(
+        codeLens.range,
+        currentVersion
+      )
+    );
+  }
 }
