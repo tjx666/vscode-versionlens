@@ -13,7 +13,7 @@ export function npmPackageDirExists(packageJsonPath, packageName) {
   return fs.existsSync(npmFormattedPath);
 }
 
-export function npmViewVersion(packageJsonPath, packageName) {
+export function npmViewVersion(packageName) {
   return new Promise((resolve, reject) => {
     npm.load(loadError => {
       if (loadError) {
@@ -21,7 +21,6 @@ export function npmViewVersion(packageJsonPath, packageName) {
         return;
       }
 
-      npm.localPrefix = packageJsonPath;
       npm.view(packageName, 'version', (viewError, response) => {
         if (viewError) {
           reject(viewError);
@@ -30,6 +29,8 @@ export function npmViewVersion(packageJsonPath, packageName) {
 
         // get the keys from the object returned
         let keys = Object.keys(response);
+
+        // ensure the version keys are semver sorted
         keys.sort((a, b) => {
           if (semver.gt(a, b))
             return 1;
@@ -40,7 +41,7 @@ export function npmViewVersion(packageJsonPath, packageName) {
         });
 
         // take the last and most recent version key
-        let lastKey = keys.length > 0 ? keys[keys.length - 1] : '';
+        let lastKey = keys.length > 0 ? keys[keys.length - 1] : null;
 
         resolve(lastKey);
       });
@@ -115,7 +116,7 @@ export function npmGetOutdated(npmLocalPath) {
   });
 }
 
-export function npmGetLocalPackageStatus(packageName, npmLocalPath) {
+export function npmViewVersions(packageName) {
   return new Promise((resolve, reject) => {
     npm.load(loadError => {
       if (loadError) {
@@ -123,16 +124,16 @@ export function npmGetLocalPackageStatus(packageName, npmLocalPath) {
         return;
       }
 
-      npm.localPrefix = npmLocalPath;
-      npm.config.set('json', true);
-      npm.outdated(packageName, true, (err, response) => {
-        if (err) {
-          reject(err);
+      npm.view(packageName, 'versions', (viewError, response) => {
+        if (viewError) {
+          reject(viewError);
           return;
         }
 
-        const outdated = parseOutdatedResponse(response);
-        resolve(outdated);
+        // get the keys from the object returned
+        let keys = Object.keys(response);
+        let firstKey = keys[0];
+        resolve(response[firstKey].versions);
       });
     });
   });

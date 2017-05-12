@@ -33,13 +33,6 @@ describe("CommandFactory", () => {
       assert.equal(testLens.command.arguments, undefined);
     })
 
-    it("when server and local version are 'latest' then codeLens should return LatestCommand", () => {
-      const testLens = CommandFactory.makeTestVersionCommand('latest', 'latest');
-      assert.equal(testLens.command.title, 'Matches latest', "Expected command.title failed.");
-      assert.equal(testLens.command.command, undefined);
-      assert.equal(testLens.command.arguments, undefined);
-    });
-
     it("when local ranged version does not satisfy the server version then codeLens should return NewVersionCommand", () => {
       const testLens = CommandFactory.makeTestVersionCommand('1.0.0 - 2.0.0', '2.8.0');
       assert.equal(testLens.command.title, '⮬ 2.8.0', "Expected command.title failed.");
@@ -49,7 +42,7 @@ describe("CommandFactory", () => {
 
     it("when local ranged version does satisfy the server version then codeLens should return SatisfiedCommand", () => {
       const testLens = CommandFactory.makeTestVersionCommand('1.0.0 - 3.0.0', '2.8.0');
-      assert.equal(testLens.command.title, 'Matches v2.8.0', "Expected command.title failed.");
+      assert.equal(testLens.command.title, 'Matches 2.8.0', "Expected command.title failed.");
       assert.equal(testLens.command.command, undefined);
       assert.equal(testLens.command.arguments, undefined);
     });
@@ -63,7 +56,7 @@ describe("CommandFactory", () => {
 
     it("when local version has caret and satisfies the server version (and matches) then codeLens should return SatisfiedCommand", () => {
       const testLens = CommandFactory.makeTestVersionCommand('^2.0.0', '2.0.0');
-      assert.equal(testLens.command.title, 'Matches v2.0.0', "Expected command.title failed.");
+      assert.equal(testLens.command.title, 'Matches 2.0.0', "Expected command.title failed.");
       assert.equal(testLens.command.command, undefined);
       assert.equal(testLens.command.arguments, undefined);
     });

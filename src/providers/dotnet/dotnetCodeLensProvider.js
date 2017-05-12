@@ -10,7 +10,7 @@ import { Range } from 'vscode';
 import { appConfig } from '../../common/appConfiguration';
 import { parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
-import { dotnetVersionParser } from './dotnetParser.js';
+import { dotnetVersionParser } from './dotnetVersionParser.js';
 import { clearDecorations } from '../../editor/decorations';
 
 export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
@@ -46,6 +46,10 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   evaluateCodeLens(codeLens) {
+    // check if this package was found
+    if (codeLens.notFound())
+      return CommandFactory.makeNotFoundCommand(codeLens);
+
     // check if this is a tagged version
     if (codeLens.isTaggedVersion())
       return CommandFactory.makeTaggedVersionCommand(codeLens);

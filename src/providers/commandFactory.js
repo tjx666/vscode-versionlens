@@ -13,7 +13,7 @@ export function makeErrorCommand(errorMsg, codeLens) {
   return codeLens.setCommand(`${errorMsg}`);
 }
 
-export function makeVersionCommand(localVersion, serverVersion, codeLens, latestServerVersion) {
+export function makeVersionCommand(localVersion, serverVersion, codeLens) {
   const isLocalValid = semver.valid(localVersion);
   const isLocalValidRange = semver.validRange(localVersion);
   const isServerValid = semver.valid(serverVersion);
@@ -24,9 +24,6 @@ export function makeVersionCommand(localVersion, serverVersion, codeLens, latest
 
   if (!isServerValid && !isServerValidRange && serverVersion !== 'latest')
     return makeErrorCommand("Invalid semver server version received, " + serverVersion, codeLens);
-
-  if (localVersion === 'latest')
-    return makeLatestCommand(codeLens);
 
   if (isLocalValidRange && !isLocalValid) {
 
@@ -52,9 +49,6 @@ export function makeVersionCommand(localVersion, serverVersion, codeLens, latest
   if (serverVersion !== localVersion && hasNewerVersion)
     return makeNewVersionCommand(serverVersion, codeLens);
 
-  if (latestServerVersion !== undefined)
-    return makeNewVersionCommand(latestServerVersion, codeLens, 'Matches latest | ');
-
   return makeLatestCommand(codeLens);
 }
 
@@ -68,7 +62,7 @@ export function makeNewVersionCommand(newVersion, codeLens, prefix = '') {
 }
 
 export function makeSatisfiedCommand(serverVersion, codeLens) {
-  return codeLens.setCommand(`Matches v${serverVersion}`);
+  return codeLens.setCommand(`Matches ${serverVersion}`);
 }
 
 export function makeSatisfiedWithNewerCommand(serverVersion, codeLens) {
@@ -165,4 +159,11 @@ export function makeFixedVersionCommand(codeLens) {
     version = "invalid";
 
   return makeTagCommand(`Matches ${version}`, codeLens);
+}
+
+export function makeNotFoundCommand(codeLens) {
+  return makeErrorCommand(
+    `${codeLens.package.name} could not be found`,
+    codeLens
+  );
 }

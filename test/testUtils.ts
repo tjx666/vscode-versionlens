@@ -47,3 +47,11 @@ export class TestFixtureMap {
   }
 
 }
+
+export function generatePackage(name, version, info) {
+  return {
+    name,
+    version,
+    meta: info
+  }
+}

@@ -41,6 +41,10 @@ export class PackageCodeLens extends CodeLens {
     return this.package.meta.tag.version;
   }
 
+  notFound() {
+    return this.package && this.package.meta && this.package.meta.notFound;
+  }
+
   setCommand(text, command, args) {
     this.command = {
       title: text,

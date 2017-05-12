@@ -20,10 +20,10 @@ export function nugetGetPackageVersions(packageName) {
           });
           return;
         }
-        
+
         const pkg = JSON.parse(response.responseText);
         resolve(pkg.versions.reverse());
-      });
+      }).catch(reject);
   });
 
 }

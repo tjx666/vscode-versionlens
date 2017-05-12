@@ -14,3 +14,4 @@ import './providers/jspm/jspmVersionParser.tests';
 import './providers/bower/bowerCodeLensProvider.tests';
 import './providers/bower/bowerVersionParser.tests';
 import './providers/dub/dubCodeLensProvider.tests';
+import './providers/dotnet/dotnetCodeLensProvider.tests';

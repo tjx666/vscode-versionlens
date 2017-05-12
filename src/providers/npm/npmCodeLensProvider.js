@@ -70,9 +70,6 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   evaluateCodeLens(codeLens) {
-    if (codeLens.package.version === 'latest')
-      return CommandFactory.makeLatestCommand(codeLens);
-
     if (codeLens.package.meta) {
       if (codeLens.package.meta.type === 'github')
         return CommandFactory.makeGithubCommand(codeLens);
@@ -81,64 +78,28 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         return CommandFactory.makeLinkCommand(codeLens);
     }
 
-    const viewPackageName = codeLens.package.name + (
-      (!codeLens.package.meta.isValidSemver || codeLens.package.meta.isFixedVersion == false) ?
-        `@${codeLens.package.version}` :
-        ''
+    // check if this package was found
+    if (codeLens.notFound())
+      return CommandFactory.makeNotFoundCommand(codeLens);
+
+    // check if this is a tagged version
+    if (codeLens.isTaggedVersion())
+      return CommandFactory.makeTaggedVersionCommand(codeLens);
+
+    // check if this is a fixed version
+    if (codeLens.isFixedVersion())
+      return CommandFactory.makeFixedVersionCommand(codeLens);
+
+    // check if this is set to the latest version
+    if (codeLens.package.version === 'latest')
+      return CommandFactory.makeLatestCommand(codeLens);
+
+    const latestVersion = codeLens.package.meta.tag.version;
+    return CommandFactory.makeVersionCommand(
+      codeLens.package.version,
+      latestVersion,
+      codeLens
     );
-
-    return npmViewVersion(this._documentPath, viewPackageName)
-      .then(remoteVersion => {
-        // check if this is a dist tag
-        if (codeLens.isTaggedVersion())
-          return CommandFactory.makeTaggedVersionCommand(codeLens);
-
-        // check if this is a fixed version
-        if (codeLens.isFixedVersion())
-          return CommandFactory.makeFixedVersionCommand(codeLens);
-
-        // check that a version was returned by npm view
-        if (remoteVersion === '')
-          return CommandFactory.makeErrorCommand(
-            `'${viewPackageName}' not found`,
-            codeLens
-          );
-
-        if (codeLens.package.meta.isValidSemver)
-          return CommandFactory.makeVersionCommand(
-            codeLens.package.version,
-            remoteVersion,
-            codeLens
-          );
-
-        if (!remoteVersion)
-          return CommandFactory.makeErrorCommand(
-            `${viewPackageName} gave an invalid response`,
-            codeLens
-          );
-
-        return CommandFactory.makeTagCommand(`${viewPackageName} = v${remoteVersion}`, codeLens);
-      })
-      .catch(error => {
-        // dont show errors for tagged versions
-        // otherwise it will render multiple times in the codelens
-        if (codeLens.isTaggedVersion())
-          return;
-
-        if (codeLens.package.version == 'E404') {
-          return CommandFactory.makeErrorCommand(
-            `${codeLens.package.name} could not be found`,
-            codeLens
-          );
-        }
-
-        console.error(error);
-        return CommandFactory.makeErrorCommand(
-          "An error occurred retrieving this package.",
-          codeLens
-        );
-
-      });
   }
 
   // get the outdated packages and cache them

@@ -9,84 +9,91 @@ import {
   formatWithExistingLeading
 } from '../../common/utils';
 import appSettings from '../../common/appSettings';
-import { tagFilter } from '../../common/versions';
-import { npmViewDistTags } from './npmAPI'
+import { mapTaggedVersions, tagFilter, isFixedVersion } from '../../common/versions';
+import { npmViewVersion, npmViewDistTags } from './npmAPI'
 
 export function npmVersionParser(node, appConfig) {
-  const { name, value: version } = node;
+  const { name, value: requestedVersion } = node;
   let result;
 
   // check if we have a local file version
-  if (result = parseFileVersion(node, name, version))
+  if (result = parseFileVersion(node, name, requestedVersion))
     return result;
 
   // TODO: implement raw git url support too
 
   // check if we have a github version
-  if (result = parseGithubVersion(node, name, version, appConfig.githubTaggedCommits))
+  if (result = parseGithubVersion(node, name, requestedVersion, appConfig.githubTaggedCommits))
     return result;
 
   // must be a registry version
   return parseNpmRegistryVersion(
     node,
     name,
-    version,
+    requestedVersion,
     appConfig
   );
 }
 
-export function parseNpmRegistryVersion(node, name, version, appConfig, customGenerateVersion = null) {
+export function parseNpmRegistryVersion(node, name, requestedVersion, appConfig, customGenerateVersion = null) {
   // check if its a valid semver, if not could be a tag like 'latest'
-  const isValidSemver = semver.validRange(version);
+  const isValidSemver = semver.validRange(requestedVersion);
 
   // check if this is a fixed version
-  let isFixedVersion = false;
-  if (isValidSemver) {
-    const testRange = new semver.Range(version);
-    isFixedVersion = testRange.set[0][0].operator === "";
-  }
+  const isFixed = isValidSemver && isFixedVersion(requestedVersion);
 
-  // get all the tag entries
-  return npmViewDistTags(name)
-    .then(tags => {
-      // insert the 'Matches' entry before all other tagged entries
-      const matchesEntry = { name: 'Matches', version: null };
-      tags.splice(0, 0, matchesEntry);
+  // get the matched version
+  const viewVersionArg = `${name}@${requestedVersion}`;
+  return npmViewVersion(viewVersionArg)
+    .then(matchedVersion => {
 
-      // only show 'Matches' and 'latest' entries when showTaggedVersions is false
-      // filter by the appConfig.npmDistTagFilter
-      let tagsToProcess;
-      if (appSettings.showTaggedVersions === false)
-        tagsToProcess = [
-          tags[0], // matches entry
-          tags[1]  // latest entry
-        ];
-      else if (appConfig.npmDistTagFilter.length > 0)
-        tagsToProcess = tagFilter(tags, ['Matches', 'Latest', ...appConfig.npmDistTagFilter]);
-      else
-        tagsToProcess = tags;
+      return npmViewDistTags(name)
+        .then(tags => {
+          // insert the 'Matches' entry before all other tagged entries
+          const matchesEntry = { name: 'Matches', version: matchedVersion };
+          tags.splice(0, 0, matchesEntry);
 
-      // map the tags to packages
-      return tagsToProcess
-        .map((tag, index) => {
-          // generate the package data for each tag
-          const packageInfo = {
-            type: 'npm',
-            isValidSemver,
-            isFixedVersion,
-            tag,
-            isTaggedVersion: index !== 0
-          };
+          // only show 'Matches' and 'latest' entries when showTaggedVersions is false
+          // filter by the appConfig.npmDistTagFilter
+          let tagsToProcess;
+          if (appSettings.showTaggedVersions === false)
+            tagsToProcess = [
+              tags[0], // matches entry
+              tags[1]  // latest entry
+            ];
+          else if (appConfig.npmDistTagFilter.length > 0)
+            tagsToProcess = tagFilter(tags, [
+              'Matches',
+              'Latest',
+              ...appConfig.npmDistTagFilter
+            ]);
+          else
+            tagsToProcess = tags;
 
-          return {
-            node,
-            package: generatePackage(
-              name,
-              version,
-              packageInfo,
-              customGenerateVersion
-            )
-          };
+          // map the tags to packages
+          return tagsToProcess
+            .map((tag, index) => {
+              const isTaggedVersion = index !== 0;
+
+              // generate the package data for each tag
+              const packageInfo = {
+                type: 'npm',
+                isValidSemver,
+                isFixedVersion: isFixed,
+                tag,
+                isTaggedVersion
+              };
+
+              return {
+                node,
+                package: generatePackage(
+                  name,
+                  requestedVersion,
+                  packageInfo,
+                  customGenerateVersion
+                )
+              };
+            });
         });
     })
     .catch(error => {
@@ -96,13 +103,14 @@ export function parseNpmRegistryVersion(node, name, version, appConfig, customGe
           node,
           package: generatePackage(
             name,
-            'E404',
-            { type: 'npm' },
+            null,
+            { type: 'npm', notFound: true },
             null
           )
         }];
 
       console.error(error);
+      throw error;
     });
 }
 
