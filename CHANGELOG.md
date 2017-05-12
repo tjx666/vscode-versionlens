@@ -1,3 +1,11 @@
+# 0.17.0
+  - Added tagged version support to dotnet projects (i.e. 1.2.3-beta.1, 1.2.3-rc.1)
+
+    ![image](https://cloud.githubusercontent.com/assets/1727302/25976984/20b32294-36b0-11e7-83b8-ede7f05c1f14.png)
+
+    To filter out packages that have many unwanted tagged versions you can set a preferred list using `versionlens.dotnet.tagFilter` 
+  - Added semver range matching to dotnet projects
+
 # 0.16.2
   - Fixes issue where dependency decorations were being stuck on the wrong line after a mutli line edit.
   - Made dependency colours configurable in user settings. Will help if the default colours are difficult to see for a specific theme (CSS colours are valid entries)
