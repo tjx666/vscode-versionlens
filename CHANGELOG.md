@@ -1,5 +1,5 @@
 # 0.17.1
-  - Fixed issue where tagged versions shown where older then the required version entered. (NPM and DotNet)
+  - Fixed issue where tagged versions shown were older than the required version entered. (NPM and DotNet)
 
     Old horror before this fix
 
@@ -9,7 +9,7 @@
 
     ![image](https://cloud.githubusercontent.com/assets/1727302/26018962/1c10c970-376a-11e7-859a-ef409dab4bc5.png)
 
-  - Some packages in NPM have multiple tags with the same version as what 'latest' providers. When this is the case these tags are not shown.
+  - Some packages in NPM have multiple tags with the same version as what 'latest' provides. When this is the case these tags are not shown.
 
   - Fixed edge case where many tagged versions caused install decorations to appear on wrong line
 
