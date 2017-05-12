@@ -40,3 +40,9 @@ export function refreshCodeLens() {
   }, 500);
 
 }
+
+export function flatMap(array, lambda) {
+  return [].concat(
+    ...array.map(lambda)
+  );
+};

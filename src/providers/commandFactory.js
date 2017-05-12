@@ -160,6 +160,9 @@ export function makeTaggedVersionCommand(codeLens) {
 }
 
 export function makeFixedVersionCommand(codeLens) {
-  const version = codeLens.package.version;
+  const version = codeLens.package.meta.tag.version;
+  if (!version)
+    version = "invalid";
+
   return makeTagCommand(`Matches ${version}`, codeLens);
 }

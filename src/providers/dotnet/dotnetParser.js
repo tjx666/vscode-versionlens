@@ -6,6 +6,7 @@ import * as semver from 'semver';
 import appSettings from '../../common/appSettings';
 import { nugetGetPackageVersions } from './nugetAPI.js';
 import { tagFilter } from '../../common/versions';
+import { flatMap } from '../../common/utils';
 
 export function dotnetVersionParser(node, appConfig) {
   const { name, value: requestedVersion } = node;
@@ -92,14 +93,12 @@ function mapVersions(versions, requestedVersion) {
   let matchedVersion = requestedVersion;
   try {
     matchedVersion = semver.maxSatisfying(
-      stripNonSemverVersions(releases),
+      stripNonSemverVersions([
+        ...releases,
+        ...flatMap(Object.keys(taggedVersionMap), key => taggedVersionMap[key])
+      ]),
       requestedVersion
     );
-    if (!matchedVersion)
-      matchedVersion = requestedVersion;
-    else if (matchedVersion == requestedVersion) {
-      matchedVersion = releases[0];
-    }
   } catch (err) {
   }
 
