@@ -45,7 +45,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
       return [];
 
-    const dubJson = document.uri.fsPath;
+    const dubJson = ((document.uri || {}).fsPath || "").toString();
 
     if (dubJson.endsWith(".json")) {
       // dub.json -> dub.selections.json
@@ -146,6 +146,9 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
   generateDecoration(codeLens) {
     const currentPackageName = codeLens.package.name;
     const currentPackageVersion = codeLens.package.version;
+
+    if (!codeLens.range)
+      return;
 
     if (!this.selectionsJson) {
       updateDecoration(createMissingDecoration(codeLens.range));
