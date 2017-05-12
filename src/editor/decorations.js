@@ -23,6 +23,9 @@ export function clearDecorations() {
 }
 
 export function setDecorations(decorationList) {
+  if (!window || !window.activeTextEditor)
+    return;
+
   window.activeTextEditor.setDecorations(
     _decorationTypeKey,
     decorationList
