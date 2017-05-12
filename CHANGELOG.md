@@ -4,10 +4,11 @@
     ![image](https://cloud.githubusercontent.com/assets/1727302/25976984/20b32294-36b0-11e7-83b8-ede7f05c1f14.png)
 
     To filter out packages that have many unwanted tagged versions you can set a preferred list using `versionlens.dotnet.tagFilter` 
-  - Added semver ranged matching to dotnet projects
   - Latest version will show by default instead of being hidden behind the tagged versions option
   
     ![image](https://cloud.githubusercontent.com/assets/1727302/25977208/d4d51812-36b1-11e7-8e5d-884c09daabe9.png)
+
+  - Fixed non-existing version detection
 
 # 0.16.2
   - Fixes issue where dependency decorations were being stuck on the wrong line after a mutli line edit.
