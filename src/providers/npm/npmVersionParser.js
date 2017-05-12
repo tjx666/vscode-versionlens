@@ -9,7 +9,7 @@ import {
   formatWithExistingLeading
 } from '../../common/utils';
 import appSettings from '../../common/appSettings';
-import { mapTaggedVersions, tagFilter, isFixedVersion } from '../../common/versions';
+import { mapTaggedVersions, tagFilter, isFixedVersion, isOlderVersion } from '../../common/versions';
 import { npmViewVersion, npmViewDistTags } from './npmAPI'
 
 export function npmVersionParser(node, appConfig) {
@@ -70,8 +70,24 @@ export function parseNpmRegistryVersion(node, name, requestedVersion, appConfig,
           else
             tagsToProcess = tags;
 
+          // strip old tagged versions
+          const recentTags = tagsToProcess
+            .filter((tag, index) => {
+              // we always want to keep the 'Matches' and 'Latest' entries
+              if (index === 0 || index === 1)
+                return true;
+
+              // package tags that have the same version as the latest will be ignored
+              if (tag.version == tagsToProcess[1].version)
+                return false;
+
+              // package tags that are older than then requestedVersion will be ignored
+              const isOlder = isOlderVersion(tag.version, requestedVersion);
+              return !isOlder;
+            });
+
           // map the tags to packages
-          return tagsToProcess
+          return recentTags
             .map((tag, index) => {
               const isTaggedVersion = index !== 0;
 
