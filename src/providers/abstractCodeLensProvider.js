@@ -16,10 +16,6 @@ export class AbstractCodeLensProvider {
       // set in progress 
       appSettings.inProgress = true;
 
-      // generate decoration if func present
-      if (this.generateDecoration)
-        this.generateDecoration(codeLens);
-
       // evaluate the code lens
       const evaluated = this.evaluateCodeLens(codeLens);
 

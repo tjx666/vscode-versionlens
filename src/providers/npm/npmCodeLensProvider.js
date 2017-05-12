@@ -86,6 +86,9 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     if (codeLens.isTaggedVersion())
       return CommandFactory.makeTaggedVersionCommand(codeLens);
 
+    // generate decoration
+    this.generateDecoration(codeLens);
+
     // check if this is a fixed version
     if (codeLens.isFixedVersion())
       return CommandFactory.makeFixedVersionCommand(codeLens);
