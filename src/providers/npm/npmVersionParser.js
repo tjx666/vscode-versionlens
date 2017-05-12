@@ -49,12 +49,12 @@ export function parseNpmRegistryVersion(node, name, version, appConfig, customGe
   // get all the tag entries
   return npmViewDistTags(name)
     .then(tags => {
-      // insert the matches entry before all other tagged entries
+      // insert the 'Matches' entry before all other tagged entries
       const matchesEntry = { name: 'Matches', version: null };
       tags.splice(0, 0, matchesEntry);
 
-      // only show matches and latest entries when showTaggedVersions is false
-      // otherwise filter by the appConfig.dotnetTagFilter
+      // only show 'Matches' and 'latest' entries when showTaggedVersions is false
+      // filter by the appConfig.npmDistTagFilter
       let tagsToProcess;
       if (appSettings.showTaggedVersions === false)
         tagsToProcess = [
