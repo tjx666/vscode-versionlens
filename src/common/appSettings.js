@@ -13,6 +13,7 @@ let _showVersionLenses = false;
 const config = {
   extensionName: "versionlens",
   updateIndicator: '⮬',
+  revertIndicator: '⮮',
   openNewWindowIndicator: '⧉',
 
   get isActive() {

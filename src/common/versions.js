@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as semver from 'semver';
-import { flatMap } from './utils';
+import { flatMap, formatTagNameRegex } from './utils';
 
 /*
 * tags: Array<TaggedVersion>
@@ -55,7 +55,7 @@ export function mapTaggedVersions(versions, requestedVersion) {
     const taggedVersionName = components[0];
 
     // format the tag name so it groups things like alpha1, alpha2 to become alpha etc..
-    const formattedTagName = stripNumbersFromName(taggedVersionName);
+    const formattedTagName = formatTagName(taggedVersionName);
     if (!taggedVersionMap[formattedTagName])
       taggedVersionMap[formattedTagName] = [];
 
@@ -116,13 +116,12 @@ export function isOlderVersion(version, requestedVersion) {
   return semver.ltr(testVersion, requestedVersion);
 }
 
-function stripNumbersFromName(tagName) {
-  let pos = tagName.length - 1;
-  while (pos >= 0 && (tagName[pos] === '-' || isNaN(Number.parseInt(tagName[pos])) == false)) {
-    pos--;
-  }
+function formatTagName(tagName) {
+  const regexResult = formatTagNameRegex.exec(tagName);
+  if (!regexResult)
+    return tagName;
 
-  return tagName.substring(0, pos + 1);
+  return regexResult[0];
 }
 
 function stripNonSemverVersions(versions) {

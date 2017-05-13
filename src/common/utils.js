@@ -10,6 +10,7 @@ export const gitHubDependencyRegex = /^\/?([^:\/\s]+)(\/)([\w\-\.]+[^#?\s]+)(.*)
 export const stripSymbolFromVersionRegex = /^(?:[^0-9]+)?(.+)$/;
 export const extractSymbolFromVersionRegex = /^([^0-9]*)?.*$/;
 export const semverLeadingChars = ['^', '~', '<', '<=', '>', '>=', '~>'];
+export const formatTagNameRegex = /^[^0-9\-]*/;
 
 export function formatWithExistingLeading(existingVersion, newVersion) {
   const regExResult = extractSymbolFromVersionRegex.exec(existingVersion);

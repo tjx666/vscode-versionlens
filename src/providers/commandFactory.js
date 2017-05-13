@@ -55,7 +55,7 @@ export function makeVersionCommand(localVersion, serverVersion, codeLens) {
 export function makeNewVersionCommand(newVersion, codeLens, prefix = '') {
   const replaceWithVersion = codeLens.generateNewVersion(newVersion);
   return codeLens.setCommand(
-    `${codeLens.getTaggedVersionPrefix() || prefix}${appSettings.updateIndicator} ${newVersion}`,
+    `${codeLens.getTaggedVersionPrefix() || prefix}${codeLens.getIndicator()} ${newVersion}`,
     `${appSettings.extensionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
@@ -68,7 +68,7 @@ export function makeSatisfiedCommand(serverVersion, codeLens) {
 export function makeSatisfiedWithNewerCommand(serverVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(serverVersion);
   return codeLens.setCommand(
-    `Matches ${appSettings.updateIndicator} ${serverVersion}`,
+    `Matches ${codeLens.getIndicator()} ${serverVersion}`,
     `${appSettings.extensionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
@@ -115,7 +115,7 @@ export function makeGithubCommand(codeLens) {
 
       const newVersion = codeLens.generateNewVersion(entry.version);
       return codeLens.setCommand(
-        `${meta.category}: ${appSettings.updateIndicator} ${entry.version}`,
+        `${meta.category}: ${codeLens.getIndicator()} ${entry.version}`,
         `${appSettings.extensionName}.updateDependencyCommand`,
         [codeLens, `"${newVersion}"`]
       );

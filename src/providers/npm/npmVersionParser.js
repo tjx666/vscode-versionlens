@@ -9,7 +9,7 @@ import {
   formatWithExistingLeading
 } from '../../common/utils';
 import appSettings from '../../common/appSettings';
-import { mapTaggedVersions, tagFilter, isFixedVersion, isOlderVersion } from '../../common/versions';
+import { tagFilter, isFixedVersion, isOlderVersion } from '../../common/versions';
 import { generateNotFoundPackage, generateNotSupportedPackage, generatePackage } from '../../common/packageGeneration';
 import { npmViewVersion, npmViewDistTags, parseNpmVersion } from './npmAPI'
 
@@ -122,6 +122,7 @@ export function parseNpmRegistryVersion(node, name, requestedVersion, appConfig,
           return recentTags
             .map((tag, index) => {
               const isTaggedVersion = index !== 0;
+              const isOlder = tag.version && isValidSemver && isOlderVersion(tag.version, requestedVersion);
 
               // generate the package data for each tag
               const packageInfo = {
@@ -129,7 +130,8 @@ export function parseNpmRegistryVersion(node, name, requestedVersion, appConfig,
                 isValidSemver,
                 isFixedVersion: isFixed,
                 tag,
-                isTaggedVersion
+                isTaggedVersion,
+                isOlderVersion: isOlder
               };
 
               return {

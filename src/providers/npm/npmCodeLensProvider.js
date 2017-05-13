@@ -7,21 +7,16 @@ import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { npmVersionParser } from './npmVersionParser';
 import { appConfig } from '../../common/appConfiguration';
 import * as CommandFactory from '../commandFactory';
-import {
-  npmViewVersion,
-  npmGetOutdated,
-  npmPackageDirExists
-} from './npmAPI';
+import { npmGetOutdated, npmPackageDirExists } from './npmAPI';
 import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
-import { window, Range, Position } from 'vscode';
+import { window, Range } from 'vscode';
 import {
   createMissingDecoration,
   createInstalledDecoration,
   createOutdatedDecoration,
-  updateDecoration,
-  clearDecorations
+  updateDecoration
 } from '../../editor/decorations';
 import * as path from 'path';
 

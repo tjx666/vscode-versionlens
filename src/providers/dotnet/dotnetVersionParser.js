@@ -5,8 +5,8 @@
 import * as semver from 'semver';
 import appSettings from '../../common/appSettings';
 import { nugetGetPackageVersions } from './nugetAPI.js';
-import { mapTaggedVersions, tagFilter, isFixedVersion } from '../../common/versions';
-import { flatMap } from '../../common/utils';
+import { mapTaggedVersions, tagFilter, isFixedVersion, isOlderVersion } from '../../common/versions';
+import { generateNotFoundPackage } from '../../common/packageGeneration';
 
 export function dotnetVersionParser(node, appConfig) {
   const { name, value: requestedVersion } = node;
@@ -43,13 +43,15 @@ export function dotnetVersionParser(node, appConfig) {
       // map the tags to packages
       return tagsToProcess.map((tag, index) => {
         const isTaggedVersion = index !== 0;
+        const isOlder = tag.version && isValidSemver && isOlderVersion(tag.version, requestedVersion);
 
         const packageInfo = {
           type: 'nuget',
           isValidSemver,
           isFixedVersion: isFixed,
           tag,
-          isTaggedVersion
+          isTaggedVersion,
+          isOlderVersion: isOlder
         };
 
         return {
@@ -69,11 +71,7 @@ export function dotnetVersionParser(node, appConfig) {
       if (error.status === 404)
         return [{
           node,
-          package: {
-            name,
-            version: null,
-            meta: { type: 'nuget', notFound: true }
-          }
+          package: generateNotFoundPackage(name, version, 'nuget')
         }];
 
       console.error(error);

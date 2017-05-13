@@ -8,13 +8,5 @@
     "peerDependencies",
     "optionalDependencies",
     "customDependencies"
-  ],
-  "versionlens.npm.distTagFilter": [
-    "beta",
-    "next",
-    "legacy"
-  ],
-  "versionlens.dotnet.tagFilter": [
-    "beta"
   ]
 }

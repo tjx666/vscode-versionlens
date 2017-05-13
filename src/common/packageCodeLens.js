@@ -2,8 +2,9 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { CodeLens, Range, Uri } from 'vscode';
-import { extractSymbolFromVersionRegex, formatWithExistingLeading } from './utils';
+import { CodeLens, Range } from 'vscode';
+import { formatWithExistingLeading } from './utils';
+import appSettings from './appSettings';
 
 export class PackageCodeLens extends CodeLens {
 
@@ -47,6 +48,12 @@ export class PackageCodeLens extends CodeLens {
 
   notSupported() {
     return this.package && this.package.meta && this.package.meta.notSupported;
+  }
+
+  getIndicator() {
+    return this.package.meta.isOlderVersion ?
+      appSettings.revertIndicator :
+      appSettings.updateIndicator;
   }
 
   setCommand(text, command, args) {

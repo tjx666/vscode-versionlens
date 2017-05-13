@@ -43,14 +43,15 @@ describe("NpmCodeLensProvider", () => {
   NpmAPIModule.npmViewDistTags = packageName => {
     return Promise.resolve([{
       name: 'latest',
-      version: 'latest'
+      version: '5.0.0'
     }, {
       name: 'beta',
-      version: 'beta'
+      version: '5.0.0-beta.1'
     }]);
   }
 
   NpmAPIModule.npmGetOutdated = _ => Promise.resolve([]);
+  NpmAPIModule.npmViewVersion = _ => Promise.resolve("1.2.3");
 
   const NpmVersionParserModule = proxyquire('../../../../src/providers/npm/npmVersionParser', {
     './npmAPI': NpmAPIModule
