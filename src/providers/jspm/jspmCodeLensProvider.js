@@ -40,7 +40,12 @@ export class JspmCodeLensProvider extends NpmCodeLensProvider {
       jspmVersionParser
     );
 
-    return generateCodeLenses(packageCollection, document);
+    appSettings.inProgress = true;
+    return generateCodeLenses(packageCollection, document)
+      .then(codelenses => {
+        appSettings.inProgress = false;
+        return codelenses;
+      });
   }
 
   getJspmRootNode_(rootNode) {

@@ -40,7 +40,12 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
       dotnetVersionParser
     );
 
-    return generateCodeLenses(packageCollection, document);
+    appSettings.inProgress = true;
+    return generateCodeLenses(packageCollection, document)
+      .then(codelenses => {
+        appSettings.inProgress = false;
+        return codelenses;
+      });
   }
 
   evaluateCodeLens(codeLens) {
