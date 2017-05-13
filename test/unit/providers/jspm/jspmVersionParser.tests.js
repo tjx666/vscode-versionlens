@@ -89,7 +89,7 @@ describe('jspmVersionParser(node, appConfig)', () => {
 
     const newVersion = '4.0.0-alpha.5';
     assert.equal(
-      JspmVersionParserModule.customGenerateVersion(packageMock, newVersion), `github:bootstrap@^4.0.0-alpha.5`,
+      JspmVersionParserModule.customJspmGenerateVersion(packageMock, newVersion), `github:bootstrap@^4.0.0-alpha.5`,
       "Expected customGenerateVersion to return correct version"
     );
   });
@@ -106,7 +106,7 @@ describe('jspmVersionParser(node, appConfig)', () => {
 
     const newVersion = '5f7a3bc';
     assert.equal(
-      JspmVersionParserModule.customGenerateVersion(packageMock, newVersion), `github:bootstrap@5f7a3bc`,
+      JspmVersionParserModule.customJspmGenerateVersion(packageMock, newVersion), `github:bootstrap@5f7a3bc`,
       "Expected customGenerateVersion to return correct version"
     );
   });

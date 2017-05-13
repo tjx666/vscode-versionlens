@@ -10,29 +10,61 @@ import {
 } from '../../common/utils';
 import appSettings from '../../common/appSettings';
 import { mapTaggedVersions, tagFilter, isFixedVersion, isOlderVersion } from '../../common/versions';
-import { npmViewVersion, npmViewDistTags } from './npmAPI'
+import { generateNotFoundPackage, generateNotSupportedPackage, generatePackage } from '../../common/packageGeneration';
+import { npmViewVersion, npmViewDistTags, parseNpmVersion } from './npmAPI'
 
 export function npmVersionParser(node, appConfig) {
   const { name, value: requestedVersion } = node;
-  let result;
 
-  // check if we have a local file version
-  if (result = parseFileVersion(node, name, requestedVersion))
-    return result;
+  return parseNpmVersion(name, requestedVersion)
+    .then(npmVersionInfo => {
+      // check if we have a directory
+      if (npmVersionInfo.type === 'directory')
+        return parseFileVersion(node, name, requestedVersion);
 
-  // TODO: implement raw git url support too
+      // check if we have a github version
+      if (npmVersionInfo.type === 'git' && npmVersionInfo.hosted.type === 'github') {
+        return parseGithubVersion(
+          node,
+          name,
+          requestedVersion,
+          appConfig.githubTaggedCommits,
+          customNpmGenerateVersion
+        );
+      } else if (npmVersionInfo.type === 'git') {
+        // TODO: implement raw git url support
+        return [{
+          node,
+          package: generateNotSupportedPackage(name, requestedVersion, 'npm')
+        }];
+      }
 
-  // check if we have a github version
-  if (result = parseGithubVersion(node, name, requestedVersion, appConfig.githubTaggedCommits))
-    return result;
+      // must be a registry version
+      return parseNpmRegistryVersion(
+        node,
+        name,
+        requestedVersion,
+        appConfig
+      );
 
-  // must be a registry version
-  return parseNpmRegistryVersion(
-    node,
-    name,
-    requestedVersion,
-    appConfig
-  );
+    })
+    .catch(error => {
+      if (error.code === 'EUNSUPPORTEDPROTOCOL') {
+        return [{
+          node,
+          package: generateNotSupportedPackage(name, requestedVersion, 'npm')
+        }];
+      }
+
+      if (error.code === 'E404') {
+        return [{
+          node,
+          package: generateNotFoundPackage(name, requestedVersion, 'npm')
+        }];
+      }
+
+      throw new Error("NPM: parseNpmVersion " + error);
+    });
 }
 
 export function parseNpmRegistryVersion(node, name, requestedVersion, appConfig, customGenerateVersion = null) {
@@ -111,34 +143,63 @@ export function parseNpmRegistryVersion(node, name, requestedVersion, appConfig,
               };
             });
         });
-    })
-    .catch(error => {
-      // show the 404 to the user; otherwise throw the error
-      if (error.code === 'E404')
-        return [{
-          node,
-          package: generatePackage(
-            name,
-            null,
-            { type: 'npm', notFound: true },
-            null
-          )
-        }];
-
-      console.error(error);
-      throw error;
     });
 }
 
 export function parseFileVersion(node, name, version) {
   const fileRegExpResult = fileDependencyRegex.exec(version);
-  if (fileRegExpResult) {
+  if (!fileRegExpResult)
+    return;
+
+  const packageInfo = {
+    type: "file",
+    remoteUrl: `${fileRegExpResult[1]}`
+  };
+
+  return [{
+    node,
+    package: generatePackage(
+      name,
+      version,
+      packageInfo,
+      customNpmGenerateVersion
+    )
+  }];
+}
+
+export function parseGithubVersion(node, name, version, githubTaggedVersions, customGenerateVersion) {
+  const gitHubRegExpResult = gitHubDependencyRegex.exec(version);
+  if (!gitHubRegExpResult)
+    return;
+
+  const proto = "https";
+  const user = gitHubRegExpResult[1];
+  const repo = gitHubRegExpResult[3];
+  const userRepo = `${user}/${repo}`;
+  const commitish = gitHubRegExpResult[4] ? gitHubRegExpResult[4].substring(1) : '';
+  const commitishSlug = commitish ? `/commit/${commitish}` : '';
+  const remoteUrl = `${proto}://github.com/${user}/${repo}${commitishSlug}`;
+
+  // take a copy of the app config tagged versions
+  const taggedVersions = githubTaggedVersions.slice();
+
+  // ensure that commits are the first and the latest entries to be shown
+  taggedVersions.splice(0, 0, 'Commit');
+
+  // only show commits of showTaggedVersions is false
+  if (appSettings.showTaggedVersions === false)
+    taggedVersions = [taggedVersions[0]];
+
+  return taggedVersions.map(category => {
     const packageInfo = {
-      type: "file",
-      remoteUrl: `${fileRegExpResult[1]}`
+      category,
+      type: "github",
+      remoteUrl,
+      userRepo,
+      commitish
     };
 
-    return [{
+    const parseResult = {
       node,
       package: generatePackage(
         name,
@@ -146,56 +207,13 @@ export function parseFileVersion(node, name, version) {
         packageInfo,
         customGenerateVersion
       )
-    }];
-  }
+    };
+
+    return parseResult;
+  });
 }
 
-export function parseGithubVersion(node, name, version, githubTaggedVersions) {
-  const gitHubRegExpResult = gitHubDependencyRegex.exec(version);
-  if (gitHubRegExpResult) {
-    const proto = "https";
-    const user = gitHubRegExpResult[1];
-    const repo = gitHubRegExpResult[3];
-    const userRepo = `${user}/${repo}`;
-    const commitish = gitHubRegExpResult[4] ? gitHubRegExpResult[4].substring(1) : '';
-    const commitishSlug = commitish ? `/commit/${commitish}` : '';
-    const remoteUrl = `${proto}://github.com/${user}/${repo}${commitishSlug}`;
-
-    // take a copy of the app config tagged versions
-    const taggedVersions = githubTaggedVersions.slice();
-
-    // ensure that commits are the first and the latest entries to be shown
-    taggedVersions.splice(0, 0, 'Commit');
-
-    // only show commits of showTaggedVersions is false
-    if (appSettings.showTaggedVersions === false)
-      taggedVersions = [taggedVersions[0]];
-
-    return taggedVersions.map(category => {
-      const packageInfo = {
-        category,
-        type: "github",
-        remoteUrl,
-        userRepo,
-        commitish
-      };
-
-      const parseResult = {
-        node,
-        package: generatePackage(
-          name,
-          version,
-          packageInfo,
-          customGenerateVersion
-        )
-      };
-
-      return parseResult;
-    });
-  }
-}
-
-export function customGenerateVersion(packageInfo, newVersion) {
+export function customNpmGenerateVersion(packageInfo, newVersion) {
   const existingVersion
   // test if the newVersion is a valid semver range
   // if it is then we need to use the commitish for github versions 
@@ -207,13 +225,4 @@ export function customGenerateVersion(packageInfo, newVersion) {
   // preserve the leading symbol from the existing version
   const preservedLeadingVersion = formatWithExistingLeading(existingVersion, newVersion)
   return `${packageInfo.meta.userRepo}#${preservedLeadingVersion}`
-}
-
-function generatePackage(name, version, info, customGenerateVersion) {
-  return {
-    name,
-    version,
-    meta: info,
-    customGenerateVersion
-  };
 }

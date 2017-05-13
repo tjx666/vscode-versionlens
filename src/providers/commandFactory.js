@@ -167,3 +167,10 @@ export function makeNotFoundCommand(codeLens) {
     codeLens
   );
 }
+
+export function makeNotSupportedCommand(codeLens) {
+  return makeErrorCommand(
+    `${codeLens.package.meta.message}`,
+    codeLens
+  );
+}

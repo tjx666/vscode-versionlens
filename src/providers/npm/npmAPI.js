@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as npm from 'npm';
+import * as npa from 'npm-package-arg';
 import * as semver from 'semver';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -138,6 +139,18 @@ export function npmViewVersions(packageName) {
     });
   });
 }
+
+export function parseNpmVersion(packageName, packageVersion) {
+  return new Promise(function (resolve, reject) {
+    try {
+      const npaParsed = npa.resolve(packageName, packageVersion);
+      resolve(npaParsed);
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
 
 function parseOutdatedResponse(response) {
   let outdated = [];

@@ -119,7 +119,7 @@ describe('npmVersionParser(node, appConfig)', () => {
 
     const newVersion = '4.0.0-alpha.5';
     assert.equal(
-      NpmVersionParserModule.customGenerateVersion(packageMock, newVersion), `twbs/bootstrap#^4.0.0-alpha.5`,
+      NpmVersionParserModule.customNpmGenerateVersion(packageMock, newVersion), `twbs/bootstrap#^4.0.0-alpha.5`,
       "Expected customGenerateVersion to return correct version"
     );
   });
@@ -137,7 +137,7 @@ describe('npmVersionParser(node, appConfig)', () => {
 
     const newVersion = '5f7a3bc';
     assert.equal(
-      NpmVersionParserModule.customGenerateVersion(packageMock, newVersion), `twbs/bootstrap#5f7a3bc`,
+      NpmVersionParserModule.customNpmGenerateVersion(packageMock, newVersion), `twbs/bootstrap#5f7a3bc`,
       "Expected customGenerateVersion to return correct version"
     );
   });

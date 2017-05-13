@@ -34,41 +34,42 @@ export function bowerVersionParser(node, appConfig) {
 
 export function parseGithubVersion(node, packageName, packageVersion, githubTaggedVersions) {
   const gitHubRegExpResult = gitHubDependencyRegex.exec(packageVersion);
-  if (gitHubRegExpResult) {
-    const proto = "https";
-    const user = gitHubRegExpResult[1];
-    const repo = gitHubRegExpResult[3];
-    const userRepo = `${user}/${repo}`;
-    const commitish = gitHubRegExpResult[4] ? gitHubRegExpResult[4].substring(1) : '';
-    const commitishSlug = commitish ? `/commit/${commitish}` : '';
-    const remoteUrl = `${proto}://github.com/${user}/${repo}${commitishSlug}`;
+  if (!gitHubRegExpResult)
+    return;
 
-    // take a copy of the app config tagged versions
-    const taggedVersions = githubTaggedVersions.slice();
+  const proto = "https";
+  const user = gitHubRegExpResult[1];
+  const repo = gitHubRegExpResult[3];
+  const userRepo = `${user}/${repo}`;
+  const commitish = gitHubRegExpResult[4] ? gitHubRegExpResult[4].substring(1) : '';
+  const commitishSlug = commitish ? `/commit/${commitish}` : '';
+  const remoteUrl = `${proto}://github.com/${user}/${repo}${commitishSlug}`;
 
-    // ensure that commits are the first and the latest entries to be shown
-    taggedVersions.splice(0, 0, 'Commit');
+  // take a copy of the app config tagged versions
+  const taggedVersions = githubTaggedVersions.slice();
 
-    // only show commits of showTaggedVersions is false
-    if (appSettings.showTaggedVersions === false)
-      githubTaggedVersions = [githubTaggedVersions[0]];
+  // ensure that commits are the first and the latest entries to be shown
+  taggedVersions.splice(0, 0, 'Commit');
 
-    return githubTaggedVersions.map(category => {
-      const parseResult = {
-        node, package: {
-          packageName,
-          packageVersion,
-          meta: {
-            category,
-            type: "github",
-            remoteUrl,
-            userRepo,
-            commitish
-          },
-          customGenerateVersion: (packageInfo, newVersion) => `${packageInfo.meta.userRepo}#${newVersion}`
-        }
-      };
-      return parseResult;
-    });
-  }
+  // only show commits of showTaggedVersions is false
+  if (appSettings.showTaggedVersions === false)
+    githubTaggedVersions = [githubTaggedVersions[0]];
+
+  return githubTaggedVersions.map(category => {
+    const parseResult = {
+      node, package: {
+        packageName,
+        packageVersion,
+        meta: {
+          category,
+          type: "github",
+          remoteUrl,
+          userRepo,
+          commitish
+        },
+        customGenerateVersion: (packageInfo, newVersion) => `${packageInfo.meta.userRepo}#${newVersion}`
+      }
+    };
+    return parseResult;
+  });
 }

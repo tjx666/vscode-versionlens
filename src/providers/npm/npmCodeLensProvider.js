@@ -82,6 +82,10 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     if (codeLens.notFound())
       return CommandFactory.makeNotFoundCommand(codeLens);
 
+    // check if this package is supported
+    if (codeLens.notSupported())
+      return CommandFactory.makeNotSupportedCommand(codeLens);
+
     // check if this is a tagged version
     if (codeLens.isTaggedVersion())
       return CommandFactory.makeTaggedVersionCommand(codeLens);

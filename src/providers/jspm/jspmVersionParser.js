@@ -9,24 +9,33 @@ import {
   parseFileVersion,
   parseGithubVersion
 } from '../npm/npmVersionParser';
+import { generateNotSupportedPackage } from '../../common/packageGeneration';
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;
 export function jspmVersionParser(node, appConfig) {
   const { name, value: version } = node;
+
+  // check for supported package resgitries
   const regExpResult = jspmDependencyRegex.exec(version);
-  if (!regExpResult)
-    return;
+  if (!regExpResult) {
+    return [{
+      node,
+      package: generateNotSupportedPackage(name, version, 'jspm')
+    }];
+  }
 
   const packageManager = regExpResult[1];
   const extractedPkgName = regExpResult[2];
   const newPkgVersion = regExpResult[3];
 
   if (packageManager === 'github') {
-    const results = parseGithubVersion(node, extractedPkgName, `${extractedPkgName}#${newPkgVersion}`, appConfig.githubTaggedCommits);
-    return results.map(result => {
-      result.package.customGenerateVersion = customGenerateVersion;
-      return result;
-    });
+    return parseGithubVersion(
+      node,
+      extractedPkgName,
+      `${extractedPkgName}#${newPkgVersion}`,
+      appConfig.githubTaggedCommits,
+      customJspmGenerateVersion
+    );
   }
 
   return parseNpmRegistryVersion(
@@ -34,11 +43,11 @@ export function jspmVersionParser(node, appConfig) {
     extractedPkgName,
     newPkgVersion,
     appConfig,
-    customGenerateVersion
+    customJspmGenerateVersion
   );
 }
 
-export function customGenerateVersion(packageInfo, newVersion) {
+export function customJspmGenerateVersion(packageInfo, newVersion) {
   const existingVersion
   // test if the newVersion is a valid semver range
   // if it is then we need to use the commitish for github versions 
