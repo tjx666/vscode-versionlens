@@ -18,9 +18,10 @@ export function onActiveEditorChanged(editor, providers) {
     return;
   }
 
+  clearDecorations();
+
   if (!editor.document) {
     appSettings.isActive = false;
-    clearDecorations();
     return;
   }
 
@@ -33,7 +34,6 @@ export function onActiveEditorChanged(editor, providers) {
   }
 
   appSettings.isActive = false;
-  clearDecorations();
 }
 
 // update the decorators if the changed line affects them

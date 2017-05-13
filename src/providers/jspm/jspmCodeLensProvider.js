@@ -16,8 +16,6 @@ import { clearDecorations } from '../../editor/decorations';
 export class JspmCodeLensProvider extends NpmCodeLensProvider {
 
   provideCodeLenses(document, token) {
-    clearDecorations();
-
     if (appSettings.showVersionLenses === false)
       return;
 

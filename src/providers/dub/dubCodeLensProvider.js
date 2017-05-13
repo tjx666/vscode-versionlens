@@ -36,8 +36,6 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   provideCodeLenses(document, token) {
-    clearDecorations();
-
     if (appSettings.showVersionLenses === false)
       return;
 
