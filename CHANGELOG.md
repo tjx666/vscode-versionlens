@@ -1,3 +1,7 @@
+# 0.17.2
+  - Dub correctly identifies packages that are not found. Thanks to @WebFreak001
+  - Dub install status decorations are now showing correctly. Thanks again to @WebFreak001
+
 # 0.17.1
   - Fixed issue where tagged versions shown were older than the required version entered. (NPM and DotNet)
 
