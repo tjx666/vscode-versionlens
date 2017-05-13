@@ -1,6 +1,8 @@
 # 0.17.2
-  - Dub correctly identifies packages that are not found. Thanks to @WebFreak001
+  - Dub now correctly identifies packages that are not found. Thanks to @WebFreak001
   - Dub install status decorations are now showing correctly. Thanks again to @WebFreak001
+  - Jspm: Handles scenarios where no code lenses would render when an invalid registry was given. Thanks to @eamodio
+  - Npm: Handles unsupported protocols which prevented code lenses from rendering.
 
 # 0.17.1
   - Fixed issue where tagged versions shown were older than the required version entered. (NPM and DotNet)
