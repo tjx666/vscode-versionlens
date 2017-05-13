@@ -9,7 +9,7 @@ export const fileDependencyRegex = /^file:(.*)$/;
 export const gitHubDependencyRegex = /^\/?([^:\/\s]+)(\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/;
 export const stripSymbolFromVersionRegex = /^(?:[^0-9]+)?(.+)$/;
 export const extractSymbolFromVersionRegex = /^([^0-9]*)?.*$/;
-export const semverLeadingChars = ['^', '~', '<', '<=', '>', '>='];
+export const semverLeadingChars = ['^', '~', '<', '<=', '>', '>=', '~>'];
 
 export function formatWithExistingLeading(existingVersion, newVersion) {
   const regExResult = extractSymbolFromVersionRegex.exec(existingVersion);
