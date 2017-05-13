@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as assert from 'assert';
-import { tagFilter } from '../../../src/common/versions';
+import { tagFilter, isOlderVersion } from '../../../src/common/versions';
 
 describe('Versions', () => {
 
@@ -66,6 +66,45 @@ describe('Versions', () => {
       );
 
     });
+
+  });
+
+  describe('isOlderVersion', () => {
+
+    it('Reports true for older versions and false for newer versions', () => {
+
+      const older = [
+        '1.2.2',
+        '1.2.2',
+        '1.0.0-beta.1',
+        '1.0.0-beta.1'
+      ];
+
+      const newer = [
+        '1.2.3',
+        '1.2.3-beta.1',
+        '1.0.1',
+        '1.0.0-beta.2'
+      ];
+
+      older.forEach((olderVersion, index) => {
+        const newerVersion = newer[index];
+        assert.ok(
+          isOlderVersion(olderVersion, newerVersion),
+          `${olderVersion} should be older than ${newerVersion}`
+        );
+      });
+
+      older.forEach((olderVersion, index) => {
+        const newerVersion = newer[index];
+        assert.ok(
+          isOlderVersion(newerVersion, olderVersion) === false,
+          `${newerVersion} should be newer than ${olderVersion}`
+        );
+      });
+
+    });
+
 
   });
 

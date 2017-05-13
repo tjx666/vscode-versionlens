@@ -31,6 +31,8 @@ export function tagFilter(tags, tagFilter) {
 /*
 * versions: Array<String>
 * requestedVersion: String
+*
+* returns: Array<TaggedVersion>
 */
 export function mapTaggedVersions(versions, requestedVersion) {
   const taggedVersionMap = {};
@@ -44,6 +46,10 @@ export function mapTaggedVersions(versions, requestedVersion) {
       releases.push(version);
       return;
     }
+
+    // make sure this version isn't older than the requestedVersion
+    if (isOlderVersion(version, requestedVersion))
+      return;
 
     // process pre-release
     const taggedVersionName = components[0];
@@ -67,14 +73,13 @@ export function mapTaggedVersions(versions, requestedVersion) {
       requestedVersion
     );
   } catch (err) {
-
     console.log(err);
   }
 
   // return an Array<TaggedVersion>
   return [
     { name: "Matches", version: matchedVersion },
-    { name: "Latest", version: releases[0] },
+    { name: "Latest", version: releases[0] }, // take the latest released version
     // concat any the tagged versions
     ...Object.keys(taggedVersionMap)
       .map((name, index) => {
@@ -89,6 +94,26 @@ export function mapTaggedVersions(versions, requestedVersion) {
 export function isFixedVersion(versionToCheck) {
   const testRange = new semver.Range(versionToCheck);
   return testRange.set[0][0].operator === "";
+}
+
+export function isOlderVersion(version, requestedVersion) {
+  let testVersion = version;
+
+  const requestedVersionComponents = semver.prerelease(requestedVersion);
+  // check the required version isn't a prerelease
+  if (!requestedVersionComponents) {
+    // check if the test version is a pre release
+    const testVersionComponents = semver.prerelease(testVersion);
+    if (testVersionComponents) {
+      // strip the test version prerelease info
+      // semver always see prereleases as < than releases regardless of version numbering
+      testVersion = testVersion.replace('-' + testVersionComponents.join('.'), '');
+      // and we only want newer prereleases
+      return semver.ltr(testVersion, requestedVersion) || !semver.gtr(testVersion, requestedVersion);
+    }
+  }
+
+  return semver.ltr(testVersion, requestedVersion);
 }
 
 function stripNumbersFromName(tagName) {

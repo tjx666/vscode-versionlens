@@ -93,7 +93,8 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     // generate decoration
     this.generateDecoration(codeLens);
 
-    const queryUrl = `http://code.dlang.org/api/packages/${encodeURIComponent(codeLens.package.name)}/latest`;
+    const queryUrl = `https://code.dlang.org/api/packages/${encodeURIComponent(codeLens.package.name)}/latest`;
+
     return httpRequest.xhr({ url: queryUrl })
       .then(response => {
         if (response.status != 200)
@@ -116,6 +117,8 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
         );
       })
       .catch(response => {
+        if (response.status == 404)
+          return CommandFactory.makeNotFoundCommand(codeLens);
         const respObj = JSON.parse(response.responseText);
         console.error(respObj.statusMessage);
         return CommandFactory.makeErrorCommand(
