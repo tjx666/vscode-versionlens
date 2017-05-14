@@ -10,8 +10,12 @@ describe('jspmVersionParser(node, appConfig)', () => {
   const appConfigMock
 
   const npmAPIMock = {
-    npmViewDistTags: packageName => {
-      return Promise.resolve(['latest', 'alpha', 'beta'])
+    npmViewDistTags: function (testPackageName) {
+      return Promise.resolve([
+        { name: 'latest', version: '1.2.3' },
+        { name: 'alpha', version: '1.2.5-alpha.1' },
+        { name: 'beta', version: '1.2.5-beta.1' }
+      ]);
     }
   };
 

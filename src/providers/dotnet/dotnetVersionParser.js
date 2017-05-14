@@ -5,8 +5,8 @@
 import * as semver from 'semver';
 import appSettings from '../../common/appSettings';
 import { nugetGetPackageVersions } from './nugetAPI.js';
-import { mapTaggedVersions, tagFilter, isFixedVersion, isOlderVersion } from '../../common/versions';
-import { generateNotFoundPackage } from '../../common/packageGeneration';
+import { extractTagsFromVersionList, tagFilter, isFixedVersion, isOlderVersion } from '../../common/versions';
+import * as PackageFactory from '../../common/packageGeneration';
 
 export function dotnetVersionParser(node, appConfig) {
   const { name, value: requestedVersion } = node;
@@ -21,24 +21,26 @@ export function dotnetVersionParser(node, appConfig) {
   return nugetGetPackageVersions(name)
     .then(versions => {
       // get all the tag entries
-      let tags = mapTaggedVersions(versions, requestedVersion);
+      let extractedTags = extractTagsFromVersionList(versions, requestedVersion);
+
+      const satisfiesEntry = extractedTags[0];
 
       // only show matches and latest entries when showTaggedVersions is false
       // otherwise filter by the appConfig.dotnetTagFilter
       let tagsToProcess;
       if (appSettings.showTaggedVersions === false)
         tagsToProcess = [
-          tags[0], // matches entry
-          tags[1]  // latest entry
+          satisfiesEntry,
+          ...(satisfiesEntry.isLatestVersion ? [] : extractedTags[1])
         ];
       else if (appConfig.dotnetTagFilter.length > 0)
-        tagsToProcess = tagFilter(tags, [
-          'Matches',
-          'Latest',
+        tagsToProcess = tagFilter(extractedTags, [
+          'satisfies',
+          ...(installsLatest ? [] : 'latest'),
           ...appConfig.dotnetTagFilter
         ]);
       else
-        tagsToProcess = tags;
+        tagsToProcess = extractedTags;
 
       // map the tags to packages
       return tagsToProcess.map((tag, index) => {
@@ -71,13 +73,11 @@ export function dotnetVersionParser(node, appConfig) {
       if (error.status === 404)
         return [{
           node,
-          package: generateNotFoundPackage(name, version, 'nuget')
+          package: PackageFactory.createPackageNotFound(name, version, 'nuget')
         }];
 
       console.error(error);
       throw error;
     });
-
-
 
 }

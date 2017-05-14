@@ -21,7 +21,7 @@ describe("CommandFactory", () => {
 
     it("when local version is invalid then should return ErrorCommand", () => {
       const testLens = CommandFactory.makeTestVersionCommand('blah', 'latest');
-      assert.equal(testLens.command.title, 'Invalid semver version entered', "Expected command.title failed.");
+      assert.equal(testLens.command.title, 'Invalid version entered', "Expected command.title failed.");
       assert.equal(testLens.command.command, undefined);
       assert.equal(testLens.command.arguments, undefined);
     });
@@ -54,7 +54,7 @@ describe("CommandFactory", () => {
       assert.equal(testLens.command.arguments[1], '"^2.8.0"');
     });
 
-    it("when local version has caret and satisfies the server version (and matches) then codeLens should return SatisfiedCommand", () => {
+    it("when local version has caret and satisfies the server version (and Matches) then codeLens should return SatisfiedCommand", () => {
       const testLens = CommandFactory.makeTestVersionCommand('^2.0.0', '2.0.0');
       assert.equal(testLens.command.title, 'Matches 2.0.0', "Expected command.title failed.");
       assert.equal(testLens.command.command, undefined);
@@ -77,7 +77,7 @@ describe("CommandFactory", () => {
 
     it("when local version does satisfy the server version then codeLens should return LatestCommand", () => {
       const testLens = CommandFactory.makeTestVersionCommand('2.8.0', '2.8.0');
-      assert.equal(testLens.command.title, 'Matches latest', "Expected command.title failed.");
+      assert.equal(testLens.command.title, 'Matches latest version', "Expected command.title failed.");
       assert.equal(testLens.command.command, undefined);
       assert.equal(testLens.command.arguments, undefined);
     });

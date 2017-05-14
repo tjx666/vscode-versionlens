@@ -59,6 +59,10 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       .then(_ => {
         appSettings.inProgress = false;
         return generateCodeLenses(packageCollection, document)
+      })
+      .catch(err => {
+        console.log(err)
+
       });
   }
 
@@ -72,12 +76,12 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     }
 
     // check if this package was found
-    if (codeLens.notFound())
-      return CommandFactory.makeNotFoundCommand(codeLens);
+    if (codeLens.packageNotFound())
+      return CommandFactory.makePackageNotFoundCommand(codeLens);
 
     // check if this package is supported
-    if (codeLens.notSupported())
-      return CommandFactory.makeNotSupportedCommand(codeLens);
+    if (codeLens.packageNotSupported())
+      return CommandFactory.makePackageNotSupportedCommand(codeLens);
 
     // check if this is a tagged version
     if (codeLens.isTaggedVersion())
@@ -86,13 +90,21 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     // generate decoration
     this.generateDecoration(codeLens);
 
+    // check if the entered version is valid
+    if (codeLens.isInvalidVersion())
+      return CommandFactory.makeInvalidCommand(codeLens);
+
+    // check if this entered versions matches a registry versions
+    if (codeLens.versionMatchNotFound())
+      return CommandFactory.makeVersionMatchNotFoundCommand(codeLens);
+
+    // check if this install a tagged version
+    if (codeLens.installsTaggedVersion())
+      return CommandFactory.makeMatchesTagVersionCommand(codeLens);
+
     // check if this is a fixed version
     if (codeLens.isFixedVersion())
       return CommandFactory.makeFixedVersionCommand(codeLens);
-
-    // check if this is set to the latest version
-    if (codeLens.package.version === 'latest')
-      return CommandFactory.makeLatestCommand(codeLens);
 
     const latestVersion = codeLens.package.meta.tag.version;
     return CommandFactory.makeVersionCommand(
@@ -106,6 +118,9 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   updateOutdated() {
     return npmGetOutdated(this._documentPath)
       .then(results => this._outdatedCache = results)
+      .catch(err => {
+        console.log("npmGetOutdated", err)
+      });
   }
 
   generateDecoration(codeLens) {

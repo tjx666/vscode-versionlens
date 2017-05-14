@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as semver from 'semver';
-import { flatMap, formatTagNameRegex } from './utils';
+import { flatMap, formatTagNameRegex, sortDescending } from './utils';
 
 /*
 * tags: Array<TaggedVersion>
@@ -34,9 +34,13 @@ export function tagFilter(tags, tagFilter) {
 *
 * returns: Array<TaggedVersion>
 */
-export function mapTaggedVersions(versions, requestedVersion) {
+export function extractTagsFromVersionList(versions, requestedVersion) {
   const taggedVersionMap = {};
   const releases = [];
+  let satisfiesTag = false;
+  let satisfiesTagName = '';
+
+  const isRequestedVersionValid = semver.validRange(requestedVersion);
 
   versions.forEach(version => {
     const components = semver.prerelease(version);
@@ -48,7 +52,7 @@ export function mapTaggedVersions(versions, requestedVersion) {
     }
 
     // make sure this version isn't older than the requestedVersion
-    if (isOlderVersion(version, requestedVersion))
+    if (isRequestedVersionValid && isOlderVersion(version, requestedVersion))
       return;
 
     // process pre-release
@@ -56,6 +60,18 @@ export function mapTaggedVersions(versions, requestedVersion) {
 
     // format the tag name so it groups things like alpha1, alpha2 to become alpha etc..
     const formattedTagName = formatTagName(taggedVersionName);
+
+    // make sure this version isn't the same as the requestedVersion
+    if (version === requestedVersion) {
+      // store the tag name for the satisifesEntry
+      if (!satisfiesTag) {
+        satisfiesTag = true;
+        satisfiesTagName = formattedTagName;
+      };
+
+      return;
+    }
+
     if (!taggedVersionMap[formattedTagName])
       taggedVersionMap[formattedTagName] = [];
 
@@ -66,22 +82,44 @@ export function mapTaggedVersions(versions, requestedVersion) {
   let matchedVersion = requestedVersion;
   try {
     matchedVersion = semver.maxSatisfying(
-      stripNonSemverVersions([
-        ...releases,
-        ...flatMap(Object.keys(taggedVersionMap), key => taggedVersionMap[key])
-      ]),
+      stripNonSemverVersions(versions),
       requestedVersion
     );
+
   } catch (err) {
-    console.log(err);
+    // console.log(err);
   }
+
+  const matchIsLatest = semver.satisfies(matchedVersion, releases[0]);
+  if (matchIsLatest) {
+    // overide these if we match the latest
+    satisfiesTag = true;
+    satisfiesTagName = 'latest';
+  }
+
+  const latestEntry = { name: "latest", version: releases[0] };
+
+  const satisfiesEntry = {
+    name: "satisfies",
+    version: matchedVersion,
+    isLatestVersion: matchIsLatest && requestedVersion.includes(latestEntry.version),
+    installsLatestVersion: matchIsLatest,
+    satisfiesTag,
+    satisfiesTagName,
+    isInvalid: !isRequestedVersionValid,
+    versionMatchNotFound: !matchedVersion
+  };
 
   // return an Array<TaggedVersion>
   return [
-    { name: "Matches", version: matchedVersion },
-    { name: "Latest", version: releases[0] }, // take the latest released version
-    // concat any the tagged versions
+    satisfiesEntry,
+
+    // only provide the latest when the satisfiesEntry is not the latest
+    ...(satisfiesEntry.isLatestVersion ? [] : latestEntry),
+
+    // concat all other tags if not older than the matched version
     ...Object.keys(taggedVersionMap)
+      .sort(sortDescending)
       .map((name, index) => {
         return {
           name,

@@ -1,28 +1,32 @@
-export function generateNotSupportedPackage(name, version, type) {
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Peter Flannery. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+export function createPackageNotSupported(name, version, type) {
   return {
     name,
     version,
     meta: {
       type,
-      notSupported: true,
+      packageNotSupported: true,
       message: "Package registry not supported"
     }
   };
 }
 
-export function generateNotFoundPackage(name, version, type) {
+export function createPackageNotFound(name, version, type) {
   return {
     name,
     version,
     meta: {
       type,
-      notSupported: true,
+      packageNotFound: true,
       message: `${name} could not be found`
     }
   };
 }
 
-export function generatePackage(name, version, info, customGenerateVersion) {
+export function createPackage(name, version, info, customGenerateVersion) {
   return {
     name,
     version,

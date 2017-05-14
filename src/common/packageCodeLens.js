@@ -24,33 +24,49 @@ export class PackageCodeLens extends CodeLens {
   }
 
   getTaggedVersionPrefix() {
-    if (this.package && this.package.meta && this.package.meta.isTaggedVersion)
+    if (this.package.meta.isTaggedVersion)
       return this.package.meta.tag.name + ': ';
 
     return '';
   }
 
+  isInvalidVersion() {
+    return this.package.meta.tag.isInvalid;
+  }
+
   isTaggedVersion() {
-    return this.package && this.package.meta && this.package.meta.isTaggedVersion;
+    return this.package.meta.isTaggedVersion;
   }
 
   isFixedVersion() {
-    return this.package && this.package.meta && this.package.meta.isFixedVersion;
+    return this.package.meta.isFixedVersion;
+  }
+
+  installsTaggedVersion() {
+    return this.package.meta.tag.satisfiesTag;
+  }
+
+  getInstalledTagName() {
+    return this.package.meta.tag.satisfiesTagName;
   }
 
   getTaggedVersion() {
     return this.package.meta.tag.version;
   }
 
-  notFound() {
-    return this.package && this.package.meta && this.package.meta.notFound;
+  packageNotFound() {
+    return this.package.meta.packageNotFound;
   }
 
-  notSupported() {
-    return this.package && this.package.meta && this.package.meta.notSupported;
+  packageNotSupported() {
+    return this.package.meta.packageNotSupported;
   }
 
-  getIndicator() {
+  versionMatchNotFound() {
+    return this.package.meta.tag.versionMatchNotFound;
+  }
+
+  getInstallIndicator() {
     return this.package.meta.isOlderVersion ?
       appSettings.revertIndicator :
       appSettings.updateIndicator;

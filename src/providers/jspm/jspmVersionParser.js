@@ -9,7 +9,7 @@ import {
   parseFileVersion,
   parseGithubVersion
 } from '../npm/npmVersionParser';
-import { generateNotSupportedPackage } from '../../common/packageGeneration';
+import * as PackageFactory from '../../common/packageGeneration';
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;
 export function jspmVersionParser(node, appConfig) {
@@ -20,7 +20,7 @@ export function jspmVersionParser(node, appConfig) {
   if (!regExpResult) {
     return [{
       node,
-      package: generateNotSupportedPackage(name, version, 'jspm')
+      package: PackageFactory.createPackageNotSupported(name, version, 'jspm')
     }];
   }
 

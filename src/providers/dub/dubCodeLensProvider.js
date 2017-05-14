@@ -116,7 +116,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
       })
       .catch(response => {
         if (response.status == 404)
-          return CommandFactory.makeNotFoundCommand(codeLens);
+          return CommandFactory.makePackageNotFoundCommand(codeLens);
         const respObj = JSON.parse(response.responseText);
         console.error(respObj.statusMessage);
         return CommandFactory.makeErrorCommand(

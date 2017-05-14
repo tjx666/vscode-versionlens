@@ -3,9 +3,15 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as assert from 'assert';
-import { tagFilter, isOlderVersion } from '../../../src/common/versions';
+import * as path from 'path';
+import { TestFixtureMap } from '../../testUtils';
+import { extractTagsFromVersionList, tagFilter, isOlderVersion } from '../../../src/common/versions';
 
 describe('Versions', () => {
+
+  const testPath = path.join(__dirname, '../../../..', 'test');
+  const fixturePath = path.join(testPath, 'fixtures');
+  const fixtureMap = new TestFixtureMap(fixturePath);
 
   describe('tagFilter', () => {
 
@@ -105,6 +111,92 @@ describe('Versions', () => {
 
     });
 
+  });
+
+  describe('extractTagsFromVersionList', () => {
+
+    it('Extracts and groups all version tags', () => {
+      const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
+      const testResults = extractTagsFromVersionList(testVersions, '1.2.3');
+      assert.ok(testResults[0].name == 'satisfies', "Tag name did not match")
+      assert.ok(testResults[1].name == 'latest', "Tag name did not match")
+      assert.ok(testResults[2].name == 'rc', "Tag name did not match")
+      assert.ok(testResults[3].name == 'beta', "Tag name did not match")
+      assert.ok(testResults[4].name == 'alpha', "Tag name did not match")
+    });
+
+    it('Should be no "latest" tag entry when requested version is already latest', () => {
+      const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
+      const testResults = extractTagsFromVersionList(testVersions, '2.2.0');
+      assert.ok(testResults[1].name != 'latest', "Name should not match 'latest'")
+    });
+
+    it('no "latest" tag entry should exist when requested version range is already latest', () => {
+      const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
+      const testResults = extractTagsFromVersionList(testVersions, '~2.2.0');
+      assert.ok(testResults[1].name != 'latest', "Name should not match 'latest'")
+    });
+
+    it('Should return a "latest" tag entry when requested version not the latest', () => {
+      const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
+      const testResults = extractTagsFromVersionList(testVersions, '2.3.0-beta2-build3683');
+      assert.ok(testResults[1].name == 'latest', "Name should match 'latest'")
+    });
+
+    it('returns a "latest" tag entry when requested version range is not latest', () => {
+      const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
+      const testResults = extractTagsFromVersionList(testVersions, '^2.1.0');
+      assert.ok(testResults[1].name === 'latest', "Name should match 'latest'");
+    });
+
+    it('"satisfies" tag entry should be latest and install latest when requested version is equal to the latest', () => {
+      const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
+      const testResults = extractTagsFromVersionList(testVersions, '2.2.0');
+      assert.ok(testResults[0].isLatestVersion === true, "Should be latest version");
+      assert.ok(testResults[0].installsLatestVersion === true, "Should install latest version");
+    });
+
+    it('"satisfies" tag entry should not be latest but install latest when requested version satisfies the latest', () => {
+      const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
+      const testResults = extractTagsFromVersionList(testVersions, '^2.1.0');
+      assert.ok(testResults[0].isLatestVersion === false, "Should not be latest version");
+      assert.ok(testResults[0].installsLatestVersion === true, "Should install latest version");
+    });
+
+    it('"satisfies" tag entry should not be latest or install latest when requested version does not satisfy the latest', () => {
+      const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
+      const testResults = extractTagsFromVersionList(testVersions, '~2.1.0');
+      assert.ok(testResults[0].isLatestVersion === false, "Should not be latest version");
+      assert.ok(testResults[0].installsLatestVersion === false, "Should install latest version");
+    });
+
+    it('"satisfies".isInvalid is true when requested version is invalid', () => {
+      const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
+      const testResults = extractTagsFromVersionList(testVersions, 'sds11312');
+      assert.ok(testResults[0].isInvalid === true, "isInvalid should be true")
+    });
+
+    it('"satisfies".isInvalid is false when requested version is valid', () => {
+      const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
+      testVersions.forEach(version => {
+        const testResults = extractTagsFromVersionList(testVersions, version);
+        assert.ok(testResults[0].isInvalid === false, `${version} was not valid`);
+      });
+    });
+
+    it('"satisfies".versionMatchNotFound is true when requested version does not match anything', () => {
+      const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
+      const testResults = extractTagsFromVersionList(testVersions, '1.2.3');
+      assert.ok(testResults[0].versionMatchNotFound === true, "Matched a version that does not exist");
+      assert.ok(testResults[0].isInvalid === false, "Version should not be flagged as invalid");
+    });
+
+    it('"satisfies".versionMatchNotFound is false when requested version matches an existing versions', () => {
+      const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
+      let testResults = extractTagsFromVersionList(testVersions, '~1.9.1');
+      assert.ok(testResults[0].versionMatchNotFound === false, "Did not match a version that does exists")
+      assert.ok(testResults[0].isInvalid === false, "Version should not be flagged as invalid");
+    });
 
   });
 

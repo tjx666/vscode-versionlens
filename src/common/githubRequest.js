@@ -91,7 +91,7 @@ class GithubRequest {
         }
 
         // check if the request was not found and report back
-        error.notFound = (
+        error.resourceNotFound = (
           error.status = 404 &&
           error.data.message.includes('Not Found')
         );

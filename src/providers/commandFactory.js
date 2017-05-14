@@ -20,7 +20,7 @@ export function makeVersionCommand(localVersion, serverVersion, codeLens) {
   const isServerValidRange = semver.validRange(serverVersion);
 
   if (!isLocalValid && !isLocalValidRange && localVersion !== 'latest')
-    return makeErrorCommand("Invalid semver version entered", codeLens);
+    return makeInvalidCommand(codeLens);
 
   if (!isServerValid && !isServerValidRange && serverVersion !== 'latest')
     return makeErrorCommand("Invalid semver server version received, " + serverVersion, codeLens);
@@ -52,10 +52,10 @@ export function makeVersionCommand(localVersion, serverVersion, codeLens) {
   return makeLatestCommand(codeLens);
 }
 
-export function makeNewVersionCommand(newVersion, codeLens, prefix = '') {
+export function makeNewVersionCommand(newVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(newVersion);
   return codeLens.setCommand(
-    `${codeLens.getTaggedVersionPrefix() || prefix}${codeLens.getIndicator()} ${newVersion}`,
+    `${codeLens.getTaggedVersionPrefix()}${codeLens.getInstallIndicator()} ${newVersion}`,
     `${appSettings.extensionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
@@ -68,14 +68,14 @@ export function makeSatisfiedCommand(serverVersion, codeLens) {
 export function makeSatisfiedWithNewerCommand(serverVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(serverVersion);
   return codeLens.setCommand(
-    `Matches ${codeLens.getIndicator()} ${serverVersion}`,
+    `Matches ${codeLens.getInstallIndicator()} ${serverVersion}`,
     `${appSettings.extensionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
 }
 
 export function makeLatestCommand(codeLens) {
-  return codeLens.setCommand('Matches latest');
+  return codeLens.setCommand('Matches latest version');
 }
 
 export function makeTagCommand(tag, codeLens) {
@@ -115,7 +115,7 @@ export function makeGithubCommand(codeLens) {
 
       const newVersion = codeLens.generateNewVersion(entry.version);
       return codeLens.setCommand(
-        `${meta.category}: ${codeLens.getIndicator()} ${entry.version}`,
+        `${meta.category}: ${codeLens.getInstallIndicator()} ${entry.version}`,
         `${appSettings.extensionName}.updateDependencyCommand`,
         [codeLens, `"${newVersion}"`]
       );
@@ -124,7 +124,7 @@ export function makeGithubCommand(codeLens) {
       if (error.rateLimitExceeded)
         return makeTagCommand('Rate limit exceeded', codeLens);
 
-      if (error.notFound)
+      if (error.resourceNotFound)
         return makeTagCommand('Git resource not found', codeLens);
 
       if (error.badCredentials)
@@ -156,21 +156,36 @@ export function makeTaggedVersionCommand(codeLens) {
 export function makeFixedVersionCommand(codeLens) {
   const version = codeLens.package.meta.tag.version;
   if (!version)
-    version = "invalid";
+    return makeInvalidCommand(codeLens);
 
   return makeTagCommand(`Matches ${version}`, codeLens);
 }
 
-export function makeNotFoundCommand(codeLens) {
+export function makeMatchesTagVersionCommand(codeLens) {
+  return makeTagCommand(`Matches ${codeLens.getInstalledTagName()} version`, codeLens);
+}
+
+export function makeInvalidCommand(codeLens) {
+  return makeTagCommand(`Invalid version entered`, codeLens);
+}
+
+export function makePackageNotFoundCommand(codeLens) {
   return makeErrorCommand(
     `${codeLens.package.name} could not be found`,
     codeLens
   );
 }
 
-export function makeNotSupportedCommand(codeLens) {
+export function makePackageNotSupportedCommand(codeLens) {
   return makeErrorCommand(
     `${codeLens.package.meta.message}`,
+    codeLens
+  );
+}
+
+export function makeVersionMatchNotFoundCommand(codeLens) {
+  return makeErrorCommand(
+    `Match not found: ${codeLens.package.version}`,
     codeLens
   );
 }

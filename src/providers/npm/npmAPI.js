@@ -7,6 +7,7 @@ import * as npa from 'npm-package-arg';
 import * as semver from 'semver';
 import * as path from 'path';
 import * as fs from 'fs';
+import { sortDescending } from '../../common/utils';
 
 export function npmPackageDirExists(packageJsonPath, packageName) {
   npm.localPrefix = packageJsonPath;
@@ -72,6 +73,7 @@ export function npmViewDistTags(packageName) {
         if (keys.length > 0) {
           const distTags = response[keys[0]]['dist-tags'];
           tags = Object.keys(distTags)
+            .sort(sortDescending)
             .map(key => ({ name: key, version: distTags[key] }));
         } else {
           tags = [
@@ -106,12 +108,15 @@ export function npmGetOutdated(npmLocalPath) {
       npm.config.set('json', true);
       npm.outdated((err, response) => {
         if (err) {
-          reject(err);
-          return;
+          if (err.code !== 'ETARGET') {
+            reject(err);
+            return;
+          }
+          response = "";
         }
 
-        const outdated = parseOutdatedResponse(response);
-        resolve(outdated);
+        const outdatedResult = parseOutdatedResponse(response);
+        resolve(outdatedResult);
       });
     });
   });

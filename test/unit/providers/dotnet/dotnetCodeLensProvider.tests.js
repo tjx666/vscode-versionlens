@@ -55,7 +55,7 @@ describe("DotNetCodeLensProvider", () => {
   describe("evaluateCodeLens", () => {
 
     it("returns not found", () => {
-      const codeLens = new PackageCodeLens(null, null, generatePackage('SomePackage', null, { type: 'nuget', isValidSemver: true, notFound: true }), null);
+      const codeLens = new PackageCodeLens(null, null, generatePackage('SomePackage', null, { type: 'nuget', isValidSemver: true, packageNotFound: true }), null);
       const result = testProvider.evaluateCodeLens(codeLens, null)
       assert.equal(result.command.title, 'SomePackage could not be found', "Expected command.title failed.");
       assert.equal(result.command.command, undefined);
@@ -71,7 +71,7 @@ describe("DotNetCodeLensProvider", () => {
     });
 
     it("returns fixed versions", () => {
-      const codeLens = new PackageCodeLens(null, null, generatePackage('SomePackage', '3.3.3', { type: 'nuget', isFixedVersion: true, tag: { name: 'Matches', version: '3.3.3' } }), null);
+      const codeLens = new PackageCodeLens(null, null, generatePackage('SomePackage', '3.3.3', { type: 'nuget', isFixedVersion: true, tag: { name: 'satisfies', version: '3.3.3' } }), null);
       const result = testProvider.evaluateCodeLens(codeLens, null)
       assert.equal(result.command.title, 'Matches 3.3.3', "Expected command.title failed.");
       assert.equal(result.command.command, null);
@@ -79,15 +79,15 @@ describe("DotNetCodeLensProvider", () => {
     });
 
     it("returns 'latest' versions", () => {
-      const codeLens = new PackageCodeLens(null, null, generatePackage('SomePackage', 'latest', { type: 'nuget', tag: { name: 'Matches', version: '3.3.3' } }), null);
+      const codeLens = new PackageCodeLens(null, null, generatePackage('SomePackage', 'latest', { type: 'nuget', tag: { name: 'latest', version: '3.3.3', satisfiesTag: true, satisfiesTagName: 'latest' } }), null);
       const result = testProvider.evaluateCodeLens(codeLens, null)
-      assert.equal(result.command.title, 'Matches latest', "Expected command.title failed.");
+      assert.equal(result.command.title, 'Matches latest version', "Expected command.title failed.");
       assert.equal(result.command.command, null);
       assert.equal(result.command.arguments, null);
     });
 
     it("returns updatable versions", () => {
-      const codeLens = new PackageCodeLens(null, null, generatePackage('SomePackage', '1.2.3', { type: 'nuget', tag: { name: 'Matches', version: '3.2.1' } }), null);
+      const codeLens = new PackageCodeLens(null, null, generatePackage('SomePackage', '1.2.3', { type: 'nuget', tag: { name: 'satisfies', version: '3.2.1' } }), null);
       const result = testProvider.evaluateCodeLens(codeLens, null)
       assert.equal(result.command.title, '⮬ 3.2.1');
       assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
