@@ -120,8 +120,8 @@ describe('Versions', () => {
       const testResults = extractTagsFromVersionList(testVersions, '1.2.3');
       assert.ok(testResults[0].name == 'satisfies', "Tag name did not match")
       assert.ok(testResults[1].name == 'latest', "Tag name did not match")
-      assert.ok(testResults[2].name == 'rc', "Tag name did not match")
-      assert.ok(testResults[3].name == 'beta', "Tag name did not match")
+      assert.ok(testResults[2].name == 'beta', "Tag name did not match")
+      assert.ok(testResults[3].name == 'rc', "Tag name did not match")
       assert.ok(testResults[4].name == 'alpha', "Tag name did not match")
     });
 

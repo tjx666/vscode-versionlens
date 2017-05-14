@@ -119,13 +119,13 @@ export function extractTagsFromVersionList(versions, requestedVersion) {
 
     // concat all other tags if not older than the matched version
     ...Object.keys(taggedVersionMap)
-      .sort(sortDescending)
       .map((name, index) => {
         return {
           name,
           version: taggedVersionMap[name][0]
         }
       })
+      .sort(sortTagsRecentFirst)
   ];
 }
 
@@ -152,6 +152,22 @@ export function isOlderVersion(version, requestedVersion) {
   }
 
   return semver.ltr(testVersion, requestedVersion);
+}
+
+/*
+* tags: Array<TaggedVersion>
+*/
+export function sortTagsRecentFirst(tagA, tagB) {
+  const a = tagA.version;
+  const b = tagB.version;
+
+  if (semver.lt(a, b))
+    return 1;
+
+  if (semver.gt(a, b))
+    return -1;
+
+  return sortDescending(tagA.name, tagB.name);
 }
 
 function formatTagName(tagName) {
