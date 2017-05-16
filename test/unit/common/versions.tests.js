@@ -153,21 +153,21 @@ describe('Versions', () => {
       const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
       const testResults = extractTagsFromVersionList(testVersions, '2.2.0');
       assert.ok(testResults[0].isLatestVersion === true, "Should be latest version");
-      assert.ok(testResults[0].installsLatestVersion === true, "Should install latest version");
+      assert.ok(testResults[0].satisfiesLatest === true, "Should install latest version");
     });
 
     it('"satisfies" tag entry should not be latest but install latest when requested version satisfies the latest', () => {
       const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
       const testResults = extractTagsFromVersionList(testVersions, '^2.1.0');
       assert.ok(testResults[0].isLatestVersion === false, "Should not be latest version");
-      assert.ok(testResults[0].installsLatestVersion === true, "Should install latest version");
+      assert.ok(testResults[0].satisfiesLatest === true, "Should install latest version");
     });
 
     it('"satisfies" tag entry should not be latest or install latest when requested version does not satisfy the latest', () => {
       const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
       const testResults = extractTagsFromVersionList(testVersions, '~2.1.0');
       assert.ok(testResults[0].isLatestVersion === false, "Should not be latest version");
-      assert.ok(testResults[0].installsLatestVersion === false, "Should install latest version");
+      assert.ok(testResults[0].satisfiesLatest === false, "Should install latest version");
     });
 
     it('"satisfies".isInvalid is true when requested version is invalid', () => {

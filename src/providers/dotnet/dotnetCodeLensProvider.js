@@ -65,9 +65,17 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
     if (codeLens.versionMatchNotFound())
       return CommandFactory.makeVersionMatchNotFoundCommand(codeLens);
 
-    // check if this install a tagged version
-    if (codeLens.installsTaggedVersion())
-      return CommandFactory.makeMatchesTagVersionCommand(codeLens);
+    // check if this matches prerelease version
+    if (codeLens.matchesPrereleaseVersion())
+      return CommandFactory.makeMatchesPrereleaseVersionCommand(codeLens);
+
+    // check if this is the latest version
+    if (codeLens.matchesLatestVersion())
+      return CommandFactory.makeMatchesLatestVersionCommand(codeLens);
+
+    // check if this satisfies the latest version
+    if (codeLens.satisfiesLatestVersion())
+      return CommandFactory.makeSatisfiesLatestVersionCommand(codeLens);
 
     // check if this is a fixed version
     if (codeLens.isFixedVersion())

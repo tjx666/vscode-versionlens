@@ -73,20 +73,6 @@ export function getDecorationsByLine(lineToFilterBy) {
   return results;
 }
 
-export function updateDecoration(newDecoration) {
-  const foundIndex = _decorations.findIndex(
-    entry => entry.range.start.line === newDecoration.range.start.line
-  );
-
-  if (foundIndex > -1) {
-    _decorations[foundIndex] = newDecoration;
-  } else {
-    _decorations.push(newDecoration);
-  }
-
-  setDecorations(_decorations);
-}
-
 export function createRenderOptions(contentText, color) {
   return {
     contentText,
@@ -94,8 +80,8 @@ export function createRenderOptions(contentText, color) {
   };
 }
 
-export function createMissingDecoration(range) {
-  return {
+export function renderMissingDecoration(range) {
+  updateDecoration({
     range: new Range(
       range.start,
       new Position(range.end.line, range.end.character + 1)
@@ -107,11 +93,11 @@ export function createMissingDecoration(range) {
         appConfig.missingDependencyColour
       )
     }
-  };
+  });
 }
 
-export function createInstalledDecoration(range) {
-  return {
+export function renderInstalledDecoration(range, version) {
+  updateDecoration({
     range: new Range(
       range.start,
       new Position(range.end.line, range.end.character + 1)
@@ -119,15 +105,15 @@ export function createInstalledDecoration(range) {
     hoverMessage: null,
     renderOptions: {
       after: createRenderOptions(
-        ' ▪ latest installed',
+        ` ▪ ${version} installed`,
         appConfig.installedDependencyColour
       )
     }
-  };
+  });
 }
 
-export function createOutdatedDecoration(range, installedVersion) {
-  return {
+export function renderOutdatedDecoration(range, version) {
+  updateDecoration({
     range: new Range(
       range.start,
       new Position(range.end.line, range.end.character + 1)
@@ -135,9 +121,38 @@ export function createOutdatedDecoration(range, installedVersion) {
     hoverMessage: null,
     renderOptions: {
       after: createRenderOptions(
-        ` ▪ ${installedVersion} installed`,
+        ` ▪ ${version} installed`,
         appConfig.outdatedDependencyColour
       )
     }
-  };
+  });
+}
+
+export function renderPrereleaseInstalledDecoration(range, version) {
+  updateDecoration({
+    range: new Range(
+      range.start,
+      new Position(range.end.line, range.end.character + 1)
+    ),
+    hoverMessage: null,
+    renderOptions: {
+      after: createRenderOptions(
+        ` ▪ ${version} prerelease installed`,
+        appConfig.outdatedDependencyColour
+      )
+    }
+  });
+}
+
+function updateDecoration(newDecoration) {
+  const foundIndex = _decorations.findIndex(
+    entry => entry.range.start.line === newDecoration.range.start.line
+  );
+
+  if (foundIndex > -1)
+    _decorations[foundIndex] = newDecoration;
+  else
+    _decorations.push(newDecoration);
+
+  setDecorations(_decorations);
 }

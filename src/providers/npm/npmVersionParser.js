@@ -218,9 +218,7 @@ export function extractTagsFromDistTagList(requestedVersion, satisifiesVersion, 
   const isSatisifiesVersionValid = semver.validRange(satisifiesVersion);
   const isRequestedVersionValid = semver.validRange(requestedVersion);
 
-  const satisifiesLatest = satisifiesVersion && semver.satisfies(satisifiesVersion, latestEntry.version);
-  let satisfiesTag = false;
-  let satisfiesTagName = '';
+  const satisfiesLatest = satisifiesVersion && semver.satisfies(satisifiesVersion, latestEntry.version);
 
   const newerDistTags = distTags.filter(distTag => {
     // make sure this version isn't older than the satisifiesVersion
@@ -228,14 +226,8 @@ export function extractTagsFromDistTagList(requestedVersion, satisifiesVersion, 
       return false;
 
     // make sure this version isn't the same as the satisifiesVersion
-    if (distTag.version === satisifiesVersion) {
-      // store the tag name with the satisifesEntry
-      if (!satisfiesTag) {
-        satisfiesTag = true;
-        satisfiesTagName = distTag.name;
-      };
+    if (distTag.version === satisifiesVersion)
       return false;
-    }
 
     // package tags that have the same version as the latest will be ignored
     if (distTag.version == latestEntry.version)
@@ -244,19 +236,14 @@ export function extractTagsFromDistTagList(requestedVersion, satisifiesVersion, 
     return true;
   });
 
-  if (satisifiesLatest) {
-    // override these if we match the latest
-    satisfiesTag = true;
-    satisfiesTagName = 'latest';
-  }
+  const isLatest = requestedVersion === 'latest' || requestedVersion.includes(latestEntry.version);
 
   const satisfiesEntry = {
     name: 'satisifes',
     version: satisifiesVersion,
-    isLatestVersion: requestedVersion === 'latest' || requestedVersion.includes(latestEntry.version),
-    installsLatestVersion: satisifiesLatest,
-    satisfiesTag,
-    satisfiesTagName,
+    isNewerThanLatest: !isLatest && satisifiesVersion && semver.gt(satisifiesVersion, latestEntry.version),
+    isLatestVersion: isLatest,
+    satisfiesLatest,
     isInvalid: !isRequestedVersionValid && requestedVersion !== 'latest',
     versionMatchNotFound: !satisifiesVersion
   };

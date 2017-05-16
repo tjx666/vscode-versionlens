@@ -158,11 +158,19 @@ export function makeFixedVersionCommand(codeLens) {
   if (!version)
     return makeInvalidCommand(codeLens);
 
-  return makeTagCommand(`Matches ${version}`, codeLens);
+  return makeTagCommand(`Fixed to ${version}`, codeLens);
 }
 
-export function makeMatchesTagVersionCommand(codeLens) {
-  return makeTagCommand(`Matches ${codeLens.getInstalledTagName()} version`, codeLens);
+export function makeMatchesLatestVersionCommand(codeLens) {
+  return makeTagCommand(`Matches the latest`, codeLens);
+}
+
+export function makeSatisfiesLatestVersionCommand(codeLens) {
+  return makeTagCommand(`Satisfies the latest`, codeLens);
+}
+
+export function makeMatchesPrereleaseVersionCommand(codeLens) {
+  return makeTagCommand(`Matches a prerelease`, codeLens);
 }
 
 export function makeInvalidCommand(codeLens) {

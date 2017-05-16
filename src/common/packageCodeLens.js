@@ -42,12 +42,16 @@ export class PackageCodeLens extends CodeLens {
     return this.package.meta.isFixedVersion;
   }
 
-  installsTaggedVersion() {
-    return this.package.meta.tag.satisfiesTag;
+  matchesLatestVersion() {
+    return this.package.meta.tag.isLatestVersion;
   }
 
-  getInstalledTagName() {
-    return this.package.meta.tag.satisfiesTagName;
+  satisfiesLatestVersion() {
+    return this.package.meta.tag.satisfiesLatest;
+  }
+
+  matchesPrereleaseVersion() {
+    return this.package.meta.tag.isNewerThanLatest;
   }
 
   getTaggedVersion() {

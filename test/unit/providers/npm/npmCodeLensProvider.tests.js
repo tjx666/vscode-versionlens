@@ -213,15 +213,31 @@ describe("NpmCodeLensProvider", () => {
     it("returns fixed versions", () => {
       const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', isFixedVersion: true, tag: { name: 'satisfies', version: '3.3.3' } }), null);
       const result = testProvider.evaluateCodeLens(codeLens, null)
-      assert.equal(result.command.title, 'Matches 3.3.3', "Expected command.title failed.");
+      assert.equal(result.command.title, 'Fixed to 3.3.3', "Expected command.title failed.");
       assert.equal(result.command.command, null);
       assert.equal(result.command.arguments, null);
     });
 
-    it("returns 'tagged named' versions", () => {
-      const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', 'latest', { type: 'npm', tag: { name: 'satisfies', version: '3.3.3', satisfiesTag: true, satisfiesTagName: 'latest' } }), null);
+    it("returns prerelease versions", () => {
+      const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', isFixedVersion: true, tag: { name: 'satisfies', version: '3.3.3', isNewerThanLatest: true } }), null);
       const result = testProvider.evaluateCodeLens(codeLens, null)
-      assert.equal(result.command.title, 'Matches latest version', "Expected command.title failed.");
+      assert.equal(result.command.title, 'Matches a prerelease', "Expected command.title failed.");
+      assert.equal(result.command.command, null);
+      assert.equal(result.command.arguments, null);
+    });
+
+    it("returns latest version matches", () => {
+      const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', tag: { name: 'satisfies', version: '3.3.3', isLatestVersion: true } }), null);
+      const result = testProvider.evaluateCodeLens(codeLens, null)
+      assert.equal(result.command.title, 'Matches the latest', "Expected command.title failed.");
+      assert.equal(result.command.command, null);
+      assert.equal(result.command.arguments, null);
+    });
+
+    it("returns satisfies latest version", () => {
+      const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', tag: { name: 'satisfies', version: '3.3.3', satisfiesLatest: true } }), null);
+      const result = testProvider.evaluateCodeLens(codeLens, null)
+      assert.equal(result.command.title, 'Satisfies the latest', "Expected command.title failed.");
       assert.equal(result.command.command, null);
       assert.equal(result.command.arguments, null);
     });

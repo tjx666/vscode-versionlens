@@ -13,10 +13,10 @@ import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
 import { window, Range } from 'vscode';
 import {
-  createMissingDecoration,
-  createInstalledDecoration,
-  createOutdatedDecoration,
-  updateDecoration
+  renderMissingDecoration,
+  renderInstalledDecoration,
+  renderOutdatedDecoration,
+  renderPrereleaseInstalledDecoration
 } from '../../editor/decorations';
 import * as path from 'path';
 
@@ -62,7 +62,6 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       })
       .catch(err => {
         console.log(err)
-
       });
   }
 
@@ -98,9 +97,17 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     if (codeLens.versionMatchNotFound())
       return CommandFactory.makeVersionMatchNotFoundCommand(codeLens);
 
-    // check if this install a tagged version
-    if (codeLens.installsTaggedVersion())
-      return CommandFactory.makeMatchesTagVersionCommand(codeLens);
+    // check if this matches prerelease version
+    if (codeLens.matchesPrereleaseVersion())
+      return CommandFactory.makeMatchesPrereleaseVersionCommand(codeLens);
+
+    // check if this is the latest version
+    if (codeLens.matchesLatestVersion())
+      return CommandFactory.makeMatchesLatestVersionCommand(codeLens);
+
+    // check if this satisfies the latest version
+    if (codeLens.satisfiesLatestVersion())
+      return CommandFactory.makeSatisfiesLatestVersionCommand(codeLens);
 
     // check if this is a fixed version
     if (codeLens.isFixedVersion())
@@ -130,7 +137,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
     const packageDirExists = npmPackageDirExists(documentPath, currentPackageName);
     if (!packageDirExists) {
-      updateDecoration(createMissingDecoration(codeLens.range));
+      renderMissingDecoration(codeLens.range);
       return;
     }
 
@@ -141,21 +148,30 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         );
 
         if (findIndex === -1) {
-          updateDecoration(createInstalledDecoration(codeLens.range));
+          renderInstalledDecoration(
+            codeLens.range,
+            codeLens.package.meta.tag.version
+          );
           return;
         }
 
         if (!outdated[findIndex].current) {
-          updateDecoration(createMissingDecoration(codeLens.range));
+          renderMissingDecoration(
+            codeLens.range
+          );
           return;
         }
 
-        updateDecoration(
-          createOutdatedDecoration(
+        if (codeLens.matchesPrereleaseVersion())
+          renderPrereleaseInstalledDecoration(
+            codeLens.range,
+            codeLens.package.meta.tag.version
+          );
+        else
+          renderOutdatedDecoration(
             codeLens.range,
             outdated[findIndex].current
-          )
-        );
+          );
       })
       .catch(console.error);
 

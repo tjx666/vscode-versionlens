@@ -16,10 +16,9 @@ import {
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
 import {
-  createMissingDecoration,
-  createInstalledDecoration,
-  createOutdatedDecoration,
-  updateDecoration,
+  renderMissingDecoration,
+  renderInstalledDecoration,
+  renderOutdatedDecoration,
   clearDecorations
 } from '../../editor/decorations';
 import * as fs from 'fs';
@@ -52,7 +51,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
       if (fs.existsSync(dubSelections)) {
         fs.readFile(dubSelections, "utf-8", (err, data) => {
           if (err) {
-            updateDecoration(createMissingDecoration(codeLens.range));
+            renderMissingDecoration(codeLens.range);
             return;
           }
           this.selectionsJson = JSON.parse(data.toString());
@@ -152,26 +151,28 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
       return;
 
     if (!this.selectionsJson) {
-      updateDecoration(createMissingDecoration(codeLens.range));
+      renderMissingDecoration(codeLens.range);
       return;
     }
 
-    var currentVersion = this.selectionsJson.versions[currentPackageName];
+    const currentVersion = this.selectionsJson.versions[currentPackageName];
     if (!currentVersion) {
-      updateDecoration(createMissingDecoration(codeLens.range));
+      renderMissingDecoration(codeLens.range);
       return;
     }
 
     if (formatWithExistingLeading(currentPackageVersion, currentVersion) == currentPackageVersion) {
-      updateDecoration(createInstalledDecoration(codeLens.range));
+      renderInstalledDecoration(
+        codeLens.range,
+        currentPackageVersion
+      );
       return;
     }
 
-    updateDecoration(
-      createOutdatedDecoration(
-        codeLens.range,
-        currentVersion
-      )
+    renderOutdatedDecoration(
+      codeLens.range,
+      currentVersion
     );
+
   }
 }

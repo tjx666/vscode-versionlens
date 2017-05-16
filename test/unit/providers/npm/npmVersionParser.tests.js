@@ -205,7 +205,7 @@ describe('npmVersionParser(node, appConfig)', () => {
 
       const testResults = NpmVersionParserModule.extractTagsFromDistTagList(testRequestVersion, testSatisfiesVersion, fixture.distTags);
       assert.ok(testResults[0].isLatestVersion === true, "Should be latest version");
-      assert.ok(testResults[0].installsLatestVersion === true, "Should install latest version");
+      assert.ok(testResults[0].satisfiesLatest === true, "Should install latest version");
     });
 
     it('"satisfies" tag entry should not be latest but install latest when requested version satisfies the latest', () => {
@@ -215,7 +215,7 @@ describe('npmVersionParser(node, appConfig)', () => {
 
       const testResults = NpmVersionParserModule.extractTagsFromDistTagList(testRequestVersion, testSatisfiesVersion, fixture.distTags);
       assert.ok(testResults[0].isLatestVersion === false, "Should not be latest version");
-      assert.ok(testResults[0].installsLatestVersion === true, "Should install latest version");
+      assert.ok(testResults[0].satisfiesLatest === true, "Should install latest version");
     });
 
     it('"satisfies" tag entry should not be latest or install latest when requested version does not satisfy the latest', () => {
@@ -225,7 +225,7 @@ describe('npmVersionParser(node, appConfig)', () => {
 
       const testResults = NpmVersionParserModule.extractTagsFromDistTagList(testRequestVersion, testSatisfiesVersion, fixture.distTags);
       assert.ok(testResults[0].isLatestVersion === false, "Should not be latest version");
-      assert.ok(testResults[0].installsLatestVersion === false, "Should install latest version");
+      assert.ok(testResults[0].satisfiesLatest === false, "Should install latest version");
     });
 
     it('"satisfies".isInvalid is true when requested version is invalid', () => {

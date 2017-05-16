@@ -37,9 +37,6 @@ export function tagFilter(tags, tagFilter) {
 export function extractTagsFromVersionList(versions, requestedVersion) {
   const taggedVersionMap = {};
   const releases = [];
-  let satisfiesTag = false;
-  let satisfiesTagName = '';
-
   const isRequestedVersionValid = semver.validRange(requestedVersion);
 
   versions.forEach(version => {
@@ -62,15 +59,8 @@ export function extractTagsFromVersionList(versions, requestedVersion) {
     const formattedTagName = formatTagName(taggedVersionName);
 
     // make sure this version isn't the same as the requestedVersion
-    if (version === requestedVersion) {
-      // store the tag name for the satisifesEntry
-      if (!satisfiesTag) {
-        satisfiesTag = true;
-        satisfiesTagName = formattedTagName;
-      };
-
+    if (version === requestedVersion)
       return;
-    }
 
     if (!taggedVersionMap[formattedTagName])
       taggedVersionMap[formattedTagName] = [];
@@ -85,27 +75,19 @@ export function extractTagsFromVersionList(versions, requestedVersion) {
       stripNonSemverVersions(versions),
       requestedVersion
     );
-
   } catch (err) {
     // console.log(err);
   }
 
   const matchIsLatest = semver.satisfies(matchedVersion, releases[0]);
-  if (matchIsLatest) {
-    // overide these if we match the latest
-    satisfiesTag = true;
-    satisfiesTagName = 'latest';
-  }
-
   const latestEntry = { name: "latest", version: releases[0] };
 
   const satisfiesEntry = {
     name: "satisfies",
     version: matchedVersion,
+    isNewerThanLatest: !matchIsLatest && matchedVersion && semver.gt(matchedVersion, latestEntry.version),
     isLatestVersion: matchIsLatest && requestedVersion.includes(latestEntry.version),
-    installsLatestVersion: matchIsLatest,
-    satisfiesTag,
-    satisfiesTagName,
+    satisfiesLatest: matchIsLatest,
     isInvalid: !isRequestedVersionValid,
     versionMatchNotFound: !matchedVersion
   };
