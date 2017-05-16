@@ -118,6 +118,30 @@ describe('npmVersionParser(node, appConfig)', () => {
         .catch(console.log.bind(this));
     });
 
+    it('returns the expected object for git+http+github versions', done => {
+      let nodeMock = {
+        name: 'bootstrap',
+        value: 'git+https://git@github.com/twbs/bootstrap.git#v10.2.3-alpha'
+      };
+
+      const parsedResults = NpmVersionParserModule.npmVersionParser(nodeMock, appConfigMock);
+      Promise.resolve(parsedResults)
+        .then(results => {
+          results.forEach((result, index) => {
+            assert.equal(result.package.name, 'bootstrap', "Expected packageName");
+            assert.equal(result.package.version, 'twbs/bootstrap#v10.2.3-alpha', "Expected packageName");
+            assert.equal(result.package.meta.category, githubTaggedCommitsMock[index], `Expected meta.category ${result.package.meta.category} == ${githubTaggedCommitsMock[index]}`);
+            assert.equal(result.package.meta.type, 'github', "Expected meta.type");
+            assert.equal(result.package.meta.remoteUrl, `https://github.com/${result.package.meta.userRepo}/commit/${result.package.meta.commitish}`, "Expected meta.remoteUrl");
+            assert.equal(result.package.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");
+            assert.equal(result.package.meta.commitish, 'v10.2.3-alpha', "Expected meta.commitish");
+            assert.ok(!!result.package.customGenerateVersion, "Expected package.customGenerateVersion");
+          });
+          done();
+        })
+        .catch(console.log.bind(this));
+    });
+
   });
 
   describe('customGenerateVersion', () => {

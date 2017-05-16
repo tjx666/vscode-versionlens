@@ -28,7 +28,7 @@ export function npmVersionParser(node, appConfig) {
         return parseGithubVersion(
           node,
           name,
-          requestedVersion,
+          npmVersionInfo.hosted.path({ noCommittish: false }),
           appConfig.githubTaggedCommits,
           customNpmGenerateVersion
         );
@@ -154,7 +154,7 @@ export function parseFileVersion(node, name, version) {
 }
 
 export function parseGithubVersion(node, name, version, githubTaggedVersions, customGenerateVersion) {
-  const gitHubRegExpResult = gitHubDependencyRegex.exec(version);
+  const gitHubRegExpResult = gitHubDependencyRegex.exec(version.replace('github:', ''));
   if (!gitHubRegExpResult)
     return;
 
