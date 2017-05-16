@@ -82,10 +82,10 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
       return codeLens;
 
     if (codeLens.package.version === 'latest')
-      return CommandFactory.makeLatestCommand(codeLens);
+      return CommandFactory.createLatestCommand(codeLens);
 
     if (codeLens.package.version === '~master')
-      return CommandFactory.makeLatestCommand(codeLens);
+      return CommandFactory.createLatestCommand(codeLens);
 
     // generate decoration
     this.generateDecoration(codeLens);
@@ -95,19 +95,19 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     return httpRequest.xhr({ url: queryUrl })
       .then(response => {
         if (response.status != 200)
-          return CommandFactory.makeErrorCommand(
+          return CommandFactory.createErrorCommand(
             response.responseText,
             codeLens
           );
 
         const verionStr = JSON.parse(response.responseText);
         if (typeof verionStr !== "string")
-          return CommandFactory.makeErrorCommand(
+          return CommandFactory.createErrorCommand(
             "Invalid object returned from server",
             codeLens
           );
 
-        return CommandFactory.makeVersionCommand(
+        return CommandFactory.createVersionCommand(
           codeLens.package.version,
           verionStr,
           codeLens
@@ -115,10 +115,10 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
       })
       .catch(response => {
         if (response.status == 404)
-          return CommandFactory.makePackageNotFoundCommand(codeLens);
+          return CommandFactory.createPackageNotFoundCommand(codeLens);
         const respObj = JSON.parse(response.responseText);
         console.error(respObj.statusMessage);
-        return CommandFactory.makeErrorCommand(
+        return CommandFactory.createErrorCommand(
           "An error occurred retrieving this package.",
           codeLens
         );

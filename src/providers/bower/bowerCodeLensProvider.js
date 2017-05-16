@@ -56,29 +56,29 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
       return codeLens;
 
     if (codeLens.package.version === 'latest')
-      return CommandFactory.makeLatestCommand(codeLens);
+      return CommandFactory.createLatestCommand(codeLens);
 
     if (codeLens.package.meta) {
       if (codeLens.package.meta.type === 'github')
-        return CommandFactory.makeGithubCommand(codeLens);
+        return CommandFactory.createGithubCommand(codeLens);
 
       if (codeLens.package.meta.type === 'file')
-        return CommandFactory.makeLinkCommand(codeLens);
+        return CommandFactory.createLinkCommand(codeLens);
     }
 
     return new Promise(success => {
       bower.commands.info(codeLens.package.name)
         .on('end', info => {
           if (!info || !info.latest) {
-            success(CommandFactory.makeErrorCommand("Invalid object returned from server", codeLens));
+            success(CommandFactory.createErrorCommand("Invalid object returned from server", codeLens));
             return;
           }
-          success(CommandFactory.makeVersionCommand(codeLens.package.version, info.latest.version, codeLens));
+          success(CommandFactory.createVersionCommand(codeLens.package.version, info.latest.version, codeLens));
         })
         .on('error', err => {
           console.error(err);
           success(
-            CommandFactory.makeErrorCommand(
+            CommandFactory.createErrorCommand(
               "An error occurred retrieving this package.",
               codeLens
             )

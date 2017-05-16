@@ -51,38 +51,38 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
   evaluateCodeLens(codeLens) {
     // check if this package was found
     if (codeLens.packageNotFound())
-      return CommandFactory.makePackageNotFoundCommand(codeLens);
+      return CommandFactory.createPackageNotFoundCommand(codeLens);
 
     // check if this is a tagged version
     if (codeLens.isTaggedVersion())
-      return CommandFactory.makeTaggedVersionCommand(codeLens);
+      return CommandFactory.createTaggedVersionCommand(codeLens);
 
     // check if this install a tagged version
     if (codeLens.isInvalidVersion())
-      return CommandFactory.makeInvalidCommand(codeLens);
+      return CommandFactory.createInvalidCommand(codeLens);
 
     // check if this entered versions matches a registry versions
     if (codeLens.versionMatchNotFound())
-      return CommandFactory.makeVersionMatchNotFoundCommand(codeLens);
+      return CommandFactory.createVersionMatchNotFoundCommand(codeLens);
 
     // check if this matches prerelease version
     if (codeLens.matchesPrereleaseVersion())
-      return CommandFactory.makeMatchesPrereleaseVersionCommand(codeLens);
+      return CommandFactory.createMatchesPrereleaseVersionCommand(codeLens);
 
     // check if this is the latest version
     if (codeLens.matchesLatestVersion())
-      return CommandFactory.makeMatchesLatestVersionCommand(codeLens);
+      return CommandFactory.createMatchesLatestVersionCommand(codeLens);
 
     // check if this satisfies the latest version
     if (codeLens.satisfiesLatestVersion())
-      return CommandFactory.makeSatisfiesLatestVersionCommand(codeLens);
+      return CommandFactory.createSatisfiesLatestVersionCommand(codeLens);
 
     // check if this is a fixed version
     if (codeLens.isFixedVersion())
-      return CommandFactory.makeFixedVersionCommand(codeLens);
+      return CommandFactory.createFixedVersionCommand(codeLens);
 
     const latestVersion = codeLens.package.meta.tag.version;
-    return CommandFactory.makeVersionCommand(
+    return CommandFactory.createVersionCommand(
       codeLens.package.version,
       latestVersion,
       codeLens

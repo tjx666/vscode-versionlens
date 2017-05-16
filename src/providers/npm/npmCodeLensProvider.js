@@ -68,53 +68,53 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   evaluateCodeLens(codeLens) {
     if (codeLens.package.meta) {
       if (codeLens.package.meta.type === 'github')
-        return CommandFactory.makeGithubCommand(codeLens);
+        return CommandFactory.createGithubCommand(codeLens);
 
       if (codeLens.package.meta.type === 'file')
-        return CommandFactory.makeLinkCommand(codeLens);
+        return CommandFactory.createLinkCommand(codeLens);
     }
 
     // check if this package was found
     if (codeLens.packageNotFound())
-      return CommandFactory.makePackageNotFoundCommand(codeLens);
+      return CommandFactory.createPackageNotFoundCommand(codeLens);
 
     // check if this package is supported
     if (codeLens.packageNotSupported())
-      return CommandFactory.makePackageNotSupportedCommand(codeLens);
+      return CommandFactory.createPackageNotSupportedCommand(codeLens);
 
     // check if this is a tagged version
     if (codeLens.isTaggedVersion())
-      return CommandFactory.makeTaggedVersionCommand(codeLens);
+      return CommandFactory.createTaggedVersionCommand(codeLens);
 
     // generate decoration
     this.generateDecoration(codeLens);
 
     // check if the entered version is valid
     if (codeLens.isInvalidVersion())
-      return CommandFactory.makeInvalidCommand(codeLens);
+      return CommandFactory.createInvalidCommand(codeLens);
 
     // check if this entered versions matches a registry versions
     if (codeLens.versionMatchNotFound())
-      return CommandFactory.makeVersionMatchNotFoundCommand(codeLens);
+      return CommandFactory.createVersionMatchNotFoundCommand(codeLens);
 
     // check if this matches prerelease version
     if (codeLens.matchesPrereleaseVersion())
-      return CommandFactory.makeMatchesPrereleaseVersionCommand(codeLens);
+      return CommandFactory.createMatchesPrereleaseVersionCommand(codeLens);
 
     // check if this is the latest version
     if (codeLens.matchesLatestVersion())
-      return CommandFactory.makeMatchesLatestVersionCommand(codeLens);
+      return CommandFactory.createMatchesLatestVersionCommand(codeLens);
 
     // check if this satisfies the latest version
     if (codeLens.satisfiesLatestVersion())
-      return CommandFactory.makeSatisfiesLatestVersionCommand(codeLens);
+      return CommandFactory.createSatisfiesLatestVersionCommand(codeLens);
 
     // check if this is a fixed version
     if (codeLens.isFixedVersion())
-      return CommandFactory.makeFixedVersionCommand(codeLens);
+      return CommandFactory.createFixedVersionCommand(codeLens);
 
     const latestVersion = codeLens.package.meta.tag.version;
-    return CommandFactory.makeVersionCommand(
+    return CommandFactory.createVersionCommand(
       codeLens.package.version,
       latestVersion,
       codeLens

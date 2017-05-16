@@ -9,50 +9,50 @@ import { stripSymbolFromVersionRegex, semverLeadingChars } from '../common/utils
 import { githubRequest } from '../common/githubRequest';
 import appSettings from '../common/appSettings';
 
-export function makeErrorCommand(errorMsg, codeLens) {
+export function createErrorCommand(errorMsg, codeLens) {
   return codeLens.setCommand(`${errorMsg}`);
 }
 
-export function makeVersionCommand(localVersion, serverVersion, codeLens) {
+export function createVersionCommand(localVersion, serverVersion, codeLens) {
   const isLocalValid = semver.valid(localVersion);
   const isLocalValidRange = semver.validRange(localVersion);
   const isServerValid = semver.valid(serverVersion);
   const isServerValidRange = semver.validRange(serverVersion);
 
   if (!isLocalValid && !isLocalValidRange && localVersion !== 'latest')
-    return makeInvalidCommand(codeLens);
+    return createInvalidCommand(codeLens);
 
   if (!isServerValid && !isServerValidRange && serverVersion !== 'latest')
-    return makeErrorCommand("Invalid semver server version received, " + serverVersion, codeLens);
+    return createErrorCommand("Invalid semver server version received, " + serverVersion, codeLens);
 
   if (isLocalValidRange && !isLocalValid) {
 
     if (!semver.satisfies(serverVersion, localVersion))
-      return makeNewVersionCommand(serverVersion, codeLens);
+      return createNewVersionCommand(serverVersion, codeLens);
 
     try {
       let matches = stripSymbolFromVersionRegex.exec(localVersion);
       let cleanLocalVersion = (matches && matches[1]) || semver.clean(localVersion) || localVersion;
       if (cleanLocalVersion && semver.eq(serverVersion, cleanLocalVersion)) {
-        return makeSatisfiedCommand(serverVersion, codeLens);
+        return createSatisfiesCommand(serverVersion, codeLens);
       }
     } catch (ex) {
-      return makeSatisfiedCommand(serverVersion, codeLens);
+      return createSatisfiesCommand(serverVersion, codeLens);
     }
 
-    return makeSatisfiedWithNewerCommand(serverVersion, codeLens);
+    return createSatisfiedWithNewerCommand(serverVersion, codeLens);
   }
 
   const hasNewerVersion = semver.gt(serverVersion, localVersion) === true
     || semver.lt(serverVersion, localVersion) === true;
 
   if (serverVersion !== localVersion && hasNewerVersion)
-    return makeNewVersionCommand(serverVersion, codeLens);
+    return createNewVersionCommand(serverVersion, codeLens);
 
-  return makeLatestCommand(codeLens);
+  return createLatestCommand(codeLens);
 }
 
-export function makeNewVersionCommand(newVersion, codeLens) {
+export function createNewVersionCommand(newVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(newVersion);
   return codeLens.setCommand(
     `${codeLens.getTaggedVersionPrefix()}${codeLens.getInstallIndicator()} ${newVersion}`,
@@ -61,11 +61,11 @@ export function makeNewVersionCommand(newVersion, codeLens) {
   );
 }
 
-export function makeSatisfiedCommand(serverVersion, codeLens) {
-  return codeLens.setCommand(`Matches ${serverVersion}`);
+export function createSatisfiesCommand(serverVersion, codeLens) {
+  return codeLens.setCommand(`Satisfies ${serverVersion}`);
 }
 
-export function makeSatisfiedWithNewerCommand(serverVersion, codeLens) {
+export function createSatisfiedWithNewerCommand(serverVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(serverVersion);
   return codeLens.setCommand(
     `Matches ${codeLens.getInstallIndicator()} ${serverVersion}`,
@@ -74,15 +74,15 @@ export function makeSatisfiedWithNewerCommand(serverVersion, codeLens) {
   );
 }
 
-export function makeLatestCommand(codeLens) {
+export function createLatestCommand(codeLens) {
   return codeLens.setCommand('Matches latest version');
 }
 
-export function makeTagCommand(tag, codeLens) {
+export function createTagCommand(tag, codeLens) {
   return codeLens.setCommand(tag);
 }
 
-export function makeLinkCommand(codeLens) {
+export function createLinkCommand(codeLens) {
   const isFile = codeLens.package.meta.type === 'file';
   const title;
   const cmd = `${appSettings.extensionName}.linkCommand`;
@@ -100,18 +100,18 @@ export function makeLinkCommand(codeLens) {
   return codeLens.setCommand(title, cmd, [codeLens]);
 }
 
-export function makeGithubCommand(codeLens) {
+export function createGithubCommand(codeLens) {
   const meta = codeLens.package.meta;
   const fnName = `getLatest${meta.category}`;
 
   return githubRequest[fnName](meta.userRepo)
     .then(entry => {
       if (!entry)
-        return makeTagCommand(`${meta.category}: none`, codeLens);
+        return createTagCommand(`${meta.category}: none`, codeLens);
 
       if (meta.commitish === '' ||
         (semverLeadingChars.includes(meta.commitish[0]) ? meta.commitish[0] : '') + entry.version === meta.commitish)
-        return makeTagCommand(`${meta.category}: latest`, codeLens);
+        return createTagCommand(`${meta.category}: latest`, codeLens);
 
       const newVersion = codeLens.generateNewVersion(entry.version);
       return codeLens.setCommand(
@@ -122,19 +122,19 @@ export function makeGithubCommand(codeLens) {
     })
     .catch(error => {
       if (error.rateLimitExceeded)
-        return makeTagCommand('Rate limit exceeded', codeLens);
+        return createTagCommand('Rate limit exceeded', codeLens);
 
       if (error.resourceNotFound)
-        return makeTagCommand('Git resource not found', codeLens);
+        return createTagCommand('Git resource not found', codeLens);
 
       if (error.badCredentials)
-        return makeTagCommand('Bad credentials', codeLens);
+        return createTagCommand('Bad credentials', codeLens);
 
       return Promise.reject(error);
     });
 }
 
-export function makeTaggedVersionCommand(codeLens) {
+export function createTaggedVersionCommand(codeLens) {
   const taggedVersion = codeLens.getTaggedVersion();
   const version = codeLens.package.version;
 
@@ -145,54 +145,54 @@ export function makeTaggedVersionCommand(codeLens) {
     version = version.slice(1);
 
   if (version === taggedVersion)
-    return makeTagCommand(`${codeLens.getTaggedVersionPrefix()} ${taggedVersion}`, codeLens);
+    return createTagCommand(`${codeLens.getTaggedVersionPrefix()} ${taggedVersion}`, codeLens);
 
-  return makeNewVersionCommand(
+  return createNewVersionCommand(
     codeLens.getTaggedVersion(),
     codeLens
   );
 }
 
-export function makeFixedVersionCommand(codeLens) {
+export function createFixedVersionCommand(codeLens) {
   const version = codeLens.package.meta.tag.version;
   if (!version)
-    return makeInvalidCommand(codeLens);
+    return createInvalidCommand(codeLens);
 
-  return makeTagCommand(`Fixed to ${version}`, codeLens);
+  return createTagCommand(`Fixed to ${version}`, codeLens);
 }
 
-export function makeMatchesLatestVersionCommand(codeLens) {
-  return makeTagCommand(`Matches the latest`, codeLens);
+export function createMatchesLatestVersionCommand(codeLens) {
+  return createTagCommand(`Matches the latest`, codeLens);
 }
 
-export function makeSatisfiesLatestVersionCommand(codeLens) {
-  return makeTagCommand(`Satisfies the latest`, codeLens);
+export function createSatisfiesLatestVersionCommand(codeLens) {
+  return createTagCommand(`Satisfies the latest`, codeLens);
 }
 
-export function makeMatchesPrereleaseVersionCommand(codeLens) {
-  return makeTagCommand(`Matches a prerelease`, codeLens);
+export function createMatchesPrereleaseVersionCommand(codeLens) {
+  return createTagCommand(`Matches a prerelease`, codeLens);
 }
 
-export function makeInvalidCommand(codeLens) {
-  return makeTagCommand(`Invalid version entered`, codeLens);
+export function createInvalidCommand(codeLens) {
+  return createTagCommand(`Invalid version entered`, codeLens);
 }
 
-export function makePackageNotFoundCommand(codeLens) {
-  return makeErrorCommand(
+export function createPackageNotFoundCommand(codeLens) {
+  return createErrorCommand(
     `${codeLens.package.name} could not be found`,
     codeLens
   );
 }
 
-export function makePackageNotSupportedCommand(codeLens) {
-  return makeErrorCommand(
+export function createPackageNotSupportedCommand(codeLens) {
+  return createErrorCommand(
     `${codeLens.package.meta.message}`,
     codeLens
   );
 }
 
-export function makeVersionMatchNotFoundCommand(codeLens) {
-  return makeErrorCommand(
+export function createVersionMatchNotFoundCommand(codeLens) {
+  return createErrorCommand(
     `Match not found: ${codeLens.package.version}`,
     codeLens
   );
