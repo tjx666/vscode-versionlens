@@ -69,14 +69,9 @@ export function npmVersionParser(node, appConfig) {
 }
 
 export function parseNpmRegistryVersion(node, name, requestedVersion, appConfig, customGenerateVersion = null) {
-  // check if its a valid semver, if not could be a tag like 'latest'
-  const isValidSemver = semver.validRange(requestedVersion);
-
-  // check if this is a fixed version
-  const isFixed = isValidSemver && isFixedVersion(requestedVersion);
-
   // get the matched version
   const viewVersionArg = `${name}@${requestedVersion}`;
+
   return npmViewVersion(viewVersionArg)
     .then(satisifiesVersion => {
 
@@ -106,13 +101,11 @@ export function parseNpmRegistryVersion(node, name, requestedVersion, appConfig,
           return tagsToProcess
             .map((tag, index) => {
               const isTaggedVersion = index !== 0;
-              const isOlder = tag.version && isValidSemver && isOlderVersion(tag.version, requestedVersion);
+              const isOlder = tag.version && !tag.isInvalid && requestedVersion && isOlderVersion(tag.version, requestedVersion);
 
               // generate the package data for each tag
               const packageInfo = {
                 type: 'npm',
-                isValidSemver,
-                isFixedVersion: isFixed,
                 tag,
                 isTaggedVersion,
                 isOlderVersion: isOlder
@@ -176,13 +169,16 @@ export function parseGithubVersion(node, name, version, githubTaggedVersions, cu
   if (appSettings.showTaggedVersions === false)
     taggedVersions = [taggedVersions[0]];
 
-  return taggedVersions.map(category => {
-    const packageInfo = {
+  return taggedVersions.map((category, index) => {
+    const isTaggedVersion = index !== 0;
+
+    const meta = {
       category,
       type: "github",
       remoteUrl,
       userRepo,
-      commitish
+      commitish,
+      isTaggedVersion
     };
 
     const parseResult = {
@@ -190,7 +186,7 @@ export function parseGithubVersion(node, name, version, githubTaggedVersions, cu
       package: PackageFactory.createPackage(
         name,
         version,
-        packageInfo,
+        meta,
         customGenerateVersion
       )
     };
@@ -217,6 +213,8 @@ export function extractTagsFromDistTagList(requestedVersion, satisifiesVersion, 
   const latestEntry = distTags[0];
   const isSatisifiesVersionValid = semver.validRange(satisifiesVersion);
   const isRequestedVersionValid = semver.validRange(requestedVersion);
+  // check if this is a fixed version
+  const isFixed = isRequestedVersionValid && isFixedVersion(requestedVersion);
 
   const satisfiesLatest = satisifiesVersion && semver.satisfies(satisifiesVersion, latestEntry.version);
 
@@ -245,7 +243,8 @@ export function extractTagsFromDistTagList(requestedVersion, satisifiesVersion, 
     isLatestVersion: isLatest,
     satisfiesLatest,
     isInvalid: !isRequestedVersionValid && requestedVersion !== 'latest',
-    versionMatchNotFound: !satisifiesVersion
+    versionMatchNotFound: !satisifiesVersion,
+    isFixedVersion: isFixed
   };
 
   // return an Array<TaggedVersion>

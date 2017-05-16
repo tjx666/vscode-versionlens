@@ -4,24 +4,21 @@
  *--------------------------------------------------------------------------------------------*/
 import * as semver from 'semver';
 import appSettings from '../../common/appSettings';
-import { nugetGetPackageVersions } from './nugetAPI.js';
-import { extractTagsFromVersionList, tagFilter, isFixedVersion, isOlderVersion } from '../../common/versions';
+import { nugetGetPackageVersions, convertNugetToNodeRange } from './nugetAPI.js';
+import { extractTagsFromVersionList, tagFilter, isOlderVersion } from '../../common/versions';
 import * as PackageFactory from '../../common/packageGeneration';
 
 export function dotnetVersionParser(node, appConfig) {
   const { name, value: requestedVersion } = node;
 
-  // check if its a valid semver, if not could be a tag like latest
-  const isValidSemver = semver.validRange(requestedVersion);
-
-  // check if this is a fixed version
-  const isFixed = isValidSemver && isFixedVersion(requestedVersion);
+  // convert a nuget range to node semver range
+  const nodeRequestedRange = requestedVersion && convertNugetToNodeRange(requestedVersion)
 
   // get all the versions for the package
   return nugetGetPackageVersions(name)
     .then(versions => {
       // get all the tag entries
-      let extractedTags = extractTagsFromVersionList(versions, requestedVersion);
+      let extractedTags = extractTagsFromVersionList(versions, nodeRequestedRange);
 
       const satisfiesEntry = extractedTags[0];
 
@@ -45,12 +42,10 @@ export function dotnetVersionParser(node, appConfig) {
       // map the tags to packages
       return tagsToProcess.map((tag, index) => {
         const isTaggedVersion = index !== 0;
-        const isOlder = tag.version && isValidSemver && isOlderVersion(tag.version, requestedVersion);
+        const isOlder = tag.version && !tag.isInvalid && nodeRequestedRange && isOlderVersion(tag.version, nodeRequestedRange);
 
         const packageInfo = {
           type: 'nuget',
-          isValidSemver,
-          isFixedVersion: isFixed,
           tag,
           isTaggedVersion,
           isOlderVersion: isOlder

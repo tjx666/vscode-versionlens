@@ -23,7 +23,7 @@ describe('bowerVersionParser(node, appConfig)', () => {
     assert.equal(results[0].package.name, 'jquery-mousewheel', "Expected packageName");
     assert.equal(results[0].package.version, '3.1.12', "Expected packageName");
     assert.equal(results[0].package.meta.type, 'bower', "Expected meta.type");
-    assert.ok(!!results[0].package.meta.isValidSemver, "Expected isValidSemver");
+    assert.ok(!results[0].package.meta.tag.isInvalid, "Expected meta.tag.isInvalid");
     assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
   });
 

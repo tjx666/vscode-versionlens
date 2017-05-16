@@ -37,8 +37,14 @@ export function tagFilter(tags, tagFilter) {
 export function extractTagsFromVersionList(versions, requestedVersion) {
   const taggedVersionMap = {};
   const releases = [];
+
+  // check if this is a valid range
   const isRequestedVersionValid = semver.validRange(requestedVersion);
 
+  // check if this is a fixed version
+  const isFixed = isRequestedVersionValid && isFixedVersion(requestedVersion);
+
+  // filter releases and prereleases
   versions.forEach(version => {
     const components = semver.prerelease(version);
 
@@ -48,7 +54,7 @@ export function extractTagsFromVersionList(versions, requestedVersion) {
       return;
     }
 
-    // make sure this version isn't older than the requestedVersion
+    // make sure this pre release isn't older than the requestedVersion
     if (isRequestedVersionValid && isOlderVersion(version, requestedVersion))
       return;
 
@@ -68,6 +74,9 @@ export function extractTagsFromVersionList(versions, requestedVersion) {
     taggedVersionMap[formattedTagName].push(version);
   });
 
+  // store the latest
+  const latestEntry = { name: "latest", version: releases[0] };
+
   // see which version the requested version satisfies
   let matchedVersion = requestedVersion;
   try {
@@ -80,7 +89,6 @@ export function extractTagsFromVersionList(versions, requestedVersion) {
   }
 
   const matchIsLatest = semver.satisfies(matchedVersion, releases[0]);
-  const latestEntry = { name: "latest", version: releases[0] };
 
   const satisfiesEntry = {
     name: "satisfies",
@@ -89,7 +97,8 @@ export function extractTagsFromVersionList(versions, requestedVersion) {
     isLatestVersion: matchIsLatest && requestedVersion.includes(latestEntry.version),
     satisfiesLatest: matchIsLatest,
     isInvalid: !isRequestedVersionValid,
-    versionMatchNotFound: !matchedVersion
+    versionMatchNotFound: !matchedVersion,
+    isFixedVersion: isFixed
   };
 
   // return an Array<TaggedVersion>

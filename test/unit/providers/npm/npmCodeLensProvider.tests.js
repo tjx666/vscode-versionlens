@@ -195,7 +195,7 @@ describe("NpmCodeLensProvider", () => {
   describe("evaluateCodeLens", () => {
 
     it("returns not found", () => {
-      const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', null, { type: 'npm', isValidSemver: true, packageNotFound: true }), null);
+      const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', null, { type: 'npm', packageNotFound: true }), null);
       const result = testProvider.evaluateCodeLens(codeLens, null)
       assert.equal(result.command.title, 'SomePackage could not be found', "Expected command.title failed.");
       assert.equal(result.command.command, undefined);
@@ -211,7 +211,7 @@ describe("NpmCodeLensProvider", () => {
     });
 
     it("returns fixed versions", () => {
-      const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', isFixedVersion: true, tag: { name: 'satisfies', version: '3.3.3' } }), null);
+      const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', tag: { name: 'satisfies', version: '3.3.3', isFixedVersion: true } }), null);
       const result = testProvider.evaluateCodeLens(codeLens, null)
       assert.equal(result.command.title, 'Fixed to 3.3.3', "Expected command.title failed.");
       assert.equal(result.command.command, null);

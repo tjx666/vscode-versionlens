@@ -48,7 +48,7 @@ describe('jspmVersionParser(node, appConfig)', () => {
         assert.equal(results[0].package.name, 'bluebird', "Expected packageName");
         assert.equal(results[0].package.version, '3.4.6', "Expected packageName");
         assert.equal(results[0].package.meta.type, 'npm', "Expected meta.type");
-        assert.ok(!!results[0].package.meta.isValidSemver, "Expected isValidSemver");
+        assert.ok(!results[0].package.meta.tagisInvalid, "Expected meta.tag.isInvalid");
         assert.ok(!!results[0].package.customGenerateVersion, "Expected customGenerateVersion");
         done();
       })

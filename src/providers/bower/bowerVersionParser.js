@@ -23,9 +23,12 @@ export function bowerVersionParser(node, appConfig) {
       name,
       version,
       meta: {
-        tag: { name: 'latest', version: 'latest' },
-        type: 'bower',
-        isValidSemver
+        tag: {
+          name: 'latest',
+          version: 'latest',
+          isInvalid: !isValidSemver
+        },
+        type: 'bower'
       },
       customGenerateVersion: null
     }

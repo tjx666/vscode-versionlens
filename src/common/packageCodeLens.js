@@ -39,7 +39,7 @@ export class PackageCodeLens extends CodeLens {
   }
 
   isFixedVersion() {
-    return this.package.meta.isFixedVersion;
+    return this.package.meta.tag.isFixedVersion;
   }
 
   matchesLatestVersion() {

@@ -59,7 +59,7 @@ describe("DotNetCodeLensProvider", () => {
   describe("evaluateCodeLens", () => {
 
     it("returns not found", () => {
-      const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', null, { type: 'nuget', isValidSemver: true, packageNotFound: true }), null);
+      const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', null, { type: 'nuget', packageNotFound: true }), null);
       const result = testProvider.evaluateCodeLens(codeLens, null)
       assert.equal(result.command.title, 'SomePackage could not be found', "Expected command.title failed.");
       assert.equal(result.command.command, undefined);
@@ -75,7 +75,7 @@ describe("DotNetCodeLensProvider", () => {
     });
 
     it("returns fixed versions", () => {
-      const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'nuget', isFixedVersion: true, tag: { name: 'satisfies', version: '3.3.3' } }), null);
+      const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'nuget', tag: { name: 'satisfies', version: '3.3.3', isFixedVersion: true } }), null);
       const result = testProvider.evaluateCodeLens(codeLens, null)
       assert.equal(result.command.title, 'Fixed to 3.3.3', "Expected command.title failed.");
       assert.equal(result.command.command, null);

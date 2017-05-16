@@ -47,8 +47,8 @@ describe('npmVersionParser(node, appConfig)', () => {
           assert.equal(results[0].package.name, 'bootstrap', "Expected packageName");
           assert.equal(results[0].package.version, '1.2.3', "Expected packageVersion");
           assert.equal(results[0].package.meta.type, 'npm', "Expected meta.type");
-          assert.ok(!!results[0].package.meta.isValidSemver, "Expected meta.isValidSemver");
-          assert.ok(results[0].package.meta.isFixedVersion, "Expected meta.isFixedVersion to be true");
+          assert.ok(!results[0].package.meta.tag.isInvalid, "Expected meta.tag.isInvalid");
+          assert.ok(results[0].package.meta.tag.isFixedVersion, "Expected meta.tag.isFixedVersion to be true");
           assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
           done();
         })
@@ -67,8 +67,8 @@ describe('npmVersionParser(node, appConfig)', () => {
           assert.equal(results[0].package.name, 'bootstrap', "Expected packageName");
           assert.equal(results[0].package.version, '~1.2.3', "Expected packageVersion");
           assert.equal(results[0].package.meta.type, 'npm', "Expected meta.type");
-          assert.ok(!!results[0].package.meta.isValidSemver, "Expected meta.isValidSemver");
-          assert.ok(!results[0].package.meta.isFixedVersion, "Expected meta.isFixedVersion to be false");
+          assert.ok(!results[0].package.meta.tag.isInvalid, "Expected meta.tag.isInvalid");
+          assert.ok(!results[0].package.meta.tag.isFixedVersion, "Expected meta.tag.isFixedVersion to be false");
           assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
           done();
         })
