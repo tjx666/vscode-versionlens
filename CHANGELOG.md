@@ -1,13 +1,15 @@
-# 0.18.0-beta.1
+# 0.18.0-beta.2
+
+- Added [nuget range](https://docs.microsoft.com/en-us/nuget/create-packages/dependency-versions#version-ranges) validation
 
 - Added clearer matching reasons
 
   |label|when|
   |-|-|
-  |Fixed to x.x.x|fixed versions that are not the latest|
   |Matches a prerelease|a version that is ahead of the latest version|
   |Matches the latest|exactly matches the latest|
   |Satisfies the latest|versions that use ranges and will match latest|
+  |Fixed to x.x.x|fixed versions that are not the latest|
   |No match found: x.x.x|no version was found in the provider registry|
   |Invalid version entered|invalid semver version was entered|
 
