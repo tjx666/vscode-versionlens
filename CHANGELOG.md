@@ -1,3 +1,27 @@
+# 0.18.0-beta.1
+
+- Added clearer matching reasons
+
+  |label|when|
+  |-|-|
+  |Fixed to x.x.x|fixed versions that are not the latest|
+  |Matches a prerelease|a version that is ahead of the latest version|
+  |Matches the latest|exactly matches the latest|
+  |Satisfies the latest|versions that use ranges and will match latest|
+  |No match found: x.x.x|no version was found in the provider registry|
+  |Invalid version entered|invalid semver version was entered|
+
+- Clearer outdated statuses
+
+  |status|text shown|colour|
+  |-|-|-|
+  |is latest|x.x.x installed|green|
+  |ahead of latest|x.x.x prerelease installed|orange|
+  |behind latest|x.x.x installed|orange|
+
+- Tags are sorted in recent version order
+- Fixed git+https github urls breaking all codelenses
+
 # 0.17.2
   - Dub now correctly identifies packages that are not found. Thanks to @WebFreak001
   - Dub install status decorations are now showing correctly. Thanks again to @WebFreak001
