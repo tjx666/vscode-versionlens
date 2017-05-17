@@ -54,7 +54,7 @@ export function removeDecorationsFromLine(lineNum) {
   const results = [];
   for (let i = 0; i < _decorations.length; i++) {
     const entry = _decorations[i];
-    if (entry.range.start.line > lineNum) {
+    if (entry.range.start.line >= lineNum) {
       results.push(entry);
     }
   }
