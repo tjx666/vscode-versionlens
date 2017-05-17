@@ -1,4 +1,4 @@
-# 0.18.0-beta.3
+# 0.18.0
 
   - Added clearer matching reasons
 
@@ -21,8 +21,8 @@
     |orange|x.x.x installed|Older than the latest|
     |red|Missing install|Not installed|
 
-  - Tags are sorted in recent version order
   - Added [nuget ranges and floating versions](https://docs.microsoft.com/en-us/nuget/create-packages/dependency-versions#version-ranges) for dotnet
+  - Tags are sorted in recent version order
   - Fixed git+https github urls breaking all codelenses for npm
   - Fixes invalid version entries breaking all codelens for npm
 

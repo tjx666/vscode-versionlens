@@ -55,7 +55,7 @@ export function dotnetVersionParser(node, appConfig) {
           node,
           package: {
             name,
-            version: requestedVersion,
+            version: nodeRequestedRange || requestedVersion,
             meta: packageInfo
           }
         };

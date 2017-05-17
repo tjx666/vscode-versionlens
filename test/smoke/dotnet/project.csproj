@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.1-beta1" />
+    <PackageReference Include="Newtonsoft.Json" Version="[10,11)" />
     <PackageReference Include="NUnit" Version="3.0.0-beta-5" />
     <PackageReference Include="AngularJS.Core" Version="1.*" />
     <PackageReference Include="bootstrap" Version="(3,]" />

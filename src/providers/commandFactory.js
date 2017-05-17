@@ -68,7 +68,7 @@ export function createSatisfiesCommand(serverVersion, codeLens) {
 export function createSatisfiedWithNewerCommand(serverVersion, codeLens) {
   const replaceWithVersion = codeLens.generateNewVersion(serverVersion);
   return codeLens.setCommand(
-    `Matches ${codeLens.getInstallIndicator()} ${serverVersion}`,
+    `Satisfies ${codeLens.getInstallIndicator()} ${serverVersion}`,
     `${appSettings.extensionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
