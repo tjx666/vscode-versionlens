@@ -85,12 +85,28 @@ describe('NugetAPI', () => {
         parseVersionSpec("1."),
         parseVersionSpec("1.0."),
         parseVersionSpec("s.2.0"),
-        parseVersionSpec("beta")
+        parseVersionSpec("beta"),
+        parseVersionSpec("[1.*]"),
+        parseVersionSpec("[1.0.*,2.0.0)")
       ];
 
       results.forEach(x => {
-        assert.ok(!x, "Could not parse range")
+        assert.ok(!x, "Should not parse range")
       })
+    });
+
+    it('handles floating ranges', () => {
+      const expectedList = [
+        "1.*", ">=1.0.0 <2.0.0",
+        "1.0.*", ">=1.0.0 <1.1.0"
+      ];
+
+      for (let i = 0; i < expectedList.length; i += 2) {
+        const test = expectedList[i];
+        const expected = expectedList[i + 1];
+        const actual = convertNugetToNodeRange(test);
+        assert.equal(actual, expected, `nuget floating range did not convert ${expected} to ${actual} at ${i}`);
+      }
     });
 
   });

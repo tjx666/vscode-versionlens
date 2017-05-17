@@ -29,39 +29,39 @@ export function nugetGetPackageVersions(packageName) {
 
 }
 
-export function ensureFullVersion(value) {
-
-  if(!value ||
+export function expandShortVersion(value) {
+  if (!value ||
     value.indexOf('[') !== -1 ||
     value.indexOf('(') !== -1 ||
     value.indexOf(',') !== -1 ||
     value.indexOf(')') !== -1 ||
-    value.indexOf(']') !== -1)
+    value.indexOf(']') !== -1 ||
+    value.indexOf('*') !== -1)
     return value;
 
-    let dotCount = 0;
-    for(let i = 0; i < value.length; i++) {
-      const c = value[i];
-      if(c === '.')
-        dotCount++;
-      else if(isNaN(parseInt(c)))
-        return value;
-    }
-
-    let fmtValue = '';
-    if(dotCount === 0)
-      fmtValue = value + '.0.0';
-    else if(dotCount === 1)
-      fmtValue = value + '.0';
-    else
+  let dotCount = 0;
+  for (let i = 0; i < value.length; i++) {
+    const c = value[i];
+    if (c === '.')
+      dotCount++;
+    else if (isNaN(parseInt(c)))
       return value;
+  }
 
-    return fmtValue;
+  let fmtValue = '';
+  if (dotCount === 0)
+    fmtValue = value + '.0.0';
+  else if (dotCount === 1)
+    fmtValue = value + '.0';
+  else
+    return value;
+
+  return fmtValue;
 }
 
 export function parseVersionSpec(value) {
-  const formattedValue = ensureFullVersion(value.trim());
-  if(!formattedValue)
+  const formattedValue = expandShortVersion(value.trim());
+  if (!formattedValue)
     return null;
 
   const parsedSemver = semver.parse(formattedValue);
@@ -75,68 +75,62 @@ export function parseVersionSpec(value) {
 
   const versionSpec = {};
 
-  // Fail early if the string is too short to be valid
+  // fail if the string is too short
   if (formattedValue.length < 3)
     return null;
 
-  // The first character must be [ or (
-  switch (formattedValue[0]) {
-    case '[':
-      versionSpec.isMinInclusive = true;
-      break;
-    case '(':
-      versionSpec.isMinInclusive = false;
-      break;
-    default:
-      return null;
-  }
+  // first character must be [ or (
+  const first = formattedValue[0];
+  if (first === '[')
+    versionSpec.isMinInclusive = true;
+  else if (first === '(')
+    versionSpec.isMinInclusive = false;
+  else
+    return null;
 
-  // The last character must be ] ot )
-  switch (formattedValue[formattedValue.length - 1]) {
-    case ']':
-      versionSpec.isMaxInclusive = true;
-      break;
-    case ')':
-      versionSpec.isMaxInclusive = false;
-      break;
-    default:
-      return null;
-  }
+  // last character must be ] or )
+  const last = formattedValue[formattedValue.length - 1];
+  if (last === ']')
+    versionSpec.isMaxInclusive = true;
+  else if (last === ')')
+    versionSpec.isMaxInclusive = false;
+  else null;
 
-  // Get rid of the two brackets
+  // remove any [] or ()
   formattedValue = formattedValue.substring(1, formattedValue.length - 1);
 
-  // Split by comma, and make sure we don't get more than two pieces
+  // split by comma
   const parts = formattedValue.split(',');
+
+  // more than 2 is invalid
   if (parts.length > 2)
     return null;
   else if (parts.every(x => !x))
-    // If all parts are null or empty, then neither of upper or lower bounds were specified. Version spec is of the format (,]
+    // must be (,]
     return null;
 
-  // If there is only one piece, we use it for both min and max
-  const minVersionString = parts[0];
-  const maxVersionString = (parts.length == 2) ? parts[1] : parts[0];
+  // if only one entry then use it for both min and max
+  const minVersion = parts[0];
+  const maxVersion = (parts.length == 2) ? parts[1] : parts[0];
 
   // parse the min version
-  if (minVersionString) {
-    const parsedVersion = parseVersionSpec(minVersionString);
+  if (minVersion) {
+    const parsedVersion = parseVersionSpec(minVersion);
     if (!parsedVersion)
       return null;
 
     versionSpec.minVersionSpec = parsedVersion;
   }
 
-  // Same for max
-  if (maxVersionString) {
-    const parsedVersion = parseVersionSpec(maxVersionString);
+  // parse the max version
+  if (maxVersion) {
+    const parsedVersion = parseVersionSpec(maxVersion);
     if (!parsedVersion)
       return null;
 
     versionSpec.maxVersionSpec = parsedVersion;
   }
 
-  // Success!
   return versionSpec;
 }
 
@@ -144,8 +138,15 @@ export function convertNugetToNodeRange(nugetVersion) {
   let builder = '';
 
   const nugetVersionSpec = parseVersionSpec(nugetVersion);
-  if (!nugetVersionSpec)
+  if (!nugetVersionSpec) {
+
+    // handle basic floating ranges
+    const validNodeRange = semver.validRange(nugetVersion);
+    if (validNodeRange)
+      return validNodeRange;
+
     return null;
+  }
 
   // x.x.x cases
   if (nugetVersionSpec.version
