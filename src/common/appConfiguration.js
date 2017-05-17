@@ -80,6 +80,11 @@ class AppConfiguration {
     return config.get('outdatedDependencyColour', 'orange');
   }
 
+  get prereleaseDependencyColour() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get('prereleaseDependencyColour', 'yellowgreen');
+  }
+
 }
 
 export const appConfig = new AppConfiguration();

@@ -1,28 +1,31 @@
-# 0.18.0-beta.2
+# 0.18.0-beta.3
 
-- Added [nuget range](https://docs.microsoft.com/en-us/nuget/create-packages/dependency-versions#version-ranges) validation
+  - Added clearer matching reasons
 
-- Added clearer matching reasons
+    |Label Shown|When the version entered|
+    |-|-|
+    |Prerelease|is ahead of the latest version|
+    |Latest|matches the latest|
+    |Satisfies latest|is a range that matches the latest|
+    |Fixed to x.x.x|is fixed and not the latest|
+    |No match found: x.x.x|was found in the provider registry|
+    |Invalid version entered|was invalid|
 
-  |label|when|
-  |-|-|
-  |Matches a prerelease|a version that is ahead of the latest version|
-  |Matches the latest|exactly matches the latest|
-  |Satisfies the latest|versions that use ranges and will match latest|
-  |Fixed to x.x.x|fixed versions that are not the latest|
-  |No match found: x.x.x|no version was found in the provider registry|
-  |Invalid version entered|invalid semver version was entered|
+  - Clearer outdated statuses
 
-- Clearer outdated statuses
+    |Colour|Text shown|Status|
+    |-|-|-|
+    |green|x.x.x installed|Installed at latest|
+    |yellowgreen|x.x.x prerelease installed|Installed is a prerelease ahead of latest|
+    |orange|x.x.x installed, npm update needed|Installed but different to the entered version|
+    |orange|x.x.x installed|Older than the latest|
+    |red|Missing install|Not installed|
 
-  |status|text shown|colour|
-  |-|-|-|
-  |is latest|x.x.x installed|green|
-  |ahead of latest|x.x.x prerelease installed|orange|
-  |behind latest|x.x.x installed|orange|
+  - Tags are sorted in recent version order
+  - Fixed git+https github urls breaking all codelenses
 
-- Tags are sorted in recent version order
-- Fixed git+https github urls breaking all codelenses
+  - Added [nuget ranges](https://docs.microsoft.com/en-us/nuget/create-packages/dependency-versions#version-ranges) validation for dotnet
+
 
 # 0.17.2
   - Dub now correctly identifies packages that are not found. Thanks to @WebFreak001

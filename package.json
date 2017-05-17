@@ -8,7 +8,7 @@
   },
   "author": "Peter Flannery",
   "license": "MIT",
-  "version": "0.18.0-beta.2",
+  "version": "0.18.0-beta.3",
   "publisher": "pflannery",
   "displayName": "Version Lens",
   "icon": "images/logo.png",
@@ -264,6 +264,11 @@
           "type": "string",
           "default": "orange",
           "description": "The colour used to show outdated dependencies. Accept's valid CSS colours"
+        },
+        "versionlens.prereleaseDependencyColour": {
+          "type": "string",
+          "default": "yellowgreen",
+          "description": "The colour used to show prerelease dependencies. Accept's valid CSS colours"
         }
       }
     }

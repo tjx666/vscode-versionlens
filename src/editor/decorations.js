@@ -154,7 +154,7 @@ export function renderPrereleaseInstalledDecoration(range, version) {
     renderOptions: {
       after: createRenderOptions(
         ` ▪ ${version} prerelease installed`,
-        appConfig.outdatedDependencyColour
+        appConfig.prereleaseDependencyColour
       )
     }
   });

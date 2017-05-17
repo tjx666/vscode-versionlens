@@ -162,15 +162,15 @@ export function createFixedVersionCommand(codeLens) {
 }
 
 export function createMatchesLatestVersionCommand(codeLens) {
-  return createTagCommand(`Matches the latest`, codeLens);
+  return createTagCommand('Latest', codeLens);
 }
 
 export function createSatisfiesLatestVersionCommand(codeLens) {
-  return createTagCommand(`Satisfies the latest`, codeLens);
+  return createTagCommand('Satisfies latest', codeLens);
 }
 
 export function createMatchesPrereleaseVersionCommand(codeLens) {
-  return createTagCommand(`Matches a prerelease`, codeLens);
+  return createTagCommand('Prerelease', codeLens);
 }
 
 export function createInvalidCommand(codeLens) {

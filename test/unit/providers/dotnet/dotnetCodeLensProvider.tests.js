@@ -85,7 +85,7 @@ describe("DotNetCodeLensProvider", () => {
     it("returns prerelease versions", () => {
       const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'nuget', isFixedVersion: true, tag: { name: 'satisfies', version: '3.3.3', isNewerThanLatest: true } }), null);
       const result = testProvider.evaluateCodeLens(codeLens, null)
-      assert.equal(result.command.title, 'Matches a prerelease', "Expected command.title failed.");
+      assert.equal(result.command.title, 'Prerelease', "Expected command.title failed.");
       assert.equal(result.command.command, null);
       assert.equal(result.command.arguments, null);
     });
@@ -93,7 +93,7 @@ describe("DotNetCodeLensProvider", () => {
     it("returns latest version matches", () => {
       const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'nuget', tag: { name: 'satisfies', version: '3.3.3', isLatestVersion: true } }), null);
       const result = testProvider.evaluateCodeLens(codeLens, null)
-      assert.equal(result.command.title, 'Matches the latest', "Expected command.title failed.");
+      assert.equal(result.command.title, 'Latest', "Expected command.title failed.");
       assert.equal(result.command.command, null);
       assert.equal(result.command.arguments, null);
     });
@@ -101,7 +101,7 @@ describe("DotNetCodeLensProvider", () => {
     it("returns satisfies latest version", () => {
       const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'nuget', tag: { name: 'satisfies', version: '3.3.3', satisfiesLatest: true } }), null);
       const result = testProvider.evaluateCodeLens(codeLens, null)
-      assert.equal(result.command.title, 'Satisfies the latest', "Expected command.title failed.");
+      assert.equal(result.command.title, 'Satisfies latest', "Expected command.title failed.");
       assert.equal(result.command.command, null);
       assert.equal(result.command.arguments, null);
     });
