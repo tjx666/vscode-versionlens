@@ -24,8 +24,7 @@
   - Tags are sorted in recent version order
   - Fixed git+https github urls breaking all codelenses
 
-  - Added [nuget ranges](https://docs.microsoft.com/en-us/nuget/create-packages/dependency-versions#version-ranges) validation for dotnet
-
+  - Added [nuget ranges and floating versions](https://docs.microsoft.com/en-us/nuget/create-packages/dependency-versions#version-ranges) validation for dotnet
 
 # 0.17.2
   - Dub now correctly identifies packages that are not found. Thanks to @WebFreak001
