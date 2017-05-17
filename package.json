@@ -126,6 +126,36 @@
       }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "command": "versionlens.showingProgress",
+          "when": "false"
+        },
+        {
+          "command": "versionlens.showDependencyStatuses",
+          "when": "false"
+        },
+        {
+          "command": "versionlens.hideDependencyStatuses",
+          "when": "false"
+        },
+        {
+          "command": "versionlens.showTaggedVersions",
+          "when": "versionlens.show && versionlens.isActive"
+        },
+        {
+          "command": "versionlens.hideTaggedVersions",
+          "when": "versionlens.show && versionlens.isActive"
+        },
+        {
+          "command": "versionlens.showVersionLenses",
+          "when": "versionlens.show && versionlens.isActive"
+        },
+        {
+          "command": "versionlens.hideVersionLenses",
+          "when": "versionlens.show && versionlens.isActive"
+        }
+      ],
       "editor/title": [
         {
           "command": "versionlens.showTaggedVersions",
