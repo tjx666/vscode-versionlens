@@ -74,6 +74,8 @@ export function parseNpmRegistryVersion(node, name, requestedVersion, appConfig,
 
   return npmViewVersion(viewVersionArg)
     .then(satisifiesVersion => {
+      if (requestedVersion === 'latest')
+        requestedVersion = satisifiesVersion;
 
       return npmViewDistTags(name)
         .then(distTags => {
@@ -101,7 +103,10 @@ export function parseNpmRegistryVersion(node, name, requestedVersion, appConfig,
           return tagsToProcess
             .map((tag, index) => {
               const isTaggedVersion = index !== 0;
-              const isOlder = tag.version && !tag.isInvalid && requestedVersion && isOlderVersion(tag.version, requestedVersion);
+              const isOlder = tag.version &&
+                !tag.isInvalid &&
+                requestedVersion &&
+                isOlderVersion(tag.version, requestedVersion);
 
               // generate the package data for each tag
               const packageInfo = {
