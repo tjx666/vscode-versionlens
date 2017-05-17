@@ -7,6 +7,7 @@ import * as path from 'path';
 import * as opener from 'opener';
 import appSettings from '../common/appSettings';
 import * as utils from '../common/utils';
+import { clearDecorations } from '../editor/decorations';
 
 export function updateDependencyCommand(codeLens, packageVersion) {
   const edits = [TextEdit.replace(codeLens.replaceRange, packageVersion)];
@@ -18,7 +19,10 @@ export function updateDependencyCommand(codeLens, packageVersion) {
 
 export function linkCommand(codeLens) {
   if (codeLens.package.meta.type === 'file') {
-    const filePathToOpen = path.resolve(path.dirname(codeLens.documentUrl.fsPath), codeLens.package.meta.remoteUrl);
+    const filePathToOpen = path.resolve(
+      path.dirname(codeLens.documentUrl.fsPath),
+      codeLens.package.meta.remoteUrl
+    );
     opener(filePathToOpen);
     return;
   }
@@ -33,6 +37,16 @@ export function showTaggedVersions(file) {
 export function hideTaggedVersions(file) {
   appSettings.showTaggedVersions = false;
   utils.refreshCodeLens();
+}
+
+export function showDependencyStatuses(file) {
+  appSettings.showDependencyStatuses = true;
+  utils.refreshCodeLens();
+}
+
+export function hideDependencyStatuses(file) {
+  appSettings.showDependencyStatuses = false;
+  clearDecorations();
 }
 
 export function showVersionLenses(file) {

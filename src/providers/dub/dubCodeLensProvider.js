@@ -88,7 +88,8 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
       return CommandFactory.createLatestCommand(codeLens);
 
     // generate decoration
-    this.generateDecoration(codeLens);
+    if (appSettings.showDependencyStatuses)
+      this.generateDecoration(codeLens);
 
     const queryUrl = `https://code.dlang.org/api/packages/${encodeURIComponent(codeLens.package.name)}/latest`;
 

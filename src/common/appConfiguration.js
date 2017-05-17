@@ -20,6 +20,11 @@ class AppConfiguration {
     return config.get("showTaggedVersionsAtStartup", false);
   }
 
+  get showDependencyStatusesAtStartup() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get("showDependencyStatusesAtStartup", false);
+  }
+
   get versionPrefix() {
     const config = workspace.getConfiguration('versionlens');
     return config.get("versionPrefix", "");

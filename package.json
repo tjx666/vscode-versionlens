@@ -62,6 +62,24 @@
   "contributes": {
     "commands": [
       {
+        "command": "versionlens.showDependencyStatuses",
+        "title": "Show dependency statuses",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/dep-status-dark.svg",
+          "light": "images/icons/dep-status-light.svg"
+        }
+      },
+      {
+        "command": "versionlens.hideDependencyStatuses",
+        "title": "Hide dependency statuses",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/dep-status-active.svg",
+          "light": "images/icons/dep-status-active.svg"
+        }
+      },
+      {
         "command": "versionlens.showTaggedVersions",
         "title": "Show tagged dependency versions",
         "category": "VersionLens",
@@ -111,7 +129,7 @@
       "editor/title": [
         {
           "command": "versionlens.showTaggedVersions",
-          "when": "versionlens.showTaggedVersions == false && versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
+          "when": "versionlens.showTaggedVersions == false && versionlens.show && versionlens.isActive && versionlens.inProgress == false && textCompareEditorVisible == false",
           "group": "navigation@2"
         },
         {
@@ -153,6 +171,11 @@
           "type": "boolean",
           "default": false,
           "description": "Show dist tags by default when vscode starts. You can use the editor toolbar to show/hide dist tags at any time."
+        },
+        "versionlens.showDependencyStatusesAtStartup": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show dependency statuses default when vscode starts. You can use the editor toolbar to show/hide dependency statuses at any time."
         },
         "versionlens.npm.dependencyProperties": {
           "type": "array",

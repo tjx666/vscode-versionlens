@@ -9,6 +9,7 @@ let _isActive = false;
 let _inProgress = false;
 let _showTaggedVersions = false;
 let _showVersionLenses = false;
+let _showDependencyStatuses = true;
 
 const config = {
   extensionName: "versionlens",
@@ -37,6 +38,18 @@ const config = {
       'setContext',
       `${this.extensionName}.showTaggedVersions`,
       _showTaggedVersions
+    );
+  },
+
+  get showDependencyStatuses() {
+    return _showDependencyStatuses;
+  },
+  set showDependencyStatuses(newValue) {
+    _showDependencyStatuses = newValue;
+    commands.executeCommand(
+      'setContext',
+      `${this.extensionName}.showDependencyStatuses`,
+      _showDependencyStatuses
     );
   },
 
