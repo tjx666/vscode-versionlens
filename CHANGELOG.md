@@ -22,9 +22,9 @@
     |red|Missing install|Not installed|
 
   - Tags are sorted in recent version order
-  - Fixed git+https github urls breaking all codelenses
-
-  - Added [nuget ranges and floating versions](https://docs.microsoft.com/en-us/nuget/create-packages/dependency-versions#version-ranges) validation for dotnet
+  - Added [nuget ranges and floating versions](https://docs.microsoft.com/en-us/nuget/create-packages/dependency-versions#version-ranges) for dotnet
+  - Fixed git+https github urls breaking all codelenses for npm
+  - Fixes invalid version entries breaking all codelens for npm
 
 # 0.17.2
   - Dub now correctly identifies packages that are not found. Thanks to @WebFreak001
