@@ -112,6 +112,22 @@ export function renderInstalledDecoration(range, version) {
   });
 }
 
+export function renderNeedsUpdateDecoration(range, version) {
+  updateDecoration({
+    range: new Range(
+      range.start,
+      new Position(range.end.line, range.end.character + 1)
+    ),
+    hoverMessage: null,
+    renderOptions: {
+      after: createRenderOptions(
+        ` ▪ ${version} installed, npm update needed`,
+        appConfig.outdatedDependencyColour
+      )
+    }
+  });
+}
+
 export function renderOutdatedDecoration(range, version) {
   updateDecoration({
     range: new Range(

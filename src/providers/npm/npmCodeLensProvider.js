@@ -16,6 +16,7 @@ import {
   renderMissingDecoration,
   renderInstalledDecoration,
   renderOutdatedDecoration,
+  renderNeedsUpdateDecoration,
   renderPrereleaseInstalledDecoration
 } from '../../editor/decorations';
 import * as path from 'path';
@@ -155,23 +156,49 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
           return;
         }
 
-        if (!outdated[findIndex].current) {
+        const current = outdated[findIndex].current;
+        const entered = codeLens.package.meta.tag.version;
+
+        // no current means no install at all
+        if (!current) {
           renderMissingDecoration(
             codeLens.range
           );
           return;
         }
 
-        if (codeLens.matchesPrereleaseVersion())
-          renderPrereleaseInstalledDecoration(
-            codeLens.range,
-            codeLens.package.meta.tag.version
-          );
-        else
-          renderOutdatedDecoration(
-            codeLens.range,
-            outdated[findIndex].current
-          );
+        // if npm current and the entered version match it's installed
+        if (current === entered) {
+
+          if (codeLens.matchesLatestVersion())
+            // up to date
+            renderInstalledDecoration(
+              codeLens.range,
+              current,
+              entered
+            );
+          else if (codeLens.matchesPrereleaseVersion())
+            // ahead of latest
+            renderPrereleaseInstalledDecoration(
+              codeLens.range,
+              entered
+            );
+          else
+            // out of date
+            renderOutdatedDecoration(
+              codeLens.range,
+              current
+            );
+
+          return;
+        }
+
+        // signal needs update
+        renderNeedsUpdateDecoration(
+          codeLens.range,
+          current
+        );
+
       })
       .catch(console.error);
 
