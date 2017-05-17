@@ -49,7 +49,7 @@ export function createVersionCommand(localVersion, serverVersion, codeLens) {
   if (serverVersion !== localVersion && hasNewerVersion)
     return createNewVersionCommand(serverVersion, codeLens);
 
-  return createLatestCommand(codeLens);
+  return createMatchesLatestVersionCommand(codeLens);
 }
 
 export function createNewVersionCommand(newVersion, codeLens) {
@@ -72,10 +72,6 @@ export function createSatisfiedWithNewerCommand(serverVersion, codeLens) {
     `${appSettings.extensionName}.updateDependencyCommand`,
     [codeLens, `"${replaceWithVersion}"`]
   );
-}
-
-export function createLatestCommand(codeLens) {
-  return codeLens.setCommand('Matches latest version');
 }
 
 export function createTagCommand(tag, codeLens) {

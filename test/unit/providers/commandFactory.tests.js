@@ -77,7 +77,7 @@ describe("CommandFactory", () => {
 
     it("when local version does satisfy the server version then codeLens should return LatestCommand", () => {
       const testLens = CommandFactory.createTestVersionCommand('2.8.0', '2.8.0');
-      assert.equal(testLens.command.title, 'Matches latest version', "Expected command.title failed.");
+      assert.equal(testLens.command.title, 'Latest', "Expected command.title failed.");
       assert.equal(testLens.command.command, undefined);
       assert.equal(testLens.command.arguments, undefined);
     });

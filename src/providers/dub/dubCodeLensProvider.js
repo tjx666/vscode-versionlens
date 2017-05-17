@@ -82,10 +82,10 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
       return codeLens;
 
     if (codeLens.package.version === 'latest')
-      return CommandFactory.createLatestCommand(codeLens);
+      return CommandFactory.createMatchesLatestVersionCommand(codeLens);
 
     if (codeLens.package.version === '~master')
-      return CommandFactory.createLatestCommand(codeLens);
+      return CommandFactory.createMatchesLatestVersionCommand(codeLens);
 
     // generate decoration
     if (appSettings.showDependencyStatuses)

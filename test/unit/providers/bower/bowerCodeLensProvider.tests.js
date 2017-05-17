@@ -136,7 +136,7 @@ describe("BowerCodeLensProvider", () => {
     it("when code lens package version is 'latest' codeLens should return LatestCommand", () => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: 'latest', meta: { } }, null);
       testProvider.evaluateCodeLens(codeLens, null);
-      assert.equal(codeLens.command.title, 'Matches latest version', "Expected command.title failed.");
+      assert.equal(codeLens.command.title, 'Latest', "Expected command.title failed.");
       assert.equal(codeLens.command.command, undefined);
       assert.equal(codeLens.command.arguments, undefined);
     });

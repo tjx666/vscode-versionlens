@@ -56,7 +56,7 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
       return codeLens;
 
     if (codeLens.package.version === 'latest')
-      return CommandFactory.createLatestCommand(codeLens);
+      return CommandFactory.createMatchesLatestVersionCommand(codeLens);
 
     if (codeLens.package.meta) {
       if (codeLens.package.meta.type === 'github')
