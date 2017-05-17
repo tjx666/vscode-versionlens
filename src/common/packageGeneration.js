@@ -3,34 +3,44 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 export function createPackageNotSupported(name, version, type) {
-  return {
+  return createPackage(
     name,
-    version,
-    meta: {
+    version, {
       type,
       packageNotSupported: true,
       message: "Package registry not supported"
     }
-  };
+  );
 }
 
 export function createPackageNotFound(name, version, type) {
-  return {
+  return createPackage(
     name,
-    version,
-    meta: {
+    version, {
       type,
       packageNotFound: true,
       message: `${name} could not be found`
     }
-  };
+  );
 }
 
-export function createPackage(name, version, info, customGenerateVersion) {
+export function createInvalidVersion(name, version, type) {
+  return createPackage(
+    name,
+    version, {
+      type,
+      tag: {
+        isInvalid: true
+      }
+    }
+  );
+}
+
+export function createPackage(name, version, meta, customGenerateVersion) {
   return {
     name,
     version,
-    meta: info,
+    meta,
     customGenerateVersion
   };
 }

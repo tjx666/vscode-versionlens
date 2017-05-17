@@ -64,6 +64,13 @@ export function npmVersionParser(node, appConfig) {
         }];
       }
 
+      if (error.code === 'EINVALIDTAGNAME' || error.message.includes('Invalid comparator:')) {
+        return [{
+          node,
+          package: PackageFactory.createInvalidVersion(name, requestedVersion, 'npm')
+        }];
+      }
+
       throw new Error("NPM: parseNpmVersion " + error);
     });
 }
