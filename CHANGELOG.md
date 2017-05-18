@@ -1,6 +1,9 @@
 # 0.18.1
 
-  - Fixes unicode arrows not showing on osx and some linux dists
+  - Fixed unicode arrows not showing on osx and some linux dists
+  - Changelogs viewed from vscode extension panel has a [markdown table bug](https://github.com/Microsoft/vscode/issues/26841).
+  
+    The formatted changelog for 0.18.0 is [here](https://github.com/vscode-contrib/vscode-versionlens/blob/master/CHANGELOG.md#0180)
 
 # 0.18.0
 
