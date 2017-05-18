@@ -13,9 +13,9 @@ let _showDependencyStatuses = true;
 
 const config = {
   extensionName: "versionlens",
-  updateIndicator: '⮬',
-  revertIndicator: '⮮',
-  openNewWindowIndicator: '⧉',
+  updateIndicator: '\u2191',
+  revertIndicator: '\u2193',
+  openNewWindowIndicator: '\u29C9',
 
   get isActive() {
     return _isActive;

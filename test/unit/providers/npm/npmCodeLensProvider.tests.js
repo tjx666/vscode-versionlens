@@ -205,7 +205,7 @@ describe("NpmCodeLensProvider", () => {
     it("returns tagged versions", () => {
       const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', isTaggedVersion: true, tag: { name: 'alpha', version: '3.3.3-alpha.1' } }), null);
       const result = testProvider.evaluateCodeLens(codeLens, null)
-      assert.equal(result.command.title, 'alpha: ⮬ 3.3.3-alpha.1', "Expected command.title failed.");
+      assert.equal(result.command.title, 'alpha: \u2191 3.3.3-alpha.1', "Expected command.title failed.");
       assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
       assert.equal(result.command.arguments[1], '"3.3.3-alpha.1"');
     });
@@ -245,7 +245,7 @@ describe("NpmCodeLensProvider", () => {
     it("returns updatable versions", () => {
       const codeLens = new PackageCodeLens(testRange, null, generatePackage('SomePackage', '1.2.3', { type: 'npm', tag: { name: 'satisfies', version: '3.2.1' } }), null);
       const result = testProvider.evaluateCodeLens(codeLens, null)
-      assert.equal(result.command.title, '⮬ 3.2.1');
+      assert.equal(result.command.title, '\u2191 3.2.1');
       assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
       assert.equal(result.command.arguments[1], '"3.2.1"');
     });

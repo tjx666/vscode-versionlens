@@ -1,3 +1,7 @@
+# 0.18.1
+
+  - Fixes unicode arrows not showing on osx and some linux dists
+
 # 0.18.0
 
   - Added clearer matching reasons
