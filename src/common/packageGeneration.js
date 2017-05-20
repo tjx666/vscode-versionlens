@@ -8,7 +8,10 @@ export function createPackageNotSupported(name, version, type) {
     version, {
       type,
       packageNotSupported: true,
-      message: "Package registry not supported"
+      message: "Package registry not supported",
+      tag: {
+        isPrimaryTag: true
+      }
     }
   );
 }
@@ -19,7 +22,10 @@ export function createPackageNotFound(name, version, type) {
     version, {
       type,
       packageNotFound: true,
-      message: `${name} could not be found`
+      message: `${name} could not be found`,
+      tag: {
+        isPrimaryTag: true
+      }
     }
   );
 }
@@ -30,7 +36,8 @@ export function createInvalidVersion(name, version, type) {
     version, {
       type,
       tag: {
-        isInvalid: true
+        isInvalid: true,
+        isPrimaryTag: true
       }
     }
   );
