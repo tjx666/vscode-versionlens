@@ -7,7 +7,7 @@ import * as npa from 'npm-package-arg';
 import * as semver from 'semver';
 import * as path from 'path';
 import * as fs from 'fs';
-import { sortTagsRecentFirst } from '../../common/versions';
+import { sortTagsByRecentVersion } from '../../common/versionUtils';
 
 export function npmPackageDirExists(packageJsonPath, packageName) {
   npm.localPrefix = packageJsonPath;
@@ -74,7 +74,7 @@ export function npmViewDistTags(packageName) {
           const distTags = response[keys[0]]['dist-tags'];
           tags = Object.keys(distTags)
             .map(key => ({ name: key, version: distTags[key] }))
-            .sort(sortTagsRecentFirst);
+            .sort(sortTagsByRecentVersion);
         } else {
           tags = [
             { name: key, version: "latest" }

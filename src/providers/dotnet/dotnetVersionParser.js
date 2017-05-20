@@ -5,7 +5,12 @@
 import * as semver from 'semver';
 import appSettings from '../../common/appSettings';
 import { nugetGetPackageVersions, convertNugetToNodeRange } from './nugetAPI.js';
-import { extractTagsFromVersionList, tagFilter, isOlderVersion } from '../../common/versions';
+import { 
+  isOlderVersion, 
+  filterTagsByName,
+  buildTagsFromVersionMap, 
+  buildMapFromVersionList
+ } from '../../common/versionUtils';
 import * as PackageFactory from '../../common/packageGeneration';
 
 export function dotnetVersionParser(node, appConfig) {
@@ -17,38 +22,55 @@ export function dotnetVersionParser(node, appConfig) {
   // get all the versions for the package
   return nugetGetPackageVersions(name)
     .then(versions => {
-      // get all the tag entries
-      let extractedTags = extractTagsFromVersionList(versions, nodeRequestedRange);
+      // map from version list
+      const versionMap = buildMapFromVersionList(
+        versions,
+        nodeRequestedRange
+      );
 
+      // get all the tag entries
+      const extractedTags = buildTagsFromVersionMap(
+        versionMap,
+        nodeRequestedRange
+      );
+
+      // grab the satisfiesEntry
       const satisfiesEntry = extractedTags[0];
 
-      // only show matches and latest entries when showTaggedVersions is false
-      // otherwise filter by the appConfig.dotnetTagFilter
-      let tagsToProcess;
+      let filteredTags = extractedTags;
       if (appSettings.showTaggedVersions === false)
-        tagsToProcess = [
+        // only show 'satisfies' and 'latest' entries when showTaggedVersions is false
+        filteredTags = [
           satisfiesEntry,
           ...(satisfiesEntry.isLatestVersion ? [] : extractedTags[1])
         ];
       else if (appConfig.dotnetTagFilter.length > 0)
-        tagsToProcess = tagFilter(extractedTags, [
-          'satisfies',
-          ...(installsLatest ? [] : 'latest'),
-          ...appConfig.dotnetTagFilter
-        ]);
-      else
-        tagsToProcess = extractedTags;
+        // filter the tags using dotnet app config filter
+        filteredTags = filterTagsByName(
+          extractedTags,
+          [
+            // ensure we have a 'satisfies' entry
+            'satisfies',
+            // conditionally provide the latest entry
+            ...(satisfiesEntry.isLatestVersion ? [] : 'latest'),
+            // all other user tag name filters
+            appConfig.dotnetTagFilter
+          ]
+        );
 
-      // map the tags to packages
-      return tagsToProcess.map((tag, index) => {
+      // map the tags to package dependencies
+      return filteredTags.map((tag, index) => {
         const isTaggedVersion = index !== 0;
-        const isOlder = tag.version && !tag.isInvalid && nodeRequestedRange && isOlderVersion(tag.version, nodeRequestedRange);
+        const isOlderThanRequested = tag.version &&
+          !tag.isInvalid &&
+          nodeRequestedRange &&
+          isOlderVersion(tag.version, nodeRequestedRange);
 
         const packageInfo = {
           type: 'nuget',
           tag,
           isTaggedVersion,
-          isOlderVersion: isOlder
+          isOlderVersion: isOlderThanRequested
         };
 
         return {

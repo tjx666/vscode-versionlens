@@ -6,7 +6,7 @@ import './common/typeAssertion.tests';
 import './common/cacheMap.tests';
 import './common/githubRequest.tests';
 import './common/dependencyParser.tests';
-import './common/versions.tests';
+import './common/versionsUtils.tests';
 import './providers/commandFactory.tests';
 import './providers/npm/npmCodeLensProvider.tests';
 import './providers/npm/npmVersionParser.tests';

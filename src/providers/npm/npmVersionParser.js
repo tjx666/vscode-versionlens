@@ -9,9 +9,12 @@ import {
   formatWithExistingLeading
 } from '../../common/utils';
 import appSettings from '../../common/appSettings';
-import { tagFilter, isFixedVersion, isOlderVersion } from '../../common/versions';
+import { 
+  isOlderVersion, 
+  filterTagsByName, 
+  buildTagsFromVersionMap 
+} from '../../common/versionUtils';
 import * as PackageFactory from '../../common/packageGeneration';
-
 import { npmViewVersion, npmViewDistTags, parseNpmVersion } from './npmAPI'
 
 export function npmVersionParser(node, appConfig) {
@@ -80,37 +83,53 @@ export function parseNpmRegistryVersion(node, name, requestedVersion, appConfig,
   const viewVersionArg = `${name}@${requestedVersion}`;
 
   return npmViewVersion(viewVersionArg)
-    .then(satisifiesVersion => {
+    .then(maxSatisfyingVersion => {
       if (requestedVersion === 'latest')
-        requestedVersion = satisifiesVersion;
+        requestedVersion = maxSatisfyingVersion;
 
       return npmViewDistTags(name)
         .then(distTags => {
-          const extractedTags = extractTagsFromDistTagList(requestedVersion, satisifiesVersion, distTags);
+          const latestEntry = distTags[0];
+
+          // map the versions
+          const versionMap = {
+            releases: [latestEntry.version],
+            taggedVersions: distTags,
+            maxSatisfyingVersion
+          }
+
+          // build tags
+          const extractedTags = buildTagsFromVersionMap(versionMap, requestedVersion);
+
+          // grab the satisfiesEntry
           const satisfiesEntry = extractedTags[0];
 
-          // only show 'satisfies' and 'latest' entries when showTaggedVersions is false
-          // filter by the appConfig.npmDistTagFilter
-          let tagsToProcess;
+          let filteredTags = extractedTags;
           if (appSettings.showTaggedVersions === false)
-            tagsToProcess = [
+            // only show 'satisfies' and 'latest' entries when showTaggedVersions is false
+            filteredTags = [
               satisfiesEntry,
               ...(satisfiesEntry.isLatestVersion ? [] : extractedTags[1])
             ];
           else if (appConfig.npmDistTagFilter.length > 0)
-            tagsToProcess = tagFilter(distTags, [
-              'satisfies',
-              ...(satisfiesEntry.isLatestVersion ? [] : 'latest'),
-              ...appConfig.npmDistTagFilter
-            ]);
-          else
-            tagsToProcess = extractedTags;
+            // filter the tags using npm app config filter
+            filteredTags = filterTagsByName(
+              extractedTags,
+              [
+                // ensure we have a 'satisfies' entry
+                'satisfies',
+                // conditionally provide the latest entry
+                ...(satisfiesEntry.isLatestVersion ? [] : 'latest'),
+                // all other user tag name filters
+                appConfig.npmDistTagFilter
+              ]
+            );
 
           // map the tags to packages
-          return tagsToProcess
+          return filteredTags
             .map((tag, index) => {
               const isTaggedVersion = index !== 0;
-              const isOlder = tag.version &&
+              const isOlderThanRequested = tag.version &&
                 !tag.isInvalid &&
                 requestedVersion &&
                 isOlderVersion(tag.version, requestedVersion);
@@ -120,7 +139,7 @@ export function parseNpmRegistryVersion(node, name, requestedVersion, appConfig,
                 type: 'npm',
                 tag,
                 isTaggedVersion,
-                isOlderVersion: isOlder
+                isOlderVersion: isOlderThanRequested
               };
 
               return {
@@ -219,52 +238,4 @@ export function customNpmGenerateVersion(packageInfo, newVersion) {
   // preserve the leading symbol from the existing version
   const preservedLeadingVersion = formatWithExistingLeading(existingVersion, newVersion)
   return `${packageInfo.meta.userRepo}#${preservedLeadingVersion}`
-}
-
-export function extractTagsFromDistTagList(requestedVersion, satisifiesVersion, distTags) {
-  const latestEntry = distTags[0];
-  const isSatisifiesVersionValid = semver.validRange(satisifiesVersion);
-  const isRequestedVersionValid = semver.validRange(requestedVersion);
-  // check if this is a fixed version
-  const isFixed = isRequestedVersionValid && isFixedVersion(requestedVersion);
-
-  const satisfiesLatest = satisifiesVersion && semver.satisfies(satisifiesVersion, latestEntry.version);
-
-  const newerDistTags = distTags.filter(distTag => {
-    // make sure this version isn't older than the satisifiesVersion
-    if (isSatisifiesVersionValid && isOlderVersion(distTag.version, satisifiesVersion))
-      return false;
-
-    // make sure this version isn't the same as the satisifiesVersion
-    if (distTag.version === satisifiesVersion)
-      return false;
-
-    // package tags that have the same version as the latest will be ignored
-    if (distTag.version == latestEntry.version)
-      return false;
-
-    return true;
-  });
-
-  const isLatest = requestedVersion === 'latest' || requestedVersion.includes(latestEntry.version);
-
-  const satisfiesEntry = {
-    name: 'satisifes',
-    version: satisifiesVersion,
-    isNewerThanLatest: !isLatest && satisifiesVersion && semver.gt(satisifiesVersion, latestEntry.version),
-    isLatestVersion: isLatest,
-    satisfiesLatest,
-    isInvalid: !isRequestedVersionValid && requestedVersion !== 'latest',
-    versionMatchNotFound: !satisifiesVersion,
-    isFixedVersion: isFixed
-  };
-
-  // return an Array<TaggedVersion>
-  return [
-    satisfiesEntry,
-    // only provide the latest when the satisfiesEntry is not the latest
-    ...(satisfiesEntry.isLatestVersion ? [] : latestEntry),
-    // concat all other tags if not older than the matched version
-    ...newerDistTags
-  ];
 }

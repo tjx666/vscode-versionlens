@@ -55,3 +55,41 @@ export function sortDescending(a, b) {
     return 1;
   return 0;
 }
+
+export function createChainMutator(mutators) {
+  const propertyMap = {
+    state: {
+      value: null,
+      enumerable: false,
+      writable: true
+    },
+    toValue: {
+      value: function () {
+        return this.state;
+      }
+    },
+    set: {
+      value: function (newState) {
+        this.state = newState;
+        return this;
+      }
+    },
+    log: {
+      value: function (...args) {
+        console.log.call(console, ...args, this.state);
+        return this;
+      }
+    },
+  };
+
+  mutators.forEach(fn => {
+    propertyMap[fn.name] = {
+      value: function (...args) {
+        this.state = fn.call(this.state, ...args);
+        return this;
+      }
+    }
+  });
+
+  return Object.create({}, propertyMap);
+}
