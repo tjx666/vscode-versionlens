@@ -5,12 +5,12 @@
 import * as semver from 'semver';
 import appSettings from '../../common/appSettings';
 import { nugetGetPackageVersions, convertNugetToNodeRange } from './nugetAPI.js';
-import { 
-  isOlderVersion, 
+import {
+  isOlderVersion,
   filterTagsByName,
-  buildTagsFromVersionMap, 
+  buildTagsFromVersionMap,
   buildMapFromVersionList
- } from '../../common/versionUtils';
+} from '../../common/versionUtils';
 import * as PackageFactory from '../../common/packageGeneration';
 
 export function dotnetVersionParser(node, appConfig) {
@@ -60,17 +60,9 @@ export function dotnetVersionParser(node, appConfig) {
 
       // map the tags to package dependencies
       return filteredTags.map((tag, index) => {
-        const isTaggedVersion = index !== 0;
-        const isOlderThanRequested = tag.version &&
-          !tag.isInvalid &&
-          nodeRequestedRange &&
-          isOlderVersion(tag.version, nodeRequestedRange);
-
         const packageInfo = {
           type: 'nuget',
-          tag,
-          isTaggedVersion,
-          isOlderVersion: isOlderThanRequested
+          tag
         };
 
         return {

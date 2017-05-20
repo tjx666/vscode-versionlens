@@ -9,10 +9,10 @@ import {
   formatWithExistingLeading
 } from '../../common/utils';
 import appSettings from '../../common/appSettings';
-import { 
-  isOlderVersion, 
-  filterTagsByName, 
-  buildTagsFromVersionMap 
+import {
+  isOlderVersion,
+  filterTagsByName,
+  buildTagsFromVersionMap
 } from '../../common/versionUtils';
 import * as PackageFactory from '../../common/packageGeneration';
 import { npmViewVersion, npmViewDistTags, parseNpmVersion } from './npmAPI'
@@ -128,18 +128,10 @@ export function parseNpmRegistryVersion(node, name, requestedVersion, appConfig,
           // map the tags to packages
           return filteredTags
             .map((tag, index) => {
-              const isTaggedVersion = index !== 0;
-              const isOlderThanRequested = tag.version &&
-                !tag.isInvalid &&
-                requestedVersion &&
-                isOlderVersion(tag.version, requestedVersion);
-
               // generate the package data for each tag
               const packageInfo = {
                 type: 'npm',
-                tag,
-                isTaggedVersion,
-                isOlderVersion: isOlderThanRequested
+                tag
               };
 
               return {
@@ -201,15 +193,15 @@ export function parseGithubVersion(node, name, version, githubTaggedVersions, cu
     taggedVersions = [taggedVersions[0]];
 
   return taggedVersions.map((category, index) => {
-    const isTaggedVersion = index !== 0;
-
     const meta = {
       category,
       type: "github",
       remoteUrl,
       userRepo,
       commitish,
-      isTaggedVersion
+      tag: {
+        isPrimaryTag: index === 0
+      }
     };
 
     const parseResult = {

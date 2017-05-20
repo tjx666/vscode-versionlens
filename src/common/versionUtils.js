@@ -292,7 +292,12 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
   const isRequestedVersionValid = semver.validRange(requestedVersion);
 
   // store the latest release
-  const latestEntry = { name: "latest", version: versionMap.releases[0] };
+  const latestEntry = {
+    name: "latest",
+    version: versionMap.releases[0],
+    isOlderThanRequested: isRequestedVersionValid && isOlderVersion(versionMap.releases[0], requestedVersion),
+    isPrimaryTag: true
+  };
   const satisfiesLatest = semver.satisfies(versionMap.maxSatisfyingVersion, latestEntry.version);
   const versionMatchNotFound = !versionMap.maxSatisfyingVersion;
   const isFixed = isRequestedVersionValid && isFixedVersion(requestedVersion);
@@ -305,7 +310,8 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
     satisfiesLatest: satisfiesLatest,
     isInvalid: !isRequestedVersionValid,
     versionMatchNotFound,
-    isFixedVersion: isFixed
+    isFixedVersion: isFixed,
+    isPrimaryTag: true
   };
 
   // return an Array<TaggedVersion>

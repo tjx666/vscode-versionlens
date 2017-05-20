@@ -12,7 +12,7 @@ describe("CommandFactory", () => {
 
   beforeEach(() => {
     CommandFactory.createTestVersionCommand = (localVersion, serverVersion) => {
-      const lens = new PackageCodeLens(null, null, { version: localVersion, meta: {} }, null);
+      const lens = new PackageCodeLens(null, null, { version: localVersion, meta: { tag: { name: 'satisfies', isPrimaryTag: true } } }, null);
       return CommandFactory.createVersionCommand(localVersion, serverVersion, lens);
     };
   });

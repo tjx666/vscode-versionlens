@@ -24,7 +24,7 @@ export class PackageCodeLens extends CodeLens {
   }
 
   getTaggedVersionPrefix() {
-    if (this.package.meta.isTaggedVersion)
+    if (this.isTaggedVersion())
       return this.package.meta.tag.name + ': ';
 
     return '';
@@ -35,7 +35,7 @@ export class PackageCodeLens extends CodeLens {
   }
 
   isTaggedVersion() {
-    return this.package.meta.isTaggedVersion;
+    return !this.package.meta.tag.isPrimaryTag;
   }
 
   isFixedVersion() {
@@ -71,7 +71,7 @@ export class PackageCodeLens extends CodeLens {
   }
 
   getInstallIndicator() {
-    return this.package.meta.isOlderVersion ?
+    return this.package.meta.tag && this.package.meta.tag.isOlderThanRequested ?
       appSettings.revertIndicator :
       appSettings.updateIndicator;
   }
