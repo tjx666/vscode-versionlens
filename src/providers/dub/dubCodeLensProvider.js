@@ -52,7 +52,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
       if (fs.existsSync(dubSelections)) {
         fs.readFile(dubSelections, "utf-8", (err, data) => {
           if (err) {
-            renderMissingDecoration(codeLens.range);
+            renderMissingDecoration(codeLens.replaceRange);
             return;
           }
           this.selectionsJson = JSON.parse(data.toString());
@@ -149,30 +149,30 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     const currentPackageName = codeLens.package.name;
     const currentPackageVersion = codeLens.package.version;
 
-    if (!codeLens.range)
+    if (!codeLens.replaceRange)
       return;
 
     if (!this.selectionsJson) {
-      renderMissingDecoration(codeLens.range);
+      renderMissingDecoration(codeLens.replaceRange);
       return;
     }
 
     const currentVersion = this.selectionsJson.versions[currentPackageName];
     if (!currentVersion) {
-      renderMissingDecoration(codeLens.range);
+      renderMissingDecoration(codeLens.replaceRange);
       return;
     }
 
     if (formatWithExistingLeading(currentPackageVersion, currentVersion) == currentPackageVersion) {
       renderInstalledDecoration(
-        codeLens.range,
+        codeLens.replaceRange,
         currentPackageVersion
       );
       return;
     }
 
     renderOutdatedDecoration(
-      codeLens.range,
+      codeLens.replaceRange,
       currentVersion
     );
 

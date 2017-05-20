@@ -55,9 +55,10 @@ function createPackageFromNode(node) {
 }
 
 function createCodeLensFromEntry(entry, document, documentUrl) {
+  const commandRangePos = entry.node.start + entry.package.order;
   const commandRange = new Range(
-    document.positionAt(entry.node.start + entry.package.order),
-    document.positionAt(entry.node.end)
+    document.positionAt(commandRangePos),
+    document.positionAt(commandRangePos)
   );
   const replaceRange = new Range(
     document.positionAt(entry.node.replaceInfo.start),

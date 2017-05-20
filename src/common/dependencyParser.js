@@ -74,7 +74,7 @@ export function createDependencyNode(node, replaceInfo) {
     name: node.key.value,
     value: node.value.value,
     start: node.value.start,
-    end: node.value.end,
+    end: node.value.start,
     replaceInfo
   };
 }

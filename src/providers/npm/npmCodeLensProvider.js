@@ -18,7 +18,7 @@ import {
   renderPrereleaseInstalledDecoration
 } from '../../editor/decorations';
 
-const { window, Range } = require('vscode');
+const { window } = require('vscode');
 const jsonParser = require('vscode-contrib-jsonc');
 const path = require('path');
 
@@ -140,7 +140,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
     const packageDirExists = npmPackageDirExists(documentPath, currentPackageName);
     if (!packageDirExists) {
-      renderMissingDecoration(codeLens.range);
+      renderMissingDecoration(codeLens.replaceRange);
       return;
     }
 
@@ -152,7 +152,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
         if (findIndex === -1) {
           renderInstalledDecoration(
-            codeLens.range,
+            codeLens.replaceRange,
             codeLens.package.meta.tag.version
           );
           return;
@@ -164,7 +164,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         // no current means no install at all
         if (!current) {
           renderMissingDecoration(
-            codeLens.range
+            codeLens.replaceRange
           );
           return;
         }
@@ -175,20 +175,20 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
           if (codeLens.matchesLatestVersion())
             // up to date
             renderInstalledDecoration(
-              codeLens.range,
+              codeLens.replaceRange,
               current,
               entered
             );
           else if (codeLens.matchesPrereleaseVersion())
             // ahead of latest
             renderPrereleaseInstalledDecoration(
-              codeLens.range,
+              codeLens.replaceRange,
               entered
             );
           else
             // out of date
             renderOutdatedDecoration(
-              codeLens.range,
+              codeLens.replaceRange,
               current
             );
 
@@ -197,7 +197,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
         // signal needs update
         renderNeedsUpdateDecoration(
-          codeLens.range,
+          codeLens.replaceRange,
           current
         );
 

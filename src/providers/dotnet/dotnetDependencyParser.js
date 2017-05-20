@@ -1,4 +1,4 @@
-const { Range } = require('vscode');
+const { Position, Range } = require('vscode');
 
 export function extractDependencyNodes(rootNode, document, filterList, collector = []) {
   rootNode.eachChild(group => {
@@ -11,7 +11,7 @@ export function extractDependencyNodes(rootNode, document, filterList, collector
 
       const includeRange = {
         start: childNode.startTagPosition,
-        end: childNode.startTagPosition + 1,
+        end: childNode.startTagPosition,
       };
 
       const hasVersionAttr = !!childNode.attr.Version;
@@ -34,14 +34,14 @@ export function extractDependencyNodes(rootNode, document, filterList, collector
 }
 
 function extractFromVersionAttribute(node, includeRange, document, collector) {
-  const line = document.getText(
+  const lineText = document.getText(
     new Range(
       document.positionAt(node.startTagPosition - 1),
       document.positionAt(node.position)
     )
   );
-  const start = line.indexOf(' Version="') + 9;
-  const end = line.indexOf('"', start + 1);
+  const start = lineText.indexOf(' Version="') + 9;
+  const end = lineText.indexOf('"', start + 1);
 
   const replaceInfo = {
     start: node.startTagPosition + start - 1,
