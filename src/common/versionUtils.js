@@ -297,8 +297,7 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
     name: "latest",
     version: versionMap.releases[0],
     // can only be older if a match was found and requestedVersion is a valid range
-    isOlderThanRequested: !versionMatchNotFound && isRequestedVersionValid && isOlderVersion(versionMap.releases[0], requestedVersion),
-    isPrimaryTag: true
+    isOlderThanRequested: !versionMatchNotFound && isRequestedVersionValid && isOlderVersion(versionMap.releases[0], requestedVersion)
   };
   const satisfiesLatest = semver.satisfies(versionMap.maxSatisfyingVersion, latestEntry.version);
   const isFixed = isRequestedVersionValid && isFixedVersion(requestedVersion);
