@@ -2,23 +2,27 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import appSettings from '../../common/appSettings';
+import * as PackageFactory from '../../common/packageGeneration';
 import {
   fileDependencyRegex,
   gitHubDependencyRegex,
   formatWithExistingLeading
 } from '../../common/utils';
-import appSettings from '../../common/appSettings';
 import {
   isOlderVersion,
   filterTagsByName,
   buildTagsFromVersionMap
 } from '../../common/versionUtils';
-import * as PackageFactory from '../../common/packageGeneration';
-import { npmViewVersion, npmViewDistTags, parseNpmVersion } from './npmAPI'
+import {
+  npmViewVersion,
+  npmViewDistTags,
+  parseNpmVersion
+} from './npmAPI'
 
 const semver = require('semver');
 
-export function npmVersionParser(node, appConfig) {
+export function npmPackageParser(node, appConfig) {
   const { name, value: requestedVersion } = node;
 
   return parseNpmVersion(name, requestedVersion)

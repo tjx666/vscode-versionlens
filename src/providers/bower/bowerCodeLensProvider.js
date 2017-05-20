@@ -4,13 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 import { PackageCodeLens } from '../../common/packageCodeLens';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
-import { bowerVersionParser } from './bowerVersionParser';
 import { appConfig } from '../../common/appConfiguration';
 import * as CommandFactory from '../commandFactory';
 import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
 import { clearDecorations } from '../../editor/decorations';
+import { bowerGetPackageInfo } from './bowerAPI';
+import { bowerPackageParser } from './bowerPackageParser';
 
 const bower = require('bower');
 const jsonParser = require('vscode-contrib-jsonc');
@@ -41,7 +42,7 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
     const packageCollection = parseDependencyNodes(
       dependencyNodes,
       appConfig,
-      bowerVersionParser
+      bowerPackageParser
     );
 
     appSettings.inProgress = true;
@@ -67,25 +68,21 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
         return CommandFactory.createLinkCommand(codeLens);
     }
 
-    return new Promise(success => {
-      bower.commands.info(codeLens.package.name)
-        .on('end', info => {
-          if (!info || !info.latest) {
-            success(CommandFactory.createErrorCommand("Invalid object returned from server", codeLens));
-            return;
-          }
-          success(CommandFactory.createVersionCommand(codeLens.package.version, info.latest.version, codeLens));
-        })
-        .on('error', err => {
-          console.error(err);
-          success(
-            CommandFactory.createErrorCommand(
-              "An error occurred retrieving this package.",
-              codeLens
-            )
-          );
-        });
-    });
+    return bowerGetPackageInfo(codeLens.package.name)
+      .then(info => {
+        return CommandFactory.createVersionCommand(
+          codeLens.package.version,
+          info.latest.version,
+          codeLens
+        );
+      })
+      .catch(err => {
+        console.error(err);
+        return CommandFactory.createErrorCommand(
+          "An error occurred retrieving this package",
+          codeLens
+        );
+      });
   }
 
 }

@@ -46,14 +46,14 @@ export function extractDependencyNodes(rootNode, filterList, collector = []) {
   return collector;
 }
 
-export function parseDependencyNodes(dependencyNodes, appConfig, customVersionParser = null) {
+export function parseDependencyNodes(dependencyNodes, appConfig, customPackageParser = null) {
   const collector = [];
   for (let i = 0; i < dependencyNodes.length; i++) {
     const node = dependencyNodes[i];
 
     const parsedResult;
-    if (customVersionParser)
-      parsedResult = customVersionParser(node, appConfig);
+    if (customPackageParser)
+      parsedResult = customPackageParser(node, appConfig);
     else
       parsedResult = { node };
 

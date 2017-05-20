@@ -4,10 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 import { gitHubDependencyRegex } from '../../common/utils';
 import appSettings from '../../common/appSettings';
+import * as PackageFactory from '../../common/packageGeneration';
 
 const semver = require('semver');
 
-export function bowerVersionParser(node, appConfig) {
+export function bowerPackageParser(node, appConfig) {
   const { name, value: version } = node;
   let result;
 
@@ -18,21 +19,22 @@ export function bowerVersionParser(node, appConfig) {
   // check if its a valid semver, if not could be a tag
   const isValidSemver = semver.validRange(version);
 
+  const meta = {
+    type: 'bower',
+    tag: {
+      name: 'latest',
+      version: 'latest',
+      isInvalid: !isValidSemver
+    }
+  };
+
   return [{
     node,
-    package: {
+    package: PackageFactory.createPackage(
       name,
       version,
-      meta: {
-        tag: {
-          name: 'latest',
-          version: 'latest',
-          isInvalid: !isValidSemver
-        },
-        type: 'bower'
-      },
-      customGenerateVersion: null
-    }
+      meta
+    )
   }];
 }
 

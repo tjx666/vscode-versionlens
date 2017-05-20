@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as assert from 'assert';
-import { bowerVersionParser } from '../../../../src/providers/bower/bowerVersionParser';
+import { bowerPackageParser } from '../../../../src/providers/bower/bowerPackageParser';
 
-describe('bowerVersionParser(node, appConfig)', () => {
+describe('bowerPackageParser(node, appConfig)', () => {
   const githubTaggedCommits = ['Release', 'Tag'];
   const appConfigMock = {
     get githubTaggedCommits() {
@@ -19,7 +19,7 @@ describe('bowerVersionParser(node, appConfig)', () => {
       value: '3.1.12'
     };
 
-    let results = bowerVersionParser(nodeMock, appConfigMock);
+    let results = bowerPackageParser(nodeMock, appConfigMock);
     assert.equal(results[0].package.name, 'jquery-mousewheel', "Expected packageName");
     assert.equal(results[0].package.version, '3.1.12', "Expected packageName");
     assert.equal(results[0].package.meta.type, 'bower', "Expected meta.type");
@@ -33,7 +33,7 @@ describe('bowerVersionParser(node, appConfig)', () => {
       value: 'desandro/masonry#^4.1.1'
     };
 
-    let results = bowerVersionParser(nodeMock, appConfigMock);
+    let results = bowerPackageParser(nodeMock, appConfigMock);
     results.forEach((result, index) => {
       assert.equal(result.package.packageName, 'masonry', "Expected packageName");
       assert.equal(result.package.packageVersion, 'desandro/masonry#^4.1.1', "Expected packageName");

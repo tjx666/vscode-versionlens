@@ -23,6 +23,10 @@ describe("BowerCodeLensProvider", () => {
     }
   };
 
+  const BowerAPIModule = proxyquire('../../../../src/providers/bower/bowerAPI', {
+    'bower': bowerMock
+  });
+
   const bowerDependencyProperties = bowerDefaultDependencyProperties;
   const appConfigMock = {
     get bowerDependencyProperties() {
@@ -34,7 +38,7 @@ describe("BowerCodeLensProvider", () => {
   };
 
   const BowerCodeLensProviderModule = proxyquire('../../../../src/providers/bower/bowerCodeLensProvider', {
-    'bower': bowerMock,
+    './bowerAPI.js': BowerAPIModule,
     '../../common/appConfiguration': {
       appConfig: appConfigMock
     }
@@ -45,14 +49,14 @@ describe("BowerCodeLensProvider", () => {
   beforeEach(() => {
     testProvider = new BowerCodeLensProviderModule.BowerCodeLensProvider();
 
-    bowerMock.commands.info = name => {
-      return {
-        on: (eventName, callback) => {
-          if (eventName === 'end')
-            callback({ latest: { version: '3.2.1' } });
+    BowerAPIModule.bowerGetPackageInfo = name => {
+      return Promise.resolve({
+        latest: {
+          version: '3.2.1'
         }
-      };
+      });
     };
+
   });
 
   describe("provideCodeLenses", () => {
@@ -143,88 +147,41 @@ describe("BowerCodeLensProvider", () => {
 
     it("when null info object returned from bower then codeLens should return ErrorCommand", done => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: {} }, null);
-      bowerMock.commands.info = name => {
-        let result;
-        result = {
-          on: (eventName, callback) => {
-            if (eventName === 'end')
-              callback(null);
-            return result;
-          }
-        };
-        return result;
+
+      BowerAPIModule.bowerGetPackageInfo = name => {
+        return Promise.reject({
+          status: 500,
+          responseText: 'Invalid object returned from server'
+        });
       };
 
-      testProvider.evaluateCodeLens(codeLens, null).then(result => {
-        assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
-        assert.equal(result.command.command, undefined);
-        assert.equal(result.command.arguments, undefined);
-        done();
-      });
-    });
-
-    it("when null info.latest object returned from bower then codeLens should return ErrorCommand", done => {
-      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: {} }, null);
-      bowerMock.commands.info = name => {
-        let result;
-        result = {
-          on: (eventName, callback) => {
-            if (eventName === 'end')
-              callback({});
-            return result;
-          }
-        };
-        return result;
-      };
-
-      testProvider.evaluateCodeLens(codeLens, null).then(result => {
-        assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
-        assert.equal(result.command.command, undefined);
-        assert.equal(result.command.arguments, undefined);
-        done();
-      });
+      testProvider.evaluateCodeLens(codeLens, null)
+        .then(result => {
+          assert.equal(result.command.title, 'An error occurred retrieving this package', "Expected command.title failed.");
+          assert.equal(result.command.command, undefined);
+          assert.equal(result.command.arguments, undefined);
+          done();
+        });
     });
 
     it("when valid info.latest object returned from bower then codeLens should return VersionCommand", done => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: { tag: { name: 'satisfies', isPrimaryTag: true } } }, null);
-      bowerMock.commands.info = name => {
-        let result;
-        result = {
-          on: (eventName, callback) => {
-            if (eventName === 'end')
-              callback({ latest: { version: '3.2.1' } });
-            return result;
+
+      BowerAPIModule.bowerGetPackageInfo = name => {
+        return Promise.resolve({
+          latest: {
+            version: '3.2.1'
           }
-        };
-        return result;
+        });
       };
 
-      testProvider.evaluateCodeLens(codeLens, null).then(result => {
-        assert.equal(result.command.title, '\u2191 3.2.1');
-        assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
-        assert.equal(result.command.arguments[1], '"3.2.1"');
-        done();
-      });
-    });
-
-    it("when bower info returns an error then codeLens should return ErrorCommand", done => {
-      const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: { isPrimaryTag: true } }, null);
-      bowerMock.commands.info = name => {
-        let result;
-        result = {
-          on: (eventName, callback) => {
-            if (eventName === 'error')
-              callback("bower info error");
-            return result;
-          }
-        };
-        return result;
-      };
-
-      testProvider.evaluateCodeLens(codeLens, null).then(result => {
-        assert.equal(result.command.title, 'An error occurred retrieving this package.');
-        done();
-      });
+      testProvider.evaluateCodeLens(codeLens, null)
+        .then(result => {
+          assert.equal(result.command.title, '\u2191 3.2.1');
+          assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
+          assert.equal(result.command.arguments[1], '"3.2.1"');
+          done();
+        });
     });
 
   });

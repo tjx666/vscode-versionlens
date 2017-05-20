@@ -9,7 +9,7 @@ import { appConfig } from '../../common/appConfiguration';
 import { parseDependencyNodes } from '../../common/dependencyParser';
 import { extractDependencyNodes } from './dotnetDependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
-import { dotnetVersionParser } from './dotnetVersionParser.js';
+import { dotnetPackageParser } from './dotnetPackageParser.js';
 import { clearDecorations } from '../../editor/decorations';
 
 const xmldoc = require('xmldoc');
@@ -40,7 +40,7 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
     const packageCollection = parseDependencyNodes(
       dependencyNodes,
       appConfig,
-      dotnetVersionParser
+      dotnetPackageParser
     );
 
     appSettings.inProgress = true;

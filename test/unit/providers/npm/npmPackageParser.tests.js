@@ -7,7 +7,7 @@ import * as assert from 'assert';
 import * as path from 'path';
 import { TestFixtureMap } from '../../../testUtils';
 
-describe('npmVersionParser(node, appConfig)', () => {
+describe('npmPackageParser(node, appConfig)', () => {
   const testPath = path.join(__dirname, '../../../../..', 'test');
   const fixturePath = path.join(testPath, 'fixtures');
   const fixtureMap = new TestFixtureMap(fixturePath);
@@ -22,7 +22,7 @@ describe('npmVersionParser(node, appConfig)', () => {
     }
   }
 
-  const NpmVersionParserModule = proxyquire('../../../../src/providers/npm/npmVersionParser', {
+  const npmPackageParserModule = proxyquire('../../../../src/providers/npm/npmPackageParser', {
     './npmAPI': npmAPIMock
   });
 
@@ -33,7 +33,7 @@ describe('npmVersionParser(node, appConfig)', () => {
     }
   };
 
-  describe('npmVersionParser', () => {
+  describe('npmPackageParser', () => {
 
     it('returns the expected object for non ranged semver versions', done => {
       let nodeMock = {
@@ -41,7 +41,7 @@ describe('npmVersionParser(node, appConfig)', () => {
         value: '1.2.3'
       };
 
-      const parsedResults = NpmVersionParserModule.npmVersionParser(nodeMock, appConfigMock);
+      const parsedResults = npmPackageParserModule.npmPackageParser(nodeMock, appConfigMock);
       Promise.resolve(parsedResults)
         .then(results => {
           assert.equal(results[0].package.name, 'bootstrap', "Expected packageName");
@@ -61,7 +61,7 @@ describe('npmVersionParser(node, appConfig)', () => {
         value: '~1.2.3'
       };
 
-      const parsedResults = NpmVersionParserModule.npmVersionParser(nodeMock, appConfigMock);
+      const parsedResults = npmPackageParserModule.npmPackageParser(nodeMock, appConfigMock);
       Promise.resolve(parsedResults)
         .then(results => {
           assert.equal(results[0].package.name, 'bootstrap', "Expected packageName");
@@ -81,7 +81,7 @@ describe('npmVersionParser(node, appConfig)', () => {
         value: 'file:../another-project'
       };
 
-      const parsedResults = NpmVersionParserModule.npmVersionParser(nodeMock, appConfigMock);
+      const parsedResults = npmPackageParserModule.npmPackageParser(nodeMock, appConfigMock);
       Promise.resolve(parsedResults)
         .then(results => {
           assert.equal(results[0].package.name, 'another-project', "Expected packageName");
@@ -100,7 +100,7 @@ describe('npmVersionParser(node, appConfig)', () => {
         value: 'twbs/bootstrap#v10.2.3-alpha'
       };
 
-      const parsedResults = NpmVersionParserModule.npmVersionParser(nodeMock, appConfigMock);
+      const parsedResults = npmPackageParserModule.npmPackageParser(nodeMock, appConfigMock);
       Promise.resolve(parsedResults)
         .then(results => {
           results.forEach((result, index) => {
@@ -124,7 +124,7 @@ describe('npmVersionParser(node, appConfig)', () => {
         value: 'git+https://git@github.com/twbs/bootstrap.git#v10.2.3-alpha'
       };
 
-      const parsedResults = NpmVersionParserModule.npmVersionParser(nodeMock, appConfigMock);
+      const parsedResults = npmPackageParserModule.npmPackageParser(nodeMock, appConfigMock);
       Promise.resolve(parsedResults)
         .then(results => {
           results.forEach((result, index) => {
@@ -159,7 +159,7 @@ describe('npmVersionParser(node, appConfig)', () => {
 
       const newVersion = '4.0.0-alpha.5';
       assert.equal(
-        NpmVersionParserModule.customNpmGenerateVersion(packageMock, newVersion), `twbs/bootstrap#^4.0.0-alpha.5`,
+        npmPackageParserModule.customNpmGenerateVersion(packageMock, newVersion), `twbs/bootstrap#^4.0.0-alpha.5`,
         "Expected customGenerateVersion to return correct version"
       );
     });
@@ -177,7 +177,7 @@ describe('npmVersionParser(node, appConfig)', () => {
 
       const newVersion = '5f7a3bc';
       assert.equal(
-        NpmVersionParserModule.customNpmGenerateVersion(packageMock, newVersion), `twbs/bootstrap#5f7a3bc`,
+        npmPackageParserModule.customNpmGenerateVersion(packageMock, newVersion), `twbs/bootstrap#5f7a3bc`,
         "Expected customGenerateVersion to return correct version"
       );
     });

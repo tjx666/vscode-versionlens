@@ -5,7 +5,7 @@
 import * as proxyquire from 'proxyquire';
 import * as assert from 'assert';
 
-describe('jspmVersionParser(node, appConfig)', () => {
+describe('jspmPackageParser(node, appConfig)', () => {
   const githubTaggedCommitsMock
   const appConfigMock
 
@@ -19,12 +19,12 @@ describe('jspmVersionParser(node, appConfig)', () => {
     }
   };
 
-  const NpmVersionParserModule = proxyquire('../../../../src/providers/npm/npmVersionParser', {
+  const npmPackageParserModule = proxyquire('../../../../src/providers/npm/npmPackageParser', {
     './npmAPI': npmAPIMock
   });
 
-  const JspmVersionParserModule = proxyquire('../../../../src/providers/jspm/jspmVersionParser', {
-    '../npm/npmVersionParser': NpmVersionParserModule
+  const jspmPackageParserModule = proxyquire('../../../../src/providers/jspm/jspmPackageParser', {
+    '../npm/npmPackageParser': npmPackageParserModule
   });
 
   beforeEach(() => {
@@ -42,7 +42,7 @@ describe('jspmVersionParser(node, appConfig)', () => {
       value: 'npm:bluebird@3.4.6'
     };
 
-    const parsedResults = JspmVersionParserModule.jspmVersionParser(nodeMock, appConfigMock);
+    const parsedResults = jspmPackageParserModule.jspmPackageParser(nodeMock, appConfigMock);
     Promise.resolve(parsedResults)
       .then(results => {
         assert.equal(results[0].package.name, 'bluebird', "Expected packageName");
@@ -62,7 +62,7 @@ describe('jspmVersionParser(node, appConfig)', () => {
       value: 'github:twbs/bootstrap@4.0.0-alpha.4'
     };
 
-    const parsedResults = JspmVersionParserModule.jspmVersionParser(nodeMock, appConfigMock);
+    const parsedResults = jspmPackageParserModule.jspmPackageParser(nodeMock, appConfigMock);
     Promise.resolve(parsedResults)
       .then(results => {
         results.forEach((result, index) => {
@@ -93,7 +93,7 @@ describe('jspmVersionParser(node, appConfig)', () => {
 
     const newVersion = '4.0.0-alpha.5';
     assert.equal(
-      JspmVersionParserModule.customJspmGenerateVersion(packageMock, newVersion), `github:bootstrap@^4.0.0-alpha.5`,
+      jspmPackageParserModule.customJspmGenerateVersion(packageMock, newVersion), `github:bootstrap@^4.0.0-alpha.5`,
       "Expected customGenerateVersion to return correct version"
     );
   });
@@ -110,7 +110,7 @@ describe('jspmVersionParser(node, appConfig)', () => {
 
     const newVersion = '5f7a3bc';
     assert.equal(
-      JspmVersionParserModule.customJspmGenerateVersion(packageMock, newVersion), `github:bootstrap@5f7a3bc`,
+      jspmPackageParserModule.customJspmGenerateVersion(packageMock, newVersion), `github:bootstrap@5f7a3bc`,
       "Expected customGenerateVersion to return correct version"
     );
   });

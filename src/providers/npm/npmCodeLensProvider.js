@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
-import { npmVersionParser } from './npmVersionParser';
+import { npmPackageParser } from './npmPackageParser';
 import { appConfig } from '../../common/appConfiguration';
 import * as CommandFactory from '../commandFactory';
 import { npmGetOutdated, npmPackageDirExists } from './npmAPI';
@@ -53,7 +53,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     const packageCollection = parseDependencyNodes(
       dependencyNodes,
       appConfig,
-      npmVersionParser
+      npmPackageParser
     );
 
     appSettings.inProgress = true;

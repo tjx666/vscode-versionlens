@@ -17,7 +17,7 @@ describe("DubCodeLensProvider", () => {
   const fixturePath = path.join(testPath, 'fixtures');
   const fixtureMap = new TestFixtureMap(fixturePath);
 
-  const httpRequestMock = {};
+  const dubAPIMock = {};
   let defaultDubDependencyKeys = dubDefaultDependencyProperties;
 
   const appConfigMock = {
@@ -26,8 +26,12 @@ describe("DubCodeLensProvider", () => {
     }
   }
 
+  const DubAPIModule = proxyquire('../../../../src/providers/dub/dubAPI', {
+
+  });
+
   const DubCodeLensProviderModule = proxyquire('../../../../src/providers/dub/dubCodeLensProvider', {
-    'request-light': httpRequestMock,
+    './dubAPI.js': DubAPIModule,
     '../../common/appConfiguration': {
       appConfig: appConfigMock
     }
@@ -39,12 +43,17 @@ describe("DubCodeLensProvider", () => {
     testProvider = new DubCodeLensProviderModule.DubCodeLensProvider();
 
     // default mock handler for http requests
-    httpRequestMock.xhr = options => {
+    DubAPIModule.dubGetPackageLatest = packageName => {
       return Promise.resolve({
         status: 200,
         responseText: null
       });
     };
+
+    DubAPIModule.readDubSelections = filePath => {
+      return Promise.resolve(null);
+    }
+
   });
 
   describe("provideCodeLenses", () => {
@@ -86,7 +95,10 @@ describe("DubCodeLensProvider", () => {
 
       let testDocument = {
         getText: range => fixture.content,
-        fileName: 'filename.json'
+        fileName: 'filename.json',
+        uri: {
+          fsPath: ''
+        }
       };
 
       let codeLenses = testProvider.provideCodeLenses(testDocument, null)
@@ -105,7 +117,10 @@ describe("DubCodeLensProvider", () => {
       let testDocument = {
         getText: range => fixture.content,
         positionAt: offset => new vscode.Position(0, 0),
-        fileName: fixture.basename
+        fileName: fixture.basename,
+        uri: {
+          fsPath: ''
+        }
       };
 
       let codeLenses = testProvider.provideCodeLenses(testDocument, null)
@@ -127,10 +142,10 @@ describe("DubCodeLensProvider", () => {
 
   describe("evaluateCodeLens", () => {
 
-    it("passes url to httpRequest.xhr", done => {
+    it("passes package name to dubGetPackageLatest", done => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: {} }, null);
-      httpRequestMock.xhr = options => {
-        assert.equal(options.url, 'https://code.dlang.org/api/packages/SomePackage/latest', "Expected httpRequest.xhr(options.url) but failed.");
+      DubAPIModule.dubGetPackageLatest = packageName => {
+        assert.equal(packageName, 'SomePackage', "Expected package name to equal SomePackage");
         done();
         return Promise.resolve({
           status: 200,
@@ -142,17 +157,18 @@ describe("DubCodeLensProvider", () => {
 
     it("when dub does not return status 200 then codeLens should return ErrorCommand", done => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: {} }, null);
-      httpRequestMock.xhr = options => {
-        return Promise.resolve({
+      DubAPIModule.dubGetPackageLatest = packageName => {
+        return Promise.reject({
           status: 404,
           responseText: 'Not found'
         });
       };
 
-      testProvider.evaluateCodeLens(codeLens, null).then(result => {
-        assert.equal(result.command.title, 'Not found', "Expected command.title failed.");
-        assert.equal(result.command.command, undefined);
-        assert.equal(result.command.arguments, undefined);
+      testProvider.evaluateCodeLens(codeLens, null)
+      .then(result => {
+        assert.equal(result.command.title, 'SomePackage could not be found', "Expected command.title failed.");
+        assert.equal(result.command.command, null);
+        assert.equal(result.command.arguments, null);
         done();
       });
     });
@@ -160,14 +176,12 @@ describe("DubCodeLensProvider", () => {
     it("when null response object returned from dub then codeLens should return ErrorCommand", done => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: {} }, null);
 
-      httpRequestMock.xhr = options => {
-        return Promise.resolve({
-          status: 200,
-          responseText: null
-        });
+      DubAPIModule.dubGetPackageLatest = packageName => {
+        return Promise.resolve(null);
       };
 
-      testProvider.evaluateCodeLens(codeLens, null).then(result => {
+      testProvider.evaluateCodeLens(codeLens, null)
+      .then(result => {
         assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
         assert.equal(result.command.command, undefined);
         assert.equal(result.command.arguments, undefined);
@@ -179,14 +193,15 @@ describe("DubCodeLensProvider", () => {
     it("when response is an error object then codeLens should return ErrorCommand", done => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: {} }, null);
 
-      httpRequestMock.xhr = options => {
+      DubAPIModule.dubGetPackageLatest = options => {
         return Promise.resolve({
           status: 200,
           responseText: '{"statusMessage": "Package not found"}'
         });
       };
 
-      testProvider.evaluateCodeLens(codeLens, null).then(result => {
+      testProvider.evaluateCodeLens(codeLens, null)
+      .then(result => {
         assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
         assert.equal(result.command.command, undefined);
         assert.equal(result.command.arguments, undefined);
@@ -196,13 +211,11 @@ describe("DubCodeLensProvider", () => {
 
     it("when a valid response returned from dub and package version is 'not latest' then codeLens should return NewVersionCommand", done => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: { tag: { name: 'satisfies', isPrimaryTag: true } } }, null);
-      httpRequestMock.xhr = options => {
-        return Promise.resolve({
-          status: 200,
-          responseText: '"3.2.1"'
-        });
+      DubAPIModule.dubGetPackageLatest = options => {
+        return Promise.resolve('3.2.1');
       };
-      testProvider.evaluateCodeLens(codeLens, null).then(result => {
+      testProvider.evaluateCodeLens(codeLens, null)
+      .then(result => {
         assert.equal(result.command.title, '\u2191 3.2.1');
         assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
         assert.equal(result.command.arguments[1], '"3.2.1"');

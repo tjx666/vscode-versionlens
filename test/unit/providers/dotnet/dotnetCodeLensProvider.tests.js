@@ -35,12 +35,12 @@ describe("DotNetCodeLensProvider", () => {
     nugetGetPackageVersions: function () { }
   };
 
-  const DotNetVersionParserModule = proxyquire('../../../../src/providers/dotnet/dotnetVersionParser', {
+  const dotnetPackageParserModule = proxyquire('../../../../src/providers/dotnet/dotnetPackageParser', {
     './nugetAPI': nugetAPIModuleMock
   });
 
   const DotNetCodeLensProviderModule = proxyquire('../../../../src/providers/dotnet/dotnetCodeLensProvider', {
-    './dotnetVersionParser': DotNetVersionParserModule,
+    './dotnetPackageParser': dotnetPackageParserModule,
     '../../common/appConfiguration': {
       appConfig: appConfigMock
     }

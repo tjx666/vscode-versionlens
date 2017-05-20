@@ -1,6 +1,11 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Peter Flannery. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 const { Position, Range } = require('vscode');
 
-export function extractDependencyNodes(rootNode, document, filterList, collector = []) {
+export function extractDependencyNodes(rootNode, document, filterList) {
+  const collector = [];
   rootNode.eachChild(group => {
     if (group.name !== 'ItemGroup')
       return;
@@ -26,14 +31,13 @@ export function extractDependencyNodes(rootNode, document, filterList, collector
       else if (childNode.children.length > 0)
         collectFromChildVersionTag(childNode, includeRange, collector)
 
-
     });
   });
 
   return collector;
 }
 
-function extractFromVersionAttribute(node, includeRange, document, collector) {
+function extractFromVersionAttribute(node, includeRange, document) {
   const lineText = document.getText(
     new Range(
       document.positionAt(node.startTagPosition - 1),

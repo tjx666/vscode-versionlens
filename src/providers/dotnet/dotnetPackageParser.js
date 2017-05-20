@@ -14,7 +14,7 @@ import * as PackageFactory from '../../common/packageGeneration';
 
 const semver = require('semver');
 
-export function dotnetVersionParser(node, appConfig) {
+export function dotnetPackageParser(node, appConfig) {
   const { name, value: requestedVersion } = node;
 
   // convert a nuget range to node semver range

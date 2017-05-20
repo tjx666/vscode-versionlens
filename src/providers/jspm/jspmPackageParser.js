@@ -7,13 +7,13 @@ import {
   parseNpmRegistryVersion,
   parseFileVersion,
   parseGithubVersion
-} from '../npm/npmVersionParser';
+} from '../npm/npmPackageParser';
 import * as PackageFactory from '../../common/packageGeneration';
 
 const semver = require('semver');
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;
-export function jspmVersionParser(node, appConfig) {
+export function jspmPackageParser(node, appConfig) {
   const { name, value: version } = node;
 
   // check for supported package resgitries
