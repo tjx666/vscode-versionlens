@@ -145,7 +145,7 @@ export function createTaggedVersionCommand(codeLens) {
     return createTagCommand(`${codeLens.getTaggedVersionPrefix()} ${taggedVersion}`, codeLens);
 
   return createNewVersionCommand(
-    codeLens.getTaggedVersion(),
+    taggedVersion,
     codeLens
   );
 }

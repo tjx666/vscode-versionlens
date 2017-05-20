@@ -68,11 +68,11 @@ export function dotnetVersionParser(node, appConfig) {
 
         return {
           node,
-          package: {
+          package: PackageFactory.createPackage(
             name,
-            version: nodeRequestedRange || requestedVersion,
-            meta: packageInfo
-          }
+            requestedVersion, // TODO need nodeRequestedRange to be shown in match not found info
+            packageInfo
+          )
         };
 
       });

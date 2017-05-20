@@ -84,10 +84,10 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
     if (codeLens.isFixedVersion())
       return CommandFactory.createFixedVersionCommand(codeLens);
 
-    const latestVersion = codeLens.package.meta.tag.version;
+    const tagVersion = codeLens.getTaggedVersion();
     return CommandFactory.createVersionCommand(
       codeLens.package.version,
-      latestVersion,
+      tagVersion,
       codeLens
     );
   }
