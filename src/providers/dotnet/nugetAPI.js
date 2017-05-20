@@ -2,8 +2,8 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as httpRequest from 'request-light';
-import * as semver from 'semver';
+const httpRequest = require('request-light');
+const semver = require('semver');
 
 // TODO allow for mutliple sources
 const FEED_URL = 'https://api.nuget.org/v3-flatcontainer';

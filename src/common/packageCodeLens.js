@@ -2,9 +2,10 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { CodeLens, Range } from 'vscode';
 import { formatWithExistingLeading } from './utils';
 import appSettings from './appSettings';
+
+const { CodeLens, Range } = require('vscode');
 
 export class PackageCodeLens extends CodeLens {
 

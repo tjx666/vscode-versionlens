@@ -2,16 +2,17 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as xmldoc from 'xmldoc';
 import * as CommandFactory from '../commandFactory';
 import appSettings from '../../common/appSettings';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
-import { Range } from 'vscode';
 import { appConfig } from '../../common/appConfiguration';
 import { parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import { dotnetVersionParser } from './dotnetVersionParser.js';
 import { clearDecorations } from '../../editor/decorations';
+
+const xmldoc = require('xmldoc');
+const { Range } = require('vscode');
 
 export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 

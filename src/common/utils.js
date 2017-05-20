@@ -2,8 +2,9 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { workspace } from 'vscode';
 import { clearDecorations } from '../editor/decorations';
+
+const { workspace } = require('vscode');
 
 export const fileDependencyRegex = /^file:(.*)$/;
 export const gitHubDependencyRegex = /^\/?([^:\/\s]+)(\/)([\w\-\.]+[^#?\s]+)(.*)?(#[\w\-]+)?$/;

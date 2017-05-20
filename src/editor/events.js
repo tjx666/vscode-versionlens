@@ -2,9 +2,10 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { window, workspace } from 'vscode';
 import codeLensProviders from '../providers/codeLensProviders'
 import { onActiveEditorChanged, onChangeTextDocument } from './handlers';
+
+const { window, workspace } = require('vscode');
 
 export default function () {
   // update versionLens.isActive upon start

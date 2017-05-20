@@ -2,8 +2,6 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as path from 'path';
-import * as minimatch from 'minimatch';
 import appSettings from '../common/appSettings';
 import {
   getDecorationsByLine,
@@ -11,6 +9,9 @@ import {
   clearDecorations,
   removeDecorationsFromLine
 } from './decorations';
+
+const path = require('path');
+const minimatch = require('minimatch');
 
 export function onActiveEditorChanged(editor, providers) {
   if (!editor) {

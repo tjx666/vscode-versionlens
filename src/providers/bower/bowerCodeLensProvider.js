@@ -2,8 +2,6 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as bower from 'bower';
-import * as jsonParser from 'vscode-contrib-jsonc';
 import { PackageCodeLens } from '../../common/packageCodeLens';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { bowerVersionParser } from './bowerVersionParser';
@@ -13,6 +11,9 @@ import { extractDependencyNodes, parseDependencyNodes } from '../../common/depen
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
 import { clearDecorations } from '../../editor/decorations';
+
+const bower = require('bower');
+const jsonParser = require('vscode-contrib-jsonc');
 
 export class BowerCodeLensProvider extends AbstractCodeLensProvider {
 

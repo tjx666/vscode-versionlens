@@ -2,7 +2,6 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as semver from 'semver';
 import { formatWithExistingLeading } from '../../common/utils';
 import {
   parseNpmRegistryVersion,
@@ -10,6 +9,8 @@ import {
   parseGithubVersion
 } from '../npm/npmVersionParser';
 import * as PackageFactory from '../../common/packageGeneration';
+
+const semver = require('semver');
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;
 export function jspmVersionParser(node, appConfig) {

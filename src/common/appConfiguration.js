@@ -2,11 +2,12 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { workspace } from 'vscode';
 import { npmDefaultDependencyProperties } from '../providers/npm/config';
 import { bowerDefaultDependencyProperties } from '../providers/bower/config';
 import { dotnetCSProjDefaultDependencyProperties, dotnetProjectJsonDefaultDependencyProperties } from '../providers/dotnet/config';
 import { dubDefaultDependencyProperties } from '../providers/dub/config';
+
+const { workspace } = require('vscode');
 
 class AppConfiguration {
 

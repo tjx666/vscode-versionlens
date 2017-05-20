@@ -2,8 +2,6 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as jsonParser from 'vscode-contrib-jsonc';
-import * as httpRequest from 'request-light';
 import { PackageCodeLens } from '../../common/packageCodeLens';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { appConfig } from '../../common/appConfiguration';
@@ -21,8 +19,11 @@ import {
   renderOutdatedDecoration,
   clearDecorations
 } from '../../editor/decorations';
-import * as fs from 'fs';
 import { formatWithExistingLeading } from '../../common/utils';
+
+const jsonParser = require('vscode-contrib-jsonc');
+const httpRequest = require('request-light');
+const fs = require('fs');
 
 export class DubCodeLensProvider extends AbstractCodeLensProvider {
 

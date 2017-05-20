@@ -2,12 +2,13 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as path from 'path';
-import * as fs from 'fs';
-import * as semver from 'semver';
 import { stripSymbolFromVersionRegex, semverLeadingChars } from '../common/utils';
 import { githubRequest } from '../common/githubRequest';
 import appSettings from '../common/appSettings';
+
+const path = require('path');
+const fs = require('fs');
+const semver = require('semver');
 
 export function createErrorCommand(errorMsg, codeLens) {
   return codeLens.setCommand(`${errorMsg}`);

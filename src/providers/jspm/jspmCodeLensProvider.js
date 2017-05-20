@@ -2,7 +2,6 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as jsonParser from 'vscode-contrib-jsonc';
 import { PackageCodeLens } from '../../common/packageCodeLens';
 import { NpmCodeLensProvider } from '../npm/npmCodeLensProvider';
 import { jspmVersionParser } from './jspmVersionParser';
@@ -10,8 +9,10 @@ import { appConfig } from '../../common/appConfiguration';
 import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
-import * as path from 'path';
 import { clearDecorations } from '../../editor/decorations';
+
+const path = require('path');
+const jsonParser = require('vscode-contrib-jsonc');
 
 export class JspmCodeLensProvider extends NpmCodeLensProvider {
 

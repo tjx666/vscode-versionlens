@@ -2,7 +2,6 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as semver from 'semver';
 import appSettings from '../../common/appSettings';
 import { nugetGetPackageVersions, convertNugetToNodeRange } from './nugetAPI.js';
 import {
@@ -12,6 +11,8 @@ import {
   buildMapFromVersionList
 } from '../../common/versionUtils';
 import * as PackageFactory from '../../common/packageGeneration';
+
+const semver = require('semver');
 
 export function dotnetVersionParser(node, appConfig) {
   const { name, value: requestedVersion } = node;
@@ -38,7 +39,7 @@ export function dotnetVersionParser(node, appConfig) {
       const satisfiesEntry = extractedTags[0];
 
       let filteredTags = extractedTags;
-      if (appSettings.showTaggedVersions === false)
+      if (appSettings.showTaggedVersions === false) //  && extractedTags.length > 2
         // only show 'satisfies' and 'latest' entries when showTaggedVersions is false
         filteredTags = [
           satisfiesEntry,

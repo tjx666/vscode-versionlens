@@ -2,12 +2,12 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as npm from 'npm';
-import * as npa from 'npm-package-arg';
-import * as semver from 'semver';
-import * as path from 'path';
-import * as fs from 'fs';
 import { sortTagsByRecentVersion } from '../../common/versionUtils';
+const npm = require('npm');
+const npa = require('npm-package-arg');
+const semver = require('semver');
+const path = require('path');
+const fs = require('fs');
 
 export function npmPackageDirExists(packageJsonPath, packageName) {
   npm.localPrefix = packageJsonPath;

@@ -2,9 +2,10 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { window, Range, Position } from 'vscode';
 import appSettings from '../common/appSettings';
 import { appConfig } from '../common/appConfiguration';
+
+const { window, Range, Position } = require('vscode');
 
 let _decorations = [];
 const _decorationTypeKey = window.createTextEditorDecorationType({

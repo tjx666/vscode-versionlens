@@ -2,12 +2,13 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { workspace, TextEdit, WorkspaceEdit } from 'vscode';
-import * as path from 'path';
-import * as opener from 'opener';
 import appSettings from '../common/appSettings';
 import * as utils from '../common/utils';
 import { clearDecorations } from '../editor/decorations';
+
+const { workspace, TextEdit, WorkspaceEdit } = require('vscode');
+const path = require('path');
+const opener = require('opener');
 
 export function updateDependencyCommand(codeLens, packageVersion) {
   const edits = [TextEdit.replace(codeLens.replaceRange, packageVersion)];

@@ -2,8 +2,9 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { commands } from 'vscode';
 import { appConfig } from './appConfiguration';
+
+const { commands } = require('vscode');
 
 let _isActive = false;
 let _inProgress = false;

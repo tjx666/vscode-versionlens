@@ -2,9 +2,10 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as httpRequest from 'request-light';
 import { CacheMap } from './cacheMap';
 import { appConfig } from './appConfiguration';
+
+const httpRequest = require('request-light');
 
 class GithubRequest {
 
