@@ -290,16 +290,17 @@ export function deduceMaxSatisfyingFromSemverList(semverList, requestedVersion) 
 export function buildTagsFromVersionMap(versionMap, requestedVersion) {
   // check if this is a valid range
   const isRequestedVersionValid = semver.validRange(requestedVersion);
+  const versionMatchNotFound = !versionMap.maxSatisfyingVersion;
 
   // store the latest release
   const latestEntry = {
     name: "latest",
     version: versionMap.releases[0],
-    isOlderThanRequested: isRequestedVersionValid && isOlderVersion(versionMap.releases[0], requestedVersion),
+    // can only be older if a match was found and requestedVersion is a valid range
+    isOlderThanRequested: !versionMatchNotFound && isRequestedVersionValid && isOlderVersion(versionMap.releases[0], requestedVersion),
     isPrimaryTag: true
   };
   const satisfiesLatest = semver.satisfies(versionMap.maxSatisfyingVersion, latestEntry.version);
-  const versionMatchNotFound = !versionMap.maxSatisfyingVersion;
   const isFixed = isRequestedVersionValid && isFixedVersion(requestedVersion);
 
   const satisfiesEntry = {
