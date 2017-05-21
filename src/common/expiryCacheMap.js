@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-export class CacheMap {
+export class ExpiryCacheMap {
 
   constructor(cacheDuration) {
     this.cacheDuration = cacheDuration || 300000; // defaults to 5mins in ms

@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { CacheMap } from './cacheMap';
+import { ExpiryCacheMap } from './expiryCacheMap';
 import { appConfig } from './appConfiguration';
 
 const httpRequest = require('request-light');
@@ -10,7 +10,7 @@ const httpRequest = require('request-light');
 class GithubRequest {
 
   constructor() {
-    this.cache = new CacheMap();
+    this.cache = new ExpiryCacheMap();
     this.headers = {
       accept: 'application\/vnd.github.v3+json',
       'user-agent': 'vscode-contrib/vscode-versionlens'
