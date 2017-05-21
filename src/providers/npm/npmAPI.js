@@ -2,7 +2,6 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { sortTagsByRecentVersion } from '../../common/versionUtils';
 const npm = require('npm');
 const npa = require('npm-package-arg');
 const semver = require('semver');
@@ -43,7 +42,9 @@ export function npmViewVersion(packageName) {
         });
 
         // take the last and most recent version key
-        let lastKey = keys.length > 0 ? keys[keys.length - 1] : null;
+        let lastKey = null;
+        if (keys.length > 0)
+          lastKey = keys[keys.length - 1];
 
         resolve(lastKey);
       });
@@ -66,22 +67,28 @@ export function npmViewDistTags(packageName) {
         }
 
         // get the keys from the object returned
-        let keys = Object.keys(response);
+        const keys = Object.keys(response);
 
         // take the first key and return the dist-tags keys
         let tags
+
         if (keys.length > 0) {
           const distTags = response[keys[0]]['dist-tags'];
           tags = Object.keys(distTags)
-            .map(key => ({ name: key, version: distTags[key] }))
-            .sort(sortTagsByRecentVersion);
+            .map(key => ({
+              name: key,
+              version: distTags[key]
+            }))
         } else {
           tags = [
-            { name: key, version: "latest" }
+            {
+              name: 'latest',
+              version: 'latest'
+            }
           ];
         }
 
-        // fixes a case where npm doesn't publish latest as the first dist-tags
+        // fixes a case where npm doesn't publish latest as the first dist-tag
         const latestIndex = tags.findIndex(item => item.name === 'latest');
         if (latestIndex > 0) {
           // extract the entry
