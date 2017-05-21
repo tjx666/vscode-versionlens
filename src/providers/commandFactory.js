@@ -81,8 +81,8 @@ export function createTagCommand(tag, codeLens) {
 
 export function createLinkCommand(codeLens) {
   const isFile = codeLens.package.meta.type === 'file';
-  const title;
   const cmd = `${appSettings.extensionName}.linkCommand`;
+  let title;
 
   if (isFile) {
     const filePath = path.resolve(path.dirname(codeLens.documentUrl.fsPath), codeLens.package.meta.remoteUrl);

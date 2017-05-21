@@ -85,7 +85,7 @@ export function pluckSemverVersions(versions) {
 export function parseVersion(version) {
   const prereleaseComponents = semver.prerelease(version);
   const isPrerelease = !!prereleaseComponents && prereleaseComponents.length > 0;
-  const prereleaseGroup = '';
+  let prereleaseGroup = '';
 
   if (isPrerelease) {
     const regexResult = formatTagNameRegex.exec(prereleaseComponents[0]);
