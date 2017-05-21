@@ -7,10 +7,6 @@ import appSettings from '../common/appSettings';
 
 export class AbstractCodeLensProvider {
 
-  constructor() {
-    this._disposables = [];
-  }
-
   resolveCodeLens(codeLens, token) {
     if (codeLens instanceof PackageCodeLens) {
       // set in progress 
@@ -30,12 +26,6 @@ export class AbstractCodeLensProvider {
 
       // return evaluated codelens
       return evaluated;
-    }
-  }
-
-  dispose() {
-    while (this._disposables.length > 0) {
-      this._disposables.pop().dispose();
     }
   }
 
