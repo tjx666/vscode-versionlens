@@ -62,7 +62,10 @@ describe("DubCodeLensProvider", () => {
       let fixture = fixtureMap.read('package-invalid.json');
 
       let testDocument = {
-        getText: range => fixture.content
+        getText: range => fixture.content,
+        uri: {
+          fsPath: ''
+        }
       };
 
       let codeLenses = testProvider.provideCodeLenses(testDocument, null)
@@ -77,7 +80,10 @@ describe("DubCodeLensProvider", () => {
 
     it("returns empty array when the document text is empty", done => {
       let testDocument = {
-        getText: range => ''
+        getText: range => '',
+        uri: {
+          fsPath: ''
+        }
       };
 
       let codeLenses = testProvider.provideCodeLenses(testDocument, null)
@@ -165,12 +171,12 @@ describe("DubCodeLensProvider", () => {
       };
 
       testProvider.evaluateCodeLens(codeLens, null)
-      .then(result => {
-        assert.equal(result.command.title, 'SomePackage could not be found', "Expected command.title failed.");
-        assert.equal(result.command.command, null);
-        assert.equal(result.command.arguments, null);
-        done();
-      });
+        .then(result => {
+          assert.equal(result.command.title, 'SomePackage could not be found', "Expected command.title failed.");
+          assert.equal(result.command.command, null);
+          assert.equal(result.command.arguments, null);
+          done();
+        });
     });
 
     it("when null response object returned from dub then codeLens should return ErrorCommand", done => {
@@ -181,12 +187,12 @@ describe("DubCodeLensProvider", () => {
       };
 
       testProvider.evaluateCodeLens(codeLens, null)
-      .then(result => {
-        assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
-        assert.equal(result.command.command, undefined);
-        assert.equal(result.command.arguments, undefined);
-        done();
-      });
+        .then(result => {
+          assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
+          assert.equal(result.command.command, undefined);
+          assert.equal(result.command.arguments, undefined);
+          done();
+        });
 
     });
 
@@ -201,12 +207,12 @@ describe("DubCodeLensProvider", () => {
       };
 
       testProvider.evaluateCodeLens(codeLens, null)
-      .then(result => {
-        assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
-        assert.equal(result.command.command, undefined);
-        assert.equal(result.command.arguments, undefined);
-        done();
-      });
+        .then(result => {
+          assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
+          assert.equal(result.command.command, undefined);
+          assert.equal(result.command.arguments, undefined);
+          done();
+        });
     });
 
     it("when a valid response returned from dub and package version is 'not latest' then codeLens should return NewVersionCommand", done => {
@@ -215,12 +221,12 @@ describe("DubCodeLensProvider", () => {
         return Promise.resolve('3.2.1');
       };
       testProvider.evaluateCodeLens(codeLens, null)
-      .then(result => {
-        assert.equal(result.command.title, '\u2191 3.2.1');
-        assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
-        assert.equal(result.command.arguments[1], '"3.2.1"');
-        done();
-      });
+        .then(result => {
+          assert.equal(result.command.title, '\u2191 3.2.1');
+          assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
+          assert.equal(result.command.arguments[1], '"3.2.1"');
+          done();
+        });
     });
 
   });

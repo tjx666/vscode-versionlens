@@ -63,6 +63,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
         return generateCodeLenses(packageCollection, document)
       })
       .catch(err => {
+        appSettings.inProgress = false;
         console.log(err)
       });
   }

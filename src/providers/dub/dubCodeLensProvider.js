@@ -24,10 +24,12 @@ import { extractSubPackageDependencyNodes } from './dubDependencyParser';
 
 const jsonParser = require('vscode-contrib-jsonc');
 const httpRequest = require('request-light');
+const path = require('path');
 
 export class DubCodeLensProvider extends AbstractCodeLensProvider {
 
-  selectionsJson = null;
+  _outdatedCache = [];
+  _documentPath = '';
 
   get selector() {
     return {
@@ -40,6 +42,8 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
   provideCodeLenses(document, token) {
     if (appSettings.showVersionLenses === false)
       return;
+
+    this._documentPath = path.dirname(document.uri.fsPath);
 
     const jsonDoc = jsonParser.parse(document.getText());
     if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
@@ -58,17 +62,17 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
       appConfig
     );
 
-    const selectionsFilePath = document.uri.fsPath.slice(0, -4) + "selections.json";
-    readDubSelections(selectionsFilePath)
-      .then(selectionsJson => {
-        this.selectionsJson = selectionsJson;
+    appSettings.inProgress = true;
+    return this.updateOutdated()
+      .then(_ => {
+        appSettings.inProgress = false;
+        return generateCodeLenses(packageCollection, document)
       })
       .catch(err => {
-        if (err)
-          console.warn(err);
-      })
+        appSettings.inProgress = false;
+        console.log(err)
+      });
 
-    return generateCodeLenses(packageCollection, document);
   }
 
   evaluateCodeLens(codeLens) {
@@ -112,6 +116,19 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
       });
   }
 
+  // get the outdated packages and cache them
+  updateOutdated() {
+    const selectionsFilePath = path.join(this._documentPath, 'dub.selections.json');
+    return readDubSelections(selectionsFilePath)
+      .then(selectionsJson => {
+        this._outdatedCache = selectionsJson;
+      })
+      .catch(err => {
+        if (err)
+          console.warn(err);
+      })
+  }
+
   generateDecoration(codeLens) {
     const currentPackageName = codeLens.package.name;
     const currentPackageVersion = codeLens.package.version;
@@ -119,12 +136,12 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     if (!codeLens.replaceRange)
       return;
 
-    if (!this.selectionsJson) {
+    if (!this._outdatedCache) {
       renderMissingDecoration(codeLens.replaceRange);
       return;
     }
 
-    const currentVersion = this.selectionsJson.versions[currentPackageName];
+    const currentVersion = this._outdatedCache.versions[currentPackageName];
     if (!currentVersion) {
       renderMissingDecoration(codeLens.replaceRange);
       return;
