@@ -14,9 +14,7 @@ import * as PackageFactory from '../../common/packageGeneration';
 
 const semver = require('semver');
 
-export function dotnetPackageParser(node, appConfig) {
-  const { name, value: requestedVersion } = node;
-
+export function dotnetPackageParser(name, requestedVersion, appConfig) {
   // convert a nuget range to node semver range
   const nodeRequestedRange = requestedVersion && convertNugetToNodeRange(requestedVersion)
 
@@ -66,25 +64,24 @@ export function dotnetPackageParser(node, appConfig) {
           tag
         };
 
-        return {
-          node,
-          package: PackageFactory.createPackage(
-            name,
-            requestedVersion, // TODO need nodeRequestedRange to be shown in match not found info
-            packageInfo
-          )
-        };
-
+        return PackageFactory.createPackage(
+          name,
+          // TODO need nodeRequestedRange to be shown in match not found info
+          requestedVersion,
+          packageInfo
+        );
       });
-
+      
     })
     .catch(error => {
       // show the 404 to the user; otherwise throw the error
-      if (error.status === 404)
-        return [{
-          node,
-          package: PackageFactory.createPackageNotFound(name, version, 'nuget')
-        }];
+      if (error.status === 404) {
+        return PackageFactory.createPackageNotFound(
+          name,
+          requestedVersion,
+          'nuget'
+        );
+      }
 
       console.error(error);
       throw error;

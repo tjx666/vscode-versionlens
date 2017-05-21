@@ -8,12 +8,11 @@ import * as PackageFactory from '../../common/packageGeneration';
 
 const semver = require('semver');
 
-export function bowerPackageParser(node, appConfig) {
-  const { name, value: version } = node;
+export function bowerPackageParser(name, version, appConfig) {
   let result;
 
   // check if we have a github version
-  if (result = parseGithubVersion(node, name, version, appConfig.githubTaggedCommits))
+  if (result = parseGithubVersion(name, version, appConfig.githubTaggedCommits))
     return result;
 
   // check if its a valid semver, if not could be a tag
@@ -28,17 +27,14 @@ export function bowerPackageParser(node, appConfig) {
     }
   };
 
-  return [{
-    node,
-    package: PackageFactory.createPackage(
-      name,
-      version,
-      meta
-    )
-  }];
+  return PackageFactory.createPackage(
+    name,
+    version,
+    meta
+  );
 }
 
-export function parseGithubVersion(node, packageName, packageVersion, githubTaggedVersions) {
+export function parseGithubVersion(packageName, packageVersion, githubTaggedVersions) {
   const gitHubRegExpResult = gitHubDependencyRegex.exec(packageVersion);
   if (!gitHubRegExpResult)
     return;
@@ -62,20 +58,19 @@ export function parseGithubVersion(node, packageName, packageVersion, githubTagg
     githubTaggedVersions = [githubTaggedVersions[0]];
 
   return githubTaggedVersions.map(category => {
-    const parseResult = {
-      node, package: {
-        packageName,
-        packageVersion,
-        meta: {
-          category,
-          type: "github",
-          remoteUrl,
-          userRepo,
-          commitish
-        },
-        customGenerateVersion: (packageInfo, newVersion) => `${packageInfo.meta.userRepo}#${newVersion}`
-      }
+    const meta = {
+      category,
+      type: "github",
+      remoteUrl,
+      userRepo,
+      commitish
     };
-    return parseResult;
+
+    return PackageFactory.createPackage(
+      packageName,
+      packageVersion,
+      meta,
+      (packageInfo, newVersion) => `${packageInfo.meta.userRepo}#${newVersion}`
+    );
   });
 }

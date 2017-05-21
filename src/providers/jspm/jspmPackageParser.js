@@ -13,16 +13,15 @@ import * as PackageFactory from '../../common/packageGeneration';
 const semver = require('semver');
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;
-export function jspmPackageParser(node, appConfig) {
-  const { name, value: version } = node;
-
+export function jspmPackageParser(name, version, appConfig) {
   // check for supported package resgitries
   const regExpResult = jspmDependencyRegex.exec(version);
   if (!regExpResult) {
-    return [{
-      node,
-      package: PackageFactory.createPackageNotSupported(name, version, 'jspm')
-    }];
+    return PackageFactory.createPackageNotSupported(
+      name,
+      version,
+      'jspm'
+    );
   }
 
   const packageManager = regExpResult[1];
@@ -31,7 +30,6 @@ export function jspmPackageParser(node, appConfig) {
 
   if (packageManager === 'github') {
     return parseGithubVersion(
-      node,
       extractedPkgName,
       `${extractedPkgName}#${newPkgVersion}`,
       appConfig.githubTaggedCommits,
@@ -40,7 +38,6 @@ export function jspmPackageParser(node, appConfig) {
   }
 
   return parseNpmRegistryVersion(
-    node,
     extractedPkgName,
     newPkgVersion,
     appConfig,

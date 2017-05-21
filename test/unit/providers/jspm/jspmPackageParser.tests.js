@@ -37,19 +37,18 @@ describe('jspmPackageParser(node, appConfig)', () => {
   });
 
   it('returns the expected object for npm semver versions', done => {
-    let nodeMock = {
-      name: 'bluebird',
-      value: 'npm:bluebird@3.4.6'
-    };
+    const name = 'bluebird',
+    const version = 'npm:bluebird@3.4.6';
 
-    const parsedResults = jspmPackageParserModule.jspmPackageParser(nodeMock, appConfigMock);
+
+    const parsedResults = jspmPackageParserModule.jspmPackageParser(name, version, appConfigMock);
     Promise.resolve(parsedResults)
       .then(results => {
-        assert.equal(results[0].package.name, 'bluebird', "Expected packageName");
-        assert.equal(results[0].package.version, '3.4.6', "Expected packageName");
-        assert.equal(results[0].package.meta.type, 'npm', "Expected meta.type");
-        assert.ok(!results[0].package.meta.tagisInvalid, "Expected meta.tag.isInvalid");
-        assert.ok(!!results[0].package.customGenerateVersion, "Expected customGenerateVersion");
+        assert.equal(results[0].name, 'bluebird', "Expected packageName");
+        assert.equal(results[0].version, '3.4.6', "Expected packageName");
+        assert.equal(results[0].meta.type, 'npm', "Expected meta.type");
+        assert.ok(!results[0].meta.tagisInvalid, "Expected meta.tag.isInvalid");
+        assert.ok(!!results[0].customGenerateVersion, "Expected customGenerateVersion");
         done();
       })
       .catch(console.log.bind(this));
@@ -57,23 +56,21 @@ describe('jspmPackageParser(node, appConfig)', () => {
   });
 
   it('returns the expected object for github versions', done => {
-    let nodeMock = {
-      name: 'bootstrap',
-      value: 'github:twbs/bootstrap@4.0.0-alpha.4'
-    };
+    const name = 'bootstrap';
+    const version = 'github:twbs/bootstrap@4.0.0-alpha.4';
 
-    const parsedResults = jspmPackageParserModule.jspmPackageParser(nodeMock, appConfigMock);
+    const parsedResults = jspmPackageParserModule.jspmPackageParser(name, version, appConfigMock);
     Promise.resolve(parsedResults)
       .then(results => {
         results.forEach((result, index) => {
-          assert.equal(result.package.name, 'twbs/bootstrap', "Expected packageName");
-          assert.equal(result.package.version, 'twbs/bootstrap#4.0.0-alpha.4', "Expected packageName");
-          assert.equal(result.package.meta.category, githubTaggedCommitsMock[index], `Expected meta.category ${result.package.meta.category} == ${githubTaggedCommitsMock[index]}`);
-          assert.equal(result.package.meta.type, 'github', "Expected meta.type");
-          assert.equal(result.package.meta.remoteUrl, `https://github.com/${result.package.meta.userRepo}/commit/${result.package.meta.commitish}`, "Expected meta.remoteUrl");
-          assert.equal(result.package.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");
-          assert.equal(result.package.meta.commitish, '4.0.0-alpha.4', "Expected meta.commitish");
-          assert.ok(!!result.package.customGenerateVersion, "Expected package.customGenerateVersion");
+          assert.equal(result.name, 'twbs/bootstrap', "Expected packageName");
+          assert.equal(result.version, 'twbs/bootstrap#4.0.0-alpha.4', "Expected packageName");
+          assert.equal(result.meta.category, githubTaggedCommitsMock[index], `Expected meta.category ${result.meta.category} == ${githubTaggedCommitsMock[index]}`);
+          assert.equal(result.meta.type, 'github', "Expected meta.type");
+          assert.equal(result.meta.remoteUrl, `https://github.com/${result.meta.userRepo}/commit/${result.meta.commitish}`, "Expected meta.remoteUrl");
+          assert.equal(result.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");
+          assert.equal(result.meta.commitish, '4.0.0-alpha.4', "Expected meta.commitish");
+          assert.ok(!!result.customGenerateVersion, "Expected package.customGenerateVersion");
         });
         done();
       })

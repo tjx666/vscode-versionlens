@@ -36,19 +36,17 @@ describe('npmPackageParser(node, appConfig)', () => {
   describe('npmPackageParser', () => {
 
     it('returns the expected object for non ranged semver versions', done => {
-      let nodeMock = {
-        name: 'bootstrap',
-        value: '1.2.3'
-      };
+      const name = 'bootstrap';
+      const version = '1.2.3';
 
-      const parsedResults = npmPackageParserModule.npmPackageParser(nodeMock, appConfigMock);
+      const parsedResults = npmPackageParserModule.npmPackageParser(name, version, appConfigMock);
       Promise.resolve(parsedResults)
         .then(results => {
-          assert.equal(results[0].package.name, 'bootstrap', "Expected packageName");
-          assert.equal(results[0].package.version, '1.2.3', "Expected packageVersion");
-          assert.equal(results[0].package.meta.type, 'npm', "Expected meta.type");
-          assert.ok(!results[0].package.meta.tag.isInvalid, "Expected meta.tag.isInvalid");
-          assert.ok(results[0].package.meta.tag.isFixedVersion, "Expected meta.tag.isFixedVersion to be true");
+          assert.equal(results[0].name, 'bootstrap', "Expected packageName");
+          assert.equal(results[0].version, '1.2.3', "Expected packageVersion");
+          assert.equal(results[0].meta.type, 'npm', "Expected meta.type");
+          assert.ok(!results[0].meta.tag.isInvalid, "Expected meta.tag.isInvalid");
+          assert.ok(results[0].meta.tag.isFixedVersion, "Expected meta.tag.isFixedVersion to be true");
           assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
           done();
         })
@@ -56,19 +54,17 @@ describe('npmPackageParser(node, appConfig)', () => {
     });
 
     it('returns the expected object for ranged semver versions', done => {
-      let nodeMock = {
-        name: 'bootstrap',
-        value: '~1.2.3'
-      };
+      const name = 'bootstrap';
+      const version = '~1.2.3';
 
-      const parsedResults = npmPackageParserModule.npmPackageParser(nodeMock, appConfigMock);
+      const parsedResults = npmPackageParserModule.npmPackageParser(name, version, appConfigMock);
       Promise.resolve(parsedResults)
         .then(results => {
-          assert.equal(results[0].package.name, 'bootstrap', "Expected packageName");
-          assert.equal(results[0].package.version, '~1.2.3', "Expected packageVersion");
-          assert.equal(results[0].package.meta.type, 'npm', "Expected meta.type");
-          assert.ok(!results[0].package.meta.tag.isInvalid, "Expected meta.tag.isInvalid");
-          assert.ok(!results[0].package.meta.tag.isFixedVersion, "Expected meta.tag.isFixedVersion to be false");
+          assert.equal(results[0].name, 'bootstrap', "Expected packageName");
+          assert.equal(results[0].version, '~1.2.3', "Expected packageVersion");
+          assert.equal(results[0].meta.type, 'npm', "Expected meta.type");
+          assert.ok(!results[0].meta.tag.isInvalid, "Expected meta.tag.isInvalid");
+          assert.ok(!results[0].meta.tag.isFixedVersion, "Expected meta.tag.isFixedVersion to be false");
           assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
           done();
         })
@@ -76,42 +72,38 @@ describe('npmPackageParser(node, appConfig)', () => {
     });
 
     it('returns the expected object for file versions', done => {
-      let nodeMock = {
-        name: 'another-project',
-        value: 'file:../another-project'
-      };
+      const name = 'another-project';
+      const version = 'file:../another-project';
 
-      const parsedResults = npmPackageParserModule.npmPackageParser(nodeMock, appConfigMock);
+      const parsedResults = npmPackageParserModule.npmPackageParser(name, version, appConfigMock);
       Promise.resolve(parsedResults)
-        .then(results => {
-          assert.equal(results[0].package.name, 'another-project', "Expected packageName");
-          assert.equal(results[0].package.version, 'file:../another-project', "Expected packageName");
-          assert.equal(results[0].package.meta.type, 'file', "Expected meta.type");
-          assert.equal(results[0].package.meta.remoteUrl, '../another-project', "Expected meta.remoteUrl");
-          assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
+        .then(result => {
+          assert.equal(result.name, 'another-project', "Expected packageName");
+          assert.equal(result.version, 'file:../another-project', "Expected packageName");
+          assert.equal(result.meta.type, 'file', "Expected meta.type");
+          assert.equal(result.meta.remoteUrl, '../another-project', "Expected meta.remoteUrl");
+          assert.equal(result.customGenerateVersion, null, "Expected customGenerateVersion");
           done();
         })
         .catch(console.log.bind(this));
     });
 
     it('returns the expected object for github versions', done => {
-      let nodeMock = {
-        name: 'bootstrap',
-        value: 'twbs/bootstrap#v10.2.3-alpha'
-      };
+      const name = 'bootstrap';
+      const version = 'twbs/bootstrap#v10.2.3-alpha';
 
-      const parsedResults = npmPackageParserModule.npmPackageParser(nodeMock, appConfigMock);
+      const parsedResults = npmPackageParserModule.npmPackageParser(name, version, appConfigMock);
       Promise.resolve(parsedResults)
         .then(results => {
           results.forEach((result, index) => {
-            assert.equal(result.package.name, 'bootstrap', "Expected packageName");
-            assert.equal(result.package.version, 'twbs/bootstrap#v10.2.3-alpha', "Expected packageName");
-            assert.equal(result.package.meta.category, githubTaggedCommitsMock[index], `Expected meta.category ${result.package.meta.category} == ${githubTaggedCommitsMock[index]}`);
-            assert.equal(result.package.meta.type, 'github', "Expected meta.type");
-            assert.equal(result.package.meta.remoteUrl, `https://github.com/${result.package.meta.userRepo}/commit/${result.package.meta.commitish}`, "Expected meta.remoteUrl");
-            assert.equal(result.package.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");
-            assert.equal(result.package.meta.commitish, 'v10.2.3-alpha', "Expected meta.commitish");
-            assert.ok(!!result.package.customGenerateVersion, "Expected package.customGenerateVersion");
+            assert.equal(result.name, 'bootstrap', "Expected packageName");
+            assert.equal(result.version, 'twbs/bootstrap#v10.2.3-alpha', "Expected packageName");
+            assert.equal(result.meta.category, githubTaggedCommitsMock[index], `Expected meta.category ${result.meta.category} == ${githubTaggedCommitsMock[index]}`);
+            assert.equal(result.meta.type, 'github', "Expected meta.type");
+            assert.equal(result.meta.remoteUrl, `https://github.com/${result.meta.userRepo}/commit/${result.meta.commitish}`, "Expected meta.remoteUrl");
+            assert.equal(result.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");
+            assert.equal(result.meta.commitish, 'v10.2.3-alpha', "Expected meta.commitish");
+            assert.ok(!!result.customGenerateVersion, "Expected package.customGenerateVersion");
           });
           done();
         })
@@ -119,23 +111,21 @@ describe('npmPackageParser(node, appConfig)', () => {
     });
 
     it('returns the expected object for git+http+github versions', done => {
-      let nodeMock = {
-        name: 'bootstrap',
-        value: 'git+https://git@github.com/twbs/bootstrap.git#v10.2.3-alpha'
-      };
+      const name = 'bootstrap';
+      const version = 'git+https://git@github.com/twbs/bootstrap.git#v10.2.3-alpha';
 
-      const parsedResults = npmPackageParserModule.npmPackageParser(nodeMock, appConfigMock);
+      const parsedResults = npmPackageParserModule.npmPackageParser(name, version, appConfigMock);
       Promise.resolve(parsedResults)
         .then(results => {
           results.forEach((result, index) => {
-            assert.equal(result.package.name, 'bootstrap', "Expected packageName");
-            assert.equal(result.package.version, 'twbs/bootstrap#v10.2.3-alpha', "Expected packageName");
-            assert.equal(result.package.meta.category, githubTaggedCommitsMock[index], `Expected meta.category ${result.package.meta.category} == ${githubTaggedCommitsMock[index]}`);
-            assert.equal(result.package.meta.type, 'github', "Expected meta.type");
-            assert.equal(result.package.meta.remoteUrl, `https://github.com/${result.package.meta.userRepo}/commit/${result.package.meta.commitish}`, "Expected meta.remoteUrl");
-            assert.equal(result.package.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");
-            assert.equal(result.package.meta.commitish, 'v10.2.3-alpha', "Expected meta.commitish");
-            assert.ok(!!result.package.customGenerateVersion, "Expected package.customGenerateVersion");
+            assert.equal(result.name, 'bootstrap', "Expected packageName");
+            assert.equal(result.version, 'twbs/bootstrap#v10.2.3-alpha', "Expected packageName");
+            assert.equal(result.meta.category, githubTaggedCommitsMock[index], `Expected meta.category ${result.meta.category} == ${githubTaggedCommitsMock[index]}`);
+            assert.equal(result.meta.type, 'github', "Expected meta.type");
+            assert.equal(result.meta.remoteUrl, `https://github.com/${result.meta.userRepo}/commit/${result.meta.commitish}`, "Expected meta.remoteUrl");
+            assert.equal(result.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");
+            assert.equal(result.meta.commitish, 'v10.2.3-alpha', "Expected meta.commitish");
+            assert.ok(!!result.customGenerateVersion, "Expected package.customGenerateVersion");
           });
           done();
         })

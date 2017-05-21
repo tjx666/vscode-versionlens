@@ -48,17 +48,35 @@ export function extractDependencyNodes(rootNode, filterList, collector = []) {
 
 export function parseDependencyNodes(dependencyNodes, appConfig, customPackageParser = null) {
   const collector = [];
-  for (let i = 0; i < dependencyNodes.length; i++) {
-    const node = dependencyNodes[i];
 
-    const parsedResult;
-    if (customPackageParser)
-      parsedResult = customPackageParser(node, appConfig);
-    else
-      parsedResult = { node };
+  dependencyNodes.forEach(
+    function (node) {
+      let result = null;
+      if (customPackageParser) {
+        const { name, value } = node;
+        result = customPackageParser(name, value, appConfig);
 
-    collector.push(Promise.resolve(parsedResult));
-  }
+        // ensure the result is a promise
+        result = Promise.resolve(result)
+          .then(function (packageOrPackages) {
+            if (Array.isArray(packageOrPackages) === false)
+              return [{ node, package: packageOrPackages }];
+
+            return packageOrPackages.map(
+              pkg => {
+                return { node, package: pkg }
+              }
+            );
+          });
+      }
+
+      if (!result)
+        result = Promise.resolve({ node });
+
+      collector.push(result);
+    }
+  );
+
   return collector;
 }
 

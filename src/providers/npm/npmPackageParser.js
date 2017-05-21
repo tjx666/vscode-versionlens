@@ -22,19 +22,16 @@ import {
 
 const semver = require('semver');
 
-export function npmPackageParser(node, appConfig) {
-  const { name, value: requestedVersion } = node;
-
+export function npmPackageParser(name, requestedVersion, appConfig) {
   return parseNpmVersion(name, requestedVersion)
     .then(npmVersionInfo => {
       // check if we have a directory
       if (npmVersionInfo.type === 'directory')
-        return parseFileVersion(node, name, requestedVersion);
+        return parseFileVersion(name, requestedVersion);
 
       // check if we have a github version
       if (npmVersionInfo.type === 'git' && npmVersionInfo.hosted.type === 'github') {
         return parseGithubVersion(
-          node,
           name,
           npmVersionInfo.hosted.path({ noCommittish: false }),
           appConfig.githubTaggedCommits,
@@ -42,15 +39,15 @@ export function npmPackageParser(node, appConfig) {
         );
       } else if (npmVersionInfo.type === 'git') {
         // TODO: implement raw git url support
-        return [{
-          node,
-          package: PackageFactory.createPackageNotSupported(name, requestedVersion, 'npm')
-        }];
+        return PackageFactory.createPackageNotSupported(
+          name,
+          requestedVersion,
+          'npm'
+        );
       }
 
       // must be a registry version
       return parseNpmRegistryVersion(
-        node,
         name,
         requestedVersion,
         appConfig
@@ -59,31 +56,34 @@ export function npmPackageParser(node, appConfig) {
     })
     .catch(error => {
       if (error.code === 'EUNSUPPORTEDPROTOCOL') {
-        return [{
-          node,
-          package: PackageFactory.createPackageNotSupported(name, requestedVersion, 'npm')
-        }];
+        return PackageFactory.createPackageNotSupported(
+          name,
+          requestedVersion,
+          'npm'
+        );
       }
 
       if (error.code === 'E404') {
-        return [{
-          node,
-          package: PackageFactory.createPackageNotFound(name, requestedVersion, 'npm')
-        }];
+        return PackageFactory.createPackageNotFound(
+          name,
+          requestedVersion,
+          'npm'
+        );
       }
 
       if (error.code === 'EINVALIDTAGNAME' || error.message.includes('Invalid comparator:')) {
-        return [{
-          node,
-          package: PackageFactory.createInvalidVersion(name, requestedVersion, 'npm')
-        }];
+        return PackageFactory.createInvalidVersion(
+          name,
+          requestedVersion,
+          'npm'
+        );
       }
 
       throw new Error("NPM: parseNpmVersion " + error);
     });
 }
 
-export function parseNpmRegistryVersion(node, name, requestedVersion, appConfig, customGenerateVersion = null) {
+export function parseNpmRegistryVersion(name, requestedVersion, appConfig, customGenerateVersion = null) {
   // get the matched version
   const viewVersionArg = `${name}@${requestedVersion}`;
 
@@ -134,47 +134,42 @@ export function parseNpmRegistryVersion(node, name, requestedVersion, appConfig,
           return filteredTags
             .map((tag, index) => {
               // generate the package data for each tag
-              const packageInfo = {
+              const meta = {
                 type: 'npm',
                 tag
               };
 
-              return {
-                node,
-                package: PackageFactory.createPackage(
-                  name,
-                  requestedVersion,
-                  packageInfo,
-                  customGenerateVersion
-                )
-              };
+              return PackageFactory.createPackage(
+                name,
+                requestedVersion,
+                meta,
+                customGenerateVersion
+              );
             });
         });
     });
 }
 
-export function parseFileVersion(node, name, version) {
+export function parseFileVersion(name, version) {
   const fileRegExpResult = fileDependencyRegex.exec(version);
   if (!fileRegExpResult)
     return;
 
-  const packageInfo = {
+  const meta = {
     type: "file",
     remoteUrl: `${fileRegExpResult[1]}`
   };
 
-  return [{
-    node,
-    package: PackageFactory.createPackage(
-      name,
-      version,
-      packageInfo,
-      customNpmGenerateVersion
-    )
-  }];
+  return PackageFactory.createPackage(
+    name,
+    version,
+    meta,
+    null
+  );
+
 }
 
-export function parseGithubVersion(node, name, version, githubTaggedVersions, customGenerateVersion) {
+export function parseGithubVersion(name, version, githubTaggedVersions, customGenerateVersion) {
   const gitHubRegExpResult = gitHubDependencyRegex.exec(version.replace('github:', ''));
   if (!gitHubRegExpResult)
     return;
@@ -209,15 +204,12 @@ export function parseGithubVersion(node, name, version, githubTaggedVersions, cu
       }
     };
 
-    const parseResult = {
-      node,
-      package: PackageFactory.createPackage(
-        name,
-        version,
-        meta,
-        customGenerateVersion
-      )
-    };
+    const parseResult = PackageFactory.createPackage(
+      name,
+      version,
+      meta,
+      customGenerateVersion
+    );
 
     return parseResult;
   });
