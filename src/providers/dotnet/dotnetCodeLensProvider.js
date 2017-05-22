@@ -7,13 +7,9 @@ import appSettings from '../../common/appSettings';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { appConfig } from '../../common/appConfiguration';
 import { parseDependencyNodes } from '../../common/dependencyParser';
-import { extractDependencyNodes } from './dotnetDependencyParser';
+import { findNodesInXmlContent } from './dotnetDependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import { dotnetPackageParser } from './dotnetPackageParser.js';
-import { clearDecorations } from '../../editor/decorations';
-
-const xmldoc = require('xmldoc');
-const { Range } = require('vscode');
 
 export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -29,10 +25,8 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
     if (appSettings.showVersionLenses === false)
       return;
 
-    const xmlDocument = new xmldoc.XmlDocument(document.getText());
-
-    const dependencyNodes = extractDependencyNodes(
-      xmlDocument,
+    const dependencyNodes = findNodesInXmlContent(
+      document.getText(),
       document,
       appConfig.dotnetCSProjDependencyProperties
     );

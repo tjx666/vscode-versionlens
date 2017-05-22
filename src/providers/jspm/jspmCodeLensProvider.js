@@ -7,13 +7,12 @@ import { appConfig } from '../../common/appConfiguration';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
 import { clearDecorations } from '../../editor/decorations';
-import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
+import { parseDependencyNodes } from '../../common/dependencyParser';
 import { NpmCodeLensProvider } from '../npm/npmCodeLensProvider';
-import { getJspmRootNode } from './jspmDependencyParser';
+import { findNodesInJsonContent } from './jspmDependencyParser';
 import { jspmPackageParser } from './jspmPackageParser';
 
 const path = require('path');
-const jsonParser = require('vscode-contrib-jsonc');
 
 export class JspmCodeLensProvider extends NpmCodeLensProvider {
 
@@ -23,16 +22,8 @@ export class JspmCodeLensProvider extends NpmCodeLensProvider {
 
     this._documentPath = path.dirname(document.uri.fsPath);
 
-    const jsonDoc = jsonParser.parse(document.getText());
-    if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
-      return [];
-
-    const jspmRootNode = getJspmRootNode(jsonDoc.root);
-    if (jspmRootNode === null)
-      return;
-
-    const dependencyNodes = extractDependencyNodes(
-      jspmRootNode,
+    const dependencyNodes = findNodesInJsonContent(
+      document.getText(),
       appConfig.npmDependencyProperties
     );
 

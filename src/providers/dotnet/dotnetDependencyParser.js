@@ -2,16 +2,31 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+const xmldoc = require('xmldoc');
 const { Position, Range } = require('vscode');
 
-export function extractDependencyNodes(rootNode, document, filterList) {
+export function findNodesInXmlContent(xmlContent, document, filterProperties) {
+  const rootNode = new xmldoc.XmlDocument(document.getText());
+  if (!rootNode)
+    return [];
+
+  const dependencyNodes = extractDependencyNodes(
+    rootNode,
+    document,
+    filterProperties
+  );
+
+  return dependencyNodes;
+}
+
+export function extractDependencyNodes(rootNode, document, filterProperties) {
   const collector = [];
   rootNode.eachChild(group => {
     if (group.name !== 'ItemGroup')
       return;
 
     group.eachChild(childNode => {
-      if (!filterList.includes(childNode.name))
+      if (!filterProperties.includes(childNode.name))
         return;
 
       const includeRange = {

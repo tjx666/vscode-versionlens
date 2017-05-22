@@ -65,7 +65,8 @@ describe("BowerCodeLensProvider", () => {
       let fixture = fixtureMap.read('package-invalid.json');
 
       let testDocument = {
-        getText: range => fixture.content
+        getText: range => fixture.content,
+        fileName: 'bower.json'
       };
 
       let codeLenses = testProvider.provideCodeLenses(testDocument, null);
@@ -80,7 +81,8 @@ describe("BowerCodeLensProvider", () => {
 
     it("returns empty array when the document text is empty", done => {
       let testDocument = {
-        getText: range => ''
+        getText: range => '',
+        fileName: 'bower.json'
       };
 
       let codeLenses = testProvider.provideCodeLenses(testDocument, null);

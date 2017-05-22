@@ -2,7 +2,27 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { createDependencyNode } from '../../common/dependencyParser';
+import {
+  findRootNode,
+  extractDependencyNodes,
+  createDependencyNode
+} from '../../common/dependencyParser';
+
+export function findNodesInJsonContent(jsonContent, filterProperties) {
+  const rootNode = findRootNode(jsonContent);
+  if (!rootNode)
+    return [];
+
+  const dependencyNodes = extractDependencyNodes(
+    rootNode,
+    filterProperties
+  );
+
+  const subObjectNodes = extractSubPackageDependencyNodes(rootNode);
+  dependencyNodes.push(...subObjectNodes)
+
+  return dependencyNodes;
+}
 
 export function extractSubPackageDependencyNodes(rootNode) {
   const collector = [];

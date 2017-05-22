@@ -6,24 +6,19 @@ import { PackageCodeLens } from '../../common/packageCodeLens';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { appConfig } from '../../common/appConfiguration';
 import * as CommandFactory from '../commandFactory';
-import {
-  extractDependencyNodes,
-  parseDependencyNodes
-} from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
+import { formatWithExistingLeading } from '../../common/utils';
+import { dubGetPackageLatest, readDubSelections } from './dubAPI';
+import { findNodesInJsonContent } from './dubDependencyParser';
+import { parseDependencyNodes } from '../../common/dependencyParser';
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
   renderOutdatedDecoration,
   clearDecorations
 } from '../../editor/decorations';
-import { formatWithExistingLeading } from '../../common/utils';
-import { dubGetPackageLatest, readDubSelections } from './dubAPI';
-import { extractSubPackageDependencyNodes } from './dubDependencyParser';
 
-const jsonParser = require('vscode-contrib-jsonc');
-const httpRequest = require('request-light');
 const path = require('path');
 
 export class DubCodeLensProvider extends AbstractCodeLensProvider {
@@ -45,22 +40,18 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
 
     this._documentPath = path.dirname(document.uri.fsPath);
 
-    const jsonDoc = jsonParser.parse(document.getText());
-    if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
-      return [];
-
-    const dependencyNodes = extractDependencyNodes(
-      jsonDoc.root,
+    const dependencyNodes = findNodesInJsonContent(
+      document.getText(),
       appConfig.dubDependencyProperties
     );
-
-    const subObjectNodes = extractSubPackageDependencyNodes(jsonDoc.root);
-    dependencyNodes.push(...subObjectNodes)
 
     const packageCollection = parseDependencyNodes(
       dependencyNodes,
       appConfig
     );
+
+    if (packageCollection.length === 0)
+      return [];
 
     appSettings.inProgress = true;
     return this.updateOutdated()

@@ -92,61 +92,14 @@ export function parseNpmRegistryVersion(name, requestedVersion, appConfig, custo
       if (requestedVersion === 'latest')
         requestedVersion = maxSatisfyingVersion;
 
-      return npmViewDistTags(name)
-        .then(distTags => {
-          const latestEntry = distTags[0];
+      return parseNpmDistTags(
+        name,
+        requestedVersion,
+        maxSatisfyingVersion,
+        appConfig,
+        customGenerateVersion
+      );
 
-          // map the versions
-          const versionMap = {
-            releases: [latestEntry.version],
-            taggedVersions: distTags,
-            maxSatisfyingVersion
-          }
-
-          // build tags
-          const extractedTags = buildTagsFromVersionMap(versionMap, requestedVersion);
-
-          // grab the satisfiesEntry
-          const satisfiesEntry = extractedTags[0];
-
-          let filteredTags = extractedTags;
-          if (appSettings.showTaggedVersions === false)
-            // only show 'satisfies' and 'latest' entries when showTaggedVersions is false
-            filteredTags = [
-              satisfiesEntry,
-              ...(satisfiesEntry.isLatestVersion ? [] : extractedTags[1])
-            ];
-          else if (appConfig.npmDistTagFilter.length > 0)
-            // filter the tags using npm app config filter
-            filteredTags = filterTagsByName(
-              extractedTags,
-              [
-                // ensure we have a 'satisfies' entry
-                'satisfies',
-                // conditionally provide the latest entry
-                ...(satisfiesEntry.isLatestVersion ? [] : 'latest'),
-                // all other user tag name filters
-                appConfig.npmDistTagFilter
-              ]
-            );
-
-          // map the tags to packages
-          return filteredTags
-            .map((tag, index) => {
-              // generate the package data for each tag
-              const meta = {
-                type: 'npm',
-                tag
-              };
-
-              return PackageFactory.createPackage(
-                name,
-                requestedVersion,
-                meta,
-                customGenerateVersion
-              );
-            });
-        });
     });
 }
 
@@ -227,4 +180,64 @@ export function customNpmGenerateVersion(packageInfo, newVersion) {
   // preserve the leading symbol from the existing version
   const preservedLeadingVersion = formatWithExistingLeading(existingVersion, newVersion)
   return `${packageInfo.meta.userRepo}#${preservedLeadingVersion}`
+}
+
+export function parseNpmDistTags(name, requestedVersion, maxSatisfyingVersion, appConfig, customGenerateVersion = null) {
+
+  return npmViewDistTags(name)
+    .then(distTags => {
+      const latestEntry = distTags[0];
+
+      // map the versions
+      const versionMap = {
+        releases: [latestEntry.version],
+        taggedVersions: distTags,
+        maxSatisfyingVersion
+      }
+
+      // build tags
+      const extractedTags = buildTagsFromVersionMap(versionMap, requestedVersion);
+
+      // grab the satisfiesEntry
+      const satisfiesEntry = extractedTags[0];
+
+      let filteredTags = extractedTags;
+      if (appSettings.showTaggedVersions === false)
+        // only show 'satisfies' and 'latest' entries when showTaggedVersions is false
+        filteredTags = [
+          satisfiesEntry,
+          ...(satisfiesEntry.isLatestVersion ? [] : extractedTags[1])
+        ];
+      else if (appConfig.npmDistTagFilter.length > 0)
+        // filter the tags using npm app config filter
+        filteredTags = filterTagsByName(
+          extractedTags,
+          [
+            // ensure we have a 'satisfies' entry
+            'satisfies',
+            // conditionally provide the latest entry
+            ...(satisfiesEntry.isLatestVersion ? [] : 'latest'),
+            // all other user tag name filters
+            appConfig.npmDistTagFilter
+          ]
+        );
+
+      // map the tags to packages
+      return filteredTags
+        .map((tag, index) => {
+          // generate the package data for each tag
+          const meta = {
+            type: 'npm',
+            tag
+          };
+
+          return PackageFactory.createPackage(
+            name,
+            requestedVersion,
+            meta,
+            customGenerateVersion
+          );
+        });
+    });
+
 }

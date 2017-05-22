@@ -2,19 +2,14 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { PackageCodeLens } from '../../common/packageCodeLens';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { appConfig } from '../../common/appConfiguration';
 import * as CommandFactory from '../commandFactory';
-import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
-import { clearDecorations } from '../../editor/decorations';
 import { bowerGetPackageInfo } from './bowerAPI';
 import { bowerPackageParser } from './bowerPackageParser';
-
-const bower = require('bower');
-const jsonParser = require('vscode-contrib-jsonc');
+import { findNodesInJsonContent, parseDependencyNodes } from '../../common/dependencyParser';
 
 export class BowerCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -30,12 +25,8 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
     if (appSettings.showVersionLenses === false)
       return;
 
-    const jsonDoc = jsonParser.parse(document.getText());
-    if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
-      return [];
-
-    const dependencyNodes = extractDependencyNodes(
-      jsonDoc.root,
+    const dependencyNodes = findNodesInJsonContent(
+      document.getText(),
       appConfig.bowerDependencyProperties
     );
 

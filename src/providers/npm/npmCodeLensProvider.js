@@ -7,9 +7,9 @@ import { npmPackageParser } from './npmPackageParser';
 import { appConfig } from '../../common/appConfiguration';
 import * as CommandFactory from '../commandFactory';
 import { npmGetOutdated, npmPackageDirExists } from './npmAPI';
-import { extractDependencyNodes, parseDependencyNodes } from '../../common/dependencyParser';
 import { generateCodeLenses } from '../../common/codeLensGeneration';
 import appSettings from '../../common/appSettings';
+import { findNodesInJsonContent, parseDependencyNodes } from '../../common/dependencyParser';
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
@@ -19,7 +19,6 @@ import {
 } from '../../editor/decorations';
 
 const { window } = require('vscode');
-const jsonParser = require('vscode-contrib-jsonc');
 const path = require('path');
 
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
@@ -41,12 +40,8 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
     this._documentPath = path.dirname(document.uri.fsPath);
 
-    const jsonDoc = jsonParser.parse(document.getText());
-    if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
-      return [];
-
-    const dependencyNodes = extractDependencyNodes(
-      jsonDoc.root,
+    const dependencyNodes = findNodesInJsonContent(
+      document.getText(),
       appConfig.npmDependencyProperties
     );
 
@@ -56,11 +51,14 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       npmPackageParser
     );
 
+    if (packageCollection.length === 0)
+      return [];
+
     appSettings.inProgress = true;
     return this.updateOutdated()
       .then(_ => {
         appSettings.inProgress = false;
-        return generateCodeLenses(packageCollection, document)
+        return generateCodeLenses(packageCollection, document);
       })
       .catch(err => {
         appSettings.inProgress = false;

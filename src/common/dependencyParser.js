@@ -2,6 +2,8 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+const jsonParser = require('vscode-contrib-jsonc');
+
 function collectChildDependencyNodes(nodes, collector) {
   nodes.forEach(node => {
     const replaceInfo = {
@@ -30,6 +32,27 @@ function extractChildReplaceRange(childNodes) {
       };
     }
   }
+}
+
+export function findNodesInJsonContent(jsonContent, filterProperties) {
+  const rootNode = findRootNode(jsonContent);
+  if (!rootNode)
+    return [];
+
+  const dependencyNodes = extractDependencyNodes(
+    rootNode,
+    filterProperties
+  );
+
+  return dependencyNodes;
+}
+
+export function findRootNode(jsonContent) {
+  const jsonDoc = jsonParser.parse(jsonContent);
+  if (!jsonDoc || !jsonDoc.root || jsonDoc.validationResult.errors.length > 0)
+    return null;
+
+  return jsonDoc.root;
 }
 
 export function extractDependencyNodes(rootNode, filterList, collector = []) {
