@@ -2,13 +2,13 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as CommandFactory from '../commandFactory';
-import appSettings from '../../common/appSettings';
+import * as CommandFactory from 'commands/commandFactory';
+import appSettings from 'common/appSettings';
+import appContrib from 'common/appContrib';
+import { parseDependencyNodes } from 'common/dependencyParser';
+import { generateCodeLenses } from 'common/codeLensGeneration';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
-import { appConfig } from '../../common/appConfiguration';
-import { parseDependencyNodes } from '../../common/dependencyParser';
 import { findNodesInXmlContent } from './dotnetDependencyParser';
-import { generateCodeLenses } from '../../common/codeLensGeneration';
 import { dotnetPackageParser } from './dotnetPackageParser.js';
 
 export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
@@ -28,12 +28,12 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
     const dependencyNodes = findNodesInXmlContent(
       document.getText(),
       document,
-      appConfig.dotnetCSProjDependencyProperties
+      appContrib.dotnetCSProjDependencyProperties
     );
 
     const packageCollection = parseDependencyNodes(
       dependencyNodes,
-      appConfig,
+      appContrib,
       dotnetPackageParser
     );
 

@@ -2,8 +2,8 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import appSettings from '../common/appSettings';
-import * as utils from '../common/utils';
+import appSettings from 'common/appSettings';
+import * as utils from 'common/utils';
 import { clearDecorations } from '../editor/decorations';
 
 const { workspace, TextEdit, WorkspaceEdit } = require('vscode');

@@ -2,28 +2,29 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as assert from 'assert';
-import { parseDependencyNodes } from '../../../src/common/dependencyParser';
+import { parseDependencyNodes } from 'common/dependencyParser';
 
-describe('DependencyParser', () => {
+const assert = require('assert');
 
-  describe('parseDependencyNodes', () => {
+export const DependencyParserTests = {
 
-    it('passes arguments to customVersionParser when specified', done => {
+  'parseDependencyNodes': {
+
+    'passes arguments to customVersionParser when specified': done => {
       const dependencyNodes = [{
         name: 'test',
         value: '1.2.3'
       }];
-      const appConfig = {};
+      const appContrib = {};
       let funcCalled = false;
 
       const promiseCollection = parseDependencyNodes(
-        dependencyNodes, appConfig,
+        dependencyNodes, appContrib,
         (testName, testVersion, testConfig) => {
           funcCalled = true;
           assert.ok(testName === dependencyNodes[0].name, 'customVersionParser: testName does not match');
           assert.ok(testVersion === dependencyNodes[0].value, 'customVersionParser: testVersion does not match');
-          assert.ok(testConfig === appConfig, 'customVersionParser: appConfig does not match');
+          assert.ok(testConfig === appContrib, 'customVersionParser: appContrib does not match');
           return Promise.resolve({
             name: testName,
             version: testVersion
@@ -41,14 +42,14 @@ describe('DependencyParser', () => {
         })
         .catch(console.error.bind(console));
 
-    });
+    },
 
-    it('returns a collection of nodes wrapped in promises when no customVersionParser is specified', done => {
+    'returns a collection of nodes wrapped in promises when no customVersionParser is specified': done => {
       const dependencyNodes = [{}, {}, {}];
-      const appConfig = {};
+      const appContrib = {};
       const promiseCollection = parseDependencyNodes(
         dependencyNodes,
-        appConfig
+        appContrib
       );
 
       Promise.all(promiseCollection)
@@ -59,8 +60,8 @@ describe('DependencyParser', () => {
           done();
         })
         .catch(console.error.bind(console));
-    });
+    }
 
-  });
+  }
 
-});
+}

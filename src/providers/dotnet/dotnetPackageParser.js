@@ -2,19 +2,19 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import appSettings from '../../common/appSettings';
 import { nugetGetPackageVersions, convertNugetToNodeRange } from './nugetAPI.js';
+import appSettings from 'common/appSettings';
+import * as PackageFactory from 'common/packageGeneration';
 import {
   isOlderVersion,
   filterTagsByName,
   buildTagsFromVersionMap,
   buildMapFromVersionList
-} from '../../common/versionUtils';
-import * as PackageFactory from '../../common/packageGeneration';
+} from 'common/versionUtils';
 
 const semver = require('semver');
 
-export function dotnetPackageParser(name, requestedVersion, appConfig) {
+export function dotnetPackageParser(name, requestedVersion, appContrib) {
   // convert a nuget range to node semver range
   const nodeRequestedRange = requestedVersion && convertNugetToNodeRange(requestedVersion)
 
@@ -43,7 +43,7 @@ export function dotnetPackageParser(name, requestedVersion, appConfig) {
           satisfiesEntry,
           ...(satisfiesEntry.isLatestVersion ? [] : extractedTags[1])
         ];
-      else if (appConfig.dotnetTagFilter.length > 0)
+      else if (appContrib.dotnetTagFilter.length > 0)
         // filter the tags using dotnet app config filter
         filteredTags = filterTagsByName(
           extractedTags,
@@ -53,7 +53,7 @@ export function dotnetPackageParser(name, requestedVersion, appConfig) {
             // conditionally provide the latest entry
             ...(satisfiesEntry.isLatestVersion ? [] : 'latest'),
             // all other user tag name filters
-            appConfig.dotnetTagFilter
+            appContrib.dotnetTagFilter
           ]
         );
 

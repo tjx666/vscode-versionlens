@@ -2,12 +2,11 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { PackageCodeLens } from '../../common/packageCodeLens';
-import { appConfig } from '../../common/appConfiguration';
-import { generateCodeLenses } from '../../common/codeLensGeneration';
-import appSettings from '../../common/appSettings';
-import { clearDecorations } from '../../editor/decorations';
-import { parseDependencyNodes } from '../../common/dependencyParser';
+import appSettings from 'common/appSettings';
+import { PackageCodeLens } from 'common/packageCodeLens';
+import appContrib from 'common/appContrib';
+import { generateCodeLenses } from 'common/codeLensGeneration';
+import { parseDependencyNodes } from 'common/dependencyParser';
 import { NpmCodeLensProvider } from '../npm/npmCodeLensProvider';
 import { findNodesInJsonContent } from './jspmDependencyParser';
 import { jspmPackageParser } from './jspmPackageParser';
@@ -24,12 +23,12 @@ export class JspmCodeLensProvider extends NpmCodeLensProvider {
 
     const dependencyNodes = findNodesInJsonContent(
       document.getText(),
-      appConfig.npmDependencyProperties
+      appContrib.npmDependencyProperties
     );
 
     const packageCollection = parseDependencyNodes(
       dependencyNodes,
-      appConfig,
+      appContrib,
       jspmPackageParser
     );
 

@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "system",
+    "moduleResolution": "node",
+    "outFile": "../out/test/index.js",
+    "lib": [
+      "ES2017"
+    ],
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "commands/*": [
+        "../src/commands/*"
+      ],
+      "common/*": [
+        "../src/common/*"
+      ],
+      "providers/*": [
+        "../src/providers/*"
+      ],
+      "test/unit/*": [
+        "unit/*"
+      ]
+    }
+  },
+  "files": [
+    "loader.js",
+    "unit/extension.test.js"
+  ]
+}

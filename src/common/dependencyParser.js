@@ -69,7 +69,7 @@ export function extractDependencyNodes(rootNode, filterList, collector = []) {
   return collector;
 }
 
-export function parseDependencyNodes(dependencyNodes, appConfig, customPackageParser = null) {
+export function parseDependencyNodes(dependencyNodes, appContrib, customPackageParser = null) {
   const collector = [];
 
   dependencyNodes.forEach(
@@ -77,7 +77,7 @@ export function parseDependencyNodes(dependencyNodes, appConfig, customPackagePa
       let result = null;
       if (customPackageParser) {
         const { name, value } = node;
-        result = customPackageParser(name, value, appConfig);
+        result = customPackageParser(name, value, appContrib);
 
         // ensure the result is a promise
         result = Promise.resolve(result)

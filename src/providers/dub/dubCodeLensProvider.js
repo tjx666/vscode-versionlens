@@ -2,16 +2,17 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { PackageCodeLens } from '../../common/packageCodeLens';
+import * as CommandFactory from 'commands/commandFactory';
+import { PackageCodeLens } from 'common/packageCodeLens';
+import appContrib from 'common/appContrib';
+import { generateCodeLenses } from 'common/codeLensGeneration';
+import appSettings from 'common/appSettings';
+import { formatWithExistingLeading } from 'common/utils';
+import { parseDependencyNodes } from 'common/dependencyParser';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
-import { appConfig } from '../../common/appConfiguration';
-import * as CommandFactory from '../commandFactory';
-import { generateCodeLenses } from '../../common/codeLensGeneration';
-import appSettings from '../../common/appSettings';
-import { formatWithExistingLeading } from '../../common/utils';
 import { dubGetPackageLatest, readDubSelections } from './dubAPI';
 import { findNodesInJsonContent } from './dubDependencyParser';
-import { parseDependencyNodes } from '../../common/dependencyParser';
+
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
@@ -42,12 +43,12 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
 
     const dependencyNodes = findNodesInJsonContent(
       document.getText(),
-      appConfig.dubDependencyProperties
+      appContrib.dubDependencyProperties
     );
 
     const packageCollection = parseDependencyNodes(
       dependencyNodes,
-      appConfig
+      appContrib
     );
 
     if (packageCollection.length === 0)

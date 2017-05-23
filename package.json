@@ -30,24 +30,26 @@
     "onLanguage:json",
     "onLanguage:xml"
   ],
-  "main": "./out/src/extension.js",
+  "main": "./out/extension-bundle.js",
   "scripts": {
     "teardown": "npm run -s clean && rimraf ./node_modules",
     "vscode:prepublish": "npm run -s compile",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "clean": "rimraf ./out",
-    "compile": "npm run -s clean && tsc --outDir ./out --sourceMap",
+    "clean": "rimraf ./out ./test/out",
+    "compile": "npm run -s clean && tsc -p ./src/bundle.json",
+    "compile-test": "npm run -s clean && tsc -p ./test/bundle.test.json",
     "test": "node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
     "typescript": "2.3.2",
     "vscode": "1.1.0",
     "rimraf": "2.6.1",
-    "proxyquire": "1.7.11",
+    "mock-require": "2.0.2",
     "@types/node": "~6.0.73"
   },
   "dependencies": {
+    "systemjs": "0.20.12",
     "bower": "1.8.0",
     "npm": "4.6.1",
     "npm-package-arg": "5.0.1",

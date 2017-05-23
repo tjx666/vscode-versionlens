@@ -12,7 +12,7 @@
       ],
       "stopOnEntry": false,
       "sourceMaps": true,
-      "outDir": "${workspaceRoot}/out/src",
+      "outDir": "${workspaceRoot}/out",
       "preLaunchTask": "compile"
     },
     {
@@ -27,7 +27,7 @@
       "stopOnEntry": false,
       "sourceMaps": true,
       "outDir": "${workspaceRoot}/out/test",
-      "preLaunchTask": "compile"
+      "preLaunchTask": "compile-test"
     }
   ]
 }

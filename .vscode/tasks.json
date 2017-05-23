@@ -27,6 +27,13 @@
       ]
     },
     {
+      "taskName": "compile-test",
+      "isBuildCommand": true,
+      "args": [
+        "compile-test"
+      ]
+    },
+    {
       "taskName": "test",
       "isTestCommand": true,
       "args": [

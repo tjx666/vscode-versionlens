@@ -2,96 +2,98 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as assert from 'assert';
 import {
   assertInstanceOf,
   assertTypeOf,
   assertDefined,
   assertEmpty
-} from '../../../src/common/typeAssertion';
+} from 'common/typeAssertion';
 
-describe('TypeAssertion', () => {
+const assert = require('assert');
 
-  describe('assertInstanceOf', () => {
+export const TypeAssertionTests = {
 
-    it('throws an error when instanceof is false', () => {
+  "assertInstanceOf": {
+
+    "throws an error when instanceof is false": () => {
       let testThrowFn = () => {
-        assertInstanceOf([], String, 'Array is not an instanceof String');
+        assertInstanceOf([], String, "Array is not an instanceof String");
       };
-      assert.throws(testThrowFn, 'Array is not an instanceof String');
-    });
+      assert.throws(testThrowFn, "Array is not an instanceof String");
+    },
 
-    it('does not throw an error when instanceof is true', () => {
+    "does not throw an error when instanceof is true": () => {
       let testThrowFn = () => {
-        assertInstanceOf([], Array, 'Array is an instanceof Array');
+        assertInstanceOf([], Array, "Array is an instanceof Array");
       };
-      assert.doesNotThrow(testThrowFn, 'Array is an instanceof Array');
-    });
+      assert.doesNotThrow(testThrowFn, "Array is an instanceof Array");
+    }
 
-  });
+  },
 
-  describe('assertTypeOf', () => {
+  "assertTypeOf": {
 
-    it('throws an error when assertTypeOf is false', () => {
+    "throws an error when assertTypeOf is false": () => {
       let testThrowFn = () => {
-        assertTypeOf('', 'object', 'String is not an typeof object');
+        assertTypeOf("", "object", "String is not an typeof object");
       };
-      assert.throws(testThrowFn, 'String is not an typeof object');
-    });
+      assert.throws(testThrowFn, "String is not an typeof object");
+    },
 
-    it('does not throw an error when assertTypeOf is true', () => {
+    "does not throw an error when assertTypeOf is true": () => {
       let testThrowFn = () => {
-        assertTypeOf('', 'string', 'String is a typeof string');
+        assertTypeOf("", "string", "String is a typeof string");
       };
-      assert.doesNotThrow(testThrowFn, ReferenceError, 'String is a typeof string');
-    });
+      assert.doesNotThrow(testThrowFn, ReferenceError, "String is a typeof string");
+    }
 
-  });
+  },
 
-  describe('assertDefined', () => {
+  "assertDefined": {
 
-    it('throws an error when assertDefined is false', () => {
+    "throws an error when assertDefined is false": () => {
       let testThrowFn = () => {
-        assertDefined(undefined, 'parameter is undefined');
+        assertDefined(undefined, "parameter is undefined");
       };
-      assert.throws(testThrowFn, 'parameter is undefined');
-    });
+      assert.throws(testThrowFn, "parameter is undefined");
+    }
 
-    it('does not throw an error when assertDefined is true', () => {
+  },
+
+  "does not throw an error when assertDefined is true": () => {
+    let testThrowFn = () => {
+      assertDefined("", "parameter is defined");
+    };
+    assert.doesNotThrow(testThrowFn, ReferenceError, "parameter is defined");
+  },
+
+
+  "assertEmpty": {
+
+    "throws an error when assertEmpty is false": () => {
       let testThrowFn = () => {
-        assertDefined('', 'parameter is defined');
+        assertEmpty("", "string is empty");
       };
-      assert.doesNotThrow(testThrowFn, ReferenceError, 'parameter is defined');
-    });
-
-  });
-
-  describe('assertEmpty', () => {
-
-    it('throws an error when assertEmpty is false', () => {
-      let testThrowFn = () => {
-        assertEmpty('', 'string is empty');
-      };
-      assert.throws(testThrowFn, 'string is empty');
+      assert.throws(testThrowFn, "string is empty");
 
       testThrowFn = () => {
-        assertEmpty([], 'array is empty');
+        assertEmpty([], "array is empty");
       };
-      assert.throws(testThrowFn, 'array is empty');
-    });
+      assert.throws(testThrowFn, "array is empty");
+    },
 
-    it('does not throw an error when assertEmpty is true', () => {
+    "does not throw an error when assertEmpty is true": () => {
       let testThrowFn = () => {
-        assertEmpty('1', 'string is empty');
+        assertEmpty("1", "string is empty");
       };
-      assert.doesNotThrow(testThrowFn, 'string is empty');
+      assert.doesNotThrow(testThrowFn, "string is empty");
 
       testThrowFn = () => {
-        assertEmpty([1], 'array is empty');
+        assertEmpty([1], "array is empty");
       };
-      assert.doesNotThrow(testThrowFn, 'array is empty');
-    });
+      assert.doesNotThrow(testThrowFn, "array is empty");
+    }
 
-  });
+  }
 
-});
+};

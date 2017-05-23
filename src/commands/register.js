@@ -1,4 +1,4 @@
-import appSettings from '../common/appSettings';
+import appSettings from 'common/appSettings';
 import * as CustomCommands from './commands';
 
 const { commands } = require('vscode');

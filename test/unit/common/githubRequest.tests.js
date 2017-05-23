@@ -2,42 +2,42 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as proxyquire from 'proxyquire';
-import * as assert from 'assert';
-import * as path from 'path';
-import * as httpRequest from 'request-light';
-import { TestFixtureMap } from '../../testUtils';
+import { TestFixtureMap } from 'test/unit/utils';
+import { githubRequest } from 'common/githubRequest';
+import appContribMock from 'common/appContrib';
 
-describe('GithubRequest', () => {
-  const testPath = path.join(__dirname, '../../../..', 'test');
-  const fixturePath = path.join(testPath, 'fixtures');
-  const fixtureMap = new TestFixtureMap(fixturePath);
+const assert = require('assert');
+const mock = require('mock-require');
 
-  let githubAccessTokenMock = null;
-  const httpRequestMock = {};
-  const appConfigMock = {
-    get githubAccessToken() {
-      return githubAccessTokenMock;
-    }
-  };
-  const GithubRequestModule = proxyquire('../../../src/common/githubRequest', {
-    'request-light': httpRequestMock,
-    './appConfiguration': {
-      appConfig: appConfigMock
-    }
-  });
+const requestLightMock = {
+  xhr: _ => { throw new Error("Not implemented") }
+};
 
-  let testGithubRequest;
+mock('request-light', requestLightMock);
 
-  beforeEach(() => {
-    githubAccessTokenMock = null
-    testGithubRequest = GithubRequestModule.githubRequest;
-  });
+const fixtureMap = new TestFixtureMap('./fixtures');
 
-  describe('.httpGet(userRepo, category)', () => {
+export const GithubRequestTests = {
 
-    it('generates the expected url with no query params', done => {
-      httpRequestMock.xhr = options => {
+  beforeAll: () => {
+    this.githubAccessTokenMock = null
+
+    Reflect.defineProperty(
+      appContribMock,
+      "githubAccessToken", {
+        get: () => this.githubAccessTokenMock
+      }
+    )
+  },
+
+  beforeEach: () => {
+    this.githubAccessTokenMock = null
+  },
+
+  "httpGet(userRepo, category)": {
+
+    "generates the expected url with no query params": done => {
+      requestLightMock.xhr = options => {
         assert.equal(options.url, 'https://api.github.com/repos/testRepo/testCategory', "Expected httpRequest.xhr(options.url) but failed.");
         assert.equal(options.type, 'GET');
         assert.equal(options.headers['user-agent'], 'vscode-contrib/vscode-versionlens');
@@ -47,12 +47,15 @@ describe('GithubRequest', () => {
           responseText: null
         })
       };
-      testGithubRequest.httpGet('testRepo', 'testCategory')
-        .catch(console.error.bind(console));
-    });
 
-    it('generates the expected url with access token', done => {
-      httpRequestMock.xhr = options => {
+      githubRequest.httpGet('testRepo', 'testCategory')
+        .catch(console.error.bind(console));
+    },
+
+    "generates the expected url with access token": done => {
+      this.githubAccessTokenMock = 123;
+
+      requestLightMock.xhr = options => {
         assert.equal(options.url, 'https://api.github.com/repos/testRepo/testCategory?access_token=123', "Expected httpRequest.xhr(options.url) but failed.");
         assert.equal(options.type, 'GET');
         assert.equal(options.headers['user-agent'], 'vscode-contrib/vscode-versionlens');
@@ -62,13 +65,15 @@ describe('GithubRequest', () => {
           responseText: null
         })
       };
-      githubAccessTokenMock = 123;
-      testGithubRequest.httpGet('testRepo', 'testCategory')
-        .catch(console.error.bind(console));
-    });
 
-    it('generates the expected url with access token with query params', done => {
-      httpRequestMock.xhr = options => {
+      githubRequest.httpGet('testRepo', 'testCategory')
+        .catch(console.error.bind(console));
+    },
+
+    "generates the expected url with access token with query params": done => {
+      this.githubAccessTokenMock = 2345;
+
+      requestLightMock.xhr = options => {
         assert.equal(options.url, 'https://api.github.com/repos/testRepo/testCategory?page=1&per_page=1&access_token=2345', "Expected httpRequest.xhr(options.url) but failed.");
         assert.equal(options.type, 'GET');
         assert.equal(options.headers['user-agent'], 'vscode-contrib/vscode-versionlens');
@@ -78,22 +83,22 @@ describe('GithubRequest', () => {
           responseText: null
         })
       };
-      githubAccessTokenMock = 2345;
-      testGithubRequest.httpGet('testRepo', 'testCategory', { page: 1, per_page: 1 })
-        .catch(console.error.bind(console));
-    });
 
-    it('caches url response when promise resolves', done => {
-      httpRequestMock.xhr = options => {
+      githubRequest.httpGet('testRepo', 'testCategory', { page: 1, per_page: 1 })
+        .catch(console.error.bind(console));
+    },
+
+    "caches url response when promise resolves": done => {
+      requestLightMock.xhr = options => {
         return Promise.resolve({
           status: 200,
           responseText: '{"message": "cached test"}'
         })
       };
 
-      testGithubRequest.httpGet('testRepo', 'testCategory')
+      githubRequest.httpGet('testRepo', 'testCategory')
         .then(response => {
-          const cachedData = testGithubRequest.cache.get('GET_https://api.github.com/repos/testRepo/testCategory');
+          const cachedData = githubRequest.cache.get('GET_https://api.github.com/repos/testRepo/testCategory');
           assert.equal(
             cachedData.message,
             'cached test',
@@ -102,20 +107,20 @@ describe('GithubRequest', () => {
           done();
         })
         .catch(console.error.bind(console));
-    });
+    },
 
-    it('caches url response when promise is rejected', done => {
-      httpRequestMock.xhr = options => {
+    "caches url response when promise is rejected": done => {
+      requestLightMock.xhr = options => {
         return Promise.reject({
           status: 404,
           responseText: '{"message": "Not Found"}'
         })
       };
 
-      testGithubRequest.httpGet('testRepo', 'testCategory')
+      githubRequest.httpGet('testRepo', 'testCategory')
         .then(console.error.bind(console))
         .catch(response => {
-          const cachedData = testGithubRequest.cache.get('GET_https://api.github.com/repos/testRepo/testCategory');
+          const cachedData = githubRequest.cache.get('GET_https://api.github.com/repos/testRepo/testCategory');
           assert.equal(
             cachedData.message,
             'Not Found',
@@ -123,14 +128,14 @@ describe('GithubRequest', () => {
           );
           done();
         });
-    });
+    }
 
-  });
+  },
 
-  describe('.getLatestCommit(userRepo)', () => {
+  "getLatestCommit(userRepo)": {
 
-    it('generates expected commits url', done => {
-      httpRequestMock.xhr = options => {
+    "generates expected commits url": done => {
+      requestLightMock.xhr = options => {
         assert.equal(options.url, 'https://api.github.com/repos/testRepo/commits?page=1&per_page=1', "Expected httpRequest.xhr(options.url) but failed.");
         done();
         return Promise.resolve({
@@ -139,33 +144,29 @@ describe('GithubRequest', () => {
         })
       };
 
-      testGithubRequest.getLatestCommit('testRepo')
+      githubRequest.getLatestCommit('testRepo')
         .catch(console.error.bind(console));
-    });
+    },
 
-    it('returns a reduced commit object data from result', done => {
-      httpRequestMock.xhr = options => {
+    "returns a reduced commit object data from result": done => {
+      requestLightMock.xhr = options => {
         return Promise.resolve({
           status: 200,
           responseText: fixtureMap.read('common/github-commit.json').content
         })
       };
 
-      testGithubRequest.getLatestCommit('testRepo')
+      githubRequest.getLatestCommit('testRepo')
         .then(entry => {
           assert.equal(entry.category, 'commit', "Expected category to match");
           assert.equal(entry.version, '0913a0b', "Expected sha to match");
           done();
         })
         .catch(console.error.bind(console));
-    });
+    },
 
-  });
-
-  describe('.getLatestTag(userRepo)', () => {
-
-    it('generates expected tags url', done => {
-      httpRequestMock.xhr = options => {
+    "generates expected tags url": done => {
+      requestLightMock.xhr = options => {
         assert.equal(options.url, 'https://api.github.com/repos/testRepo/tags?page=1&per_page=1', "Expected httpRequest.xhr(options.url) but failed.");
         done();
         return Promise.resolve({
@@ -173,19 +174,18 @@ describe('GithubRequest', () => {
           responseText: fixtureMap.read('common/github-tag.json').content
         })
       };
-      testGithubRequest.getCommitBySha = sha => {
+      githubRequest.getCommitBySha = sha => {
         return Promise.resolve({
           category: null,
           version: null
         });
       }
-      testGithubRequest.getLatestTag('testRepo')
+      githubRequest.getLatestTag('testRepo')
         .catch(console.error.bind(console));
-    });
+    },
 
-    it('returns a reduced tag object data from result', done => {
-      let xhrCallCount = 0;
-      httpRequestMock.xhr = options => {
+    "returns a reduced tag object data from result": done => {
+      requestLightMock.xhr = options => {
         let resultPromise;
         if (options.url.includes('tags'))
           resultPromise = Promise.resolve({
@@ -201,21 +201,21 @@ describe('GithubRequest', () => {
         return resultPromise
       };
 
-      testGithubRequest.getLatestTag('testRepo')
+      githubRequest.getLatestTag('testRepo')
         .then(entry => {
           assert.equal(entry.category, 'tag', "Expected category to match");
           assert.equal(entry.version, 'v4.0.0-alpha.5', "Expected tag to match");
           done();
         })
         .catch(console.error.bind(console));
-    });
+    },
 
-  });
+  },
 
-  describe('.getLatestRelease(userRepo)', () => {
+  "getLatestRelease(userRepo)": {
 
-    it('generates the expected url with pagination', done => {
-      httpRequestMock.xhr = options => {
+    "generates the expected url with pagination": done => {
+      requestLightMock.xhr = options => {
         assert.equal(options.url, 'https://api.github.com/repos/testRepo/releases?page=1&per_page=1', "Expected httpRequest.xhr(options.url) but failed.");
         done();
         return Promise.resolve({
@@ -223,44 +223,43 @@ describe('GithubRequest', () => {
           responseText: fixtureMap.read('common/github-release.json').content
         })
       };
-      testGithubRequest.getLatestRelease('testRepo')
+      githubRequest.getLatestRelease('testRepo')
         .catch(console.error.bind(console));
-    });
+    },
 
-    it('returns a reduced release object data from result', done => {
-      let xhrCallCount = 0;
-      httpRequestMock.xhr = options => {
+    'returns a reduced release object data from result': done => {
+      requestLightMock.xhr = options => {
         return Promise.resolve({
           status: 200,
           responseText: fixtureMap.read('common/github-release.json').content
         })
       };
-      testGithubRequest.getLatestRelease('testRepo')
+      githubRequest.getLatestRelease('testRepo')
         .then(entry => {
           assert.equal(entry.category, 'release', "Expected category to match");
           assert.equal(entry.version, 'v4.0.0-alpha.5', "Expected sha to match");
           done();
         })
         .catch(console.error.bind(console));
-    });
+    }
 
-  });
+  },
 
-  // describe('.getLatestPreRelease(userRepo)', () => {
+  // "getLatestPreRelease(userRepo)": {
+  //   only: true,
+  //   "generates the expected url with no pagination": done => {
+  //     requestLightMock.xhr = options => {
+  //       assert.equal(options.url, 'https://api.github.com/repos/testRepo/releases/latest', "Expected httpRequest.xhr(options.url) but failed.");
+  //       done();
+  //       return Promise.resolve({
+  //         status: 200,
+  //         responseText: null
+  //       });
+  //     };
+  //     githubRequest.getLatestRelease('testRepo', false)
+  //       .catch(console.error.bind(console));
+  //   }
 
-  // it('generates the expected url with no pagination', done => {
-  //   httpRequestMock.xhr = options => {
-  //     assert.equal(options.url, 'https://api.github.com/repos/testRepo/releases/latest', "Expected httpRequest.xhr(options.url) but failed.");
-  //     done();
-  //     return Promise.resolve({
-  //       status: 200,
-  //       responseText: null
-  //     });
-  //   };
-  //   testGithubRequest.getLatestRelease('testRepo', false)
-  //     .catch(console.error.bind(console));
-  // });
+  // }
 
-  // });
-
-});
+};

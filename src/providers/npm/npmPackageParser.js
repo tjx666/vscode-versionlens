@@ -2,18 +2,18 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import appSettings from '../../common/appSettings';
-import * as PackageFactory from '../../common/packageGeneration';
+import appSettings from 'common/appSettings';
+import * as PackageFactory from 'common/packageGeneration';
 import {
   fileDependencyRegex,
   gitHubDependencyRegex,
   formatWithExistingLeading
-} from '../../common/utils';
+} from 'common/utils';
 import {
   isOlderVersion,
   filterTagsByName,
   buildTagsFromVersionMap
-} from '../../common/versionUtils';
+} from 'common/versionUtils';
 import {
   npmViewVersion,
   npmViewDistTags,
@@ -22,7 +22,7 @@ import {
 
 const semver = require('semver');
 
-export function npmPackageParser(name, requestedVersion, appConfig) {
+export function npmPackageParser(name, requestedVersion, appContrib) {
   return parseNpmVersion(name, requestedVersion)
     .then(npmVersionInfo => {
       // check if we have a directory
@@ -34,7 +34,7 @@ export function npmPackageParser(name, requestedVersion, appConfig) {
         return parseGithubVersion(
           name,
           npmVersionInfo.hosted.path({ noCommittish: false }),
-          appConfig.githubTaggedCommits,
+          appContrib.githubTaggedCommits,
           customNpmGenerateVersion
         );
       } else if (npmVersionInfo.type === 'git') {
@@ -50,7 +50,7 @@ export function npmPackageParser(name, requestedVersion, appConfig) {
       return parseNpmRegistryVersion(
         name,
         requestedVersion,
-        appConfig
+        appContrib
       );
 
     })
@@ -83,7 +83,7 @@ export function npmPackageParser(name, requestedVersion, appConfig) {
     });
 }
 
-export function parseNpmRegistryVersion(name, requestedVersion, appConfig, customGenerateVersion = null) {
+export function parseNpmRegistryVersion(name, requestedVersion, appContrib, customGenerateVersion = null) {
   // get the matched version
   const viewVersionArg = `${name}@${requestedVersion}`;
 
@@ -96,7 +96,7 @@ export function parseNpmRegistryVersion(name, requestedVersion, appConfig, custo
         name,
         requestedVersion,
         maxSatisfyingVersion,
-        appConfig,
+        appContrib,
         customGenerateVersion
       );
 
@@ -182,7 +182,7 @@ export function customNpmGenerateVersion(packageInfo, newVersion) {
   return `${packageInfo.meta.userRepo}#${preservedLeadingVersion}`
 }
 
-export function parseNpmDistTags(name, requestedVersion, maxSatisfyingVersion, appConfig, customGenerateVersion = null) {
+export function parseNpmDistTags(name, requestedVersion, maxSatisfyingVersion, appContrib, customGenerateVersion = null) {
 
   return npmViewDistTags(name)
     .then(distTags => {
@@ -208,7 +208,7 @@ export function parseNpmDistTags(name, requestedVersion, maxSatisfyingVersion, a
           satisfiesEntry,
           ...(satisfiesEntry.isLatestVersion ? [] : extractedTags[1])
         ];
-      else if (appConfig.npmDistTagFilter.length > 0)
+      else if (appContrib.npmDistTagFilter.length > 0)
         // filter the tags using npm app config filter
         filteredTags = filterTagsByName(
           extractedTags,
@@ -218,7 +218,7 @@ export function parseNpmDistTags(name, requestedVersion, maxSatisfyingVersion, a
             // conditionally provide the latest entry
             ...(satisfiesEntry.isLatestVersion ? [] : 'latest'),
             // all other user tag name filters
-            appConfig.npmDistTagFilter
+            appContrib.npmDistTagFilter
           ]
         );
 

@@ -6,7 +6,7 @@ import {
   findRootNode,
   extractDependencyNodes,
   createDependencyNode
-} from '../../common/dependencyParser';
+} from 'common/dependencyParser';
 
 export function findNodesInJsonContent(jsonContent, filterProperties) {
   const rootNode = findRootNode(jsonContent);

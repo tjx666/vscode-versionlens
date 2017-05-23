@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
-import { appConfig } from '../../common/appConfiguration';
-import * as CommandFactory from '../commandFactory';
-import { generateCodeLenses } from '../../common/codeLensGeneration';
-import appSettings from '../../common/appSettings';
+import appContrib from 'common/appContrib';
+import { generateCodeLenses } from 'common/codeLensGeneration';
+import appSettings from 'common/appSettings';
+import { findNodesInJsonContent, parseDependencyNodes } from 'common/dependencyParser';
+import * as CommandFactory from 'commands/commandFactory';
 import { bowerGetPackageInfo } from './bowerAPI';
 import { bowerPackageParser } from './bowerPackageParser';
-import { findNodesInJsonContent, parseDependencyNodes } from '../../common/dependencyParser';
 
 export class BowerCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -27,12 +27,12 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
 
     const dependencyNodes = findNodesInJsonContent(
       document.getText(),
-      appConfig.bowerDependencyProperties
+      appContrib.bowerDependencyProperties
     );
 
     const packageCollection = parseDependencyNodes(
       dependencyNodes,
-      appConfig,
+      appContrib,
       bowerPackageParser
     );
 

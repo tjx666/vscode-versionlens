@@ -2,17 +2,17 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { gitHubDependencyRegex } from '../../common/utils';
-import appSettings from '../../common/appSettings';
-import * as PackageFactory from '../../common/packageGeneration';
+import { gitHubDependencyRegex } from 'common/utils';
+import appSettings from 'common/appSettings';
+import * as PackageFactory from 'common/packageGeneration';
 
 const semver = require('semver');
 
-export function bowerPackageParser(name, version, appConfig) {
+export function bowerPackageParser(name, version, appContrib) {
   let result;
 
   // check if we have a github version
-  if (result = parseGithubVersion(name, version, appConfig.githubTaggedCommits))
+  if (result = parseGithubVersion(name, version, appContrib.githubTaggedCommits))
     return result;
 
   // check if its a valid semver, if not could be a tag

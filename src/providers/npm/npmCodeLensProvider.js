@@ -4,12 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { npmPackageParser } from './npmPackageParser';
-import { appConfig } from '../../common/appConfiguration';
-import * as CommandFactory from '../commandFactory';
+import appSettings from 'common/appSettings';
+import appContrib from 'common/appContrib';
+import { generateCodeLenses } from 'common/codeLensGeneration';
+import { findNodesInJsonContent, parseDependencyNodes } from 'common/dependencyParser';
+import * as CommandFactory from 'commands/commandFactory';
 import { npmGetOutdated, npmPackageDirExists } from './npmAPI';
-import { generateCodeLenses } from '../../common/codeLensGeneration';
-import appSettings from '../../common/appSettings';
-import { findNodesInJsonContent, parseDependencyNodes } from '../../common/dependencyParser';
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
@@ -19,7 +19,6 @@ import {
 } from '../../editor/decorations';
 
 const { window } = require('vscode');
-const path = require('path');
 
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -38,16 +37,16 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     if (appSettings.showVersionLenses === false)
       return;
 
-    this._documentPath = path.dirname(document.uri.fsPath);
+    this._documentPath = require('path').dirname(document.uri.fsPath);
 
     const dependencyNodes = findNodesInJsonContent(
       document.getText(),
-      appConfig.npmDependencyProperties
+      appContrib.npmDependencyProperties
     );
 
     const packageCollection = parseDependencyNodes(
       dependencyNodes,
-      appConfig,
+      appContrib,
       npmPackageParser
     );
 

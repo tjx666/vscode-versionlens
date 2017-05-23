@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ExpiryCacheMap } from './expiryCacheMap';
-import { appConfig } from './appConfiguration';
+import appContrib from './appContrib';
 
 const httpRequest = require('request-light');
 
@@ -119,9 +119,9 @@ class GithubRequest {
   }
 
   request(method, userRepo, category, queryParams) {
-    if (appConfig.githubAccessToken) {
+    if (appContrib.githubAccessToken) {
       !queryParams && (queryParams = {});
-      queryParams["access_token"] = appConfig.githubAccessToken;
+      queryParams["access_token"] = appContrib.githubAccessToken;
     }
 
     const url = generateGithubUrl(userRepo, category, queryParams);
@@ -130,7 +130,7 @@ class GithubRequest {
     if (this.cache.expired(url) === false)
       return Promise.resolve(this.cache.get(cacheKey));
 
-    return httpRequest.xhr({ url, type: method, headers: this.headers })
+    return require('request-light').xhr({ url, type: method, headers: this.headers })
       .then(response => {
         return this.cache.set(cacheKey, response.responseText && JSON.parse(response.responseText))
       })

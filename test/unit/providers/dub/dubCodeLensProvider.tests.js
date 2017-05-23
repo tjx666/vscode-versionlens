@@ -2,63 +2,42 @@
  * Copyright (c) Peter Flannery. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import * as proxyquire from 'proxyquire';
-import * as assert from 'assert';
-import * as path from 'path';
-import * as vscode from 'vscode';
-import * as jsonParser from 'vscode-contrib-jsonc';
+import { TestFixtureMap } from 'test/unit/utils';
+import { PackageCodeLens } from 'common/packageCodeLens';
+import { dubDefaultDependencyProperties } from 'providers/dub/config';
+import { DubCodeLensProvider } from 'providers/dub/dubCodeLensProvider';
+import * as DubAPIModule from 'providers/dub/dubAPI';
 
-import { TestFixtureMap } from '../../../testUtils';
-import { dubDefaultDependencyProperties } from '../../../../src/providers/dub/config';
-import { PackageCodeLens } from '../../../../src/common/packageCodeLens';
+const mock = require('mock-require');
+const assert = require('assert');
+const vscode = require('vscode');
 
-describe("DubCodeLensProvider", () => {
-  const testPath = path.join(__dirname, '../../../../..', 'test');
-  const fixturePath = path.join(testPath, 'fixtures');
-  const fixtureMap = new TestFixtureMap(fixturePath);
+const fixtureMap = new TestFixtureMap('./fixtures');
 
-  const dubAPIMock = {};
-  let defaultDubDependencyKeys = dubDefaultDependencyProperties;
+export const DubCodeLensProviderTests = {
 
-  const appConfigMock = {
-    get dubDependencyProperties() {
-      return defaultDubDependencyKeys;
+  beforeAll: () => {
+    // default api mocks
+    DubAPIModule.readDubSelections = filePath => {
+      return Promise.resolve(null);
     }
-  }
 
-  const DubAPIModule = proxyquire('../../../../src/providers/dub/dubAPI', {
-
-  });
-
-  const DubCodeLensProviderModule = proxyquire('../../../../src/providers/dub/dubCodeLensProvider', {
-    './dubAPI.js': DubAPIModule,
-    '../../common/appConfiguration': {
-      appConfig: appConfigMock
-    }
-  });
-
-  let testProvider;
-
-  beforeEach(() => {
-    testProvider = new DubCodeLensProviderModule.DubCodeLensProvider();
-
-    // default mock handler for http requests
     DubAPIModule.dubGetPackageLatest = packageName => {
       return Promise.resolve({
         status: 200,
         responseText: null
       });
-    };
-
-    DubAPIModule.readDubSelections = filePath => {
-      return Promise.resolve(null);
     }
 
-  });
+  },
 
-  describe("provideCodeLenses", () => {
+  beforeEach: () => {
+    this.testProvider = new DubCodeLensProvider();
+  },
 
-    it("returns empty array when the document json is invalid", done => {
+  "provideCodeLenses": {
+
+    "returns empty array when the document json is invalid": done => {
       let fixture = fixtureMap.read('package-invalid.json');
 
       let testDocument = {
@@ -68,7 +47,7 @@ describe("DubCodeLensProvider", () => {
         }
       };
 
-      let codeLenses = testProvider.provideCodeLenses(testDocument, null)
+      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null)
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -76,9 +55,9 @@ describe("DubCodeLensProvider", () => {
           done();
         })
         .catch(console.error.bind(this));
-    });
+    },
 
-    it("returns empty array when the document text is empty", done => {
+    "returns empty array when the document text is empty": done => {
       let testDocument = {
         getText: range => '',
         uri: {
@@ -86,7 +65,7 @@ describe("DubCodeLensProvider", () => {
         }
       };
 
-      let codeLenses = testProvider.provideCodeLenses(testDocument, null)
+      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null)
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -94,9 +73,9 @@ describe("DubCodeLensProvider", () => {
           done();
         })
         .catch(console.error.bind(this));
-    });
+    },
 
-    it("returns empty array when the package has no dependencies", done => {
+    "returns empty array when the package has no dependencies": done => {
       let fixture = fixtureMap.read('package-no-deps.json');
 
       let testDocument = {
@@ -107,7 +86,7 @@ describe("DubCodeLensProvider", () => {
         }
       };
 
-      let codeLenses = testProvider.provideCodeLenses(testDocument, null)
+      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null)
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -115,9 +94,9 @@ describe("DubCodeLensProvider", () => {
           done();
         })
         .catch(console.error.bind(this));
-    });
+    },
 
-    it("returns array of given dependencies to be resolved", done => {
+    "returns array of given dependencies to be resolved": done => {
       let fixture = fixtureMap.read('package-with-deps.json');
 
       let testDocument = {
@@ -129,7 +108,7 @@ describe("DubCodeLensProvider", () => {
         }
       };
 
-      let codeLenses = testProvider.provideCodeLenses(testDocument, null)
+      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null)
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -142,13 +121,13 @@ describe("DubCodeLensProvider", () => {
           done();
         })
         .catch(console.error.bind(this));
-    });
+    }
 
-  });
+  },
 
-  describe("evaluateCodeLens", () => {
+  "evaluateCodeLens": {
 
-    it("passes package name to dubGetPackageLatest", done => {
+    "passes package name to dubGetPackageLatest": done => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: {} }, null);
       DubAPIModule.dubGetPackageLatest = packageName => {
         assert.equal(packageName, 'SomePackage', "Expected package name to equal SomePackage");
@@ -158,10 +137,10 @@ describe("DubCodeLensProvider", () => {
           responseText: null
         });
       };
-      testProvider.evaluateCodeLens(codeLens, null);
-    });
+      this.testProvider.evaluateCodeLens(codeLens, null);
+    },
 
-    it("when dub does not return status 200 then codeLens should return ErrorCommand", done => {
+    "when dub does not return status 200 then codeLens should return ErrorCommand": done => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: {} }, null);
       DubAPIModule.dubGetPackageLatest = packageName => {
         return Promise.reject({
@@ -170,23 +149,23 @@ describe("DubCodeLensProvider", () => {
         });
       };
 
-      testProvider.evaluateCodeLens(codeLens, null)
+      this.testProvider.evaluateCodeLens(codeLens, null)
         .then(result => {
           assert.equal(result.command.title, 'SomePackage could not be found', "Expected command.title failed.");
           assert.equal(result.command.command, null);
           assert.equal(result.command.arguments, null);
           done();
         });
-    });
+    },
 
-    it("when null response object returned from dub then codeLens should return ErrorCommand", done => {
+    "when null response object returned from dub then codeLens should return ErrorCommand": done => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: {} }, null);
 
       DubAPIModule.dubGetPackageLatest = packageName => {
         return Promise.resolve(null);
       };
 
-      testProvider.evaluateCodeLens(codeLens, null)
+      this.testProvider.evaluateCodeLens(codeLens, null)
         .then(result => {
           assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
           assert.equal(result.command.command, undefined);
@@ -194,9 +173,9 @@ describe("DubCodeLensProvider", () => {
           done();
         });
 
-    });
+    },
 
-    it("when response is an error object then codeLens should return ErrorCommand", done => {
+    "when response is an error object then codeLens should return ErrorCommand": done => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: {} }, null);
 
       DubAPIModule.dubGetPackageLatest = options => {
@@ -206,29 +185,29 @@ describe("DubCodeLensProvider", () => {
         });
       };
 
-      testProvider.evaluateCodeLens(codeLens, null)
+      this.testProvider.evaluateCodeLens(codeLens, null)
         .then(result => {
           assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
           assert.equal(result.command.command, undefined);
           assert.equal(result.command.arguments, undefined);
           done();
         });
-    });
+    },
 
-    it("when a valid response returned from dub and package version is 'not latest' then codeLens should return NewVersionCommand", done => {
+    "when a valid response returned from dub and package version is 'not latest' then codeLens should return NewVersionCommand": done => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: { tag: { name: 'satisfies', isPrimaryTag: true } } }, null);
       DubAPIModule.dubGetPackageLatest = options => {
         return Promise.resolve('3.2.1');
       };
-      testProvider.evaluateCodeLens(codeLens, null)
+      this.testProvider.evaluateCodeLens(codeLens, null)
         .then(result => {
           assert.equal(result.command.title, '\u2191 3.2.1');
           assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
           assert.equal(result.command.arguments[1], '"3.2.1"');
           done();
         });
-    });
+    }
 
-  });
+  }
 
-});
+}

@@ -2,18 +2,18 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { formatWithExistingLeading } from '../../common/utils';
+import * as PackageFactory from 'common/packageGeneration';
+import { formatWithExistingLeading } from 'common/utils';
 import {
   parseNpmRegistryVersion,
   parseFileVersion,
   parseGithubVersion
 } from '../npm/npmPackageParser';
-import * as PackageFactory from '../../common/packageGeneration';
 
 const semver = require('semver');
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;
-export function jspmPackageParser(name, version, appConfig) {
+export function jspmPackageParser(name, version, appContrib) {
   // check for supported package resgitries
   const regExpResult = jspmDependencyRegex.exec(version);
   if (!regExpResult) {
@@ -32,7 +32,7 @@ export function jspmPackageParser(name, version, appConfig) {
     return parseGithubVersion(
       extractedPkgName,
       `${extractedPkgName}#${newPkgVersion}`,
-      appConfig.githubTaggedCommits,
+      appContrib.githubTaggedCommits,
       customJspmGenerateVersion
     );
   }
@@ -40,7 +40,7 @@ export function jspmPackageParser(name, version, appConfig) {
   return parseNpmRegistryVersion(
     extractedPkgName,
     newPkgVersion,
-    appConfig,
+    appContrib,
     customJspmGenerateVersion
   );
 }

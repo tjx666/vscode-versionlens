@@ -2,8 +2,8 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import appSettings from '../common/appSettings';
-import { appConfig } from '../common/appConfiguration';
+import appSettings from 'common/appSettings';
+import  appContrib  from 'common/appContrib';
 
 const { window, Range, Position } = require('vscode');
 
@@ -91,7 +91,7 @@ export function renderMissingDecoration(range) {
     renderOptions: {
       after: createRenderOptions(
         ' ▪ missing install',
-        appConfig.missingDependencyColour
+        appContrib.missingDependencyColour
       )
     }
   });
@@ -107,7 +107,7 @@ export function renderInstalledDecoration(range, version) {
     renderOptions: {
       after: createRenderOptions(
         ` ▪ ${version} installed`,
-        appConfig.installedDependencyColour
+        appContrib.installedDependencyColour
       )
     }
   });
@@ -123,7 +123,7 @@ export function renderNeedsUpdateDecoration(range, version) {
     renderOptions: {
       after: createRenderOptions(
         ` ▪ ${version} installed, npm update needed`,
-        appConfig.outdatedDependencyColour
+        appContrib.outdatedDependencyColour
       )
     }
   });
@@ -139,7 +139,7 @@ export function renderOutdatedDecoration(range, version) {
     renderOptions: {
       after: createRenderOptions(
         ` ▪ ${version} installed`,
-        appConfig.outdatedDependencyColour
+        appContrib.outdatedDependencyColour
       )
     }
   });
@@ -155,7 +155,7 @@ export function renderPrereleaseInstalledDecoration(range, version) {
     renderOptions: {
       after: createRenderOptions(
         ` ▪ ${version} prerelease installed`,
-        appConfig.prereleaseDependencyColour
+        appContrib.prereleaseDependencyColour
       )
     }
   });

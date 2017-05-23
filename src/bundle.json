@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "system",
+    "moduleResolution": "node",
+    "outFile": "../out/extension-bundle.js",
+    "lib": [
+      "ES2017"
+    ],
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "commands/*": [
+        "commands/*"
+      ],
+      "common/*": [
+        "common/*"
+      ],
+      "providers/*": [
+        "providers/*"
+      ]
+    }
+  },
+  "files": [
+    "loader.js",
+    "extension.js"
+  ]
+}

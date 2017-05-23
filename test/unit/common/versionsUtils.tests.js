@@ -2,9 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as assert from 'assert';
-import * as path from 'path';
-import { TestFixtureMap } from '../../testUtils';
+import { TestFixtureMap } from 'test/unit/utils';
 import {
   isFixedVersion,
   isOlderVersion,
@@ -20,17 +18,18 @@ import {
   buildTagsFromVersionMap,
   deduceMaxSatisfyingFromSemverList,
   applyTagFilterRules
-} from '../../../src/common/versionUtils';
+} from 'common/versionUtils';
 
-describe('Versions', () => {
+const assert = require('assert');
+const path = require('path');
 
-  const testPath = path.join(__dirname, '../../../..', 'test');
-  const fixturePath = path.join(testPath, 'fixtures');
-  const fixtureMap = new TestFixtureMap(fixturePath);
+const fixtureMap = new TestFixtureMap('./fixtures');
 
-  describe('isOlderVersion', () => {
+export const VersionUtilTests = {
 
-    it('Reports true for older versions and false for newer versions', () => {
+  "isOlderVersion": {
+
+    "Reports true for older versions and false for newer versions": () => {
 
       const older = [
         '1.2.2',
@@ -52,7 +51,7 @@ describe('Versions', () => {
           isOlderVersion(olderVersion, newerVersion),
           `${olderVersion} should be older than ${newerVersion}`
         );
-      });
+      })
 
       older.forEach((olderVersion, index) => {
         const newerVersion = newer[index];
@@ -60,24 +59,24 @@ describe('Versions', () => {
           isOlderVersion(newerVersion, olderVersion) === false,
           `${newerVersion} should be newer than ${olderVersion}`
         );
-      });
+      })
 
-    });
+    }
 
-  });
+  },
 
-  describe('pluckSemverVersions', () => {
+  "pluckSemverVersions": {
 
-    it('removes non-semver versions', () => {
+    "removes non-semver versions": () => {
       const testVersions = [
         '2.3.4.12341',
         '1.2.3.4444-test'
       ];
       const testResults = pluckSemverVersions(testVersions);
       assert.equal(testResults.length, 0, "returned invalid semver versions");
-    });
+    },
 
-    it('returns semver versions', () => {
+    "returns semver versions": () => {
       const testVersions = [
         '1.2.3',
         '1.2.3-1',
@@ -88,13 +87,13 @@ describe('Versions', () => {
 
       const testResults = pluckSemverVersions(testVersions);
       assert.equal(testResults.length, testVersions.length, "returned invalid semver versions");
-    });
+    },
 
-  });
+  },
 
-  describe('parseVersion', () => {
+  "parseVersion": {
 
-    it('reports non-prereleases', () => {
+    "reports non-prereleases": () => {
       const testVersions = [
         '1.2.3'
       ];
@@ -105,10 +104,10 @@ describe('Versions', () => {
             result.isPrerelease, false,
             "shouldn't be set as prerelease"
           );
-        });
-    });
+        })
+    },
 
-    it('reports prereleases', () => {
+    "reports prereleases": () => {
       const testPrereleases = [
         '1.2.3-alpha.1',
         '1.2.3-alpha-1',
@@ -130,10 +129,10 @@ describe('Versions', () => {
             result.version.includes(result.prereleaseGroup), true,
             "expected a prerelease group"
           );
-        });
-    });
+        })
+    },
 
-    it('groups prereleases', () => {
+    "groups prereleases": () => {
       const testPrereleases = [
         '1.2.3-alpha.1',
         '1.2.3-alpha-1',
@@ -171,32 +170,31 @@ describe('Versions', () => {
         "expected prerelease group to be 'beta'"
       );
 
-    });
+    }
 
-  });
+  },
 
-  describe('pluckTagsAndReleases', () => {
+  "pluckTagsAndReleases": {
 
-    it('seperated tags and releases', () => {
+    "seperated tags and releases": () => {
       const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
       const testResults = pluckTagsAndReleases(testVersions);
       assert.equal(testResults.releases.length, 5, "returned invalid number of releases");
       assert.equal(testResults.taggedVersions.length, 46, "returned invalid number of tags");
-    });
+    }
 
-  });
+  },
 
-  describe('isFixedVersion', () => {
+  "isFixedVersion": {
 
-    it('returns true for fixed versions', () => {
+    "returns true for fixed versions": () => {
       assert.ok(
         isFixedVersion('1.2.3') === true,
         `1.2.3 should be a fixed version`
       );
-    });
+    },
 
-    it('returns false ranged versions', () => {
-
+    "returns false ranged versions": () => {
       const tests = [
         '~1.2.3',
         '>=1.2.3',
@@ -209,14 +207,13 @@ describe('Versions', () => {
           `${testVersion} should not be fixed at ${index}`
         );
       });
+    }
 
-    });
+  },
 
-  });
+  "sortTagsByRecentVersion": {
 
-  describe('sortTagsByRecentVersion', () => {
-
-    it('returns expected order', () => {
+    "returns expected order": () => {
       const expected = [
         "5.0.0",
         "1.2.3",
@@ -236,7 +233,7 @@ describe('Versions', () => {
         '1.2.3-rc',
         '5.0.0'
       ].map(version => ({ version }))
-        .sort(sortTagsByRecentVersion)
+        .sort(sortTagsByRecentVersion);
 
       assert.equal(
         results.length,
@@ -254,13 +251,13 @@ describe('Versions', () => {
           );
         });
 
-    });
+    }
 
-  });
+  },
 
-  describe('removeExactVersions', () => {
+  "removeExactVersions": {
 
-    it('removes exact matches', () => {
+    "removes exact matches": () => {
       const tests = [
         '1.2.3-zebra',
         '1.2.3-alpha',
@@ -278,14 +275,13 @@ describe('Versions', () => {
           assert.ok(match !== exactVersion, "did not filter exact matches");
         });
 
-    });
+    }
 
-  });
+  },
 
+  "removeOlderVersions": {
 
-  describe('removeOlderVersions', () => {
-
-    it('removes older versions', () => {
+    "removes older versions": () => {
       const expected = [
         "5.0.0",
         "5.0.0-beta",
@@ -320,13 +316,13 @@ describe('Versions', () => {
           );
         });
 
-    });
+    }
 
-  });
+  },
 
-  describe('removeAmbiguousTagNames', () => {
+  "removeAmbiguousTagNames": {
 
-    it("reduces ambiguous tag names", () => {
+    "reduces ambiguous tag names": () => {
       const expected = [
         "latest",
         "next",
@@ -359,9 +355,9 @@ describe('Versions', () => {
         );
       });
 
-    });
+    },
 
-    it("preserves unambiguous tag names", () => {
+    "preserves unambiguous tag names": () => {
       const expected = [
         "latest",
         "next",
@@ -383,13 +379,13 @@ describe('Versions', () => {
         `results.length to be expected.length`
       );
 
-    });
+    }
 
-  });
+  },
 
-  describe('filterTagsByName', () => {
+  "filterTagsByName": {
 
-    it('returns only tags in the specified filter array', () => {
+    "returns only tags in the specified filter array": () => {
       const testTags = [
         { name: 'latest' },
         { name: 'rc' },
@@ -417,24 +413,25 @@ describe('Versions', () => {
         testFilter[1],
         `tag.name[index]: Not equal. Expected ${results[1].name} to be ${testFilter[1]}`
       );
-    });
+    }
 
-  });
+  },
 
+  "buildMapFromVersionList": {
 
+    beforeEach: () => {
+      this.testVersions = [
+        "2.2.0",
+        "2.2.0-rc4-build3536",
+        "2.2.0-beta1-build3239",
+        "2.1.0",
+        "2.1.0-beta1-build2945",
+        "2.0.0"
+      ];
+    },
 
-  describe('buildMapFromVersionList', () => {
-    const testVersions = [
-      "2.2.0",
-      "2.2.0-rc4-build3536",
-      "2.2.0-beta1-build3239",
-      "2.1.0",
-      "2.1.0-beta1-build2945",
-      "2.0.0"
-    ];
-
-    it('returns expected releases', () => {
-      const results = buildMapFromVersionList(testVersions, null);
+    "returns expected releases": () => {
+      const results = buildMapFromVersionList(this.testVersions, null);
 
       assert.equal(
         results.releases.length, 3,
@@ -455,10 +452,10 @@ describe('Versions', () => {
         results.releases[2], '2.0.0',
         'release entry did not match'
       );
-    });
+    },
 
-    it('returns expected taggedVersions', () => {
-      const results = buildMapFromVersionList(testVersions, null);
+    "returns expected taggedVersions": () => {
+      const results = buildMapFromVersionList(this.testVersions, null);
 
       assert.equal(
         results.taggedVersions.length, 3,
@@ -479,48 +476,54 @@ describe('Versions', () => {
         results.taggedVersions[2].version, '2.1.0-beta1-build2945',
         'taggedVersion entry did not match'
       );
-    });
+    }
 
-  });
+  },
 
-  describe('deduceMaxSatisfyingFromSemverList', () => {
-    const testVersions = [
-      "2.2.0",
-      "2.2.0-rc4-build3536",
-      "2.2.0-beta1-build3239",
-      "2.1.0",
-      "2.1.0-beta1-build2945",
-      "2.0.0"
-    ];
+  "deduceMaxSatisfyingFromSemverList": {
 
-    it('when requested version is in range then returns satisfied verion', () => {
-      const result = deduceMaxSatisfyingFromSemverList(testVersions, '2.1')
+    beforeEach: () => {
+      this.testVersions = [
+        "2.2.0",
+        "2.2.0-rc4-build3536",
+        "2.2.0-beta1-build3239",
+        "2.1.0",
+        "2.1.0-beta1-build2945",
+        "2.0.0"
+      ];
+    },
+
+    "when requested version is in range then returns satisfied verion": () => {
+      const result = deduceMaxSatisfyingFromSemverList(this.testVersions, '2.1')
       assert.equal(result, '2.1.0', "Version mismatch")
-    });
+    },
 
-    it('when requested version is greater than any versions then returns null', () => {
-      const result = deduceMaxSatisfyingFromSemverList(testVersions, '5')
+    "when requested version is greater than any versions then returns null": () => {
+      const result = deduceMaxSatisfyingFromSemverList(this.testVersions, '5')
       assert.equal(result, null, "Version mismatch")
-    });
+    },
 
-    it('when requested version is less than any versions then returns null', () => {
-      const result = deduceMaxSatisfyingFromSemverList(testVersions, '1.0.0')
+    "when requested version is less than any versions then returns null": () => {
+      const result = deduceMaxSatisfyingFromSemverList(this.testVersions, '1.0.0')
       assert.equal(result, null, "Version mismatch")
-    });
+    },
 
-    it('when requested version is null then returns null', () => {
-      const result = deduceMaxSatisfyingFromSemverList(testVersions, null)
+    "when requested version is null then returns null": () => {
+      const result = deduceMaxSatisfyingFromSemverList(this.testVersions, null)
       assert.equal(result, null, "Version mismatch")
-    });
+    }
 
-  });
+  },
 
-  describe('buildTagsFromVersionMap', () => {
-    const testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
+  "buildTagsFromVersionMap": {
 
-    it('returns newer tags than the requestedVersion when matches are found', () => {
+    beforeEach: () => {
+      this.testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
+    },
+
+    "returns newer tags than the requestedVersion when matches are found": () => {
       const requestedVersion = '2.0.0';
-      const testVersionMap = buildMapFromVersionList(testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.equal(resultTags.length, 4, "Tag count not 4")
@@ -529,11 +532,11 @@ describe('Versions', () => {
       assert.ok(resultTags[1].name == 'latest', "Tag name did not match")
       assert.ok(resultTags[2].name == 'beta', "Tag name did not match")
       assert.ok(resultTags[3].name == 'rc', "Tag name did not match")
-    });
+    },
 
-    it('returns latest and prerelease tags when requestedVersion does not match', () => {
+    "returns latest and prerelease tags when requestedVersion does not match": () => {
       const requestedVersion = '0.0.0';
-      const testVersionMap = buildMapFromVersionList(testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.equal(resultTags.length, 3, "Tag count not 3")
@@ -541,106 +544,106 @@ describe('Versions', () => {
       assert.ok(resultTags[0].versionMatchNotFound == true, "versionMatchNotFound should be true")
       assert.ok(resultTags[1].name == 'latest', "Tag name did not match")
       assert.ok(resultTags[2].name == 'beta', "Tag name did not match")
-    });
+    },
 
-    it('Should be no "latest" tag entry when requested version is already latest', () => {
+    "Should be no 'latest' tag entry when requested version is already latest": () => {
       const requestedVersion = '2.2.0';
-      const testVersionMap = buildMapFromVersionList(testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[1].name != 'latest', "Name should not match 'latest'")
-    });
+    },
 
-    it('no "latest" tag entry should exist when requested version range is already latest', () => {
+    "no 'latest' tag entry should exist when requested version range is already latest": () => {
       const requestedVersion = '~2.2.0';
-      const testVersionMap = buildMapFromVersionList(testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[1].name != 'latest', "Name should not match 'latest'")
-    });
+    },
 
-    it('Should return a "latest" tag entry when requested version not the latest', () => {
+    "Should return a 'latest' tag entry when requested version not the latest": () => {
       const requestedVersion = '2.3.0-beta2-build3683';
-      const testVersionMap = buildMapFromVersionList(testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[1].name == 'latest', "Name should match 'latest'")
-    });
+    },
 
-    it('returns a "latest" tag entry when requested version range is not latest', () => {
+    "returns a 'latest' tag entry when requested version range is not latest": () => {
       const requestedVersion = '^2.1.0';
-      const testVersionMap = buildMapFromVersionList(testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[1].name === 'latest', "Name should match 'latest'");
-    });
+    },
 
-    it('"satisfies" tag entry should be latest and install latest when requested version is equal to the latest', () => {
+    "'satisfies' tag entry should be latest and install latest when requested version is equal to the latest": () => {
       const requestedVersion = '2.2.0';
-      const testVersionMap = buildMapFromVersionList(testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[0].isLatestVersion === true, "Should be latest version");
       assert.ok(resultTags[0].satisfiesLatest === true, "Should install latest version");
-    });
+    },
 
-    it('"satisfies" tag entry should not be latest but install latest when requested version satisfies the latest', () => {
+    "'satisfies' tag entry should not be latest but install latest when requested version satisfies the latest": () => {
       const requestedVersion = '^2.1.0';
-      const testVersionMap = buildMapFromVersionList(testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[0].isLatestVersion === false, "Should not be latest version");
       assert.ok(resultTags[0].satisfiesLatest === true, "Should install latest version");
-    });
+    },
 
-    it('"satisfies" tag entry should not be latest or install latest when requested version does not satisfy the latest', () => {
+    "'satisfies' tag entry should not be latest or install latest when requested version does not satisfy the latest": () => {
       const requestedVersion = '~2.1.0';
-      const testVersionMap = buildMapFromVersionList(testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[0].isLatestVersion === false, "Should not be latest version");
       assert.ok(resultTags[0].satisfiesLatest === false, "Should install latest version");
-    });
+    },
 
-    it('"satisfies".isInvalid is true when requested version is invalid', () => {
+    "'satisfies'.isInvalid is true when requested version is invalid": () => {
       const requestedVersion = 'sds11312';
-      const testVersionMap = buildMapFromVersionList(testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[0].isInvalid === true, "isInvalid should be true")
-    });
+    },
 
-    it('"satisfies".isInvalid is false when requested version is valid', () => {
+    "'satisfies'.isInvalid is false when requested version is valid": () => {
       testVersions.forEach(version => {
-        const testVersionMap = buildMapFromVersionList(testVersions, version);
+        const testVersionMap = buildMapFromVersionList(this.testVersions, version);
         const resultTags = buildTagsFromVersionMap(testVersionMap, version);
         assert.ok(resultTags[0].isInvalid === false, `${version} was not valid`);
       });
-    });
+    },
 
-    it('"satisfies".versionMatchNotFound is true when requested version does not match anything', () => {
+    "'satisfies'.versionMatchNotFound is true when requested version does not match anything": () => {
       const requestedVersion = '1.2.3';
-      const testVersionMap = buildMapFromVersionList(testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[0].versionMatchNotFound === true, "Matched a version that does not exist");
       assert.ok(resultTags[0].isInvalid === false, "Version should not be flagged as invalid");
-    });
+    },
 
-    it('"satisfies".versionMatchNotFound is false when requested version matches an existing versions', () => {
+    "'satisfies'.versionMatchNotFound is false when requested version matches an existing versions": () => {
       const requestedVersion = '~1.9.1';
-      const testVersionMap = buildMapFromVersionList(testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[0].versionMatchNotFound === false, "Did not match a version that does exists")
       assert.ok(resultTags[0].isInvalid === false, "Version should not be flagged as invalid");
-    });
+    }
 
-  });
+  },
 
-  describe('applyTagFilterRules', () => {
+  "applyTagFilterRules": {
 
-    it("returns results ordered by recent version", () => {
+    "returns results ordered by recent version": () => {
       const expected = [
         "next",
         "lts"
@@ -663,9 +666,8 @@ describe('Versions', () => {
             `result[index].name: Not equal. Expected ${result} to be ${expected[index]}`
           )
         });
-    });
+    }
 
-  })
+  }
 
-
-});
+}

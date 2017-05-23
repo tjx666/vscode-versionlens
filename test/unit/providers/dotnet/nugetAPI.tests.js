@@ -2,14 +2,15 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as assert from 'assert';
-import { parseVersionSpec, convertNugetToNodeRange } from '../../../../src/providers/dotnet/nugetAPI.js';
+import { parseVersionSpec, convertNugetToNodeRange } from 'providers/dotnet/nugetAPI.js';
 
-describe('NugetAPI', () => {
+const assert = require('assert');
 
-  describe('parseVersionSpec', () => {
+export const NugetAPITests = {
 
-    it('No nulls from valid notations', () => {
+  'parseVersionSpec': {
+
+    'No nulls from valid notations': () => {
       // spec https://docs.microsoft.com/en-us/nuget/create-packages/dependency-versions#version-ranges
       const results = [
         parseVersionSpec("1.0.0"),
@@ -26,9 +27,9 @@ describe('NugetAPI', () => {
       results.forEach(x => {
         assert.ok(!!x, "Could not parse range")
       })
-    });
+    },
 
-    it('returns nulls from invalid notations', () => {
+    'returns nulls from invalid notations': () => {
       const results = [
         parseVersionSpec("1."),
         parseVersionSpec("1.0."),
@@ -39,12 +40,12 @@ describe('NugetAPI', () => {
       results.forEach(x => {
         assert.ok(!x, "Could not parse range")
       })
-    });
-  });
+    }
+  },
 
-  describe('convertNugetToNodeRange', () => {
+  'convertNugetToNodeRange': {
 
-    it('converts basic nuget ranges to node ranges', () => {
+    'converts basic nuget ranges to node ranges': () => {
       const expectedList = [
         // basic
         "1.0.0", "1.0.0",
@@ -62,9 +63,9 @@ describe('NugetAPI', () => {
         const actual = convertNugetToNodeRange(test);
         assert.equal(actual, expected, "nuget range did not convert to node range at " + i);
       }
-    });
+    },
 
-    it('converts partial nuget ranges to node ranges', () => {
+    'converts partial nuget ranges to node ranges': () => {
       const expectedList = [
         "1", "1.0.0",
         "1.0", "1.0.0",
@@ -78,9 +79,9 @@ describe('NugetAPI', () => {
         const actual = convertNugetToNodeRange(test);
         assert.equal(actual, expected, `nuget range did not convert ${expected} to ${actual} at ${i}`);
       }
-    });
+    },
 
-    it('returns null for invalid ranges', () => {
+    'returns null for invalid ranges': () => {
       const results = [
         parseVersionSpec("1."),
         parseVersionSpec("1.0."),
@@ -93,9 +94,9 @@ describe('NugetAPI', () => {
       results.forEach(x => {
         assert.ok(!x, "Should not parse range")
       })
-    });
+    },
 
-    it('handles floating ranges', () => {
+    'handles floating ranges': () => {
       const expectedList = [
         "1.*", ">=1.0.0 <2.0.0",
         "1.0.*", ">=1.0.0 <1.1.0"
@@ -107,8 +108,8 @@ describe('NugetAPI', () => {
         const actual = convertNugetToNodeRange(test);
         assert.equal(actual, expected, `nuget floating range did not convert ${expected} to ${actual} at ${i}`);
       }
-    });
+    }
 
-  });
+  }
 
-});
+}

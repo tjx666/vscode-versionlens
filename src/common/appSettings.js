@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { appConfig } from './appConfiguration';
+import appContrib from './appContrib';
 
 const { commands } = require('vscode');
 
@@ -81,7 +81,7 @@ const config = {
 };
 
 // ensure the context is set to the defaults
-config.showTaggedVersions = appConfig.showTaggedVersionsAtStartup === true;
-config.showVersionLenses = appConfig.showVersionLensesAtStartup === true;
+config.showTaggedVersions = appContrib.showTaggedVersionsAtStartup === true;
+config.showVersionLenses = appContrib.showVersionLensesAtStartup === true;
 
 export default config;

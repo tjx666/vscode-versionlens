@@ -4,12 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 import { npmDefaultDependencyProperties } from '../providers/npm/config';
 import { bowerDefaultDependencyProperties } from '../providers/bower/config';
-import { dotnetCSProjDefaultDependencyProperties, dotnetProjectJsonDefaultDependencyProperties } from '../providers/dotnet/config';
 import { dubDefaultDependencyProperties } from '../providers/dub/config';
+import {
+  dotnetCSProjDefaultDependencyProperties,
+  dotnetProjectJsonDefaultDependencyProperties
+} from '../providers/dotnet/config';
 
 const { workspace } = require('vscode');
 
-class AppConfiguration {
+export default new class AppContribution {
 
   get showVersionLensesAtStartup() {
     const config = workspace.getConfiguration('versionlens');
@@ -92,5 +95,3 @@ class AppConfiguration {
   }
 
 }
-
-export const appConfig = new AppConfiguration();
