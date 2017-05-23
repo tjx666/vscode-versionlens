@@ -218,7 +218,7 @@ export function parseNpmDistTags(name, requestedVersion, maxSatisfyingVersion, a
             // conditionally provide the latest entry
             ...(satisfiesEntry.isLatestVersion ? [] : 'latest'),
             // all other user tag name filters
-            appContrib.npmDistTagFilter
+            ...appContrib.npmDistTagFilter
           ]
         );
 

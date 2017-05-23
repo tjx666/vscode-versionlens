@@ -53,7 +53,7 @@ export function dotnetPackageParser(name, requestedVersion, appContrib) {
             // conditionally provide the latest entry
             ...(satisfiesEntry.isLatestVersion ? [] : 'latest'),
             // all other user tag name filters
-            appContrib.dotnetTagFilter
+            ...appContrib.dotnetTagFilter
           ]
         );
 
