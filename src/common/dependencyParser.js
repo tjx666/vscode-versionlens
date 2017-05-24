@@ -6,7 +6,7 @@ const jsonParser = require('vscode-contrib-jsonc');
 
 function collectChildDependencyNodes(nodes, collector) {
   nodes.forEach(node => {
-    const replaceInfo = {
+    let replaceInfo = {
       start: node.value.start,
       end: node.value.end
     };
@@ -59,7 +59,7 @@ export function extractDependencyNodes(rootNode, filterList, collector = []) {
   rootNode.getChildNodes()
     .forEach(node => {
       // check if this node should be processed
-      if (filterList.includes(node.key.value) == false)
+      if (filterList.includes(node.key.value) === false)
         return;
       // collect the children
       const childNodes = node.value.getChildNodes();

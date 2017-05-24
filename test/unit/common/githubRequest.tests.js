@@ -17,21 +17,25 @@ mock('request-light', requestLightMock);
 
 const fixtureMap = new TestFixtureMap('./fixtures');
 
+let testContext = null;
+
 export const GithubRequestTests = {
 
   beforeAll: () => {
-    this.githubAccessTokenMock = null
+    testContext = {};
+
+    testContext.githubAccessTokenMock = null
 
     Reflect.defineProperty(
       appContribMock,
       "githubAccessToken", {
-        get: () => this.githubAccessTokenMock
+        get: () => testContext.githubAccessTokenMock
       }
     )
   },
 
   beforeEach: () => {
-    this.githubAccessTokenMock = null
+    testContext.githubAccessTokenMock = null
   },
 
   "httpGet(userRepo, category)": {
@@ -53,7 +57,7 @@ export const GithubRequestTests = {
     },
 
     "generates the expected url with access token": done => {
-      this.githubAccessTokenMock = 123;
+      testContext.githubAccessTokenMock = 123;
 
       requestLightMock.xhr = options => {
         assert.equal(options.url, 'https://api.github.com/repos/testRepo/testCategory?access_token=123', "Expected httpRequest.xhr(options.url) but failed.");
@@ -71,7 +75,7 @@ export const GithubRequestTests = {
     },
 
     "generates the expected url with access token with query params": done => {
-      this.githubAccessTokenMock = 2345;
+      testContext.githubAccessTokenMock = 2345;
 
       requestLightMock.xhr = options => {
         assert.equal(options.url, 'https://api.github.com/repos/testRepo/testCategory?page=1&per_page=1&access_token=2345', "Expected httpRequest.xhr(options.url) but failed.");

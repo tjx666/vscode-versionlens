@@ -60,7 +60,7 @@ export function expandShortVersion(value) {
 }
 
 export function parseVersionSpec(value) {
-  const formattedValue = expandShortVersion(value.trim());
+  let formattedValue = expandShortVersion(value.trim());
   if (!formattedValue)
     return null;
 
@@ -94,7 +94,6 @@ export function parseVersionSpec(value) {
     versionSpec.isMaxInclusive = true;
   else if (last === ')')
     versionSpec.isMaxInclusive = false;
-  else null;
 
   // remove any [] or ()
   formattedValue = formattedValue.substring(1, formattedValue.length - 1);

@@ -24,8 +24,11 @@ const path = require('path');
 
 export class DubCodeLensProvider extends AbstractCodeLensProvider {
 
-  _outdatedCache = [];
-  _documentPath = '';
+  constructor() {
+    super();
+    this._outdatedCache = [];
+    this._documentPath = '';
+  }
 
   get selector() {
     return {

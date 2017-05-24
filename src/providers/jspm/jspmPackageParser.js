@@ -46,7 +46,7 @@ export function jspmPackageParser(name, version, appContrib) {
 }
 
 export function customJspmGenerateVersion(packageInfo, newVersion) {
-  const existingVersion
+  let existingVersion
   // test if the newVersion is a valid semver range
   // if it is then we need to use the commitish for github versions 
   if (packageInfo.meta.type === 'github' && semver.validRange(newVersion))

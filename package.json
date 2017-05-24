@@ -38,16 +38,17 @@
     "postinstall": "node ./node_modules/vscode/bin/install",
     "clean": "rimraf ./out ./test/out",
     "compile": "npm run -s clean && tsc -p ./src/bundle.json",
-    "compile-test": "npm run -s clean && tsc -p ./test/bundle.test.json",
+    "compile-test": "npm run -s clean && jshint ./src && tsc -p ./test/bundle.test.json",
     "test": "node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
-    "typescript": "2.3.3",
-    "vscode": "1.1.0",
-    "rimraf": "2.6.1",
-    "mock-require": "2.0.2",
+    "jshint": "2.9.4",
+    "@types/node": "~7.0.22",
     "mocha-ui-esm": "1.0.0-alpha.3",
-    "@types/node": "~7.0.22"
+    "mock-require": "2.0.2",
+    "rimraf": "2.6.1",
+    "typescript": "2.3.3",
+    "vscode": "1.1.0"
   },
   "dependencies": {
     "systemjs": "0.20.12",

@@ -21,9 +21,10 @@ import {
 } from 'common/versionUtils';
 
 const assert = require('assert');
-const path = require('path');
 
 const fixtureMap = new TestFixtureMap('./fixtures');
+
+let testContext = null
 
 export const VersionUtilTests = {
 
@@ -420,7 +421,8 @@ export const VersionUtilTests = {
   "buildMapFromVersionList": {
 
     beforeEach: () => {
-      this.testVersions = [
+      testContext = {};
+      testContext.testVersions = [
         "2.2.0",
         "2.2.0-rc4-build3536",
         "2.2.0-beta1-build3239",
@@ -431,7 +433,7 @@ export const VersionUtilTests = {
     },
 
     "returns expected releases": () => {
-      const results = buildMapFromVersionList(this.testVersions, null);
+      const results = buildMapFromVersionList(testContext.testVersions, null);
 
       assert.equal(
         results.releases.length, 3,
@@ -455,7 +457,7 @@ export const VersionUtilTests = {
     },
 
     "returns expected taggedVersions": () => {
-      const results = buildMapFromVersionList(this.testVersions, null);
+      const results = buildMapFromVersionList(testContext.testVersions, null);
 
       assert.equal(
         results.taggedVersions.length, 3,
@@ -483,7 +485,7 @@ export const VersionUtilTests = {
   "deduceMaxSatisfyingFromSemverList": {
 
     beforeEach: () => {
-      this.testVersions = [
+      testContext.testVersions = [
         "2.2.0",
         "2.2.0-rc4-build3536",
         "2.2.0-beta1-build3239",
@@ -494,22 +496,22 @@ export const VersionUtilTests = {
     },
 
     "when requested version is in range then returns satisfied verion": () => {
-      const result = deduceMaxSatisfyingFromSemverList(this.testVersions, '2.1')
+      const result = deduceMaxSatisfyingFromSemverList(testContext.testVersions, '2.1')
       assert.equal(result, '2.1.0', "Version mismatch")
     },
 
     "when requested version is greater than any versions then returns null": () => {
-      const result = deduceMaxSatisfyingFromSemverList(this.testVersions, '5')
+      const result = deduceMaxSatisfyingFromSemverList(testContext.testVersions, '5')
       assert.equal(result, null, "Version mismatch")
     },
 
     "when requested version is less than any versions then returns null": () => {
-      const result = deduceMaxSatisfyingFromSemverList(this.testVersions, '1.0.0')
+      const result = deduceMaxSatisfyingFromSemverList(testContext.testVersions, '1.0.0')
       assert.equal(result, null, "Version mismatch")
     },
 
     "when requested version is null then returns null": () => {
-      const result = deduceMaxSatisfyingFromSemverList(this.testVersions, null)
+      const result = deduceMaxSatisfyingFromSemverList(testContext.testVersions, null)
       assert.equal(result, null, "Version mismatch")
     }
 
@@ -518,12 +520,13 @@ export const VersionUtilTests = {
   "buildTagsFromVersionMap": {
 
     beforeEach: () => {
-      this.testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
+      testContext = {}
+      testContext.testVersions = JSON.parse(fixtureMap.read('nuget/xunit-versions.json').content);
     },
 
     "returns newer tags than the requestedVersion when matches are found": () => {
       const requestedVersion = '2.0.0';
-      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(testContext.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.equal(resultTags.length, 4, "Tag count not 4")
@@ -536,7 +539,7 @@ export const VersionUtilTests = {
 
     "returns latest and prerelease tags when requestedVersion does not match": () => {
       const requestedVersion = '0.0.0';
-      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(testContext.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.equal(resultTags.length, 3, "Tag count not 3")
@@ -548,7 +551,7 @@ export const VersionUtilTests = {
 
     "Should be no 'latest' tag entry when requested version is already latest": () => {
       const requestedVersion = '2.2.0';
-      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(testContext.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[1].name != 'latest', "Name should not match 'latest'")
@@ -556,7 +559,7 @@ export const VersionUtilTests = {
 
     "no 'latest' tag entry should exist when requested version range is already latest": () => {
       const requestedVersion = '~2.2.0';
-      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(testContext.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[1].name != 'latest', "Name should not match 'latest'")
@@ -564,7 +567,7 @@ export const VersionUtilTests = {
 
     "Should return a 'latest' tag entry when requested version not the latest": () => {
       const requestedVersion = '2.3.0-beta2-build3683';
-      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(testContext.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[1].name == 'latest', "Name should match 'latest'")
@@ -572,7 +575,7 @@ export const VersionUtilTests = {
 
     "returns a 'latest' tag entry when requested version range is not latest": () => {
       const requestedVersion = '^2.1.0';
-      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(testContext.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[1].name === 'latest', "Name should match 'latest'");
@@ -580,7 +583,7 @@ export const VersionUtilTests = {
 
     "'satisfies' tag entry should be latest and install latest when requested version is equal to the latest": () => {
       const requestedVersion = '2.2.0';
-      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(testContext.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[0].isLatestVersion === true, "Should be latest version");
@@ -589,7 +592,7 @@ export const VersionUtilTests = {
 
     "'satisfies' tag entry should not be latest but install latest when requested version satisfies the latest": () => {
       const requestedVersion = '^2.1.0';
-      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(testContext.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[0].isLatestVersion === false, "Should not be latest version");
@@ -598,7 +601,7 @@ export const VersionUtilTests = {
 
     "'satisfies' tag entry should not be latest or install latest when requested version does not satisfy the latest": () => {
       const requestedVersion = '~2.1.0';
-      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(testContext.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[0].isLatestVersion === false, "Should not be latest version");
@@ -607,15 +610,15 @@ export const VersionUtilTests = {
 
     "'satisfies'.isInvalid is true when requested version is invalid": () => {
       const requestedVersion = 'sds11312';
-      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(testContext.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[0].isInvalid === true, "isInvalid should be true")
     },
 
     "'satisfies'.isInvalid is false when requested version is valid": () => {
-      testVersions.forEach(version => {
-        const testVersionMap = buildMapFromVersionList(this.testVersions, version);
+      testContext.testVersions.forEach(version => {
+        const testVersionMap = buildMapFromVersionList(testContext.testVersions, version);
         const resultTags = buildTagsFromVersionMap(testVersionMap, version);
         assert.ok(resultTags[0].isInvalid === false, `${version} was not valid`);
       });
@@ -623,7 +626,7 @@ export const VersionUtilTests = {
 
     "'satisfies'.versionMatchNotFound is true when requested version does not match anything": () => {
       const requestedVersion = '1.2.3';
-      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(testContext.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[0].versionMatchNotFound === true, "Matched a version that does not exist");
@@ -632,7 +635,7 @@ export const VersionUtilTests = {
 
     "'satisfies'.versionMatchNotFound is false when requested version matches an existing versions": () => {
       const requestedVersion = '~1.9.1';
-      const testVersionMap = buildMapFromVersionList(this.testVersions, requestedVersion);
+      const testVersionMap = buildMapFromVersionList(testContext.testVersions, requestedVersion);
       const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
 
       assert.ok(resultTags[0].versionMatchNotFound === false, "Did not match a version that does exists")

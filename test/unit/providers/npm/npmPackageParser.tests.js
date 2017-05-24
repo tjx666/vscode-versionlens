@@ -12,11 +12,15 @@ const vscode = require('vscode');
 
 const fixtureMap = new TestFixtureMap('./fixtures');
 
+let testContext = {}
+
 export const NPMPackageParserTests = {
 
   beforeAll: () => {
+    testContext = {}
+
     // default config mock
-    this.githubTaggedCommitsMock = ['Commit', 'Release', 'Tag']
+    testContext.githubTaggedCommitsMock = ['Commit', 'Release', 'Tag']
 
     // default api mock
     npmAPIModule.npmViewVersion = _ => Promise.resolve(null)
@@ -28,11 +32,11 @@ export const NPMPackageParserTests = {
   },
 
   beforeEach: () => {
-    this.appContribMock = {}
+    testContext.appContribMock = {}
     Reflect.defineProperty(
-      this.appContribMock,
+      testContext.appContribMock,
       "githubTaggedCommits", {
-        get: () => this.githubTaggedCommitsMock
+        get: () => testContext.githubTaggedCommitsMock
       }
     )
   },
@@ -43,7 +47,7 @@ export const NPMPackageParserTests = {
       const name = 'bootstrap';
       const version = '1.2.3';
 
-      const parsedResults = npmPackageParser(name, version, this.appContribMock);
+      const parsedResults = npmPackageParser(name, version, testContext.appContribMock);
       Promise.resolve(parsedResults)
         .then(results => {
           assert.equal(results[0].name, 'bootstrap', "Expected packageName");
@@ -64,7 +68,7 @@ export const NPMPackageParserTests = {
       // mock the api
       npmAPIModule.npmViewVersion = _ => Promise.resolve("1.2.3")
 
-      const parsedResults = npmPackageParser(name, version, this.appContribMock);
+      const parsedResults = npmPackageParser(name, version, testContext.appContribMock);
       Promise.resolve(parsedResults)
         .then(results => {
           assert.equal(results[0].name, 'bootstrap', "Expected packageName");
@@ -82,7 +86,7 @@ export const NPMPackageParserTests = {
       const name = 'another-project';
       const version = 'file:../another-project';
 
-      const parsedResults = npmPackageParser(name, version, this.appContribMock);
+      const parsedResults = npmPackageParser(name, version, testContext.appContribMock);
       Promise.resolve(parsedResults)
         .then(result => {
           assert.equal(result.name, 'another-project', "Expected packageName");
@@ -99,13 +103,13 @@ export const NPMPackageParserTests = {
       const name = 'bootstrap';
       const version = 'twbs/bootstrap#v10.2.3-alpha';
 
-      const parsedResults = npmPackageParser(name, version, this.appContribMock);
+      const parsedResults = npmPackageParser(name, version, testContext.appContribMock);
       Promise.resolve(parsedResults)
         .then(results => {
           results.forEach((result, index) => {
             assert.equal(result.name, 'bootstrap', "Expected packageName");
             assert.equal(result.version, 'twbs/bootstrap#v10.2.3-alpha', "Expected packageName");
-            assert.equal(result.meta.category, this.githubTaggedCommitsMock[index], `Expected meta.category ${result.meta.category} == ${this.githubTaggedCommitsMock[index]}`);
+            assert.equal(result.meta.category, testContext.githubTaggedCommitsMock[index], `Expected meta.category ${result.meta.category} == ${testContext.githubTaggedCommitsMock[index]}`);
             assert.equal(result.meta.type, 'github', "Expected meta.type");
             assert.equal(result.meta.remoteUrl, `https://github.com/${result.meta.userRepo}/commit/${result.meta.commitish}`, "Expected meta.remoteUrl");
             assert.equal(result.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");
@@ -121,13 +125,13 @@ export const NPMPackageParserTests = {
       const name = 'bootstrap';
       const version = 'git+https://git@github.com/twbs/bootstrap.git#v10.2.3-alpha';
 
-      const parsedResults = npmPackageParser(name, version, this.appContribMock);
+      const parsedResults = npmPackageParser(name, version, testContext.appContribMock);
       Promise.resolve(parsedResults)
         .then(results => {
           results.forEach((result, index) => {
             assert.equal(result.name, 'bootstrap', "Expected packageName");
             assert.equal(result.version, 'twbs/bootstrap#v10.2.3-alpha', "Expected packageName");
-            assert.equal(result.meta.category, this.githubTaggedCommitsMock[index], `Expected meta.category ${result.meta.category} == ${this.githubTaggedCommitsMock[index]}`);
+            assert.equal(result.meta.category, testContext.githubTaggedCommitsMock[index], `Expected meta.category ${result.meta.category} == ${testContext.githubTaggedCommitsMock[index]}`);
             assert.equal(result.meta.type, 'github', "Expected meta.type");
             assert.equal(result.meta.remoteUrl, `https://github.com/${result.meta.userRepo}/commit/${result.meta.commitish}`, "Expected meta.remoteUrl");
             assert.equal(result.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");

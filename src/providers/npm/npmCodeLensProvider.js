@@ -22,8 +22,11 @@ const { window } = require('vscode');
 
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
-  _outdatedCache = [];
-  _documentPath = '';
+  constructor() {
+    super();
+    this._outdatedCache = [];
+    this._documentPath = '';
+  }
 
   get selector() {
     return {

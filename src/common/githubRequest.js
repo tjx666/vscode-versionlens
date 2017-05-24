@@ -84,7 +84,7 @@ class GithubRequest {
     return this.request('GET', userRepo, category, queryParams)
       .catch(error => {
         // handles any 404 errors during a request for the latest release
-        if (error.status = 404 && category === 'releases/latest') {
+        if (error.status === 404 && category === 'releases/latest') {
           return this.cache.set(
             url,
             null
@@ -120,8 +120,8 @@ class GithubRequest {
 
   request(method, userRepo, category, queryParams) {
     if (appContrib.githubAccessToken) {
-      !queryParams && (queryParams = {});
-      queryParams["access_token"] = appContrib.githubAccessToken;
+      if (!queryParams) queryParams = {};
+      queryParams.access_token = appContrib.githubAccessToken;
     }
 
     const url = generateGithubUrl(userRepo, category, queryParams);

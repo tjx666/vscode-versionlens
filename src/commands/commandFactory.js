@@ -81,13 +81,13 @@ export function createTagCommand(tag, codeLens) {
 
 export function createLinkCommand(codeLens) {
   const isFile = codeLens.package.meta.type === 'file';
-  const cmd = `${appSettings.extensionName}.linkCommand`;
+  let cmd = `${appSettings.extensionName}.linkCommand`;
   let title;
 
   if (isFile) {
     const filePath = path.resolve(path.dirname(codeLens.documentUrl.fsPath), codeLens.package.meta.remoteUrl);
     const fileExists = fs.existsSync(filePath);
-    if (fileExists == false)
+    if (fileExists === false)
       title = (cmd = null) || 'Specified resource does not exist';
     else
       title = `${appSettings.openNewWindowIndicator} ${codeLens.package.version}`;
@@ -133,7 +133,7 @@ export function createGithubCommand(codeLens) {
 
 export function createTaggedVersionCommand(codeLens) {
   const taggedVersion = codeLens.getTaggedVersion();
-  const version = codeLens.package.version;
+  let version = codeLens.package.version;
 
   // check for any leading semver symbols in the version
   // strip before compare if they exist

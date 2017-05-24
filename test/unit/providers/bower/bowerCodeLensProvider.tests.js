@@ -14,10 +14,13 @@ const vscode = require('vscode');
 
 const fixtureMap = new TestFixtureMap('./fixtures');
 
+let testContext = null
+
 export const BowerCodeLensProviderTests = {
 
   beforeEach: () => {
-    this.testProvider = new BowerCodeLensProvider();
+    testContext = {}
+    testContext.testProvider = new BowerCodeLensProvider();
 
     // default api mocks
     BowerAPIModule.bowerGetPackageInfo = name => {
@@ -39,7 +42,7 @@ export const BowerCodeLensProviderTests = {
         fileName: 'bower.json'
       };
 
-      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null);
+      let codeLenses = testContext.testProvider.provideCodeLenses(testDocument, null);
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -55,7 +58,7 @@ export const BowerCodeLensProviderTests = {
         fileName: 'bower.json'
       };
 
-      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null);
+      let codeLenses = testContext.testProvider.provideCodeLenses(testDocument, null);
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -72,7 +75,7 @@ export const BowerCodeLensProviderTests = {
         fileName: 'filename.json'
       };
 
-      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null);
+      let codeLenses = testContext.testProvider.provideCodeLenses(testDocument, null);
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -91,7 +94,7 @@ export const BowerCodeLensProviderTests = {
         fileName: fixture.basename
       };
 
-      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null);
+      let codeLenses = testContext.testProvider.provideCodeLenses(testDocument, null);
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -111,7 +114,7 @@ export const BowerCodeLensProviderTests = {
 
     "when code lens package version is 'latest' codeLens should return LatestCommand": () => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: 'latest', meta: {} }, null);
-      this.testProvider.evaluateCodeLens(codeLens, null);
+      testContext.testProvider.evaluateCodeLens(codeLens, null);
       assert.equal(codeLens.command.title, 'Latest', "Expected command.title failed.");
       assert.equal(codeLens.command.command, undefined);
       assert.equal(codeLens.command.arguments, undefined);
@@ -127,7 +130,7 @@ export const BowerCodeLensProviderTests = {
         });
       };
 
-      this.testProvider.evaluateCodeLens(codeLens, null)
+      testContext.testProvider.evaluateCodeLens(codeLens, null)
         .then(result => {
           assert.equal(result.command.title, 'An error occurred retrieving this package', "Expected command.title failed.");
           assert.equal(result.command.command, undefined);
@@ -147,7 +150,7 @@ export const BowerCodeLensProviderTests = {
         });
       };
 
-      this.testProvider.evaluateCodeLens(codeLens, null)
+      testContext.testProvider.evaluateCodeLens(codeLens, null)
         .then(result => {
           assert.equal(result.command.title, '\u2191 3.2.1');
           assert.equal(result.command.command, 'versionlens.updateDependencyCommand');

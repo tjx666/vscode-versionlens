@@ -12,7 +12,8 @@ export function bowerPackageParser(name, version, appContrib) {
   let result;
 
   // check if we have a github version
-  if (result = parseGithubVersion(name, version, appContrib.githubTaggedCommits))
+  result = parseGithubVersion(name, version, appContrib.githubTaggedCommits);
+  if (result)
     return result;
 
   // check if its a valid semver, if not could be a tag

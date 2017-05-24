@@ -10,17 +10,19 @@ import * as npmAPIModule from 'providers/npm/npmAPI';
 
 const mock = require('mock-require');
 const assert = require('assert');
-const path = require('path');
 const vscode = require('vscode');
 
 const fixtureMap = new TestFixtureMap('./fixtures');
 
+let testContext = null;
+
 export const NpmCodeLensProviderTests = {
 
   beforeEach: () => {
-    this.testProvider = new NpmCodeLensProvider();
+    testContext = {};
+    testContext.testProvider = new NpmCodeLensProvider();
 
-    this.testRange = new vscode.Range(
+    testContext.testRange = new vscode.Range(
       new vscode.Position(1, 1),
       new vscode.Position(1, 2)
     );
@@ -31,11 +33,11 @@ export const NpmCodeLensProviderTests = {
     npmAPIModule.npmViewDistTags = _ => Promise.resolve([])
 
     // mock app settings
-    this.showDependencyStatusesMock = false;
+    testContext.showDependencyStatusesMock = false;
     Reflect.defineProperty(
       appSettings,
       "showDependencyStatuses", {
-        get: () => this.showDependencyStatusesMock
+        get: () => testContext.showDependencyStatusesMock
       }
     )
   },
@@ -52,7 +54,7 @@ export const NpmCodeLensProviderTests = {
         }
       };
 
-      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null);
+      let codeLenses = testContext.testProvider.provideCodeLenses(testDocument, null);
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -70,7 +72,7 @@ export const NpmCodeLensProviderTests = {
         }
       };
 
-      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null);
+      let codeLenses = testContext.testProvider.provideCodeLenses(testDocument, null);
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -91,7 +93,7 @@ export const NpmCodeLensProviderTests = {
         }
       };
 
-      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null);
+      let codeLenses = testContext.testProvider.provideCodeLenses(testDocument, null);
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -126,7 +128,7 @@ export const NpmCodeLensProviderTests = {
         ])
       }
 
-      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null);
+      let codeLenses = testContext.testProvider.provideCodeLenses(testDocument, null);
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -166,56 +168,56 @@ export const NpmCodeLensProviderTests = {
   "evaluateCodeLens": {
 
     "returns not found": () => {
-      const codeLens = new PackageCodeLens(this.testRange, null, generatePackage('SomePackage', null, { type: 'npm', packageNotFound: true }), null);
-      const result = this.testProvider.evaluateCodeLens(codeLens, null)
+      const codeLens = new PackageCodeLens(testContext.testRange, null, generatePackage('SomePackage', null, { type: 'npm', packageNotFound: true }), null);
+      const result = testContext.testProvider.evaluateCodeLens(codeLens, null)
       assert.equal(result.command.title, 'SomePackage could not be found', "Expected command.title failed.");
       assert.equal(result.command.command, undefined);
       assert.equal(result.command.arguments, undefined);
     },
 
     "returns tagged versions": () => {
-      const codeLens = new PackageCodeLens(this.testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', tag: { name: 'alpha', version: '3.3.3-alpha.1', isPrimaryTag: false } }), null);
-      const result = this.testProvider.evaluateCodeLens(codeLens, null)
+      const codeLens = new PackageCodeLens(testContext.testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', tag: { name: 'alpha', version: '3.3.3-alpha.1', isPrimaryTag: false } }), null);
+      const result = testContext.testProvider.evaluateCodeLens(codeLens, null)
       assert.equal(result.command.title, 'alpha: \u2191 3.3.3-alpha.1', "Expected command.title failed.");
       assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
       assert.equal(result.command.arguments[1], '"3.3.3-alpha.1"');
     },
 
     "returns fixed versions": () => {
-      const codeLens = new PackageCodeLens(this.testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', tag: { name: 'satisfies', version: '3.3.3', isPrimaryTag: true, isFixedVersion: true } }), null);
-      const result = this.testProvider.evaluateCodeLens(codeLens, null)
+      const codeLens = new PackageCodeLens(testContext.testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', tag: { name: 'satisfies', version: '3.3.3', isPrimaryTag: true, isFixedVersion: true } }), null);
+      const result = testContext.testProvider.evaluateCodeLens(codeLens, null)
       assert.equal(result.command.title, 'Fixed to 3.3.3', "Expected command.title failed.");
       assert.equal(result.command.command, null);
       assert.equal(result.command.arguments, null);
     },
 
     "returns prerelease versions": () => {
-      const codeLens = new PackageCodeLens(this.testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', isFixedVersion: true, tag: { name: 'satisfies', version: '3.3.3', isPrimaryTag: true, isNewerThanLatest: true } }), null);
-      const result = this.testProvider.evaluateCodeLens(codeLens, null)
+      const codeLens = new PackageCodeLens(testContext.testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', isFixedVersion: true, tag: { name: 'satisfies', version: '3.3.3', isPrimaryTag: true, isNewerThanLatest: true } }), null);
+      const result = testContext.testProvider.evaluateCodeLens(codeLens, null)
       assert.equal(result.command.title, 'Prerelease', "Expected command.title failed.");
       assert.equal(result.command.command, null);
       assert.equal(result.command.arguments, null);
     },
 
     "returns latest version matches": () => {
-      const codeLens = new PackageCodeLens(this.testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', tag: { name: 'satisfies', version: '3.3.3', isPrimaryTag: true, isLatestVersion: true } }), null);
-      const result = this.testProvider.evaluateCodeLens(codeLens, null)
+      const codeLens = new PackageCodeLens(testContext.testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', tag: { name: 'satisfies', version: '3.3.3', isPrimaryTag: true, isLatestVersion: true } }), null);
+      const result = testContext.testProvider.evaluateCodeLens(codeLens, null)
       assert.equal(result.command.title, 'Latest', "Expected command.title failed.");
       assert.equal(result.command.command, null);
       assert.equal(result.command.arguments, null);
     },
 
     "returns satisfies latest version": () => {
-      const codeLens = new PackageCodeLens(this.testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', tag: { name: 'satisfies', version: '3.3.3', isPrimaryTag: true, satisfiesLatest: true } }), null);
-      const result = this.testProvider.evaluateCodeLens(codeLens, null)
+      const codeLens = new PackageCodeLens(testContext.testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', tag: { name: 'satisfies', version: '3.3.3', isPrimaryTag: true, satisfiesLatest: true } }), null);
+      const result = testContext.testProvider.evaluateCodeLens(codeLens, null)
       assert.equal(result.command.title, 'Satisfies latest', "Expected command.title failed.");
       assert.equal(result.command.command, null);
       assert.equal(result.command.arguments, null);
     },
 
     "returns updatable versions": () => {
-      const codeLens = new PackageCodeLens(this.testRange, null, generatePackage('SomePackage', '1.2.3', { type: 'npm', tag: { name: 'satisfies', version: '3.2.1', isPrimaryTag: true } }), null);
-      const result = this.testProvider.evaluateCodeLens(codeLens, null)
+      const codeLens = new PackageCodeLens(testContext.testRange, null, generatePackage('SomePackage', '1.2.3', { type: 'npm', tag: { name: 'satisfies', version: '3.2.1', isPrimaryTag: true } }), null);
+      const result = testContext.testProvider.evaluateCodeLens(codeLens, null)
       assert.equal(result.command.title, '\u2191 3.2.1');
       assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
       assert.equal(result.command.arguments[1], '"3.2.1"');

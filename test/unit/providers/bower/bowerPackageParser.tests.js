@@ -6,20 +6,23 @@ import { bowerPackageParser } from 'providers/bower/bowerPackageParser';
 
 const assert = require('assert');
 
+let testContext = null
+
 export const BowerPackageParserTests = {
 
   'bowerPackageParser': {
 
     beforeAll: () => {
-      this.githubTaggedCommits = ['Release', 'Tag'];
+      testContext = {}
+      testContext.githubTaggedCommits = ['Release', 'Tag'];
     },
 
     beforeEach: () => {
-      this.appContribMock = {}
+      testContext.appContribMock = {}
       Reflect.defineProperty(
-        this.appContribMock,
+        testContext.appContribMock,
         "githubTaggedCommits", {
-          get: () => this.githubTaggedCommits
+          get: () => testContext.githubTaggedCommits
         }
       )
     },
@@ -28,7 +31,7 @@ export const BowerPackageParserTests = {
       let name = 'jquery-mousewheel';
       let version = '3.1.12';
 
-      let result = bowerPackageParser(name, version, this.appContribMock);
+      let result = bowerPackageParser(name, version, testContext.appContribMock);
       assert.equal(result.name, 'jquery-mousewheel', "Expected packageName");
       assert.equal(result.version, '3.1.12', "Expected packageName");
       assert.equal(result.meta.type, 'bower', "Expected meta.type");
@@ -40,11 +43,11 @@ export const BowerPackageParserTests = {
       let name = 'masonry';
       let version = 'desandro/masonry#^4.1.1';
 
-      let results = bowerPackageParser(name, version, this.appContribMock);
+      let results = bowerPackageParser(name, version, testContext.appContribMock);
       results.forEach((result, index) => {
         assert.equal(result.name, 'masonry', "Expected packageName");
         assert.equal(result.version, 'desandro/masonry#^4.1.1', "Expected packageName");
-        assert.equal(result.meta.category, this.githubTaggedCommits[index], "Expected meta.category");
+        assert.equal(result.meta.category, testContext.githubTaggedCommits[index], "Expected meta.category");
         assert.equal(result.meta.type, 'github', "Expected meta.type");
         assert.equal(result.meta.remoteUrl, `https://github.com/${result.meta.userRepo}/commit/${result.meta.commitish}`, "Expected meta.remoteUrl");
         assert.equal(result.meta.userRepo, 'desandro/masonry', "Expected meta.userRepo");

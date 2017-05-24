@@ -27,7 +27,7 @@ export function onActiveEditorChanged(editor, providers) {
   }
 
   const filename = path.basename(editor.document.fileName);
-  for (var i = 0; i < providers.length; i++) {
+  for (let i = 0; i < providers.length; i++) {
     if (minimatch(filename, providers[i].selector.pattern)) {
       appSettings.isActive = true;
       return;

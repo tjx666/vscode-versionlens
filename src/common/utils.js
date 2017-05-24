@@ -47,7 +47,7 @@ export function flatMap(array, lambda) {
   return [].concat(
     ...array.map(lambda)
   );
-};
+}
 
 export function sortDescending(a, b) {
   if (a > b)

@@ -8,18 +8,21 @@ import * as npmAPIModule from 'providers/npm/npmAPI';
 const mock = require('mock-require');
 const assert = require('assert');
 
+let testContext = null;
+
 export const JSPMPackageParser = {
 
   beforeAll: () => {
-    this.githubTaggedCommitsMock = ['Commit', 'Release', 'Tag'];
+    testContext = {}
+    testContext.githubTaggedCommitsMock = ['Commit', 'Release', 'Tag'];
   },
 
   beforeEach: () => {
-    this.appContribMock = {}
+    testContext.appContribMock = {}
     Reflect.defineProperty(
-      this.appContribMock,
+      testContext.appContribMock,
       "githubTaggedCommits", {
-        get: () => this.githubTaggedCommitsMock
+        get: () => testContext.githubTaggedCommitsMock
       }
     )
 
@@ -39,7 +42,7 @@ export const JSPMPackageParser = {
       const name = 'bluebird',
       const version = 'npm:bluebird@3.4.6';
 
-      const parsedResults = jspmPackageParser(name, version, this.appContribMock);
+      const parsedResults = jspmPackageParser(name, version, testContext.appContribMock);
       Promise.resolve(parsedResults)
         .then(results => {
           assert.equal(results[0].name, 'bluebird', "Expected packageName");
@@ -56,13 +59,13 @@ export const JSPMPackageParser = {
       const name = 'bootstrap';
       const version = 'github:twbs/bootstrap@4.0.0-alpha.4';
 
-      const parsedResults = jspmPackageParser(name, version, this.appContribMock);
+      const parsedResults = jspmPackageParser(name, version, testContext.appContribMock);
       Promise.resolve(parsedResults)
         .then(results => {
           results.forEach((result, index) => {
             assert.equal(result.name, 'twbs/bootstrap', "Expected packageName");
             assert.equal(result.version, 'twbs/bootstrap#4.0.0-alpha.4', "Expected packageName");
-            assert.equal(result.meta.category, this.githubTaggedCommitsMock[index], `Expected meta.category ${result.meta.category} == ${this.githubTaggedCommitsMock[index]}`);
+            assert.equal(result.meta.category, testContext.githubTaggedCommitsMock[index], `Expected meta.category ${result.meta.category} == ${testContext.githubTaggedCommitsMock[index]}`);
             assert.equal(result.meta.type, 'github', "Expected meta.type");
             assert.equal(result.meta.remoteUrl, `https://github.com/${result.meta.userRepo}/commit/${result.meta.commitish}`, "Expected meta.remoteUrl");
             assert.equal(result.meta.userRepo, 'twbs/bootstrap', "Expected meta.userRepo");

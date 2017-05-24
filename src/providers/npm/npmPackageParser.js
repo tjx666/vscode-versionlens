@@ -136,7 +136,7 @@ export function parseGithubVersion(name, version, githubTaggedVersions, customGe
   const remoteUrl = `${proto}://github.com/${user}/${repo}${commitishSlug}`;
 
   // take a copy of the app config tagged versions
-  const taggedVersions = githubTaggedVersions.slice();
+  let taggedVersions = githubTaggedVersions.slice();
 
   // ensure that commits are the first and the latest entries to be shown
   taggedVersions.splice(0, 0, 'Commit');
@@ -169,7 +169,7 @@ export function parseGithubVersion(name, version, githubTaggedVersions, customGe
 }
 
 export function customNpmGenerateVersion(packageInfo, newVersion) {
-  const existingVersion
+  let existingVersion
   // test if the newVersion is a valid semver range
   // if it is then we need to use the commitish for github versions 
   if (packageInfo.meta.type === 'github' && semver.validRange(newVersion))

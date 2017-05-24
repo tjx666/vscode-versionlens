@@ -14,6 +14,8 @@ const vscode = require('vscode');
 
 const fixtureMap = new TestFixtureMap('./fixtures');
 
+let testContext = null;
+
 export const DubCodeLensProviderTests = {
 
   beforeAll: () => {
@@ -32,7 +34,8 @@ export const DubCodeLensProviderTests = {
   },
 
   beforeEach: () => {
-    this.testProvider = new DubCodeLensProvider();
+    testContext = {};
+    testContext.testProvider = new DubCodeLensProvider();
   },
 
   "provideCodeLenses": {
@@ -47,7 +50,7 @@ export const DubCodeLensProviderTests = {
         }
       };
 
-      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null)
+      let codeLenses = testContext.testProvider.provideCodeLenses(testDocument, null)
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -65,7 +68,7 @@ export const DubCodeLensProviderTests = {
         }
       };
 
-      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null)
+      let codeLenses = testContext.testProvider.provideCodeLenses(testDocument, null)
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -86,7 +89,7 @@ export const DubCodeLensProviderTests = {
         }
       };
 
-      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null)
+      let codeLenses = testContext.testProvider.provideCodeLenses(testDocument, null)
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -108,7 +111,7 @@ export const DubCodeLensProviderTests = {
         }
       };
 
-      let codeLenses = this.testProvider.provideCodeLenses(testDocument, null)
+      let codeLenses = testContext.testProvider.provideCodeLenses(testDocument, null)
       Promise.resolve(codeLenses)
         .then(collection => {
           assert.ok(collection instanceof Array, "codeLens should be an array.");
@@ -137,7 +140,7 @@ export const DubCodeLensProviderTests = {
           responseText: null
         });
       };
-      this.testProvider.evaluateCodeLens(codeLens, null);
+      testContext.testProvider.evaluateCodeLens(codeLens, null);
     },
 
     "when dub does not return status 200 then codeLens should return ErrorCommand": done => {
@@ -149,7 +152,7 @@ export const DubCodeLensProviderTests = {
         });
       };
 
-      this.testProvider.evaluateCodeLens(codeLens, null)
+      testContext.testProvider.evaluateCodeLens(codeLens, null)
         .then(result => {
           assert.equal(result.command.title, 'SomePackage could not be found', "Expected command.title failed.");
           assert.equal(result.command.command, null);
@@ -165,7 +168,7 @@ export const DubCodeLensProviderTests = {
         return Promise.resolve(null);
       };
 
-      this.testProvider.evaluateCodeLens(codeLens, null)
+      testContext.testProvider.evaluateCodeLens(codeLens, null)
         .then(result => {
           assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
           assert.equal(result.command.command, undefined);
@@ -185,7 +188,7 @@ export const DubCodeLensProviderTests = {
         });
       };
 
-      this.testProvider.evaluateCodeLens(codeLens, null)
+      testContext.testProvider.evaluateCodeLens(codeLens, null)
         .then(result => {
           assert.equal(result.command.title, 'Invalid object returned from server', "Expected command.title failed.");
           assert.equal(result.command.command, undefined);
@@ -199,7 +202,7 @@ export const DubCodeLensProviderTests = {
       DubAPIModule.dubGetPackageLatest = options => {
         return Promise.resolve('3.2.1');
       };
-      this.testProvider.evaluateCodeLens(codeLens, null)
+      testContext.testProvider.evaluateCodeLens(codeLens, null)
         .then(result => {
           assert.equal(result.command.title, '\u2191 3.2.1');
           assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
