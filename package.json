@@ -47,7 +47,7 @@
     "rimraf": "2.6.1",
     "mock-require": "2.0.2",
     "mocha-ui-esm": "1.0.0-alpha.3",
-    "@types/node": "~6.0.73"
+    "@types/node": "~7.0.22"
   },
   "dependencies": {
     "systemjs": "0.20.12",
