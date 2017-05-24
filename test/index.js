@@ -1,5 +1,5 @@
 const System = global.System = require('systemjs')
-const Bundle = require('../out/test')
+const Bundle = require('../out/test-bundle')
 
 exports.run = function (testRoot, onComplete) {
   System.import('test/runner')

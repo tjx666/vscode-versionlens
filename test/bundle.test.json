@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "module": "system",
-    "outFile": "../out/test/index.js",
+    "outFile": "../out/test-bundle.js",
     "lib": [
       "ES2017"
     ],
