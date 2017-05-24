@@ -6,8 +6,7 @@ import { npmDefaultDependencyProperties } from '../providers/npm/config';
 import { bowerDefaultDependencyProperties } from '../providers/bower/config';
 import { dubDefaultDependencyProperties } from '../providers/dub/config';
 import {
-  dotnetCSProjDefaultDependencyProperties,
-  dotnetProjectJsonDefaultDependencyProperties
+  dotnetCSProjDefaultDependencyProperties
 } from '../providers/dotnet/config';
 
 const { workspace } = require('vscode');
@@ -51,7 +50,7 @@ export default new class AppContribution {
 
   get dotnetCSProjDependencyProperties() {
     const config = workspace.getConfiguration('versionlens');
-    return config.get("dotnet-csproj.dependencyProperties", dotnetCSProjDefaultDependencyProperties);
+    return config.get("dotnet.dependencyProperties", dotnetCSProjDefaultDependencyProperties);
   }
 
   get dotnetTagFilter() {

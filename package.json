@@ -257,8 +257,8 @@
           "uniqueItems": true,
           "minItems": 1,
           "default": [
-            "dependencies",
-            "tools"
+            "PackageReference",
+            "DotNetCliToolReference"
           ],
           "description": "Defines which properties in project.json should be parsed by this extension"
         },
