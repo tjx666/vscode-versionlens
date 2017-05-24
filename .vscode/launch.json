@@ -22,11 +22,11 @@
       "runtimeExecutable": "${execPath}",
       "args": [
         "--extensionDevelopmentPath=${workspaceRoot}",
-        "--extensionTestsPath=${workspaceRoot}/out/test"
+        "--extensionTestsPath=${workspaceRoot}/test"
       ],
       "stopOnEntry": false,
       "sourceMaps": true,
-      "outDir": "${workspaceRoot}/out/test",
+      "outDir": "${workspaceRoot}/test",
       "preLaunchTask": "compile-test"
     }
   ]

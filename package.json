@@ -42,10 +42,11 @@
     "test": "node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
-    "typescript": "2.3.2",
+    "typescript": "2.3.3",
     "vscode": "1.1.0",
     "rimraf": "2.6.1",
     "mock-require": "2.0.2",
+    "mocha-ui-esm": "1.0.0-alpha.3",
     "@types/node": "~6.0.73"
   },
   "dependencies": {

@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "es5",
     "module": "system",
-    "moduleResolution": "node",
     "outFile": "../out/test/index.js",
     "lib": [
       "ES2017"
@@ -28,7 +27,6 @@
     }
   },
   "files": [
-    "loader.js",
-    "unit/extension.test.js"
+    "runner.js"
   ]
 }
