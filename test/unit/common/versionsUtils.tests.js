@@ -242,7 +242,6 @@ export const VersionUtilTests = {
         `results.length to be expected.length`
       );
 
-      // console.log(tests.map(tag => tag.version))
       results.map(tag => tag.version)
         .forEach((testVersion, index) => {
           assert.equal(

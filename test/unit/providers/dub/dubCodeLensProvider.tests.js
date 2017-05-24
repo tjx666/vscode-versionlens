@@ -57,7 +57,7 @@ export const DubCodeLensProviderTests = {
           assert.ok(collection.length === 0, "codeLens should be an empty array.");
           done();
         })
-        .catch(console.error.bind(this));
+        .catch(err => done(err));
     },
 
     "returns empty array when the document text is empty": done => {
@@ -75,7 +75,7 @@ export const DubCodeLensProviderTests = {
           assert.ok(collection.length === 0, "codeLens should be an empty array.");
           done();
         })
-        .catch(console.error.bind(this));
+        .catch(err => done(err));
     },
 
     "returns empty array when the package has no dependencies": done => {
@@ -96,7 +96,7 @@ export const DubCodeLensProviderTests = {
           assert.ok(collection.length === 0, "codeLens should be an empty array.");
           done();
         })
-        .catch(console.error.bind(this));
+        .catch(err => done(err));
     },
 
     "returns array of given dependencies to be resolved": done => {
@@ -123,7 +123,7 @@ export const DubCodeLensProviderTests = {
 
           done();
         })
-        .catch(console.error.bind(this));
+        .catch(err => done(err));
     }
 
   },

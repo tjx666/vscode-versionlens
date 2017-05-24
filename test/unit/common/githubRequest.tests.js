@@ -53,7 +53,7 @@ export const GithubRequestTests = {
       };
 
       githubRequest.httpGet('testRepo', 'testCategory')
-        .catch(console.error.bind(console));
+        .catch(err => done(err));
     },
 
     "generates the expected url with access token": done => {
@@ -71,7 +71,7 @@ export const GithubRequestTests = {
       };
 
       githubRequest.httpGet('testRepo', 'testCategory')
-        .catch(console.error.bind(console));
+        .catch(err => done(err));
     },
 
     "generates the expected url with access token with query params": done => {
@@ -89,7 +89,7 @@ export const GithubRequestTests = {
       };
 
       githubRequest.httpGet('testRepo', 'testCategory', { page: 1, per_page: 1 })
-        .catch(console.error.bind(console));
+        .catch(err => done(err));
     },
 
     "caches url response when promise resolves": done => {
@@ -110,7 +110,7 @@ export const GithubRequestTests = {
           );
           done();
         })
-        .catch(console.error.bind(console));
+        .catch(err => done(err));
     },
 
     "caches url response when promise is rejected": done => {
@@ -122,7 +122,7 @@ export const GithubRequestTests = {
       };
 
       githubRequest.httpGet('testRepo', 'testCategory')
-        .then(console.error.bind(console))
+        .then(results => done(new Error("Should not be called")))
         .catch(response => {
           const cachedData = githubRequest.cache.get('GET_https://api.github.com/repos/testRepo/testCategory');
           assert.equal(
@@ -149,7 +149,7 @@ export const GithubRequestTests = {
       };
 
       githubRequest.getLatestCommit('testRepo')
-        .catch(console.error.bind(console));
+        .catch(err => done(err));
     },
 
     "returns a reduced commit object data from result": done => {
@@ -166,7 +166,7 @@ export const GithubRequestTests = {
           assert.equal(entry.version, '0913a0b', "Expected sha to match");
           done();
         })
-        .catch(console.error.bind(console));
+        .catch(err => done(err));
     },
 
     "generates expected tags url": done => {
@@ -185,7 +185,7 @@ export const GithubRequestTests = {
         });
       }
       githubRequest.getLatestTag('testRepo')
-        .catch(console.error.bind(console));
+        .catch(err => done(err));
     },
 
     "returns a reduced tag object data from result": done => {
@@ -211,7 +211,7 @@ export const GithubRequestTests = {
           assert.equal(entry.version, 'v4.0.0-alpha.5', "Expected tag to match");
           done();
         })
-        .catch(console.error.bind(console));
+        .catch(err => done(err));
     },
 
   },
@@ -228,7 +228,7 @@ export const GithubRequestTests = {
         })
       };
       githubRequest.getLatestRelease('testRepo')
-        .catch(console.error.bind(console));
+        .catch(err => done(err));
     },
 
     'returns a reduced release object data from result': done => {
@@ -244,7 +244,7 @@ export const GithubRequestTests = {
           assert.equal(entry.version, 'v4.0.0-alpha.5', "Expected sha to match");
           done();
         })
-        .catch(console.error.bind(console));
+        .catch(err => done(err));
     }
 
   },
@@ -261,7 +261,7 @@ export const GithubRequestTests = {
   //       });
   //     };
   //     githubRequest.getLatestRelease('testRepo', false)
-  //       .catch(console.error.bind(console));
+  //       .catch(err => done(err));
   //   }
 
   // }

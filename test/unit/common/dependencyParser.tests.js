@@ -40,7 +40,7 @@ export const DependencyParserTests = {
           assert.ok(results[0][0].node === dependencyNodes[0], 'customVersionParser: node does not match');
           done();
         })
-        .catch(console.error.bind(console));
+        .catch(err => done(err));
 
     },
 
@@ -59,7 +59,7 @@ export const DependencyParserTests = {
           assert.ok(results[2].node === dependencyNodes[2], 'parseDependencyNodes: node does not match');
           done();
         })
-        .catch(console.error.bind(console));
+        .catch(err => done(err));
     }
 
   }

@@ -52,7 +52,7 @@ export const JSPMPackageParser = {
           assert.ok(!!results[0].customGenerateVersion, "Expected customGenerateVersion");
           done();
         })
-        .catch(console.log.bind(this));
+        .catch(err => done(err));
     },
 
     'returns the expected object for github versions': done => {
@@ -74,7 +74,7 @@ export const JSPMPackageParser = {
           });
           done();
         })
-        .catch(console.log.bind(this));
+        .catch(err => done(err));
     },
 
     'customGenerateVersion preserves leading symbol for github semver tags': () => {

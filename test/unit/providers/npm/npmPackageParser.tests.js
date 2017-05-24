@@ -58,7 +58,7 @@ export const NPMPackageParserTests = {
           assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
           done();
         })
-        .catch(console.log.bind(this));
+        .catch(err => done(err));
     },
 
     'returns the expected object for ranged semver versions': done => {
@@ -79,7 +79,7 @@ export const NPMPackageParserTests = {
           assert.equal(results[0].customGenerateVersion, null, "Expected customGenerateVersion");
           done();
         })
-        .catch(console.log.bind(this));
+        .catch(err => done(err));
     },
 
     'returns the expected object for file versions': done => {
@@ -96,7 +96,7 @@ export const NPMPackageParserTests = {
           assert.equal(result.customGenerateVersion, null, "Expected customGenerateVersion");
           done();
         })
-        .catch(console.log.bind(this));
+        .catch(err => done(err));
     },
 
     'returns the expected object for github versions': done => {
@@ -118,7 +118,7 @@ export const NPMPackageParserTests = {
           });
           done();
         })
-        .catch(console.log.bind(this));
+        .catch(err => done(err));
     },
 
     'returns the expected object for git+http+github versions': done => {
@@ -140,7 +140,7 @@ export const NPMPackageParserTests = {
           });
           done();
         })
-        .catch(console.log.bind(this));
+        .catch(err => done(err));
     }
 
   },
