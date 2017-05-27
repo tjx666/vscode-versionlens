@@ -32,13 +32,16 @@
   ],
   "main": "./out/extension-bundle.js",
   "scripts": {
-    "teardown": "npm run -s clean && rimraf ./node_modules",
+    "teardown": "npm run clean -s && rimraf ./node_modules",
     "vscode:prepublish": "npm run -s compile",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "clean": "rimraf ./out ./test/out",
-    "compile": "npm run -s clean && tsc -p ./src/bundle.json",
-    "compile-test": "npm run -s clean && jshint ./src && tsc -p ./test/bundle.test.json",
+    "clean": "rimraf ./out",
+    "precompile": "npm run clean -s && jshint ./src",
+    "precompile:test": "npm run precompile -s",
+    "compile": "tsc -p ./src/bundle.json",
+    "compile:test": "tsc -p ./test/bundle.test.json",
+    "pretest": "npm run compile-test -s",
     "test": "node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {

@@ -16,7 +16,7 @@ export class TestFixtureMap {
   fixtureRootPath;
 
   constructor(relativeFixtureRootPath) {
-    const testPath = path.join(__dirname, '../test');
+    const testPath = path.join(__dirname, '../../test');
     this.fixtureRootPath = path.join(testPath, relativeFixtureRootPath);
     if (fs.existsSync(this.fixtureRootPath) === false) {
       throw new ReferenceError("Fixture root path not found. " + this.fixtureRootPath);
