@@ -41,7 +41,7 @@
     "precompile:test": "npm run precompile -s",
     "compile": "tsc -p ./src/bundle.json",
     "compile:test": "tsc -p ./test/bundle.test.json",
-    "pretest": "npm run compile-test -s",
+    "pretest": "npm run compile:test -s",
     "test": "node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
