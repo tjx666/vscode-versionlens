@@ -4,31 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import appSettings from 'common/appSettings';
 import * as utils from 'common/utils';
-import { clearDecorations } from '../editor/decorations';
-
-const { workspace, TextEdit, WorkspaceEdit } = require('vscode');
-const path = require('path');
-const opener = require('opener');
-
-export function updateDependencyCommand(codeLens, packageVersion) {
-  const edits = [TextEdit.replace(codeLens.replaceRange, packageVersion)];
-  const edit = new WorkspaceEdit();
-  edit.set(codeLens.documentUrl, edits);
-  workspace.applyEdit(edit);
-  codeLens.pendingEval = true;
-}
-
-export function linkCommand(codeLens) {
-  if (codeLens.package.meta.type === 'file') {
-    const filePathToOpen = path.resolve(
-      path.dirname(codeLens.documentUrl.fsPath),
-      codeLens.package.meta.remoteUrl
-    );
-    opener(filePathToOpen);
-    return;
-  }
-  opener(codeLens.package.meta.remoteUrl);
-}
+import { clearDecorations } from 'editor/decorations';
 
 export function showTaggedVersions(file) {
   appSettings.showTaggedVersions = true;
@@ -58,8 +34,4 @@ export function showVersionLenses(file) {
 export function hideVersionLenses(file) {
   appSettings.showVersionLenses = false;
   utils.refreshCodeLens();
-}
-
-export function showingProgress(file) {
-  // currenlty do nothing
 }

@@ -1,12 +1,19 @@
 import appSettings from 'common/appSettings';
 import * as CustomCommands from './commands';
+import * as InternalCommands from './internal';
 
-const { commands } = require('vscode');
+export default function register() {
+  const { commands } = require('vscode');
 
-export default Object.keys(CustomCommands)
-  .map(commandName => {
-    return commands.registerCommand(
-      `${appSettings.extensionName}.${commandName}`,
-      CustomCommands[commandName]
-    );
-  });
+  function mapCommand(commandName, index) {
+    const mapObject = this
+    const id = `${appSettings.extensionName}.${commandName}`;
+    const method = mapObject[commandName];
+    return commands.registerCommand(id, method);
+  }
+
+  return [
+    ...Object.keys(InternalCommands).map(mapCommand.bind(InternalCommands)),
+    ...Object.keys(CustomCommands).map(mapCommand.bind(CustomCommands))
+  ];
+}

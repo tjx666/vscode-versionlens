@@ -7,6 +7,8 @@ export * from './common/caching/expiryCacheMap.tests';
 export * from './common/githubRequest.tests';
 export * from './common/dependencyParser.tests';
 export * from './common/versionsUtils.tests';
+export * from './commands/internal/updateDependencyCommand.tests';
+export * from './commands/internal/linkCommand.tests';
 export * from './commands/factory.tests';
 export * from './providers/npm/api/npmViewVersion.tests';
 export * from './providers/npm/api/npmViewDistTags.tests';
