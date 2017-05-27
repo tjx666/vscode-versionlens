@@ -2,19 +2,22 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-const npm = require('npm');
 const npa = require('npm-package-arg');
 const semver = require('semver');
 const path = require('path');
-const fs = require('fs');
 
 export function npmPackageDirExists(packageJsonPath, packageName) {
-  npm.localPrefix = packageJsonPath;
+  const fs = require('fs');
+  const npm = require('npm');
   const npmFormattedPath = path.join(npm.dir, packageName);
+
+  npm.localPrefix = packageJsonPath;
   return fs.existsSync(npmFormattedPath);
 }
 
 export function npmViewVersion(packageName) {
+  const npm = require('npm');
+
   return new Promise((resolve, reject) => {
     npm.load(loadError => {
       if (loadError) {
@@ -53,6 +56,8 @@ export function npmViewVersion(packageName) {
 }
 
 export function npmViewDistTags(packageName) {
+  const npm = require('npm');
+
   return new Promise((resolve, reject) => {
     npm.load(loadError => {
       if (loadError) {
@@ -68,25 +73,19 @@ export function npmViewDistTags(packageName) {
 
         // get the keys from the object returned
         const keys = Object.keys(response);
+        if (!keys.length)
+          return reject({
+            code: 'NPM_VIEW_EMPTY_RESPONSE',
+            message: `NPM view did not return any tags for ${packageName}`
+          })
 
         // take the first key and return the dist-tags keys
-        let tags
-
-        if (keys.length > 0) {
-          const distTags = response[keys[0]]['dist-tags'];
-          tags = Object.keys(distTags)
-            .map(key => ({
-              name: key,
-              version: distTags[key]
-            }))
-        } else {
-          tags = [
-            {
-              name: 'latest',
-              version: 'latest'
-            }
-          ];
-        }
+        const distTags = response[keys[0]]['dist-tags'];
+        const tags = Object.keys(distTags)
+          .map(key => ({
+            name: key,
+            version: distTags[key]
+          }))
 
         // fixes a case where npm doesn't publish latest as the first dist-tag
         const latestIndex = tags.findIndex(item => item.name === 'latest');
@@ -104,6 +103,8 @@ export function npmViewDistTags(packageName) {
 }
 
 export function npmGetOutdated(npmLocalPath) {
+  const npm = require('npm');
+
   return new Promise((resolve, reject) => {
     npm.load(loadError => {
       if (loadError) {
@@ -129,30 +130,7 @@ export function npmGetOutdated(npmLocalPath) {
   });
 }
 
-export function npmViewVersions(packageName) {
-  return new Promise((resolve, reject) => {
-    npm.load(loadError => {
-      if (loadError) {
-        reject(loadError);
-        return;
-      }
-
-      npm.view(packageName, 'versions', (viewError, response) => {
-        if (viewError) {
-          reject(viewError);
-          return;
-        }
-
-        // get the keys from the object returned
-        let keys = Object.keys(response);
-        let firstKey = keys[0];
-        resolve(response[firstKey].versions);
-      });
-    });
-  });
-}
-
-export function parseNpmVersion(packageName, packageVersion) {
+export function parseNpmArguments(packageName, packageVersion) {
   return new Promise(function (resolve, reject) {
     try {
       const npaParsed = npa.resolve(packageName, packageVersion);
@@ -162,7 +140,6 @@ export function parseNpmVersion(packageName, packageVersion) {
     }
   });
 }
-
 
 function parseOutdatedResponse(response) {
   let outdated = [];

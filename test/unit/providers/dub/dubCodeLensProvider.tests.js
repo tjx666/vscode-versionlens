@@ -8,7 +8,6 @@ import { dubDefaultDependencyProperties } from 'providers/dub/config';
 import { DubCodeLensProvider } from 'providers/dub/dubCodeLensProvider';
 import * as DubAPIModule from 'providers/dub/dubAPI';
 
-const mock = require('mock-require');
 const assert = require('assert');
 const vscode = require('vscode');
 

@@ -17,13 +17,13 @@ import {
 import {
   npmViewVersion,
   npmViewDistTags,
-  parseNpmVersion
+  parseNpmArguments
 } from './npmAPI'
 
 const semver = require('semver');
 
 export function npmPackageParser(name, requestedVersion, appContrib) {
-  return parseNpmVersion(name, requestedVersion)
+  return parseNpmArguments(name, requestedVersion)
     .then(npmVersionInfo => {
       // check if we have a directory
       if (npmVersionInfo.type === 'directory')
@@ -79,7 +79,7 @@ export function npmPackageParser(name, requestedVersion, appContrib) {
         );
       }
 
-      throw new Error("NPM: parseNpmVersion " + error);
+      throw new Error("NPM: parseNpmArguments " + error);
     });
 }
 

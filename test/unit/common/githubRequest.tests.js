@@ -2,27 +2,21 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { TestFixtureMap } from 'test/unit/utils';
-import { githubRequest } from 'common/githubRequest';
-import appContribMock from 'common/appContrib';
+import { TestFixtureMap } from 'test/unit/utils'
+import { githubRequest } from 'common/githubRequest'
+import appContribMock from 'common/appContrib'
 
-const assert = require('assert');
-const mock = require('mock-require');
+const assert = require('assert')
+const mock = require('mock-require')
+const fixtureMap = new TestFixtureMap('./fixtures')
 
-const requestLightMock = {
-  xhr: _ => { throw new Error("Not implemented") }
-};
-
-mock('request-light', requestLightMock);
-
-const fixtureMap = new TestFixtureMap('./fixtures');
-
-let testContext = null;
+let requestLightMock = null
+let testContext = null
 
 export const GithubRequestTests = {
 
   beforeAll: () => {
-    testContext = {};
+    testContext = {}
 
     testContext.githubAccessTokenMock = null
 
@@ -32,10 +26,18 @@ export const GithubRequestTests = {
         get: () => testContext.githubAccessTokenMock
       }
     )
+
+    // mock require modules
+    requestLightMock = {}
+    mock('request-light', requestLightMock)
   },
+
+  afterAll: () => mock.stopAll(),
 
   beforeEach: () => {
     testContext.githubAccessTokenMock = null
+
+    requestLightMock.xhr = _ => { throw new Error("Not implemented") }
   },
 
   "httpGet(userRepo, category)": {

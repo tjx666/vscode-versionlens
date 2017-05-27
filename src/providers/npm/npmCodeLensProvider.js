@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
+import { AbstractCodeLensProvider } from 'providers/abstractCodeLensProvider';
 import { npmPackageParser } from './npmPackageParser';
 import appSettings from 'common/appSettings';
 import appContrib from 'common/appContrib';
@@ -16,7 +16,7 @@ import {
   renderOutdatedDecoration,
   renderNeedsUpdateDecoration,
   renderPrereleaseInstalledDecoration
-} from '../../editor/decorations';
+} from 'editor/decorations';
 
 const { window } = require('vscode');
 
@@ -69,13 +69,11 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   evaluateCodeLens(codeLens) {
-    if (codeLens.package.meta) {
-      if (codeLens.package.meta.type === 'github')
+    if (codeLens.isMetaType('github'))
         return CommandFactory.createGithubCommand(codeLens);
 
-      if (codeLens.package.meta.type === 'file')
+    if (codeLens.isMetaType('file'))
         return CommandFactory.createLinkCommand(codeLens);
-    }
 
     // check if this package was found
     if (codeLens.packageNotFound())

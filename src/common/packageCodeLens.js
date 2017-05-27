@@ -36,15 +36,25 @@ export class PackageCodeLens extends CodeLens {
   }
 
   isTaggedVersion() {
-    return !this.package.meta.tag.isPrimaryTag;
+    return this.package.meta.tag
+      && !this.package.meta.tag.isPrimaryTag;
+  }
+
+  isTagName(name) {
+    return this.package.meta.tag
+      && this.package.meta.tag.name === name;
   }
 
   isFixedVersion() {
     return this.package.meta.tag.isFixedVersion;
   }
 
+  isMetaType(type) {
+    return this.package.meta.type === type;
+  }
+
   matchesLatestVersion() {
-    return this.package.meta.tag.isLatestVersion;
+    return this.package.meta.tag && this.package.meta.tag.isLatestVersion;
   }
 
   satisfiesLatestVersion() {

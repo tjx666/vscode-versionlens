@@ -8,7 +8,6 @@ import { bowerDefaultDependencyProperties } from 'providers/bower/config';
 import { BowerCodeLensProvider } from 'providers/bower/bowerCodeLensProvider';
 import * as BowerAPIModule from 'providers/bower/bowerAPI';
 
-const mock = require('mock-require');
 const assert = require('assert');
 const vscode = require('vscode');
 

@@ -8,7 +8,6 @@ import appSettings from 'common/appSettings';
 import { NpmCodeLensProvider } from 'providers/npm/npmCodeLensProvider';
 import * as npmAPIModule from 'providers/npm/npmAPI';
 
-const mock = require('mock-require');
 const assert = require('assert');
 const vscode = require('vscode');
 

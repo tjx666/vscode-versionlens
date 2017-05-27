@@ -5,7 +5,6 @@
 import { jspmPackageParser, customJspmGenerateVersion } from 'providers/jspm/jspmPackageParser';
 import * as npmAPIModule from 'providers/npm/npmAPI';
 
-const mock = require('mock-require');
 const assert = require('assert');
 
 let testContext = null;

@@ -6,7 +6,6 @@ import { TestFixtureMap } from 'test/unit/utils';
 import { npmPackageParser, customNpmGenerateVersion } from 'providers/npm/npmPackageParser';
 import * as npmAPIModule from 'providers/npm/npmAPI';
 
-const mock = require('mock-require');
 const assert = require('assert');
 const vscode = require('vscode');
 

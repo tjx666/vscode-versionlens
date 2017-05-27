@@ -7,7 +7,6 @@ import { PackageCodeLens } from 'common/packageCodeLens';
 import { dotnetCSProjDefaultDependencyProperties } from 'providers/dotnet/config';
 import { DotNetCodeLensProvider } from 'providers/dotnet/dotnetCodeLensProvider';
 
-const mock = require('mock-require');
 const assert = require('assert');
 const vscode = require('vscode');
 

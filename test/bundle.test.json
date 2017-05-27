@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "module": "system",
-    "outFile": "../out/test-bundle.js",
+    "outFile": "../out/index.js",
     "lib": [
       "ES2017"
     ],
@@ -27,6 +27,7 @@
     }
   },
   "files": [
+    "loader.js",
     "runner.js"
   ]
 }

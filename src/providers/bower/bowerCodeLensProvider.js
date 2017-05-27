@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
+import { AbstractCodeLensProvider } from 'providers/abstractCodeLensProvider';
 import appContrib from 'common/appContrib';
 import { generateCodeLenses } from 'common/codeLensGeneration';
 import appSettings from 'common/appSettings';

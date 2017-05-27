@@ -8,7 +8,7 @@ import {
   parseNpmRegistryVersion,
   parseFileVersion,
   parseGithubVersion
-} from '../npm/npmPackageParser';
+} from 'providers/npm/npmPackageParser';
 
 const semver = require('semver');
 

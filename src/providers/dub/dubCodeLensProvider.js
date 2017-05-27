@@ -18,7 +18,7 @@ import {
   renderInstalledDecoration,
   renderOutdatedDecoration,
   clearDecorations
-} from '../../editor/decorations';
+} from 'editor/decorations';
 
 const path = require('path');
 
