@@ -1,5 +1,5 @@
 import appSettings from 'common/appSettings';
-import * as CustomCommands from './commands';
+import * as EditorIconsCommands from './editorIcons';
 import * as InternalCommands from './internal';
 
 export default function register() {
@@ -14,6 +14,6 @@ export default function register() {
 
   return [
     ...Object.keys(InternalCommands).map(mapCommand.bind(InternalCommands)),
-    ...Object.keys(CustomCommands).map(mapCommand.bind(CustomCommands))
+    ...Object.keys(EditorIconsCommands).map(mapCommand.bind(EditorIconsCommands))
   ];
 }
