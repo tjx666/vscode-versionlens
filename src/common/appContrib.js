@@ -2,12 +2,12 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { npmDefaultDependencyProperties } from '../providers/npm/config';
-import { bowerDefaultDependencyProperties } from '../providers/bower/config';
-import { dubDefaultDependencyProperties } from '../providers/dub/config';
+import { npmDefaultDependencyProperties } from 'providers/npm/config';
+import { bowerDefaultDependencyProperties } from 'providers/bower/config';
+import { dubDefaultDependencyProperties } from 'providers/dub/config';
 import {
   dotnetCSProjDefaultDependencyProperties
-} from '../providers/dotnet/config';
+} from 'providers/dotnet/config';
 
 const { workspace } = require('vscode');
 

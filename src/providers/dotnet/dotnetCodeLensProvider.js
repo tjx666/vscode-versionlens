@@ -7,7 +7,7 @@ import appSettings from 'common/appSettings';
 import appContrib from 'common/appContrib';
 import { parseDependencyNodes } from 'common/dependencyParser';
 import { generateCodeLenses } from 'common/codeLensGeneration';
-import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
+import { AbstractCodeLensProvider } from 'providers/abstractCodeLensProvider';
 import { findNodesInXmlContent } from './dotnetDependencyParser';
 import { dotnetPackageParser } from './dotnetPackageParser.js';
 
