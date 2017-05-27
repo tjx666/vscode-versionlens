@@ -8,7 +8,7 @@ import appSettings from 'common/appSettings';
 import appContrib from 'common/appContrib';
 import { generateCodeLenses } from 'common/codeLensGeneration';
 import { findNodesInJsonContent, parseDependencyNodes } from 'common/dependencyParser';
-import * as CommandFactory from 'commands/commandFactory';
+import * as CommandFactory from 'commands/factory';
 import { npmGetOutdated, npmPackageDirExists } from './npmAPI';
 import {
   renderMissingDecoration,

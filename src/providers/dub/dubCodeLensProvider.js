@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as CommandFactory from 'commands/commandFactory';
+import * as CommandFactory from 'commands/factory';
 import { PackageCodeLens } from 'common/packageCodeLens';
 import appContrib from 'common/appContrib';
 import { generateCodeLenses } from 'common/codeLensGeneration';

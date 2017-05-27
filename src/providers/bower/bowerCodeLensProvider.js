@@ -7,7 +7,7 @@ import appContrib from 'common/appContrib';
 import { generateCodeLenses } from 'common/codeLensGeneration';
 import appSettings from 'common/appSettings';
 import { findNodesInJsonContent, parseDependencyNodes } from 'common/dependencyParser';
-import * as CommandFactory from 'commands/commandFactory';
+import * as CommandFactory from 'commands/factory';
 import { bowerGetPackageInfo } from './bowerAPI';
 import { bowerPackageParser } from './bowerPackageParser';
 

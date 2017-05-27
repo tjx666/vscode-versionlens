@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import { PackageCodeLens } from 'common/packageCodeLens';
-import * as CommandFactory from 'commands/commandFactory';
+import * as CommandFactory from 'commands/factory';
 
 const assert = require('assert');
 const semver = require('semver');
