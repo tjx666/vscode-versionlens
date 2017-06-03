@@ -57,15 +57,21 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       return [];
 
     appSettings.inProgress = true;
+    return generateCodeLenses(packageCollection, document)
+      .then(codeLenses => {
+        if (appSettings.showDependencyStatuses)
     return this.updateOutdated()
-      .then(_ => {
-        appSettings.inProgress = false;
-        return generateCodeLenses(packageCollection, document);
+            .then(_ => codeLenses)
+
+        return codeLenses;
       })
       .catch(err => {
-        appSettings.inProgress = false;
         console.log(err)
-      });
+      })
+      .then(codeLenses => {
+        appSettings.inProgress = false;
+        return codeLenses
+      })
   }
 
   evaluateCodeLens(codeLens) {

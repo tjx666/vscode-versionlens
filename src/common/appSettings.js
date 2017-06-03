@@ -10,7 +10,7 @@ let _isActive = false;
 let _inProgress = false;
 let _showTaggedVersions = false;
 let _showVersionLenses = false;
-let _showDependencyStatuses = true;
+let _showDependencyStatuses = false;
 
 const config = {
   extensionName: "versionlens",
@@ -80,8 +80,9 @@ const config = {
 
 };
 
-// ensure the context is set to the defaults
+// set any defaults
 config.showTaggedVersions = appContrib.showTaggedVersionsAtStartup === true;
 config.showVersionLenses = appContrib.showVersionLensesAtStartup === true;
+config.showDependencyStatuses = appContrib.showDependencyStatusesAtStartup === true;
 
 export default config;

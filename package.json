@@ -165,8 +165,18 @@
       ],
       "editor/title": [
         {
+          "command": "versionlens.showDependencyStatuses",
+          "when": "versionlens.showDependencyStatuses == false && versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
+          "group": "navigation@3"
+        },
+        {
+          "command": "versionlens.hideDependencyStatuses",
+          "when": "versionlens.showDependencyStatuses && versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
+          "group": "navigation@3"
+        },
+        {
           "command": "versionlens.showTaggedVersions",
-          "when": "versionlens.showTaggedVersions == false && versionlens.show && versionlens.isActive && versionlens.inProgress == false && textCompareEditorVisible == false",
+          "when": "versionlens.showTaggedVersions == false && versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
           "group": "navigation@2"
         },
         {
@@ -176,7 +186,7 @@
         },
         {
           "command": "versionlens.showVersionLenses",
-          "when": "versionlens.show == false && versionlens.isActive && textCompareEditorVisible == false",
+          "when": "versionlens.show == false && versionlens.isActive && versionlens.inProgress == false && textCompareEditorVisible == false",
           "group": "navigation@1"
         },
         {
