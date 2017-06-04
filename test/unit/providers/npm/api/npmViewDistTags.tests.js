@@ -15,7 +15,9 @@ export const NpmViewVersionTests = {
 
   beforeAll: () => {
     // mock require modules
-    npmMock = {}
+    npmMock = {
+      commands: {}
+    }
     mock('npm', npmMock)
   },
 
@@ -27,7 +29,7 @@ export const NpmViewVersionTests = {
 
     // mock defaults
     npmMock.load = cb => cb(true)
-    npmMock.view = (name, args, cb) => cb()
+    npmMock.commands.view = (name, args, cb) => cb()
   },
 
   "rejects on npm.load error": done => {
@@ -43,7 +45,7 @@ export const NpmViewVersionTests = {
 
   "rejects on npm.view error": done => {
     npmMock.load = cb => cb()
-    npmMock.view = (n, v, cb) => cb("view error")
+    npmMock.commands.view = (n, v, cb) => cb("view error")
 
     npmViewDistTags()
       .then(results => done(new Error("Should not be called")))
@@ -56,7 +58,7 @@ export const NpmViewVersionTests = {
   "throws NPM_VIEW_EMPTY_RESPONSE when response is empty": done => {
     const response = {}
     npmMock.load = cb => cb()
-    npmMock.view = (n, v, cb) => cb(null, response)
+    npmMock.commands.view = (n, v, cb) => cb(null, response)
 
     npmViewDistTags()
       .then(results => done(new Error("Should not be called")))
@@ -80,7 +82,7 @@ export const NpmViewVersionTests = {
     }
 
     npmMock.load = cb => cb()
-    npmMock.view = (n, v, cb) => cb(null, testResponse)
+    npmMock.commands.view = (n, v, cb) => cb(null, testResponse)
 
     npmViewDistTags()
       .then(actual => {
@@ -118,7 +120,7 @@ export const NpmViewVersionTests = {
     }
 
     npmMock.load = cb => cb()
-    npmMock.view = (n, v, cb) => cb(null, testResponse)
+    npmMock.commands.view = (n, v, cb) => cb(null, testResponse)
 
     npmViewDistTags()
       .then(actual => {

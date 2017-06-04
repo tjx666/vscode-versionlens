@@ -15,7 +15,9 @@ export const NpmViewVersionTests = {
 
   beforeAll: () => {
     // mock require modules
-    npmMock = {}
+    npmMock = {
+      commands: {}
+    }
     mock('npm', npmMock)
   },
 
@@ -27,7 +29,7 @@ export const NpmViewVersionTests = {
 
     // mock defaults
     npmMock.load = cb => cb(true)
-    npmMock.view = (name, args, cb) => cb()
+    npmMock.commands.view = (name, args, cb) => cb()
   },
 
   "rejects on npm.load error": done => {
@@ -43,7 +45,7 @@ export const NpmViewVersionTests = {
 
   "rejects on npm.view error": done => {
     npmMock.load = cb => cb()
-    npmMock.view = (n, v, cb) => cb("view error")
+    npmMock.commands.view = (n, v, cb) => cb("view error")
 
     npmViewVersion()
       .then(results => done(new Error("Should not be called")))
@@ -56,7 +58,7 @@ export const NpmViewVersionTests = {
   "returns null for empty responses": done => {
     const response = {}
     npmMock.load = cb => cb()
-    npmMock.view = (n, v, cb) => cb(null, response)
+    npmMock.commands.view = (n, v, cb) => cb(null, response)
 
     npmViewVersion()
       .then(actual => {
@@ -69,7 +71,7 @@ export const NpmViewVersionTests = {
   "returns single versions": done => {
     const response = { '1.2.3': null }
     npmMock.load = cb => cb()
-    npmMock.view = (n, v, cb) => cb(null, response)
+    npmMock.commands.view = (n, v, cb) => cb(null, response)
 
     npmViewVersion()
       .then(actual => {
@@ -82,7 +84,7 @@ export const NpmViewVersionTests = {
   "returns latest version first": done => {
     const response = { '1.2.3': null, '5.0.0': null, '1.1.1': null }
     npmMock.load = cb => cb()
-    npmMock.view = (n, v, cb) => cb(null, response)
+    npmMock.commands.view = (n, v, cb) => cb(null, response)
 
     npmViewVersion()
       .then(actual => {
