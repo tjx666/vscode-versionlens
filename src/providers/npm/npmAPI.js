@@ -25,7 +25,8 @@ export function npmViewVersion(packageName) {
         return;
       }
 
-      npm.view(packageName, 'version', (viewError, response) => {
+      const silent = true;
+      npm.commands.view([packageName, 'version'], silent, (viewError, response) => {
         if (viewError) {
           reject(viewError);
           return;
@@ -65,7 +66,8 @@ export function npmViewDistTags(packageName) {
         return;
       }
 
-      npm.view(packageName, 'dist-tags', (viewError, response) => {
+      const silent = true;
+      npm.commands.view([packageName, 'dist-tags'], silent, (viewError, response) => {
         if (viewError) {
           reject(viewError);
           return;
@@ -114,7 +116,8 @@ export function npmGetOutdated(npmLocalPath) {
 
       npm.localPrefix = npmLocalPath;
       npm.config.set('json', true);
-      npm.outdated((err, response) => {
+      const silent = true;
+      npm.commands.outdated(silent, (err, response) => {
         if (err) {
           if (err.code !== 'ETARGET') {
             reject(err);
