@@ -32,7 +32,8 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     return {
       language: 'json',
       scheme: 'file',
-      pattern: '**/package.json'
+      pattern: '**/package.json',
+      group: ['tags', 'statuses'],
     }
   }
 
@@ -40,7 +41,8 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     if (appSettings.showVersionLenses === false)
       return;
 
-    this._documentPath = require('path').dirname(document.uri.fsPath);
+    const path = require('path');
+    this._documentPath = path.dirname(document.uri.fsPath);
 
     const dependencyNodes = findNodesInJsonContent(
       document.getText(),
@@ -53,14 +55,14 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       npmPackageParser
     );
 
-    if (packageCollection.length === 0)
+    if (packageCollection.length === 0) 
       return [];
 
     appSettings.inProgress = true;
     return generateCodeLenses(packageCollection, document)
       .then(codeLenses => {
         if (appSettings.showDependencyStatuses)
-    return this.updateOutdated()
+          return this.updateOutdated()
             .then(_ => codeLenses)
 
         return codeLenses;
@@ -68,18 +70,14 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       .catch(err => {
         console.log(err)
       })
-      .then(codeLenses => {
-        appSettings.inProgress = false;
-        return codeLenses
-      })
   }
 
   evaluateCodeLens(codeLens) {
     if (codeLens.isMetaType('github'))
-        return CommandFactory.createGithubCommand(codeLens);
+      return CommandFactory.createGithubCommand(codeLens);
 
     if (codeLens.isMetaType('file'))
-        return CommandFactory.createLinkCommand(codeLens);
+      return CommandFactory.createLinkCommand(codeLens);
 
     // check if this package was found
     if (codeLens.packageNotFound())
@@ -134,7 +132,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     return npmGetOutdated(this._documentPath)
       .then(results => this._outdatedCache = results)
       .catch(err => {
-        console.log("npmGetOutdated", err)
+        console.log("npmGetOutdated", err);
       });
   }
 
@@ -168,9 +166,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
         // no current means no install at all
         if (!current) {
-          renderMissingDecoration(
-            codeLens.replaceRange
-          );
+          renderMissingDecoration(codeLens.replaceRange);
           return;
         }
 

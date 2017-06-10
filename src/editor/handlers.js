@@ -11,10 +11,7 @@ import {
   removeDecorationsFromLine
 } from './decorations';
 
-const path = require('path');
-const minimatch = require('minimatch');
-
-export function onActiveEditorChanged(editor, providers) {
+export function onActiveEditorChanged(editor) {
   if (!editor) {
     appSettings.isActive = false;
     return;
@@ -27,12 +24,9 @@ export function onActiveEditorChanged(editor, providers) {
     return;
   }
 
-  const filename = path.basename(editor.document.fileName);
-  for (let i = 0; i < providers.length; i++) {
-    if (minimatch(filename, providers[i].selector.pattern)) {
-      appSettings.isActive = true;
-      return;
-    }
+  if (getProvidersByFileName(editor.document.fileName)) {
+    appSettings.isActive = true;
+    return;
   }
 
   appSettings.isActive = false;

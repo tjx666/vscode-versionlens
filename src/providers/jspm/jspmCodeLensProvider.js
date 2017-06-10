@@ -11,20 +11,22 @@ import { NpmCodeLensProvider } from '../npm/npmCodeLensProvider';
 import { findNodesInJsonContent } from './jspmDependencyParser';
 import { jspmPackageParser } from './jspmPackageParser';
 
-const path = require('path');
-
 export class JspmCodeLensProvider extends NpmCodeLensProvider {
 
   provideCodeLenses(document, token) {
     if (appSettings.showVersionLenses === false)
       return;
 
+    const path = require('path');
     this._documentPath = path.dirname(document.uri.fsPath);
 
     const dependencyNodes = findNodesInJsonContent(
       document.getText(),
       appContrib.npmDependencyProperties
     );
+
+    if(dependencyNodes.length === 0)
+      return [];
 
     const packageCollection = parseDependencyNodes(
       dependencyNodes,
@@ -35,7 +37,6 @@ export class JspmCodeLensProvider extends NpmCodeLensProvider {
     appSettings.inProgress = true;
     return generateCodeLenses(packageCollection, document)
       .then(codelenses => {
-        appSettings.inProgress = false;
         return codelenses;
       });
   }

@@ -5,20 +5,21 @@
 import appSettings from 'common/appSettings';
 import * as utils from 'common/utils';
 import { clearDecorations } from 'editor/decorations';
+import * as CodeLensProviders from 'providers/codeLensProviders';
 
 export function showTaggedVersions(file) {
   appSettings.showTaggedVersions = true;
-  utils.refreshCodeLens();
+  CodeLensProviders.reloadActiveProviders();
 }
 
 export function hideTaggedVersions(file) {
   appSettings.showTaggedVersions = false;
-  utils.refreshCodeLens();
+  CodeLensProviders.reloadActiveProviders();
 }
 
 export function showDependencyStatuses(file) {
   appSettings.showDependencyStatuses = true;
-  utils.refreshCodeLens();
+  CodeLensProviders.reloadActiveProviders();
 }
 
 export function hideDependencyStatuses(file) {
@@ -28,10 +29,10 @@ export function hideDependencyStatuses(file) {
 
 export function showVersionLenses(file) {
   appSettings.showVersionLenses = true;
-  utils.refreshCodeLens();
+  CodeLensProviders.reloadActiveProviders();
 }
 
 export function hideVersionLenses(file) {
   appSettings.showVersionLenses = false;
-  utils.refreshCodeLens();
+  CodeLensProviders.reloadActiveProviders();
 }

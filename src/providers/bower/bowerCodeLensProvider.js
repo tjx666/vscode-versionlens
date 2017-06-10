@@ -17,7 +17,8 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
     return {
       language: 'json',
       scheme: 'file',
-      pattern: '**/bower.json'
+      pattern: '**/bower.json',
+      group: ['tags'],
     }
   }
 

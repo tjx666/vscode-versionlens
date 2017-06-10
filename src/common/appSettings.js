@@ -74,7 +74,7 @@ const config = {
     commands.executeCommand(
       'setContext',
       `${this.extensionName}.inProgress`,
-      _inProgress
+      newValue
     );
   },
 
@@ -84,5 +84,6 @@ const config = {
 config.showTaggedVersions = appContrib.showTaggedVersionsAtStartup === true;
 config.showVersionLenses = appContrib.showVersionLensesAtStartup === true;
 config.showDependencyStatuses = appContrib.showDependencyStatusesAtStartup === true;
+config.inProgress = false
 
 export default config;
