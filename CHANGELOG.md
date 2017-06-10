@@ -1,3 +1,13 @@
+# 0.19.0
+
+ - This release only supports vscode v1.13.0 onwards
+ - Takes advantage of the codelens reload feature that was fixed in vscode v1.13.0 https://github.com/Microsoft/vscode/issues/26168
+ - Fixed annoying jumps in the document after replacing the version text. Related to https://github.com/vscode-contrib/vscode-versionlens/issues/55
+
+   ![smooth-fixes](https://user-images.githubusercontent.com/1727302/26998682-771cf304-4d7f-11e7-815e-3523aa83d2f5.gif)
+
+ - Added editor icon to toggle dependency statuses.
+
 # 0.18.1
 
   - Fixed unicode arrows not showing on osx and some linux dists
