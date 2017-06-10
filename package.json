@@ -13,7 +13,7 @@
   "displayName": "Version Lens",
   "icon": "images/logo.png",
   "engines": {
-    "vscode": "^1.8.0"
+    "vscode": "^1.13.0"
   },
   "keywords": [
     "versions",
