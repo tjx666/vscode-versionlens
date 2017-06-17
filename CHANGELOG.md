@@ -1,3 +1,7 @@
+# 0.19.1
+
+  - fixes a case where pre releases were being treated as older versions
+
 # 0.19.0
 
  - This release only supports vscode v1.13.0 onwards
