@@ -3,6 +3,7 @@
   "title": "smoke test",
   "dependencies": {},
   "devDependencies": {
+    "typescript": "^2.3.4",
     "bootstrap": "twbs/bootstrap#v3.3.0",
     "test": "file:../../../src",
     "@types/angular": "~1.5",

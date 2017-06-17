@@ -46,6 +46,8 @@ export const NPMPackageParserTests = {
       const name = 'bootstrap';
       const version = '1.2.3';
 
+      npmAPIModule.npmViewVersion = _ => Promise.resolve('1.2.3')
+
       const parsedResults = npmPackageParser(name, version, testContext.appContribMock);
       Promise.resolve(parsedResults)
         .then(results => {

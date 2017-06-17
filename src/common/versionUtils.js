@@ -52,14 +52,10 @@ export function removeTagsWithName(name) {
 /**
  * @export
  * @param {Array<TaggedVersion>} tags
- * @param {Boolean} conditional
  * @param {String} versionRange
  * @returns {Array<TaggedVersion>}
  */
-export function removeOlderVersions(conditional, versionRange) {
-  if (!conditional)
-    return this;
-
+export function removeOlderVersions(versionRange) {
   return this.filter(tag => !isOlderVersion(tag.version, versionRange));
 }
 
@@ -128,8 +124,9 @@ export function isOlderVersion(version, requestedVersion) {
       // strip the test version prerelease info
       // semver always see prereleases as < than releases regardless of version numbering
       testVersion = testVersion.replace('-' + testVersionComponents.join('.'), '');
+
       // and we only want newer prereleases
-      return semver.ltr(testVersion, requestedVersion) || !semver.gtr(testVersion, requestedVersion);
+      return semver.ltr(testVersion, requestedVersion) || requestedVersion.includes(testVersion);
     }
   }
 
@@ -350,24 +347,32 @@ const versionTagFilterRules = createChainMutator([
  * @returns {Array<TaggedVersion>}
  */
 export function applyTagFilterRules(taggedVersions, requestedVersion, satisifiesVersion, latestVersion, versionMatchNotFound) {
-  // set the state to mutate
-  return versionTagFilterRules.set(taggedVersions)
+  let filterVersions = taggedVersions.slice()
+
+  if (semver.validRange(requestedVersion)) {
     // filter out any pre releases that are older than the requestedVersion
-    .removeOlderVersions(semver.validRange(requestedVersion), requestedVersion)
-    // tags that have the exact same version as the satisifiesVersion are filtered
-    .removeExactVersions(satisifiesVersion)
-    // tags that have the exact same version as the latest are filtered
-    .removeExactVersions(latestVersion)
+    filterVersions = removeOlderVersions.call(filterVersions, requestedVersion)
+  }
+
+  // tags that have the exact same version as the satisifiesVersion are filtered
+  filterVersions = removeExactVersions.call(filterVersions, satisifiesVersion)
+
+  // tags that have the exact same version as the latest are filtered
+  filterVersions = removeExactVersions.call(filterVersions, latestVersion)
+
+  if (versionMatchNotFound) {
     // if versionMatchNotFound, tags that are older than the latestVersion are filtered
-    .removeOlderVersions(versionMatchNotFound, latestVersion)
-    // remove ambiguous tag names
-    .removeAmbiguousTagNames()
-    // reduce tags to unique names
-    .reduceTagsByUniqueNames()
-    // remove any tags named latest
-    .removeTagsWithName('latest')
-    // return the final result
-    .toValue()
-    // sort tags by most recent version
-    .sort(sortTagsByRecentVersion);
+    filterVersions = removeOlderVersions.call(filterVersions, latestVersion)
+  }
+
+  // remove ambiguous tag names
+  filterVersions = removeAmbiguousTagNames.call(filterVersions)
+
+  // reduce tags to unique names
+  filterVersions = reduceTagsByUniqueNames.call(filterVersions)
+
+  // remove any tags named latest
+  filterVersions = removeTagsWithName.call(filterVersions, 'latest')
+
+  return filterVersions.sort(sortTagsByRecentVersion)
 }
