@@ -676,8 +676,18 @@ export const VersionUtilTests = {
 
       assert.ok(resultTags[0].versionMatchNotFound === false, "Did not match a version that does exists")
       assert.ok(resultTags[0].isInvalid === false, "Version should not be flagged as invalid");
-    }
+    },
 
+    "does not fail if only prerelease versions": () => {
+      const requestedVersion = '2.1.0-preview1-final';
+      const testVersionMap = buildMapFromVersionList(['2.1.0-preview1-final'], requestedVersion);
+      const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
+
+      assert.ok(resultTags[0].versionMatchNotFound === false, "Did not match a version that does exists");
+      assert.ok(resultTags[0].isInvalid === false, "Version should not be flagged as invalid");
+      assert.ok(resultTags[0].isLatestVersion === true, "Should be latest version");
+      assert.ok(resultTags[0].satisfiesLatest === true, "Should install latest version");
+    }
   },
 
   "applyTagFilterRules": {
