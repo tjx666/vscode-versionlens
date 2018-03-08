@@ -296,9 +296,9 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
   // store the latest release
   const latestEntry = {
     name: "latest",
-    version: versionMap.releases[0],
+    version: versionMap.releases[0] || versionMap.taggedVersions[0].version,
     // can only be older if a match was found and requestedVersion is a valid range
-    isOlderThanRequested: !versionMatchNotFound && isRequestedVersionValid && isOlderVersion(versionMap.releases[0], requestedVersion)
+    isOlderThanRequested: !versionMatchNotFound && isRequestedVersionValid && isOlderVersion(versionMap.releases[0] || versionMap.taggedVersions[0].version, requestedVersion)
   };
   const satisfiesLatest = semver.satisfies(versionMap.maxSatisfyingVersion, latestEntry.version);
   const isFixed = isRequestedVersionValid && isFixedVersion(requestedVersion);
