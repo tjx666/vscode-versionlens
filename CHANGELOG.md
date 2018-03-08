@@ -1,6 +1,10 @@
+# 0.20.0
+
+  - Fixes a bug that occurs when a package only has pre-release versions https://github.com/vscode-contrib/vscode-versionlens/issues/94
+
 # 0.19.1
 
-  - fixes a case where pre releases were being treated as older versions
+  - Fixes a case where pre releases were being treated as older versions
 
 # 0.19.0
 
