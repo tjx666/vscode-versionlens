@@ -17,7 +17,7 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
     return {
       language: 'xml',
       scheme: 'file',
-      pattern: '**/*.{csproj,fsproj}',
+      pattern: '**/*.{csproj,fsproj,targets,props}',
       group: ['tags'],
     }
   }
