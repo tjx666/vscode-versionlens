@@ -1,6 +1,11 @@
+# 0.20.1
+
+  - Fixed an issue where codelenses would break because the npm package contained http+ssh. See https://github.com/vscode-contrib/vscode-versionlens/issues/86
+  - Fixed an issue where dub.selections.json files weren't being detected
+
 # 0.20.0
 
-  - Fixes a bug that occurs when a package only has pre-release versions (thanks to https://github.com/jmezach) https://github.com/vscode-contrib/vscode-versionlens/issues/94 
+  - Fixes a bug that occurs when a package only has pre-release versions (thanks to https://github.com/jmezach)https://github.com/vscode-contrib/vscode-versionlens/issues/94
 
 # 0.19.1
 
