@@ -30,7 +30,7 @@ export function npmPackageParser(name, requestedVersion, appContrib) {
         return parseFileVersion(name, requestedVersion);
 
       // check if we have a github version
-      if (npmVersionInfo.type === 'git' && npmVersionInfo.hosted.type === 'github') {
+      if (npmVersionInfo.type === 'git' && (npmVersionInfo.hosted && npmVersionInfo.hosted.type === 'github')) {
         return parseGithubVersion(
           name,
           npmVersionInfo.hosted.path({ noCommittish: false }),
