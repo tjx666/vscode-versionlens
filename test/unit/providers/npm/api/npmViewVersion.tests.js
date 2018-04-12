@@ -22,7 +22,7 @@ export const NpmViewVersionTests = {
   },
 
   // reset all require mocks
-  afterAll: () => mock.stopAll,
+  afterAll: () => mock.stopAll(),
 
   beforeEach: () => {
     testContext = {}
