@@ -1,3 +1,4 @@
 export const dubDefaultDependencyProperties = [
-  "dependencies"
+  "dependencies",
+  "versions"
 ];

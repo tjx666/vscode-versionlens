@@ -34,7 +34,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     return {
       language: 'json',
       scheme: 'file',
-      pattern: '**/dub.json',
+      pattern: '**/{dub.json,dub.selections.json}',
       group: ['statuses'],
     };
   }
