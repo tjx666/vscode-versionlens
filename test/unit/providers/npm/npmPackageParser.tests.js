@@ -8,12 +8,15 @@ import * as npmAPIModule from 'providers/npm/npmAPI';
 
 const assert = require('assert');
 const vscode = require('vscode');
-
+const mock = require('mock-require');
 const fixtureMap = new TestFixtureMap('./fixtures');
 
 let testContext = {}
 
 export const NPMPackageParserTests = {
+
+  // reset all require mocks
+  afterAll: () => mock.stopAll,
 
   beforeAll: () => {
     testContext = {}
@@ -90,9 +93,9 @@ export const NPMPackageParserTests = {
       const parsedResults = npmPackageParser(name, version, testContext.appContribMock);
       Promise.resolve(parsedResults)
         .then(result => {
-          assert.equal(result.name, 'another-project', "Expected packageName");
-          assert.equal(result.version, 'file:../another-project', "Expected packageName");
-          assert.equal(result.meta.type, 'file', "Expected meta.type");
+          assert.equal(result.name, 'another-project', `Expected packageName. result.name = ${result.name}`);
+          assert.equal(result.version, 'file:../another-project', `Expected packageVersion. result.version = ${result.packageVersion}`);
+          assert.equal(result.meta.type, 'file', `Expected meta.type. result.meta.type = ${result.meta.type}`);
           assert.equal(result.meta.remoteUrl, '../another-project', "Expected meta.remoteUrl");
           assert.equal(result.customGenerateVersion, null, "Expected customGenerateVersion");
           done();
@@ -100,6 +103,7 @@ export const NPMPackageParserTests = {
         .catch(err => done(err));
     },
 
+    only: 2,
     'returns the expected object for github versions': done => {
       const name = 'bootstrap';
       const version = 'twbs/bootstrap#v10.2.3-alpha';

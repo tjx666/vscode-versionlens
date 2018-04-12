@@ -2,7 +2,6 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-const npa = require('npm-package-arg');
 const semver = require('semver');
 const path = require('path');
 
@@ -134,9 +133,15 @@ export function npmGetOutdated(npmLocalPath) {
 }
 
 export function parseNpmArguments(packageName, packageVersion) {
+  const npa = require('npm-package-arg');
+
   return new Promise(function (resolve, reject) {
     try {
       const npaParsed = npa.resolve(packageName, packageVersion);
+      if (!npaParsed) {
+        reject({ code: 'EUNSUPPORTEDPROTOCOL' });
+        return;
+      }
       resolve(npaParsed);
     } catch (err) {
       reject(err);
