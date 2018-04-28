@@ -38,6 +38,9 @@ export const BowerCodeLensProviderTests = {
 
       let testDocument = {
         getText: range => fixture.content,
+        uri: {
+          fsPath: ''
+        },
         fileName: 'bower.json'
       };
 
@@ -54,6 +57,9 @@ export const BowerCodeLensProviderTests = {
     "returns empty array when the document text is empty": done => {
       let testDocument = {
         getText: range => '',
+        uri: {
+          fsPath: ''
+        },
         fileName: 'bower.json'
       };
 
@@ -71,6 +77,9 @@ export const BowerCodeLensProviderTests = {
       let fixture = fixtureMap.read('package-no-deps.json');
       let testDocument = {
         getText: range => fixture.content,
+        uri: {
+          fsPath: ''
+        },
         fileName: 'filename.json'
       };
 
@@ -89,6 +98,9 @@ export const BowerCodeLensProviderTests = {
 
       let testDocument = {
         getText: (range) => fixture.content,
+        uri: {
+          fsPath: ''
+        },
         positionAt: (offset) => new vscode.Position(0, 0),
         fileName: fixture.basename
       };
@@ -122,16 +134,16 @@ export const BowerCodeLensProviderTests = {
     "when null info object returned from bower then codeLens should return ErrorCommand": done => {
       const codeLens = new PackageCodeLens(null, null, { name: 'SomePackage', version: '1.2.3', meta: {} }, null);
 
-      BowerAPIModule.bowerGetPackageInfo = name => {
+      BowerAPIModule.bowerGetPackageInfo = (name, localPath) => {
         return Promise.reject({
           status: 500,
-          responseText: 'Invalid object returned from server'
+          responseText: "Invalid object returned from server for 'SomePackage'"
         });
       };
 
       testContext.testProvider.evaluateCodeLens(codeLens, null)
         .then(result => {
-          assert.equal(result.command.title, 'An error occurred retrieving this package', "Expected command.title failed.");
+          assert.equal(result.command.title, "An error occurred retrieving 'SomePackage' package", "Expected command.title failed.");
           assert.equal(result.command.command, undefined);
           assert.equal(result.command.arguments, undefined);
           done();

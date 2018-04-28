@@ -11,6 +11,8 @@ import * as CommandFactory from 'commands/factory';
 import { bowerGetPackageInfo } from './bowerAPI';
 import { bowerPackageParser } from './bowerPackageParser';
 
+const path = require('path');
+
 export class BowerCodeLensProvider extends AbstractCodeLensProvider {
 
   get selector() {
@@ -25,6 +27,8 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
   provideCodeLenses(document, token) {
     if (appSettings.showVersionLenses === false)
       return;
+
+    this._documentPath = path.dirname(document.uri.fsPath);
 
     const dependencyNodes = findNodesInJsonContent(
       document.getText(),
@@ -60,7 +64,7 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
         return CommandFactory.createLinkCommand(codeLens);
     }
 
-    return bowerGetPackageInfo(codeLens.package.name)
+    return bowerGetPackageInfo(codeLens.package.name, this._documentPath)
       .then(info => {
         return CommandFactory.createVersionCommand(
           codeLens.package.version,
@@ -71,7 +75,7 @@ export class BowerCodeLensProvider extends AbstractCodeLensProvider {
       .catch(err => {
         console.error(err);
         return CommandFactory.createErrorCommand(
-          "An error occurred retrieving this package",
+          `An error occurred retrieving '${codeLens.package.name}' package`,
           codeLens
         );
       });

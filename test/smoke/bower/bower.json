@@ -16,6 +16,7 @@
     "jquery-simulate": "1.0.0",
     "jshint": "2.4.4",
     "qunit": "1.18.0",
-    "qunit-assert-classes": "1.0.2"
+    "qunit-assert-classes": "1.0.2",
+    "does-not-exist": ""
   }
 }

@@ -4,16 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 const bower = require('bower');
 
-export function bowerGetPackageInfo(packageName) {
+export function bowerGetPackageInfo(packageName, localPath) {
 
   return new Promise(function (resolve, reject) {
-
-    bower.commands.info(packageName)
+    bower.commands.info(packageName, undefined, { cwd: localPath })
       .on('end', info => {
         if (!info || !info.latest) {
           reject({
             status: 404,
-            responseText: 'Invalid object returned from server'
+            responseText: `Invalid object returned from server for '${packageName}'`
           });
           return;
         }
