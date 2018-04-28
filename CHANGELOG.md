@@ -1,6 +1,7 @@
 # 0.21.0
 
   - Added support for dotnet target and prop files (thanks to https://github.com/cilerler) https://github.com/vscode-contrib/vscode-versionlens/pull/99
+  - Ensured `bower info` is called from the cwd. Fixes https://github.com/vscode-contrib/vscode-versionlens/issues/102
 
 # 0.20.1
 
