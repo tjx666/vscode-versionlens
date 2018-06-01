@@ -105,8 +105,13 @@ export function parseNpmRegistryVersion(name, requestedVersion, appContrib, cust
 
 export function parseFileVersion(name, version) {
   const fileRegExpResult = fileDependencyRegex.exec(version);
-  if (!fileRegExpResult)
-    return;
+  if (!fileRegExpResult) {
+    return PackageFactory.createInvalidVersion(
+      name,
+      version,
+      'npm'
+    );
+  }
 
   const meta = {
     type: "file",
