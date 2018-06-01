@@ -1,3 +1,7 @@
+# 0.21.1
+
+  - NPM: Fixed an issue where the spinning progress would not stop when invalid local file paths were entered. (https://github.com/vscode-contrib/vscode-versionlens/issues/104)
+
 # 0.21.0
 
   - Added support for dotnet target and prop files (thanks to https://github.com/cilerler) https://github.com/vscode-contrib/vscode-versionlens/pull/99
