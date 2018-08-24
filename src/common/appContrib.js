@@ -8,6 +8,9 @@ import { dubDefaultDependencyProperties } from 'providers/dub/config';
 import {
   dotnetCSProjDefaultDependencyProperties
 } from 'providers/dotnet/config';
+import {
+  mavenDefaultDependencyProperties
+} from 'providers/maven/config';
 
 const { workspace } = require('vscode');
 
@@ -63,6 +66,16 @@ export default new class AppContribution {
     return config.get("dub.dependencyProperties", dubDefaultDependencyProperties);
   }
 
+  get mavenDependencyProperties() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get("maven.dependencyProperties", mavenDefaultDependencyProperties);
+  }
+
+  get mavenTagFilter() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get("maven.tagFilter", []);
+  }
+  
   get githubTaggedCommits() {
     const config = workspace.getConfiguration('versionlens');
     return config.get('github.taggedCommits', ['Release', 'Tag']);
