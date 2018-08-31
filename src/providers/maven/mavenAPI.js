@@ -6,7 +6,7 @@ const MAVEN_CENTRAL = 'http://search.maven.org/solrsearch/select?q=';
 
 export function mavenGetPackageVersions(packageName) {
 
-  const queryUrl = `${MAVEN_CENTRAL}${packageName}&rows=200&core=gav`;
+  const queryUrl = `${MAVEN_CENTRAL}${packageName}&rows=9999&core=gav`;
   return new Promise(function (resolve, reject) {
     httpRequest.xhr({ url: queryUrl })
       .then(response => {
@@ -23,7 +23,7 @@ export function mavenGetPackageVersions(packageName) {
         json_response.response.docs.forEach(doc => {
           versions.push(doc.v);
         })
-        resolve(versions.sort());
+        resolve(versions);
       }).catch(reject);
   });
 

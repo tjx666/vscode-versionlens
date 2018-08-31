@@ -1,78 +1,73 @@
 import { mavenGetPackageVersions } from './mavenAPI.js';
 import appSettings from 'common/appSettings';
 import * as PackageFactory from 'common/packageGeneration';
-// import {
-//   isOlderVersion,
-//   filterTagsByName,
-//   buildTagsFromVersionMap,
-//   buildMapFromVersionList
-// } from 'common/versionUtils';
+import { getNodeMajorVersion } from 'typescript';
 
-const semver = require('semver');
+const compareVersions = require('tiny-version-compare');
 
 export function mavenPackageParser(name, requestedVersion, appContrib) {
+
   // get all the versions for the package
   return mavenGetPackageVersions(name)
     .then(versions => {
-      const packageInfo = {
-            type: 'maven',
-            message: 'teste'
-          };
-      return PackageFactory.createPackage(name, requestedVersion, packageInfo, null)
-      // map from version list
 
-      // versions.forEach(version => {
-      //   versionMap
-      // })
-      // const versionMap = buildMapFromVersionList(
-      //   versions,
-      //   requestedVersion
-      // );
+      let sorted = versions.sort(compareVersions)
 
-      // // get all the tag entries
-      // const extractedTags = buildTagsFromVersionMap(
-      //   versionMap,
-      //   nodeRequestedRange
-      // );
-
-      // grab the satisfiesEntry
-      // const satisfiesEntry = extractedTags[0];
-
-      // let filteredTags = extractedTags;
-      // if (appSettings.showTaggedVersions === false) //  && extractedTags.length > 2
-      //   // only show 'satisfies' and 'latest' entries when showTaggedVersions is false
-      //   filteredTags = [
-      //     satisfiesEntry,
-      //     ...(satisfiesEntry.isLatestVersion ? [] : extractedTags[1])
-      //   ];
-      // else if (appContrib.mavenTagFilter.length > 0)
-      //   // filter the tags using dotnet app config filter
-      //   filteredTags = filterTagsByName(
-      //     extractedTags,
-      //     [
-      //       // ensure we have a 'satisfies' entry
-      //       'satisfies',
-      //       // conditionally provide the latest entry
-      //       ...(satisfiesEntry.isLatestVersion ? [] : 'latest'),
-      //       // all other user tag name filters
-      //       ...appContrib.mavenTagFilter
-      //     ]
-      //   );
+      let majors = []
+      let latestMajor = null
+      return versions.forEach(version => {
         
-      // map the tags to package dependencies
-      // return versions.map((version) => {
-      //   const packageInfo = {
-      //     type: 'maven'
-      //   };
+        if (latestMajor != version.split('.')[0]) {
+          latestMajor = version.split('.')[0]
+          majors.push(latestMajor)
+        }
+        let meta = {
+          type: 'maven',
+          tag: {
+            name: 'satisfies',
+            version: latestMajor,
+            isPrimaryTag: true
+          }
+        }
+        return PackageFactory.createPackage(
+          name,
+          requestedVersion,
+          meta
+        );
 
-      //   return PackageFactory.createPackage(
-      //     name,
-      //     version,
-      //     packageInfo, 
-      //     null
-      //   );
+      });
+
+      // const latestVersion = sorted.reverse()[0]
+
+      // // const versionMap = {
+      // //   releases: versions,
+      // //   taggedVersions: []
+      // // }
+
+      // let meta = {
+      //   type: 'maven',
+      //   tag: {
+      //     name: 'latest',
+      //     version: latestVersion
+      //   }
+      // }
+
+      // if (requestedVersion == latestVersion) {
+      //   meta.tag = {
+      //     isLatestVersion: true,
+      //     isPrimaryTag: true,
+      //     name: 'Latest',
+      //     version: latestVersion
+      //   }
+      // }
+
+      // return PackageFactory.createPackage(
+      //   name,
+      //   requestedVersion,
+      //   meta
+      // );
+
       // });
-      
     })
     .catch(error => {
       // show the 404 to the user; otherwise throw the error
