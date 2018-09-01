@@ -1,7 +1,7 @@
 import { mavenGetPackageVersions } from './mavenAPI.js';
 import appSettings from 'common/appSettings';
 import * as PackageFactory from 'common/packageGeneration';
-import { getNodeMajorVersion } from 'typescript';
+import { buildMapFromVersionList } from 'providers/maven/versionUtils'
 
 const compareVersions = require('tiny-version-compare');
 
@@ -10,6 +10,10 @@ export function mavenPackageParser(name, requestedVersion, appContrib) {
   // get all the versions for the package
   return mavenGetPackageVersions(name)
     .then(versions => {
+
+      let versionMeta = buildMapFromVersionList(versions, requestedVersion)
+
+      // let versionTags = buildTagsFromVersionMap(versionMap, requestedVersion)
 
       let sorted = versions.sort(compareVersions)
 
@@ -24,15 +28,15 @@ export function mavenPackageParser(name, requestedVersion, appContrib) {
         } 
       }
 
-      return latestVersions.map((version, index) => {
+      return versionMeta.map((meta, index) => {
 
-        let meta = {
-          type: 'maven',
-          tag: {
-            name: 'major',
-            version: version
-          }
-        }
+        // let meta = {
+        //   type: 'maven',
+        //   tag: {
+        //     name: 'major',
+        //     version: version
+        //   }
+        // }
 
         return PackageFactory.createPackage(
           name,
