@@ -27,3 +27,6 @@ export * from './providers/dub/dubCodeLensProvider.tests';
 
 export * from './providers/dotnet/dotnetCodeLensProvider.tests';
 export * from './providers/dotnet/nugetAPI.tests';
+
+export * from './providers/maven/mavenCodeLensProvider.tests';
+export * from './providers/maven/mavenAPI.tests';
