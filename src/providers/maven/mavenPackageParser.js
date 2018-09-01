@@ -13,38 +13,23 @@ export function mavenPackageParser(name, requestedVersion, appContrib) {
 
       let sorted = versions.sort(compareVersions)
 
-      // let majors = []
-      // let latestMajor = null
-      // return sorted.map((version, index) => {
-
-      //   if (latestMajor != version.split('.')[0]) {
-      //     latestMajor = version.split('.')[0]
-      //     majors.push(latestMajor)
-      //     let meta = {
-      //       type: 'maven',
-      //       tag: {
-      //         name: 'satisfies',
-      //         version: version,
-      //         isPrimaryTag: true
-      //       }
-      //     }
-      //     return PackageFactory.createPackage(
-      //       name,
-      //       requestedVersion,
-      //       meta
-      //     );
-      //   }
-
-      // });
-
-      const latestVersions = sorted.slice(sorted.length - 3)
+      let latestMajor = null
+      let latestVersions = []
+      
+      for (const v of sorted.reverse()) {
+        let major = v.split('.')[0]
+        if (latestMajor != major) {
+          latestMajor = major
+          latestVersions.push(v)
+        } 
+      }
 
       return latestVersions.map((version, index) => {
 
         let meta = {
           type: 'maven',
           tag: {
-            name: 'latest',
+            name: 'major',
             version: version
           }
         }
