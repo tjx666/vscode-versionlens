@@ -13,61 +13,49 @@ export function mavenPackageParser(name, requestedVersion, appContrib) {
 
       let sorted = versions.sort(compareVersions)
 
-      let majors = []
-      let latestMajor = null
-      return versions.forEach(version => {
-        
-        if (latestMajor != version.split('.')[0]) {
-          latestMajor = version.split('.')[0]
-          majors.push(latestMajor)
-        }
+      // let majors = []
+      // let latestMajor = null
+      // return sorted.map((version, index) => {
+
+      //   if (latestMajor != version.split('.')[0]) {
+      //     latestMajor = version.split('.')[0]
+      //     majors.push(latestMajor)
+      //     let meta = {
+      //       type: 'maven',
+      //       tag: {
+      //         name: 'satisfies',
+      //         version: version,
+      //         isPrimaryTag: true
+      //       }
+      //     }
+      //     return PackageFactory.createPackage(
+      //       name,
+      //       requestedVersion,
+      //       meta
+      //     );
+      //   }
+
+      // });
+
+      const latestVersions = sorted.slice(sorted.length - 3)
+
+      return latestVersions.map((version, index) => {
+
         let meta = {
           type: 'maven',
           tag: {
-            name: 'satisfies',
-            version: latestMajor,
-            isPrimaryTag: true
+            name: 'latest',
+            version: version
           }
         }
+
         return PackageFactory.createPackage(
           name,
           requestedVersion,
           meta
         );
+      })
 
-      });
-
-      // const latestVersion = sorted.reverse()[0]
-
-      // // const versionMap = {
-      // //   releases: versions,
-      // //   taggedVersions: []
-      // // }
-
-      // let meta = {
-      //   type: 'maven',
-      //   tag: {
-      //     name: 'latest',
-      //     version: latestVersion
-      //   }
-      // }
-
-      // if (requestedVersion == latestVersion) {
-      //   meta.tag = {
-      //     isLatestVersion: true,
-      //     isPrimaryTag: true,
-      //     name: 'Latest',
-      //     version: latestVersion
-      //   }
-      // }
-
-      // return PackageFactory.createPackage(
-      //   name,
-      //   requestedVersion,
-      //   meta
-      // );
-
-      // });
     })
     .catch(error => {
       // show the 404 to the user; otherwise throw the error
