@@ -58,7 +58,7 @@ export function createNewVersionCommand(newVersion, codeLens) {
   return codeLens.setCommand(
     `${codeLens.getTaggedVersionPrefix()}${codeLens.getInstallIndicator()} ${newVersion}`,
     `${appSettings.extensionName}.updateDependencyCommand`,
-    [codeLens, `"${replaceWithVersion}"`]
+    [codeLens, `${codeLens.wrapVersion(replaceWithVersion)}`]
   );
 }
 
@@ -71,7 +71,7 @@ export function createSatisfiedWithNewerCommand(serverVersion, codeLens) {
   return codeLens.setCommand(
     `Satisfies ${codeLens.getInstallIndicator()} ${serverVersion}`,
     `${appSettings.extensionName}.updateDependencyCommand`,
-    [codeLens, `"${replaceWithVersion}"`]
+    [codeLens, `${codeLens.wrapVersion(replaceWithVersion)}`]
   );
 }
 
@@ -114,7 +114,7 @@ export function createGithubCommand(codeLens) {
       return codeLens.setCommand(
         `${meta.category}: ${codeLens.getInstallIndicator()} ${entry.version}`,
         `${appSettings.extensionName}.updateDependencyCommand`,
-        [codeLens, `"${newVersion}"`]
+        [codeLens, `${codeLens.wrapVersion(newVersion)}`]
       );
     })
     .catch(error => {
