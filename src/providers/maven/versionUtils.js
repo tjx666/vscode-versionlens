@@ -6,7 +6,6 @@ String.prototype.trimChars = function (c) {
 export function parseVersion(version) {
   let versionQualifier = /((?:\d+\.?){1,})(?:[-](.+))?/
   let m = versionQualifier.exec(version)
-  console.log(m)
   let majorMinorBuild = /(\d+).(\d+)(?:.(\d+))?/
   let m2 = majorMinorBuild.exec(m[1])
   let versionStruct = { major: m2[1], minor: m2[2], build: m2[3] }
@@ -28,8 +27,8 @@ export function parseVersion(version) {
   return { version: versionStruct, fullVersion: version, qualifier: m[2], tag: tag };
 }
 
-function makeMap(version) {
-  let parsed = parseVersion(version)
+function makeMap(parsed) {
+  // let parsed = parseVersion(version)
   return {
     type: 'maven',
     tag: {
@@ -39,6 +38,24 @@ function makeMap(version) {
   }
 }
 
+Array.prototype.groupBy = function(prop) {
+  return this.reduce(function(groups, item) {
+    const val = item[prop]
+    groups[val] = groups[val] || []
+    groups[val].push(item)
+    return groups
+  }, {})
+}
+
 export function buildMapFromVersionList(versions, requestedVersion) {
-  return versions.map(makeMap)
+  let groupedByTag = versions.map(parseVersion).groupBy('tag')
+
+  let onlyOneOfEach = []
+  for (const key in groupedByTag) {
+    if (groupedByTag.hasOwnProperty(key)) {
+      onlyOneOfEach.push(groupedByTag[key][0])
+    }
+  }
+  
+  return onlyOneOfEach.map(makeMap)
 }
