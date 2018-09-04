@@ -4,7 +4,6 @@ String.prototype.trimChars = function (c) {
 }
 
 export function parseVersion(version) {
-  // let versionQualifier = /((?:\d+\.?){1,3})[-\.](.+)/
   let versionQualifier = /((?:\d+\.?){1,})(?:[-](.+))?/
   let m = versionQualifier.exec(version)
   console.log(m)
@@ -14,13 +13,13 @@ export function parseVersion(version) {
 
   let tag = 'release'
   if (m[2]) {
-    if (m[2].toLowerCase().includes('snapshot')) {
+    if (/snapshot/i.test(m[2])) {
       tag = 'snapshot'
-    } else if (m[2].toLowerCase().includes('alpha')) {
+    } else if (/alpha/i.test(m[2])) {
       tag = 'alpha'
-    } else if (m[2].toLowerCase().includes('beta')) {
+    } else if (/beta/i.test(m[2])) {
       tag = 'beta'
-    } else if (m[2].toLowerCase().includes('rc')) {
+    } else if (/rc/i.test(m[2])) {
       tag = 'rc'
     } else {
       tag = m[2]
