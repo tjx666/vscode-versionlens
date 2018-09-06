@@ -1,3 +1,4 @@
 export const mavenDefaultDependencyProperties = [
-  "dependency"
+  "dependency",
+  "parent"
 ];

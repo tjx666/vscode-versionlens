@@ -1,14 +1,9 @@
-String.prototype.trimChars = function (c) {
-  let re = new RegExp("^[" + c + "]+|[" + c + "]+$", "g");
-  return this.replace(re,"");
-}
 
 export function parseVersion(version) {
   let versionQualifier = /((?:\d+\.?){1,})(?:[-](.+))?/
   let m = versionQualifier.exec(version)
   let majorMinorBuild = /(\d+).(\d+)(?:.(\d+))?/
   let m2 = majorMinorBuild.exec(m[1])
-  let versionStruct = { major: m2[1], minor: m2[2], build: m2[3] }
 
   let tag = 'release'
   if (m[2]) {
@@ -24,7 +19,7 @@ export function parseVersion(version) {
       tag = m[2]
     }
   }
-  return { version: versionStruct, fullVersion: version, qualifier: m[2], tag: tag };
+  return { fullVersion: version, qualifier: m[2], tag: tag };
 }
 
 function makeMap(parsed) {
@@ -33,13 +28,15 @@ function makeMap(parsed) {
     type: 'maven',
     tag: {
       name: parsed.tag,
-      version: parsed.fullVersion
+      version: parsed.fullVersion,
+      // isPrimaryTag: /release/i.test(parsed.tag),
+      // isPrerelease: /alpha|beta|rc|snapshot/i.test(parsed.tag),
     }
   }
 }
 
-Array.prototype.groupBy = function(prop) {
-  return this.reduce(function(groups, item) {
+function groupBy(array, prop) {
+  return array.reduce(function(groups, item) {
     const val = item[prop]
     groups[val] = groups[val] || []
     groups[val].push(item)
@@ -48,14 +45,15 @@ Array.prototype.groupBy = function(prop) {
 }
 
 export function buildMapFromVersionList(versions, requestedVersion) {
-  let groupedByTag = versions.map(parseVersion).groupBy('tag')
-
-  let onlyOneOfEach = []
-  for (const key in groupedByTag) {
-    if (groupedByTag.hasOwnProperty(key)) {
-      onlyOneOfEach.push(groupedByTag[key][0])
-    }
-  }
+  // let groupedByTag: Array<String> = groupBy(versions.map(parseVersion), 'tag')
   
-  return onlyOneOfEach.map(makeMap)
+
+  // let onlyOneOfEach = []
+  // for (const key in groupedByTag) {
+  //   if (groupedByTag.hasOwnProperty(key)) {
+  //     onlyOneOfEach.push(groupedByTag[key][0])
+  //   }
+  // }
+  
+  return versions.map(parseVersion).map(makeMap)
 }

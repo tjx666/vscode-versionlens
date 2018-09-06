@@ -18,21 +18,36 @@ export function findNodesInXmlContent(xmlContent, document, filterProperties) {
 export function extractDependencyNodes(rootNode, document, filterProperties) {
   const collector = [];
   rootNode.eachChild(group => {
-    if (group.name !== 'dependencies')
-      return;
 
-    group.eachChild(childNode => {
-      if (!filterProperties.includes(childNode.name))
-        return;
+    switch (group.name) {
+      case "dependencies":
+        group.eachChild(childNode => {
+          if (!filterProperties.includes(childNode.name))
+            return;
 
-      const includeRange = {
-        start: childNode.startTagPosition,
-        end: childNode.startTagPosition,
-      };
+          const includeRange = {
+            start: childNode.startTagPosition,
+            end: childNode.startTagPosition,
+          };
 
-      collectFromChildVersionTag(childNode, includeRange, collector)
+          collectFromChildVersionTag(childNode, includeRange, collector)
 
-    });
+        });
+        break;
+      case "parent":
+        if (!filterProperties.includes(group.name))
+          return;
+
+        const includeRange = {
+          start: group.startTagPosition,
+          end: group.startTagPosition,
+        };
+
+        collectFromChildVersionTag(group, includeRange, collector)
+        break;
+      default:
+        break;
+    }
   });
 
   return collector;
@@ -56,7 +71,7 @@ function collectFromChildVersionTag(parentNode, includeRange, collector) {
     collector.push({
       start: includeRange.start,
       end: includeRange.end,
-      name: "g:" + group + "+AND+a:" + artifact,
+      name: group + ":" + artifact,
       value: childNode.val,
       replaceInfo
     });

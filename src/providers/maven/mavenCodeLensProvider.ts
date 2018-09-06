@@ -5,7 +5,7 @@ import { parseDependencyNodes } from 'common/dependencyParser';
 import { generateCodeLenses } from 'common/codeLensGeneration';
 import { AbstractCodeLensProvider } from 'providers/abstractCodeLensProvider';
 import { findNodesInXmlContent } from './mavenDependencyParser';
-import { mavenPackageParser } from './mavenPackageParser.js';
+import { mavenPackageParser } from './mavenPackageParser';
 
 export class MavenCodeLensProvider extends AbstractCodeLensProvider {
 
