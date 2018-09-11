@@ -76,8 +76,7 @@ export class MavenCodeLensProvider extends AbstractCodeLensProvider {
       return CommandFactory.createFixedVersionCommand(codeLens);
 
     const tagVersion = codeLens.getTaggedVersion();
-    return CommandFactory.createVersionCommand(
-      codeLens.package.version,
+    return CommandFactory.createNewVersionCommand(
       tagVersion,
       codeLens
     );
