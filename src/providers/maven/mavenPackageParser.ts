@@ -1,13 +1,13 @@
 import { mavenGetPackageVersions } from './mavenAPI';
 import appSettings from 'common/appSettings';
 import * as PackageFactory from 'common/packageGeneration';
-import { buildMapFromVersionList, majorOfEach } from './versionUtils'
+import { buildMapFromVersionList, majorOfEach, buildTagsFromVersionMap } from './versionUtils'
 
 export function mavenPackageParser(name, requestedVersion, appContrib) {
 
   // get all the versions for the package
   return mavenGetPackageVersions(name)
-    .then(versions => {
+    .then((versions: string[]) => {
       // console.log(versions);
       let customWrapVersion = (v) => {
         return `${v}`
@@ -17,15 +17,24 @@ export function mavenPackageParser(name, requestedVersion, appContrib) {
 
       let versionMeta = buildMapFromVersionList(majors, requestedVersion)
 
-      return versionMeta.map((meta, index) => {
-        return PackageFactory.createPackage(
-          name,
-          requestedVersion,
-          meta,
-          null,
-          customWrapVersion
-        );
-      })
+      let versionTags = buildTagsFromVersionMap(versionMeta, requestedVersion)
+
+      return versionTags
+        .map((tag, index) => {
+          // generate the package data for each tag
+          const meta = {
+            type: 'maven',
+            tag
+          };
+
+          return PackageFactory.createPackage(
+            name,
+            requestedVersion,
+            meta,
+            null,
+            customWrapVersion
+          );
+        });
 
     })
     .catch(error => {

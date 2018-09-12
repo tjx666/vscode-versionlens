@@ -57,7 +57,9 @@ function collectFromChildVersionTag(parentNode, includeRange, collector) {
   parentNode.eachChild(childNode => {
     if (childNode.name !== "version")
       return;
-
+    if (childNode.val.indexOf("$") >= 0) {
+      return
+    }
     // TODO: Check if is a version variable like '${spring.version}' and evaluate to get the real version
 
     const replaceInfo = {

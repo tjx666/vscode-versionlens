@@ -8,39 +8,78 @@ function makeMap(parsed) {
   }
 }
 
-// isFixedVersion:false
-// isInvalid:false
-// isLatestVersion:true
-// isNewerThanLatest:false
-// isPrimaryTag:true
-// name:"satisfies"
-// satisfiesLatest:true
-// version:"6.2.1"
-// versionMatchNotFound:false
 export function buildMapFromVersionList(versions, requestedVersion) {
-  let latest = versions[0]
-  let versionMap = versions.map(makeMap)
-  versionMap.forEach(versionMap => {
-    let compare = compareVersions(versionMap.tag.version, requestedVersion)
-    if (compare == 0) {
-      versionMap.tag.isLatestVersion = versionMap.tag.version == versions[0]
-      versionMap.tag.isPrimaryTag = true
-    } else if (compare >= 1) {
-      versionMap.tag.isLatestVersion = false
-      versionMap.tag.name = "release"
-      versionMap.tag.isPrimaryTag = true
-    } else if (compare < 0) {
-      versionMap.tag.isLatestVersion = false
-      versionMap.tag.name = "release"
-      versionMap.tag.isPrimaryTag = true
-      versionMap.tag.isOlderThanRequested = true
+  let versionMap = { allVersions: [], taggedVersions: [], releases: [] }
+  versionMap.allVersions = versions
+  versions.forEach(version => {
+    let tagged = null
+    if (/alpha|a/.test(version)) {
+      tagged = { name: 'alpha', version: version }
+      versionMap.taggedVersions.push(tagged)
+    } else if (/beta|b/.test(version)) {
+      tagged = { name: 'beta', version: version }
+      versionMap.taggedVersions.push(tagged)
+    } else if (/milestone|m/.test(version)) {
+      tagged = { name: 'milestone', version: version }
+      versionMap.taggedVersions.push(tagged)
+    } else if (/cr|rc/.test(version)) {
+      tagged = { name: 'rc', version: version }
+      versionMap.taggedVersions.push(tagged)
+    } else if (/snapshot/.test(version)) {
+      tagged = { name: 'snapshot', version: version }
+      versionMap.taggedVersions.push(tagged)
+    } else if (/sp/.test(version)) {
+      tagged = { name: 'snapshot', version: version }
+      versionMap.taggedVersions.push(tagged)
+    } else if (/ga|final/.test(version)) {
+      versionMap.releases.push(version)
+    } else {
+      versionMap.releases.push(version)
     }
   });
   return versionMap
 }
 
+function isOlderVersion(versionA, versionB) {
+  return compareVersions(versionA, versionB) < 0 ? true : false
+}
+
+export function buildTagsFromVersionMap(versionMap, requestedVersion) {
+
+  let versionMatchNotFound = versionMap.allVersions.indexOf(requestedVersion) >= 0 ? false : true
+
+  const latestEntry = {
+    name: "latest",
+    version: versionMap.releases[0] || versionMap.taggedVersions[0].version,
+    // can only be older if a match was found and requestedVersion is a valid range
+    isOlderThanRequested: !versionMatchNotFound && isOlderVersion(versionMap.releases[0] || versionMap.taggedVersions[0].version, requestedVersion),
+    isLatestVersion: compareVersions(versionMap.releases[0], requestedVersion) == 0
+  };
+  const satisfiesLatest = versionMap.allVersions.indexOf(requestedVersion) >= 0 ? true : false
+
+  let releases = versionMap.releases.slice()
+
+  releases.splice(releases.indexOf(latestEntry.version), 1)
+
+  releases = releases.map(item => {
+    return {
+      isPrimaryTag: true,
+      version: item,
+      isOlderThanRequested: compareVersions(item, requestedVersion) < 0 ? true : false
+    }
+  })
+  return [
+    latestEntry,
+    ...releases,
+    ...versionMap.taggedVersions
+  ]
+}
+
 export function parseVersion(version): any[] {
-  let parsedVersion:string = version.toLowerCase()
+  if (!version) {
+    return []
+  }
+  let parsedVersion: string = version.toLowerCase()
   parsedVersion = parsedVersion.replace(/-/g, ",[") // Opening square brackets for dashes
 
   parsedVersion = parsedVersion.replace(/\./g, ",") // Dots for commas
