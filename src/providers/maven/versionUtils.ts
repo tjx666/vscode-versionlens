@@ -35,11 +35,11 @@ export function buildMapFromVersionList(versions, requestedVersion) {
     if (compare == 0) {
       versionMap.tag.isLatestVersion = versionMap.tag.version == versions[0]
       versionMap.tag.isPrimaryTag = true
-    } else if (compare > 1) {
+    } else if (compare >= 1) {
       versionMap.tag.isLatestVersion = false
       versionMap.tag.name = "release"
       versionMap.tag.isPrimaryTag = true
-    } else if (compare < 1) {
+    } else if (compare < 0) {
       versionMap.tag.isLatestVersion = false
       versionMap.tag.name = "release"
       versionMap.tag.isPrimaryTag = true
