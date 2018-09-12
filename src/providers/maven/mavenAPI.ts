@@ -4,13 +4,17 @@ const xmldoc = require('xmldoc');
 
 const httpRequest = require('request-light');
 
+const MAVEN_CENTRAL = "https://repo.maven.apache.org/maven2/"
+
+
 function loadMavenRepos() {
+
   let repos: Array<string> = []
   const homeDir = os.homedir();
   return new Promise(function (resolve, reject) {
     fs.readFile(homeDir + "/.m2/settings.xml", (err, data) => {
       if (err) {
-        reject(err);
+        resolve([MAVEN_CENTRAL])
       }
       let xml = new xmldoc.XmlDocument(data.toString());
       let repositories = xml.descendantWithPath("profiles.profile.repositories").childrenNamed("repository")
@@ -28,7 +32,7 @@ export function mavenGetPackageVersions(packageName) {
     loadMavenRepos().then((repos: Array<string>) => {
       let [group, artifact] = packageName.split(':');
       let search = group.replace(/\./g, "/") + "/" + artifact
-      
+
       Promise.all(repos.map(element => {
         const queryUrl = `${element}${search}/maven-metadata.xml`;
         return httpRequest.xhr({ url: queryUrl })

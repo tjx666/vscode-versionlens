@@ -1,5 +1,4 @@
 function makeMap(parsed) {
-  // let parsed = parseVersion(version)
   return {
     type: 'maven',
     tag: {
@@ -7,15 +6,6 @@ function makeMap(parsed) {
       version: parsed
     }
   }
-}
-
-function groupBy(array, prop) {
-  return array.reduce(function (groups, item) {
-    const val = item[prop]
-    groups[val] = groups[val] || []
-    groups[val].push(item)
-    return groups
-  }, {})
 }
 
 // isFixedVersion:false
@@ -49,8 +39,8 @@ export function buildMapFromVersionList(versions, requestedVersion) {
   return versionMap
 }
 
-export function parseVersion(version) {
-  let parsedVersion = version.toLowerCase()
+export function parseVersion(version): any[] {
+  let parsedVersion:string = version.toLowerCase()
   parsedVersion = parsedVersion.replace(/-/g, ",[") // Opening square brackets for dashes
 
   parsedVersion = parsedVersion.replace(/\./g, ",") // Dots for commas
@@ -63,11 +53,11 @@ export function parseVersion(version) {
   }
   parsedVersion = "[" + parsedVersion + "]" // All to big array
   parsedVersion = parsedVersion.replace(/(\w+)/g, "'$1'") // Quoted items
-  parsedVersion = eval(parsedVersion) // Transform String to Array
-  parsedVersion = parsedVersion.map(toNumber) // Number String to Number
-  parsedVersion = parsedVersion.map(weightedQualifier) // Qualifiers to weight
+  let arrayVersion: any[] = eval(parsedVersion) // Transform String to Array
+  arrayVersion = arrayVersion.map(toNumber) // Number String to Number
+  arrayVersion = arrayVersion.map(weightedQualifier) // Qualifiers to weight
 
-  return parsedVersion
+  return arrayVersion
 }
 
 function toNumber(item) {
@@ -139,18 +129,16 @@ export function compareVersions(versionA, versionB) {
   return compareArray(itemA, itemB)
 }
 
-
-export function majorOfEach(list) {
+export function majorOfEach(list: string[]) {
   list = list.sort(compareVersions).reverse()
-
-  let last = -1
-  let result = []
+  let lastMajor = -1
+  let newestOfMajor: string[] = []
   for (const v of list) {
-    let current = parseVersion(v)[0]
-    if (last != current) {
-      result.push(v)
+    let currentMajor = parseVersion(v)[0]
+    if (lastMajor != currentMajor) {
+      newestOfMajor.push(v)
     }
-    last = current
+    lastMajor = currentMajor
   }
-  return result
+  return newestOfMajor
 }
