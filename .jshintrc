@@ -5,6 +5,7 @@
   "varstmt": true,    // no var's'
   "laxbreak": true,   // allow conditionals after line breaks
   "-W058": true,      // allows Missing '()' invoking a constructor.
+  "evil": true,       // This option suppresses warnings about the use of eval
   // environments
   "browser": false,
   "node": true,
