@@ -10,7 +10,7 @@ function arrayWeight(list) {
   let times = 1
   for (let item of list) {
     if (item instanceof Array) {
-      result += (arrayWeight(item)) / 1000
+      result += (arrayWeight(item)) / 1000000000000000
     } else if (typeof item == 'string') {
       result += (arrayWeight(item.split("").map(charCode))) / 100
     } else {
