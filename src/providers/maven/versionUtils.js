@@ -1,3 +1,26 @@
+// Sort versions using maven ComparableVersionTest.java as truth
+// https://github.com/apache/maven/blob/master/maven-artifact/src/test/java/org/apache/maven/artifact/versioning/ComparableVersionTest.java
+
+function charCode(value) {
+  return value.charCodeAt(0) - 100
+}
+
+function arrayWeight(list) {
+  let result = 0
+  let times = 1
+  for (let item of list) {
+    if (item instanceof Array) {
+      result += (arrayWeight(item)) / 1000
+    } else if (typeof item == 'string') {
+      result += (arrayWeight(item.split("").map(charCode))) / 100
+    } else {
+      result += (item) * times
+    }
+    times /= 10
+  }
+  return result
+}
+
 export function buildMapFromVersionList(versions, requestedVersion) {
   let versionMap = { allVersions: [], taggedVersions: [], releases: [] }
   versions = versions.sort(compareVersions).reverse()
@@ -32,7 +55,7 @@ export function buildMapFromVersionList(versions, requestedVersion) {
 }
 
 function isOlderVersion(versionA, versionB) {
-  return compareVersions(versionA, versionB) < 0 ? true : false
+  return compareVersions(versionA, versionB) < 0
 }
 
 export function buildTagsFromVersionMap(versionMap, requestedVersion) {
@@ -104,8 +127,6 @@ export function parseVersion(version) {
   arrayVersion = arrayVersion.map(toNumber) // Number String to Number
   arrayVersion = arrayVersion.map(weightedQualifier) // Qualifiers to weight
 
-  arrayVersion = removeIgnoredQualifiers(arrayVersion)
-
   return arrayVersion
 }
 
@@ -124,70 +145,34 @@ export function weightedQualifier(item) {
     switch (item) {
       case 'a': // Alpha least important
       case 'alpha':
-        return 1
+        return -7
       case 'b':
       case 'beta':
-        return 2
+        return -6
       case 'm':
       case 'milestone':
-        return 3
+        return -5
       case 'rc': // Release candidate
       case 'cr':
-        return 4
+        return -4
       case 'snapshot':
-        return 5
+        return -3
       case 'ga':
       case 'final':
-        return -1
+        return -2
       case 'sp': // Security Patch most important
-        return 7
-      default: // Same as GA, FINAL
         return -1
+      default: // Same as GA, FINAL
+        return item
     }
   }
   return item
 }
 
-function removeIgnoredQualifiers(list) {
-  for (let item of list) {
-    if (item instanceof Array) {
-      removeIgnoredQualifiers(item)
-    }
-    if (typeof item == 'number' && item < 0) {
-      list = list.splice(list.indexOf[item], 1)
-    }
-  }
-  return list
-}
-
-function compareArray(itemA, itemB) {
-  let partial = 0
-  let bigger = itemA.length > itemB.length ? itemA.length : itemB.length
-  for (let i = 0; i < bigger; i++) {
-    if (typeof itemA[i] == 'number' && typeof itemB[i] == 'number') {
-      partial = itemA[i] - itemB[i]
-      if (partial != 0) {
-        break;
-      }
-    } else if (typeof itemA[i] == 'number' && itemB[i] instanceof Array) {
-      return 1
-    } else if (itemA[i] instanceof Array && typeof itemB[i] == 'number') {
-      return -1
-    } else if (itemA[i] == undefined) {
-      return -1
-    } else if (itemB[i] == undefined) {
-      return 1
-    } else if (itemA[i] instanceof Array && itemB[i] instanceof Array) {
-      return compareArray(itemA[i], itemB[i])
-    }
-  }
-  return partial
-}
-
 export function compareVersions(versionA, versionB) {
   let itemA = parseVersion(versionA)
   let itemB = parseVersion(versionB)
-  return compareArray(itemA, itemB)
+  return arrayWeight(itemA) - arrayWeight(itemB)
 }
 
 function latestOfEachMajor(list) {

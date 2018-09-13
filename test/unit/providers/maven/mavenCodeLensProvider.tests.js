@@ -41,21 +41,18 @@ export const MavenCodeLensProviderTests = {
   },
 
   "Assert weigth of qualifiers": () => {
-    assert.equal(weightedQualifier('alpha'), 1)
-    assert.equal(weightedQualifier('beta'), 2)
-    assert.equal(weightedQualifier('milestone'), 3)
-    assert.equal(weightedQualifier('rc'), 4)
-    assert.equal(weightedQualifier('snapshot'), 5)
-    assert.equal(weightedQualifier('final'), -1)
-    assert.equal(weightedQualifier('sp'), 7)
-    assert.equal(weightedQualifier(''), -1)
+    assert.equal(weightedQualifier('alpha'), -7)
+    assert.equal(weightedQualifier('beta'), -6)
+    assert.equal(weightedQualifier('milestone'), -5)
+    assert.equal(weightedQualifier('rc'), -4)
+    assert.equal(weightedQualifier('snapshot'), -3)
+    assert.equal(weightedQualifier('final'), -2)
+    assert.equal(weightedQualifier('sp'), -1)
+    assert.equal(weightedQualifier(''), '')
+    assert.equal(weightedQualifier('abc'), 'abc')
   },
   "Assert that first version": {
     "Is older": () => {
-      // assert.equal(assertIsOlder("1.0", "1.1"), true)
-      // assert.equal(assertIsOlder("1.0.0", "1.1"), true)
-      // assert.equal(assertIsOlder("1.0-alpha", "1.0"), true)
-      // assert.equal(assertIsOlder("3.8", "3.8.1"), true)
       assert.equal(assertIsOlder("1", "2"), true, '"1" < "2"')
       assert.equal(assertIsOlder("1.5", "2"), true, '"1.5" < "2"')
       assert.equal(assertIsOlder("1", "2.5"), true, '"1" < "2.5"')
@@ -92,8 +89,8 @@ export const MavenCodeLensProviderTests = {
       assert.equal(assertIsNewer("3.8.1", "3.8"), true, '"3.8.1" > "3.8"')
     },
     "Is equal": () => {
-      assert.equal(assertIsNewer("1", "1.0"), true, '"1" = "1.0"')
-      assert.equal(assertIsNewer("2", "2.0.0"), true, '"2" = "2.0.0"')
+      assert.equal(assertIsSame("1", "1.0"), true, '"1" = "1.0"')
+      assert.equal(assertIsSame("2", "2.0.0"), true, '"2" = "2.0.0"')
     }
   },
   "parseVersions": {
