@@ -9,7 +9,7 @@ const MAVEN_CENTRAL = "https://repo.maven.apache.org/maven2/"
 
 function loadMavenRepos() {
 
-  let repos: Array<string> = []
+  let repos = []
   const homeDir = os.homedir();
   return new Promise(function (resolve, reject) {
     fs.readFile(homeDir + "/.m2/settings.xml", (err, data) => {
@@ -30,7 +30,7 @@ function loadMavenRepos() {
 
 export function mavenGetPackageVersions(packageName) {
   return new Promise(function (resolve, reject) {
-    loadMavenRepos().then((repos: Array<string>) => {
+    loadMavenRepos().then((repos) => {
       let [group, artifact] = packageName.split(':');
       let search = group.replace(/\./g, "/") + "/" + artifact
 

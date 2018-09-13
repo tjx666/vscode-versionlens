@@ -57,7 +57,7 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
     order: 0
   }
 
-  let releases: string[] = latestOfEachMajor(versionMap.releases)
+  let releases = latestOfEachMajor(versionMap.releases)
 
   releases.splice(releases.indexOf(latestEntry.version), 1)
 
@@ -83,11 +83,11 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
   return response
 }
 
-export function parseVersion(version): any[] {
+export function parseVersion(version) {
   if (!version) {
     return []
   }
-  let parsedVersion: string = version.toLowerCase()
+  let parsedVersion = version.toLowerCase()
   parsedVersion = parsedVersion.replace(/-/g, ",[") // Opening square brackets for dashes
 
   parsedVersion = parsedVersion.replace(/\./g, ",") // Dots for commas
@@ -100,7 +100,7 @@ export function parseVersion(version): any[] {
   }
   parsedVersion = "[" + parsedVersion + "]" // All to big array
   parsedVersion = parsedVersion.replace(/(\w+)/g, "'$1'") // Quoted items
-  let arrayVersion: any[] = eval(parsedVersion) // Transform String to Array
+  let arrayVersion = eval(parsedVersion) // Transform String to Array
   arrayVersion = arrayVersion.map(toNumber) // Number String to Number
   arrayVersion = arrayVersion.map(weightedQualifier) // Qualifiers to weight
 
@@ -150,12 +150,12 @@ export function weightedQualifier(item) {
 
 function removeIgnoredQualifiers(list) {
   for (let item of list) {
-      if (item instanceof Array) {
-          removeIgnoredQualifiers(item)
-      }
-      if (typeof item == 'number' && item < 0) {
-          list = list.splice(list.indexOf[item], 1)
-      }
+    if (item instanceof Array) {
+      removeIgnoredQualifiers(item)
+    }
+    if (typeof item == 'number' && item < 0) {
+      list = list.splice(list.indexOf[item], 1)
+    }
   }
   return list
 }
@@ -190,10 +190,10 @@ export function compareVersions(versionA, versionB) {
   return compareArray(itemA, itemB)
 }
 
-function latestOfEachMajor(list: string[]) {
+function latestOfEachMajor(list) {
   list = list.sort(compareVersions).reverse()
   let lastMajor = -1
-  let latestOfEachMajor: string[] = []
+  let latestOfEachMajor = []
   for (const v of list) {
     let currentMajor = parseVersion(v)[0]
     if (lastMajor != currentMajor) {

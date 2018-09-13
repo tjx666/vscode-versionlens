@@ -7,7 +7,7 @@ export function mavenPackageParser(name, requestedVersion, appContrib) {
 
   // get all the versions for the package
   return mavenGetPackageVersions(name)
-    .then((versions: string[]) => {
+    .then((versions) => {
       // console.log(versions);
       let customWrapVersion = (v) => {
         return `${v}`
