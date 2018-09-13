@@ -104,6 +104,8 @@ export function parseVersion(version): any[] {
   arrayVersion = arrayVersion.map(toNumber) // Number String to Number
   arrayVersion = arrayVersion.map(weightedQualifier) // Qualifiers to weight
 
+  arrayVersion = removeIgnoredQualifiers(arrayVersion)
+
   return arrayVersion
 }
 
@@ -114,7 +116,7 @@ function toNumber(item) {
   return parseInt(item) >= 0 ? parseInt(item) : item
 }
 
-function weightedQualifier(item) {
+export function weightedQualifier(item) {
   if (item instanceof Array) {
     return item.map(weightedQualifier)
   }
@@ -136,14 +138,26 @@ function weightedQualifier(item) {
         return 5
       case 'ga':
       case 'final':
-        return 6
+        return -1
       case 'sp': // Security Patch most important
         return 7
       default: // Same as GA, FINAL
-        return 6
+        return -1
     }
   }
   return item
+}
+
+function removeIgnoredQualifiers(list) {
+  for (let item of list) {
+      if (item instanceof Array) {
+          removeIgnoredQualifiers(item)
+      }
+      if (typeof item == 'number' && item < 0) {
+          list = list.splice(list.indexOf[item], 1)
+      }
+  }
+  return list
 }
 
 function compareArray(itemA, itemB) {
@@ -160,9 +174,9 @@ function compareArray(itemA, itemB) {
     } else if (itemA[i] instanceof Array && typeof itemB[i] == 'number') {
       return -1
     } else if (itemA[i] == undefined) {
-      return 1
-    } else if (itemB[i] == undefined) {
       return -1
+    } else if (itemB[i] == undefined) {
+      return 1
     } else if (itemA[i] instanceof Array && itemB[i] instanceof Array) {
       return compareArray(itemA[i], itemB[i])
     }
