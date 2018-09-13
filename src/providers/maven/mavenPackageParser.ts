@@ -1,7 +1,7 @@
 import { mavenGetPackageVersions } from './mavenAPI';
 import appSettings from 'common/appSettings';
 import * as PackageFactory from 'common/packageGeneration';
-import { buildMapFromVersionList, majorOfEach, buildTagsFromVersionMap } from './versionUtils'
+import { buildMapFromVersionList, buildTagsFromVersionMap } from './versionUtils'
 
 export function mavenPackageParser(name, requestedVersion, appContrib) {
 
@@ -13,13 +13,21 @@ export function mavenPackageParser(name, requestedVersion, appContrib) {
         return `${v}`
       }
 
-      let majors = majorOfEach(versions)
+      let versionMeta = buildMapFromVersionList(versions, requestedVersion)
 
-      let versionMeta = buildMapFromVersionList(majors, requestedVersion)
+      let extractedTags = buildTagsFromVersionMap(versionMeta, requestedVersion)
 
-      let versionTags = buildTagsFromVersionMap(versionMeta, requestedVersion)
+      let filteredTags = extractedTags;
+      if (appSettings.showTaggedVersions === false) {
+        filteredTags = extractedTags.filter(tag => {
+          if (tag.name && /alpha|beta|rc|milestone|snapshot|sp/.test(tag.name)) {
+            return false
+          }
+          return true
+        })
+      }
 
-      return versionTags
+      return filteredTags
         .map((tag, index) => {
           // generate the package data for each tag
           const meta = {

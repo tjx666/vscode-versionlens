@@ -1,16 +1,7 @@
-function makeMap(parsed) {
-  return {
-    type: 'maven',
-    tag: {
-      name: "release",
-      version: parsed
-    }
-  }
-}
-
 export function buildMapFromVersionList(versions, requestedVersion) {
   let versionMap = { allVersions: [], taggedVersions: [], releases: [] }
-  versionMap.allVersions = versions
+  versions = versions.sort(compareVersions).reverse()
+  versionMap.allVersions = versions.slice()
   versions.forEach(version => {
     let tagged = null
     if (/alpha|a/.test(version)) {
@@ -29,7 +20,7 @@ export function buildMapFromVersionList(versions, requestedVersion) {
       tagged = { name: 'snapshot', version: version }
       versionMap.taggedVersions.push(tagged)
     } else if (/sp/.test(version)) {
-      tagged = { name: 'snapshot', version: version }
+      tagged = { name: 'sp', version: version }
       versionMap.taggedVersions.push(tagged)
     } else if (/ga|final/.test(version)) {
       versionMap.releases.push(version)
@@ -53,26 +44,43 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
     version: versionMap.releases[0] || versionMap.taggedVersions[0].version,
     // can only be older if a match was found and requestedVersion is a valid range
     isOlderThanRequested: !versionMatchNotFound && isOlderVersion(versionMap.releases[0] || versionMap.taggedVersions[0].version, requestedVersion),
-    isLatestVersion: compareVersions(versionMap.releases[0], requestedVersion) == 0
+    isLatestVersion: compareVersions(versionMap.releases[0], requestedVersion) == 0,
+    isPrimaryTag: true
   };
-  const satisfiesLatest = versionMap.allVersions.indexOf(requestedVersion) >= 0 ? true : false
 
-  let releases = versionMap.releases.slice()
+  const requestedEntry = {
+    name: 'current',
+    version: requestedVersion,
+    versionMatchNotFound: versionMatchNotFound,
+    isFixedVersion: true,
+    isPrimaryTag: true,
+    order: 0
+  }
+
+  let releases: string[] = latestOfEachMajor(versionMap.releases)
 
   releases.splice(releases.indexOf(latestEntry.version), 1)
 
-  releases = releases.map(item => {
+  let taggedReleases = releases.map(item => {
     return {
       isPrimaryTag: true,
       version: item,
-      isOlderThanRequested: compareVersions(item, requestedVersion) < 0 ? true : false
+      isOlderThanRequested: compareVersions(item, requestedVersion) < 0,
+      isFixedVersion: compareVersions(item, requestedVersion) === 0
     }
   })
-  return [
+
+  let response = [
     latestEntry,
-    ...releases,
+    ...taggedReleases,
     ...versionMap.taggedVersions
   ]
+
+  if (latestEntry.version !== requestedEntry.version && releases.indexOf(requestedEntry.version) < 0) {
+    response.push(requestedEntry)
+  }
+
+  return response
 }
 
 export function parseVersion(version): any[] {
@@ -168,16 +176,16 @@ export function compareVersions(versionA, versionB) {
   return compareArray(itemA, itemB)
 }
 
-export function majorOfEach(list: string[]) {
+function latestOfEachMajor(list: string[]) {
   list = list.sort(compareVersions).reverse()
   let lastMajor = -1
-  let newestOfMajor: string[] = []
+  let latestOfEachMajor: string[] = []
   for (const v of list) {
     let currentMajor = parseVersion(v)[0]
     if (lastMajor != currentMajor) {
-      newestOfMajor.push(v)
+      latestOfEachMajor.push(v)
     }
     lastMajor = currentMajor
   }
-  return newestOfMajor
+  return latestOfEachMajor
 }

@@ -15,6 +15,7 @@ function loadMavenRepos() {
     fs.readFile(homeDir + "/.m2/settings.xml", (err, data) => {
       if (err) {
         resolve([MAVEN_CENTRAL])
+        return
       }
       let xml = new xmldoc.XmlDocument(data.toString());
       let repositories = xml.descendantWithPath("profiles.profile.repositories").childrenNamed("repository")
