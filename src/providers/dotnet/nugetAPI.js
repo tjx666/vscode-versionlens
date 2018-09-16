@@ -6,11 +6,11 @@ const httpRequest = require('request-light');
 const semver = require('semver');
 
 // TODO allow for mutliple sources
-const FEED_URL = 'https://api.nuget.org/v3-flatcontainer';
+const FEED_URL = 'https://api-v2v3search-0.nuget.org/autocomplete';
 
 export function nugetGetPackageVersions(packageName) {
 
-  const queryUrl = `${FEED_URL}/${packageName}/index.json`;
+  const queryUrl = `${FEED_URL}?id=${packageName}&prerelease=true&semVerLevel=2.0.0`;
   return new Promise(function (resolve, reject) {
     httpRequest.xhr({ url: queryUrl })
       .then(response => {
@@ -23,7 +23,7 @@ export function nugetGetPackageVersions(packageName) {
         }
 
         const pkg = JSON.parse(response.responseText);
-        resolve(pkg.versions.reverse());
+        resolve(pkg.data.reverse());
       }).catch(reject);
   });
 
