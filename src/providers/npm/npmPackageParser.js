@@ -18,7 +18,7 @@ import {
   npmViewVersion,
   npmViewDistTags,
   parseNpmArguments
-} from './npmAPI'
+} from './npmClient.js'
 
 const semver = require('semver');
 

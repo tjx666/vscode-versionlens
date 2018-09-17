@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { jspmPackageParser, customJspmGenerateVersion } from 'providers/jspm/jspmPackageParser';
-import * as npmAPIModule from 'providers/npm/npmAPI';
+import * as npmClientModule from 'providers/npm/npmClient.js';
 
 const assert = require('assert');
 
@@ -26,7 +26,7 @@ export const JSPMPackageParser = {
     )
 
     // default api mocks
-    npmAPIModule.npmViewDistTags = _ => {
+    npmClientModule.npmViewDistTags = _ => {
       return Promise.resolve([
         { name: 'latest', version: '1.2.3' },
         { name: 'alpha', version: '1.2.5-alpha.1' },

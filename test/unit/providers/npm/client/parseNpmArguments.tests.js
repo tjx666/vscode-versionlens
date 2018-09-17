@@ -2,8 +2,7 @@
  * Copyright (c) Peter Flannery. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import { TestFixtureMap } from 'test/unit/utils'
-import { parseNpmArguments } from 'providers/npm/npmAPI'
+import { parseNpmArguments } from 'providers/npm/npmClient.js'
 
 const mock = require('mock-require')
 const assert = require('assert')
@@ -11,7 +10,7 @@ const assert = require('assert')
 let npaMock = null
 let testContext = null
 
-export const NpmParseArguments = {
+export default {
 
   beforeAll: () => {
     // mock require modules
