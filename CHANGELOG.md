@@ -1,3 +1,7 @@
+# 0.22.0
+
+  - Dotnet: Prevented unlisted versions from appearing. (thanks to https://github.com/frankyjuang) https://github.com/vscode-contrib/vscode-versionlens/issues/108
+
 # 0.21.1
 
   - NPM: Fixed an issue where the spinning progress would not stop when invalid local file paths were entered. (https://github.com/vscode-contrib/vscode-versionlens/issues/104)
