@@ -10,7 +10,6 @@ import {
   formatWithExistingLeading
 } from 'common/utils';
 import {
-  isOlderVersion,
   filterTagsByName,
   buildTagsFromVersionMap
 } from 'common/versionUtils';

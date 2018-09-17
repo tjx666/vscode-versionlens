@@ -5,7 +5,7 @@
 import { formatWithExistingLeading } from './utils';
 import appSettings from './appSettings';
 
-const { CodeLens, Range } = require('vscode');
+const { CodeLens } = require('vscode');
 
 export class PackageCodeLens extends CodeLens {
 
