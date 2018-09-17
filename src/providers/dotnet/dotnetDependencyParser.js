@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 const xmldoc = require('xmldoc');
-const { Position, Range } = require('vscode');
+const { Range } = require('vscode');
 
 export function findNodesInXmlContent(xmlContent, document, filterProperties) {
   const rootNode = new xmldoc.XmlDocument(document.getText());
