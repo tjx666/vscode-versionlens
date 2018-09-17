@@ -23,7 +23,10 @@ export function nugetGetPackageVersions(packageName) {
         }
 
         const pkg = JSON.parse(response.responseText);
-        resolve(pkg.data.reverse());
+        if (pkg.totalHits == 0)
+          reject({ status: 404 });
+        else
+          resolve(pkg.data.reverse());
       }).catch(reject);
   });
 
