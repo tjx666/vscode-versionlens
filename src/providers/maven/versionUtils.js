@@ -5,18 +5,18 @@ function charCode(value) {
   return value.charCodeAt(0) - 100
 }
 
-function arrayWeight(list) {
+export function arrayWeight(list) {
   let result = 0
   let times = 1
   for (let item of list) {
     if (item instanceof Array) {
-      result += (arrayWeight(item)) / 1000000000000000
+      result += arrayWeight(item) * times/10
     } else if (typeof item == 'string') {
-      result += (arrayWeight(item.split("").map(charCode))) / 100
+      result += arrayWeight(item.split("").map(charCode))
     } else {
-      result += (item) * times
+      result += item * times/10
     }
-    times /= 10
+    times /= 10000000
   }
   return result
 }
@@ -172,7 +172,9 @@ export function weightedQualifier(item) {
 export function compareVersions(versionA, versionB) {
   let itemA = parseVersion(versionA)
   let itemB = parseVersion(versionB)
-  return arrayWeight(itemA) - arrayWeight(itemB)
+  let weightA = arrayWeight(itemA)
+  let weightB = arrayWeight(itemB)
+  return weightA - weightB
 }
 
 function latestOfEachMajor(list) {
