@@ -6,7 +6,7 @@ import { TestFixtureMap, generatePackage } from 'test/unit/utils';
 import { PackageCodeLens } from 'common/packageCodeLens';
 import { mavenDefaultDependencyProperties } from 'providers/maven/config';
 import { MavenCodeLensProvider } from 'providers/maven/mavenCodeLensProvider';
-import { parseVersion, compareVersions, weightedQualifier } from 'providers/maven/versionUtils'
+import { parseVersion, compareVersions, weightedQualifier, arrayWeight } from 'providers/maven/versionUtils'
 
 const assert = require('assert');
 const vscode = require('vscode');
@@ -16,7 +16,8 @@ const fixtureMap = new TestFixtureMap('./fixtures');
 let testContext = null
 
 function assertIsOlder(versionA, versionB) {
-  return (compareVersions(versionA, versionB) < 0)
+  let result = compareVersions(versionA, versionB)
+  return (result < 0)
 }
 
 function assertIsNewer(versionA, versionB) {
@@ -53,6 +54,7 @@ export const MavenCodeLensProviderTests = {
   },
   "Assert that first version": {
     "Is older": () => {
+      assert.equal(assertIsOlder("0.99", "1"), true, '"0.99" < "1"')
       assert.equal(assertIsOlder("1", "2"), true, '"1" < "2"')
       assert.equal(assertIsOlder("1.5", "2"), true, '"1.5" < "2"')
       assert.equal(assertIsOlder("1", "2.5"), true, '"1" < "2.5"')
@@ -65,6 +67,10 @@ export const MavenCodeLensProviderTests = {
       assert.equal(assertIsOlder("1.0-alpha-1", "1.0"), true, '"1.0-alpha-1" < "1.0"')
       assert.equal(assertIsOlder("1.0-alpha-1", "1.0-alpha-2"), true, '"1.0-alpha-1" < "1.0-alpha-2"')
       assert.equal(assertIsOlder("1.0-alpha-1", "1.0-beta-1"), true, '"1.0-alpha-1" < "1.0-beta-1"')
+
+      assert.equal(assertIsOlder("1.0.1.20170215.211020-2", "1.0.7-SNAPSHOT"), true, '"1.0.1.20170215.211020-2" < "1.0.7-SNAPSHOT"')
+
+      assert.equal(assertIsOlder("1.0-1", "1.0.1"), true, '"1.0-1" < "1.0.1"')
 
       assert.equal(assertIsOlder("1.0-beta-1", "1.0-SNAPSHOT"), true, '"1.0-beta-1" < "1.0-SNAPSHOT"')
       assert.equal(assertIsOlder("1.0-SNAPSHOT", "1.0"), true, '"1.0-SNAPSHOT" < "1.0"')
