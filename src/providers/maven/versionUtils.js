@@ -1,26 +1,6 @@
 // Sort versions using maven ComparableVersionTest.java as truth
 // https://github.com/apache/maven/blob/master/maven-artifact/src/test/java/org/apache/maven/artifact/versioning/ComparableVersionTest.java
 
-function charCode(value) {
-  return value.charCodeAt(0) - 100
-}
-
-export function arrayWeight(list) {
-  let result = 0
-  let times = 1
-  for (let item of list) {
-    if (item instanceof Array) {
-      result += arrayWeight(item) * times/10
-    } else if (typeof item == 'string') {
-      result += arrayWeight(item.split("").map(charCode))
-    } else {
-      result += item * times/10
-    }
-    times /= 10000000
-  }
-  return result
-}
-
 export function buildMapFromVersionList(versions, requestedVersion) {
   let versionMap = { allVersions: [], taggedVersions: [], releases: [] }
   versions = versions.sort(compareVersions).reverse()
@@ -169,12 +149,57 @@ export function weightedQualifier(item) {
   return item
 }
 
+function compare(a, b) {
+  if (typeof a == 'number' && typeof b == 'number') {
+    return a - b
+  } else if (a instanceof Array && b instanceof Array) {
+    let r = 0
+    for (let index = 0; index < a.length; index++) {
+      r += compare(a[index], b[index])
+    }
+    return r
+  } else if (a instanceof Array && typeof b === 'number') {
+    return -1
+  } else if (a instanceof Array && b === undefined) {
+    return -1
+  } else if (typeof a === 'number' && b === undefined) {
+    if (a === 0) {
+      return 0
+    }
+    return 1
+  } else if (typeof a === 'number' && b instanceof Array) {
+    return -1
+  } else if (a === undefined && b instanceof Array) {
+    return -1
+  } else if (a === undefined && typeof b === 'number') {
+    if (b === 0 ) {
+      return 0
+    }
+    return -1
+  } else if (typeof a === 'string' && typeof b === 'string') {
+    return a.localeCompare(b)
+  } else if (typeof a === 'string' && typeof b === 'number') {
+    return -1
+  } else if (typeof a === 'number' && typeof b === 'string') {
+    return 1
+  }
+}
+
 export function compareVersions(versionA, versionB) {
   let itemA = parseVersion(versionA)
   let itemB = parseVersion(versionB)
-  let weightA = arrayWeight(itemA)
-  let weightB = arrayWeight(itemB)
-  return weightA - weightB
+  let length = itemA.length > itemB.length ? itemA.length : itemB.length
+  let sum = 0
+  for (let index = 0; index < length; index++) {
+    const elementA = itemA[index];
+    const elementB = itemB[index];
+    let c = compare(elementA, elementB)
+    if (c !== 0) {
+      return c
+    }
+    sum += c
+  }
+  return sum
 }
 
 function latestOfEachMajor(list) {
