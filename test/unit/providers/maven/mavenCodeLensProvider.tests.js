@@ -6,7 +6,7 @@ import { TestFixtureMap, generatePackage } from 'test/unit/utils';
 import { PackageCodeLens } from 'common/packageCodeLens';
 import { mavenDefaultDependencyProperties } from 'providers/maven/config';
 import { MavenCodeLensProvider } from 'providers/maven/mavenCodeLensProvider';
-import { parseVersion, compareVersions, weightedQualifier, arrayWeight } from 'providers/maven/versionUtils'
+import { parseVersion, compareVersions, weightedQualifier } from 'providers/maven/versionUtils'
 
 const assert = require('assert');
 const vscode = require('vscode');
