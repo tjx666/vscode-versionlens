@@ -1,4 +1,4 @@
-# 0.22.0
+# 0.21.2
 
   - Dotnet: Prevented unlisted versions from appearing. (thanks to https://github.com/frankyjuang) https://github.com/vscode-contrib/vscode-versionlens/issues/108
   - NPM: Fixed tagged versions showing as invalid. https://github.com/vscode-contrib/vscode-versionlens/issues/112
