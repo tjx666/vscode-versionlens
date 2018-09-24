@@ -17,6 +17,7 @@ import buildMapFromVersionList from './versionUtils/buildMapFromVersionList.test
 import buildTagsFromVersionMap from './versionUtils/buildTagsFromVersionMap.tests.js';
 import deduceMaxSatisfyingFromSemverList from './versionUtils/deduceMaxSatisfyingFromSemverList.tests.js';
 import applyTagFilterRules from './versionUtils/applyTagFilterRules.tests.js';
+import resolveVersionAgainstTags from './versionUtils/resolveVersionAgainstTags.tests.js';
 
 export const VersionUtils = {
   isFixedVersion,
@@ -32,5 +33,6 @@ export const VersionUtils = {
   buildMapFromVersionList,
   buildTagsFromVersionMap,
   deduceMaxSatisfyingFromSemverList,
-  applyTagFilterRules
+  applyTagFilterRules,
+  resolveVersionAgainstTags
 };

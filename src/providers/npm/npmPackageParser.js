@@ -11,7 +11,8 @@ import {
 } from 'common/utils';
 import {
   filterTagsByName,
-  buildTagsFromVersionMap
+  buildTagsFromVersionMap,
+  resolveVersionAgainstTags
 } from 'common/versionUtils';
 import {
   npmViewVersion,
@@ -197,6 +198,11 @@ export function parseNpmDistTags(name, requestedVersion, maxSatisfyingVersion, a
         releases: [latestEntry.version],
         taggedVersions: distTags,
         maxSatisfyingVersion
+      }
+
+      // is the requestedVersion a dist tag ?
+      if (requestedVersion !== 'latest') {
+        requestedVersion = resolveVersionAgainstTags(distTags, requestedVersion, requestedVersion);
       }
 
       // build tags
