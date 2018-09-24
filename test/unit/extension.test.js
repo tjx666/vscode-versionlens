@@ -21,9 +21,7 @@ export * from './providers/bower/bowerPackageParser.tests.js';
 
 export * from './providers/dub/dubCodeLensProvider.tests.js';
 
-export * from './providers/dotnet/dotnetCodeLensProvider.tests';
-export * from './providers/dotnet/nugetAPI.tests';
+export * from './providers/dotnet/dotnet.tests.js';
 
 export * from './providers/maven/mavenCodeLensProvider.tests';
 export * from './providers/maven/mavenAPI.tests';
-export * from './providers/dotnet/dotnet.tests.js';
