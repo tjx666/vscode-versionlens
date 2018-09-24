@@ -58,9 +58,10 @@ export default {
   },
 
   "returns prerelease versions": () => {
-    const codeLens = new PackageCodeLens(testContext.testRange, null, generatePackage('SomePackage', '3.3.3', { type: 'npm', isFixedVersion: true, tag: { name: 'satisfies', version: '3.3.3', isPrimaryTag: true, isNewerThanLatest: true } }), null);
+    const testPackage = generatePackage('SomePackage', '3.3.3', { type: 'npm', isFixedVersion: true, tag: { name: 'satisfies', version: '3.3.3', isPrimaryTag: true, isNewerThanLatest: true } });
+    const codeLens = new PackageCodeLens(testContext.testRange, null, testPackage, null);
     const result = testContext.testProvider.evaluateCodeLens(codeLens, null)
-    assert.equal(result.command.title, 'Prerelease', "Expected command.title failed.");
+    assert.equal(result.command.title, `Prerelease 3.3.3`, "Expected command.title failed.");
     assert.equal(result.command.command, null);
     assert.equal(result.command.arguments, null);
   },
