@@ -22,16 +22,8 @@ Supports
 
 [How to install vscode extensions](https://code.visualstudio.com/docs/editor/extension-gallery)
 
-### Contributors
-
-These are the people that have contributed code to this project:
-
-- [pflannery](https://github.com/pflannery) — [view contributions](https://github.com/vscode-contrib/vscode-versionlens/commits?author=pflannery)
-- [WebFreak001](https://github.com/WebFreak001) — [view contributions](https://github.com/vscode-contrib/vscode-versionlens/commits?author=WebFreak001)
-- [eamodio](https://github.com/eamodio) — [view contributions](https://github.com/vscode-contrib/vscode-versionlens/commits?author=eamodio)
-
 ### License
 
 Licensed under MIT
 
-Copyright &copy; 2016+ contributors (https://github.com/vscode-contrib/vscode-versionlens/graphs/contributors)
+Copyright &copy; 2016+ [contributors](https://github.com/vscode-contrib/vscode-versionlens/graphs/contributors)

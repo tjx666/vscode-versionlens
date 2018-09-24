@@ -2,17 +2,15 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { nugetGetPackageVersions, convertNugetToNodeRange } from './nugetAPI.js';
 import appSettings from 'common/appSettings';
 import * as PackageFactory from 'common/packageGeneration';
+import { nugetGetPackageVersions } from './nugetClient.js';
+import { convertNugetToNodeRange } from './dotnetUtils.js';
 import {
-  isOlderVersion,
   filterTagsByName,
   buildTagsFromVersionMap,
   buildMapFromVersionList
 } from 'common/versionUtils';
-
-const semver = require('semver');
 
 export function dotnetPackageParser(name, requestedVersion, appContrib) {
   // convert a nuget range to node semver range

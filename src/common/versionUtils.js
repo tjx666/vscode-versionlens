@@ -61,6 +61,21 @@ export function removeOlderVersions(versionRange) {
 
 /**
  * @export
+ * @param {Array<TaggedVersion>} tags 
+ * @param {String} tagName 
+ * @param {String} defaultVersion 
+ * @returns {String}
+ */
+export function resolveVersionAgainstTags(tags, tagName, defaultVersion) {
+  const tagIndex = tags.findIndex(item => item.name === tagName);
+  if (tagIndex > -1)
+    return tags[tagIndex].version;
+  else
+    return defaultVersion;
+}
+
+/**
+ * @export
  * @param {Array<String>} versions 
  * @returns {Array<String>}
  */
@@ -293,7 +308,7 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
   const isRequestedVersionValid = semver.validRange(requestedVersion);
   const versionMatchNotFound = !versionMap.maxSatisfyingVersion;
 
-  // store the latest release
+  // create the latest release entry
   const latestEntry = {
     name: "latest",
     version: versionMap.releases[0] || versionMap.taggedVersions[0].version,
@@ -303,6 +318,7 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
   const satisfiesLatest = semver.satisfies(versionMap.maxSatisfyingVersion, latestEntry.version);
   const isFixed = isRequestedVersionValid && isFixedVersion(requestedVersion);
 
+  // create the satisfies entry
   const satisfiesEntry = {
     name: "satisfies",
     version: versionMap.maxSatisfyingVersion,

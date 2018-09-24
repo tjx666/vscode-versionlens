@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import appSettings from 'common/appSettings';
-import { PackageCodeLens } from 'common/packageCodeLens';
 import appContrib from 'common/appContrib';
 import { generateCodeLenses } from 'common/codeLensGeneration';
 import { parseDependencyNodes } from 'common/dependencyParser';

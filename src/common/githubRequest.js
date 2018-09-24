@@ -5,8 +5,6 @@
 import { ExpiryCacheMap } from './expiryCacheMap';
 import appContrib from './appContrib';
 
-const httpRequest = require('request-light');
-
 class GithubRequest {
 
   constructor() {

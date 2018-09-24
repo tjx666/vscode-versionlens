@@ -10,15 +10,15 @@ import {
   formatWithExistingLeading
 } from 'common/utils';
 import {
-  isOlderVersion,
   filterTagsByName,
-  buildTagsFromVersionMap
+  buildTagsFromVersionMap,
+  resolveVersionAgainstTags
 } from 'common/versionUtils';
 import {
   npmViewVersion,
   npmViewDistTags,
   parseNpmArguments
-} from './npmAPI'
+} from './npmClient.js'
 
 const semver = require('semver');
 
@@ -198,6 +198,11 @@ export function parseNpmDistTags(name, requestedVersion, maxSatisfyingVersion, a
         releases: [latestEntry.version],
         taggedVersions: distTags,
         maxSatisfyingVersion
+      }
+
+      // is the requestedVersion a dist tag ?
+      if (requestedVersion !== 'latest') {
+        requestedVersion = resolveVersionAgainstTags(distTags, requestedVersion, requestedVersion);
       }
 
       // build tags

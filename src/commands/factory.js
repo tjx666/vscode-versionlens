@@ -167,7 +167,7 @@ export function createSatisfiesLatestVersionCommand(codeLens) {
 }
 
 export function createMatchesPrereleaseVersionCommand(codeLens) {
-  return createTagCommand('Prerelease', codeLens);
+  return createTagCommand(`Prerelease ${codeLens.package.version}`, codeLens);
 }
 
 export function createInvalidCommand(codeLens) {

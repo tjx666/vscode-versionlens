@@ -9,7 +9,7 @@
     "@types/angular": "~1.5",
     "@types/node": "latest",
     "@angular/core": "2.2.1",
-    "webpack": "2.4.1",
+    "webpack": "next",
     "semver": "5.3.0",
     "npm": ">=4.5.1",
     "invalid": "git+https://git@github.com/testuser/test.git",

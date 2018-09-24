@@ -9,7 +9,7 @@ import appContrib from 'common/appContrib';
 import { generateCodeLenses } from 'common/codeLensGeneration';
 import { findNodesInJsonContent, parseDependencyNodes } from 'common/dependencyParser';
 import * as CommandFactory from 'commands/factory';
-import { npmGetOutdated, npmPackageDirExists } from './npmAPI';
+import { npmGetOutdated, npmPackageDirExists } from './npmClient.js';
 import {
   renderMissingDecoration,
   renderInstalledDecoration,

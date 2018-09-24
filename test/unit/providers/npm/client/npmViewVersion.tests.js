@@ -2,8 +2,7 @@
  * Copyright (c) Peter Flannery. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import { TestFixtureMap } from 'test/unit/utils'
-import { npmViewVersion } from 'providers/npm/npmAPI'
+import { npmViewVersion } from 'providers/npm/npmClient.js'
 
 const mock = require('mock-require')
 const assert = require('assert')
@@ -11,7 +10,7 @@ const assert = require('assert')
 let npmMock = null
 let testContext = null
 
-export const NpmViewVersionTests = {
+export default {
 
   beforeAll: () => {
     // mock require modules

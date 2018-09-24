@@ -1,3 +1,9 @@
+# 0.21.2
+
+  - Dotnet: Prevented unlisted versions from appearing. (thanks to https://github.com/frankyjuang) https://github.com/vscode-contrib/vscode-versionlens/issues/108
+  - NPM: Fixed tagged versions showing as invalid. https://github.com/vscode-contrib/vscode-versionlens/issues/112
+  - Now shows 'prerelease x.x.x' for preleases
+
 # 0.21.1
 
   - NPM: Fixed an issue where the spinning progress would not stop when invalid local file paths were entered. (https://github.com/vscode-contrib/vscode-versionlens/issues/104)
