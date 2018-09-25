@@ -103,7 +103,7 @@ export function parseVersion(version) {
   }
   parsedVersion = "[" + parsedVersion + "]" // All to big array
   parsedVersion = parsedVersion.replace(/(\w+)/g, "'$1'") // Quoted items
-  let arrayVersion = eval(parsedVersion) // Transform String to Array
+  let arrayVersion = JSON.parse(parsedVersion) // Transform String to Array
   arrayVersion = arrayVersion.map(toNumber) // Number String to Number
   arrayVersion = arrayVersion.map(weightedQualifier) // Qualifiers to weight
 
