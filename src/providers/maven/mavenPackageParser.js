@@ -24,6 +24,13 @@ export function mavenPackageParser(name, requestedVersion, appContrib) {
         })
       }
 
+      if (versionMeta.allVersions.length === 0) {
+        return PackageFactory.createPackageNotFound(
+          name,
+          requestedVersion,
+          'maven'
+        );
+      }
       return filteredTags
         .map((tag, index) => {
           // generate the package data for each tag

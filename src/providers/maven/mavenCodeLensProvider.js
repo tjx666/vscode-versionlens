@@ -6,6 +6,7 @@ import { generateCodeLenses } from 'common/codeLensGeneration';
 import { AbstractCodeLensProvider } from 'providers/abstractCodeLensProvider';
 import { findNodesInXmlContent } from './mavenDependencyParser';
 import { mavenPackageParser } from './mavenPackageParser';
+import { loadMavenRepositories } from './mavenAPI';
 
 export class MavenCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -22,24 +23,26 @@ export class MavenCodeLensProvider extends AbstractCodeLensProvider {
     if (appSettings.showVersionLenses === false)
       return [];
 
-    const dependencyNodes = findNodesInXmlContent(
-      document.getText(),
-      document,
-      appContrib.mavenDependencyProperties
-    );
-
-    const packageCollection = parseDependencyNodes(
-      dependencyNodes,
-      appContrib,
-      mavenPackageParser
-    );
-
-    appSettings.inProgress = true;
-    return generateCodeLenses(packageCollection, document)
-      .then(codelenses => {
-        appSettings.inProgress = false;
-        return codelenses;
-      });
+    return loadMavenRepositories().then(_ => {
+      const dependencyNodes = findNodesInXmlContent(
+        document.getText(),
+        document,
+        appContrib.mavenDependencyProperties
+      );
+  
+      const packageCollection = parseDependencyNodes(
+        dependencyNodes,
+        appContrib,
+        mavenPackageParser
+      );
+  
+      appSettings.inProgress = true;
+      return generateCodeLenses(packageCollection, document)
+        .then(codelenses => {
+          appSettings.inProgress = false;
+          return codelenses;
+        });
+    });
   }
 
   evaluateCodeLens(codeLens) {
