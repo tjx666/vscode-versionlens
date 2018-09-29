@@ -93,7 +93,6 @@ export default {
       .catch(err => done(err));
   },
 
-  only: 2,
   'returns the expected object for github versions': done => {
     const name = 'bootstrap';
     const version = 'twbs/bootstrap#v10.2.3-alpha';
@@ -137,6 +136,5 @@ export default {
       })
       .catch(err => done(err));
   }
-
 
 }
