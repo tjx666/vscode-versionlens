@@ -6,27 +6,20 @@ export function buildMapFromVersionList(versions, requestedVersion) {
   versions = versions.sort(compareVersions).reverse()
   versionMap.allVersions = versions.slice()
   versions.forEach(version => {
-    let tagged = null
-    if (/alpha|a/.test(version)) {
-      tagged = { name: 'alpha', version: version }
-      versionMap.taggedVersions.push(tagged)
-    } else if (/beta|b/.test(version)) {
-      tagged = { name: 'beta', version: version }
-      versionMap.taggedVersions.push(tagged)
-    } else if (/milestone|m/.test(version)) {
-      tagged = { name: 'milestone', version: version }
-      versionMap.taggedVersions.push(tagged)
-    } else if (/cr|rc/.test(version)) {
-      tagged = { name: 'rc', version: version }
-      versionMap.taggedVersions.push(tagged)
+    if (/beta|b/.test(version)) {
+      versionMap.taggedVersions.push(version)
     } else if (/snapshot/.test(version)) {
-      tagged = { name: 'snapshot', version: version }
-      versionMap.taggedVersions.push(tagged)
-    } else if (/sp/.test(version)) {
-      tagged = { name: 'sp', version: version }
-      versionMap.taggedVersions.push(tagged)
+      versionMap.taggedVersions.push(version)
     } else if (/ga|final/.test(version)) {
       versionMap.releases.push(version)
+    } else if (/alpha|a/.test(version)) {
+      versionMap.taggedVersions.push(version)
+    } else if (/milestone|m/.test(version)) {
+      versionMap.taggedVersions.push(version)
+    } else if (/cr|rc/.test(version)) {
+      versionMap.taggedVersions.push(version)
+    } else if (/sp/.test(version)) {
+      versionMap.taggedVersions.push(version)
     } else {
       versionMap.releases.push(version)
     }
@@ -44,10 +37,9 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
 
   const latestEntry = {
     name: "latest",
-    version: versionMap.releases[0] || versionMap.taggedVersions[0].version,
+    version: versionMap.releases[0] || versionMap.taggedVersions[0],
     // can only be older if a match was found and requestedVersion is a valid range
-    isOlderThanRequested: !versionMatchNotFound && isOlderVersion(versionMap.releases[0] || versionMap.taggedVersions[0].version, requestedVersion),
-    isLatestVersion: compareVersions(versionMap.releases[0], requestedVersion) == 0,
+    isOlderThanRequested: !versionMatchNotFound && isOlderVersion(versionMap.releases[0] || versionMap.taggedVersions[0], requestedVersion),
     isPrimaryTag: true
   };
 
@@ -57,31 +49,58 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
     versionMatchNotFound: versionMatchNotFound,
     isFixedVersion: true,
     isPrimaryTag: true,
+    isLatestVersion: compareVersions(latestEntry.version, requestedVersion) === 0,
     order: 0
   }
 
   let releases = latestOfEachMajor(versionMap.releases)
+  let tagged = latestOfEachMajor(versionMap.taggedVersions)
 
-  releases.splice(releases.indexOf(latestEntry.version), 1)
+  if (requestedEntry.isLatestVersion) {
+    releases.splice(releases.indexOf(latestEntry.version), 1)
+    tagged.splice(tagged.indexOf(latestEntry.version), 1)
+  }
+  if (releases.indexOf(requestedEntry.version) >= 0) {
+    releases.splice(releases.indexOf(requestedEntry.version), 1)
+  }
+  if (tagged.indexOf(requestedEntry.version) >= 0) {
+    tagged.splice(tagged.indexOf(requestedEntry.version), 1)
+  }
 
   let taggedReleases = releases.map(item => {
     return {
       isPrimaryTag: true,
       version: item,
-      isOlderThanRequested: compareVersions(item, requestedVersion) < 0,
-      isFixedVersion: compareVersions(item, requestedVersion) === 0
+      isOlderThanRequested: compareVersions(item, requestedVersion) < 0
+    }
+  })
+
+  let taggedVersions = tagged.map(item => {
+    let name = ''
+    if (/beta|b/.test(item)) {
+      name = 'beta'
+    } else if (/snapshot/.test(item)) {
+      name = 'snapshot'
+    } else if (/alpha|a/.test(item)) {
+      name = 'alpha'
+    } else if (/milestone|m/.test(item)) {
+      name = 'milestone'
+    } else if (/cr|rc/.test(item)) {
+      name = 'rc'
+    } else if (/sp/.test(item)) {
+      name = 'sp'
+    }
+    return {
+      name: name,
+      version: item
     }
   })
 
   let response = [
-    latestEntry,
+    requestedEntry,
     ...taggedReleases,
-    ...versionMap.taggedVersions
+    ...taggedVersions
   ]
-
-  if (latestEntry.version !== requestedEntry.version && releases.indexOf(requestedEntry.version) < 0) {
-    response.push(requestedEntry)
-  }
 
   return response
 }
@@ -172,7 +191,7 @@ function compare(a, b) {
   } else if (a === undefined && b instanceof Array) {
     return -1
   } else if (a === undefined && typeof b === 'number') {
-    if (b === 0 ) {
+    if (b === 0) {
       return 0
     }
     return -1
