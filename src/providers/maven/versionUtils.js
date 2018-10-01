@@ -6,19 +6,19 @@ export function buildMapFromVersionList(versions, requestedVersion) {
   versions = versions.sort(compareVersions).reverse()
   versionMap.allVersions = versions.slice()
   versions.forEach(version => {
-    if (/beta|b/.test(version)) {
+    if (/beta|b/i.test(version)) {
       versionMap.taggedVersions.push(version)
-    } else if (/snapshot/.test(version)) {
+    } else if (/snapshot/i.test(version)) {
       versionMap.taggedVersions.push(version)
-    } else if (/ga|final/.test(version)) {
+    } else if (/ga|final/i.test(version)) {
       versionMap.releases.push(version)
-    } else if (/alpha|a/.test(version)) {
+    } else if (/alpha|a/i.test(version)) {
       versionMap.taggedVersions.push(version)
-    } else if (/milestone|m/.test(version)) {
+    } else if (/milestone|m/i.test(version)) {
       versionMap.taggedVersions.push(version)
-    } else if (/cr|rc/.test(version)) {
+    } else if (/cr|rc/i.test(version)) {
       versionMap.taggedVersions.push(version)
-    } else if (/sp/.test(version)) {
+    } else if (/sp/i.test(version)) {
       versionMap.taggedVersions.push(version)
     } else {
       versionMap.releases.push(version)
@@ -77,17 +77,17 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
 
   let taggedVersions = tagged.map(item => {
     let name = ''
-    if (/beta|b/.test(item)) {
+    if (/beta|b/i.test(item)) {
       name = 'beta'
-    } else if (/snapshot/.test(item)) {
+    } else if (/snapshot/i.test(item)) {
       name = 'snapshot'
-    } else if (/alpha|a/.test(item)) {
+    } else if (/alpha|a/i.test(item)) {
       name = 'alpha'
-    } else if (/milestone|m/.test(item)) {
+    } else if (/milestone|m/i.test(item)) {
       name = 'milestone'
-    } else if (/cr|rc/.test(item)) {
+    } else if (/cr|rc/i.test(item)) {
       name = 'rc'
-    } else if (/sp/.test(item)) {
+    } else if (/sp/i.test(item)) {
       name = 'sp'
     }
     return {
