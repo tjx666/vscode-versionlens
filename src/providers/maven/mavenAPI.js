@@ -1,3 +1,5 @@
+
+const { window } = require('vscode')
 const fs = require('fs');
 const os = require('os');
 const xmldoc = require('xmldoc');
@@ -7,9 +9,8 @@ const httpRequest = require('request-light');
 const MAVEN_CENTRAL = "https://repo.maven.apache.org/maven2/"
 
 
-function loadMavenRepos() {
-
-  let repos = []
+function loadMavenRepositories() {
+  let repositories = []
   const homeDir = os.homedir();
   return new Promise(function (resolve, reject) {
     fs.readFile(homeDir + "/.m2/settings.xml", (err, data) => {
@@ -18,23 +19,31 @@ function loadMavenRepos() {
         return
       }
       let xml = new xmldoc.XmlDocument(data.toString());
-      let repositories = xml.descendantWithPath("profiles.profile.repositories").childrenNamed("repository")
+      let repositoriesXml = xml.descendantWithPath("profiles.profile.repositories").childrenNamed("repository")
 
-      repositories.forEach(element => {
-        repos.push(element.childNamed("url").val)
+      repositoriesXml.forEach(repositoryXml => {
+        repositories.push(repositoryXml.childNamed("url").val)
       })
-      resolve(repos)
+
+      if (window.activeTextEditor) {
+        let xmlCurrentPom = new xmldoc.XmlDocument(window.activeTextEditor.document.getText())
+        let repositoriesCurrentPom = xmlCurrentPom.descendantWithPath("repositories").childrenNamed("repository")
+        repositoriesCurrentPom.forEach(element => {
+          repositories.push(element.childNamed("url").val)
+        })
+      }
+      resolve(repositories)
     })
   });
 }
 
 export function mavenGetPackageVersions(packageName) {
   return new Promise(function (resolve, reject) {
-    loadMavenRepos().then((repos) => {
+    loadMavenRepositories().then((repositories) => {
       let [group, artifact] = packageName.split(':');
       let search = group.replace(/\./g, "/") + "/" + artifact
 
-      Promise.all(repos.map(element => {
+      Promise.all(repositories.map(element => {
         const queryUrl = `${element}${search}/maven-metadata.xml`;
         return httpRequest.xhr({ url: queryUrl })
           .then(response => {
