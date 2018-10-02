@@ -165,7 +165,7 @@ export const BowerCodeLensProviderTests = {
         .then(result => {
           assert.equal(result.command.title, '\u2191 3.2.1');
           assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
-          assert.equal(result.command.arguments[1], '"3.2.1"');
+          assert.equal(result.command.arguments[1], '3.2.1');
           done();
         });
     }

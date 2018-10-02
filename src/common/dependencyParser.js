@@ -7,8 +7,8 @@ const jsonParser = require('vscode-contrib-jsonc');
 function collectChildDependencyNodes(nodes, collector) {
   nodes.forEach(node => {
     let replaceInfo = {
-      start: node.value.start,
-      end: node.value.end
+      start: node.value.start + 1,
+      end: node.value.end - 1
     };
 
     // check if the node's value is an object
@@ -26,8 +26,8 @@ function extractChildReplaceRange(childNodes) {
     let node = childNodes[i];
     if (node.key.value === 'version') {
       return {
-        start: node.value.start,
-        end: node.value.end,
+        start: node.value.start + 1,
+        end: node.value.end - 1,
         value: node.value.value
       };
     }
@@ -106,8 +106,8 @@ export function parseDependencyNodes(dependencyNodes, appContrib, customPackageP
 export function createDependencyNode(node, replaceInfo) {
   if (!replaceInfo) {
     replaceInfo = {
-      start: node.value.start,
-      end: node.value.end,
+      start: node.value.start + 1,
+      end: node.value.end - 1,
     };
   }
 

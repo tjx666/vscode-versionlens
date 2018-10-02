@@ -55,15 +55,15 @@ export function extractDependencyNodes(rootNode, document, filterProperties) {
 function extractFromVersionAttribute(node, includeRange, document) {
   const lineText = document.getText(
     new Range(
-      document.positionAt(node.startTagPosition - 1),
+      document.positionAt(node.startTagPosition),
       document.positionAt(node.position)
     )
   );
-  const start = lineText.indexOf(' Version="') + 9;
-  const end = lineText.indexOf('"', start + 1);
+  const start = lineText.indexOf(' Version="') + 10;
+  const end = lineText.indexOf('"', start);
 
   const replaceInfo = {
-    start: node.startTagPosition + start - 1,
+    start: node.startTagPosition + start,
     end: node.startTagPosition + end,
   };
 

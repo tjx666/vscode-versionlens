@@ -46,7 +46,7 @@ export default {
     const result = testContext.testProvider.evaluateCodeLens(codeLens, null)
     assert.equal(result.command.title, 'alpha: \u2191 3.3.3-alpha.1', "Expected command.title failed.");
     assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
-    assert.equal(result.command.arguments[1], '"3.3.3-alpha.1"');
+    assert.equal(result.command.arguments[1], '3.3.3-alpha.1');
   },
 
   "returns fixed versions": () => {
@@ -87,7 +87,7 @@ export default {
     const result = testContext.testProvider.evaluateCodeLens(codeLens, null)
     assert.equal(result.command.title, '\u2191 3.2.1');
     assert.equal(result.command.command, 'versionlens.updateDependencyCommand');
-    assert.equal(result.command.arguments[1], '"3.2.1"');
+    assert.equal(result.command.arguments[1], '3.2.1');
   }
 
 

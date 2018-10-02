@@ -37,7 +37,7 @@ export const CommandFactoryTests = {
       const testLens = CommandFactory.createTestVersionCommand('1.0.0 - 2.0.0', '2.8.0');
       assert.equal(testLens.command.title, '\u2191 2.8.0', "Expected command.title failed.");
       assert.equal(testLens.command.command, 'versionlens.updateDependencyCommand');
-      assert.equal(testLens.command.arguments[1], '"2.8.0"');
+      assert.equal(testLens.command.arguments[1], '2.8.0');
     },
 
     "when local ranged version does satisfy the server version then codeLens should return SatisfiedCommand": () => {
@@ -51,7 +51,7 @@ export const CommandFactoryTests = {
       const testLens = CommandFactory.createTestVersionCommand('^1.8.0', '2.8.0');
       assert.equal(testLens.command.title, '\u2191 2.8.0', "Expected command.title failed.");
       assert.equal(testLens.command.command, 'versionlens.updateDependencyCommand');
-      assert.equal(testLens.command.arguments[1], '"^2.8.0"');
+      assert.equal(testLens.command.arguments[1], '^2.8.0');
     },
 
     "when local version has caret and satisfies the server version (and Matches) then codeLens should return SatisfiedCommand": () => {
@@ -65,14 +65,14 @@ export const CommandFactoryTests = {
       const testLens = CommandFactory.createTestVersionCommand('^2.0.0', '2.8.0');
       assert.equal(testLens.command.title, 'Satisfies \u2191 2.8.0', "Expected command.title failed.");
       assert.equal(testLens.command.command, 'versionlens.updateDependencyCommand');
-      assert.equal(testLens.command.arguments[1], '"^2.8.0"');
+      assert.equal(testLens.command.arguments[1], '^2.8.0');
     },
 
     "when local version does not satisfy the server version then codeLens should return NewVersionCommand": () => {
       const testLens = CommandFactory.createTestVersionCommand('1.0.0', '2.8.0');
       assert.equal(testLens.command.title, '\u2191 2.8.0', "Expected command.title failed.");
       assert.equal(testLens.command.command, 'versionlens.updateDependencyCommand');
-      assert.equal(testLens.command.arguments[1], '"2.8.0"');
+      assert.equal(testLens.command.arguments[1], '2.8.0');
     },
 
     "when local version does satisfy the server version then codeLens should return LatestCommand": () => {
