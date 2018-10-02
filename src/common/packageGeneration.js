@@ -43,12 +43,11 @@ export function createInvalidVersion(name, version, type) {
   );
 }
 
-export function createPackage(name, version, meta, customGenerateVersion, customWrapVersion) {
+export function createPackage(name, version, meta, customGenerateVersion) {
   return {
     name,
     version,
     meta,
-    customGenerateVersion,
-    customWrapVersion
+    customGenerateVersion
   };
 }

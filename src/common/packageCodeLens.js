@@ -23,13 +23,7 @@ export class PackageCodeLens extends CodeLens {
 
     return this.package.customGenerateVersion.call(this, this.package, newVersion);
   }
-
-  wrapVersion(version) {
-    if (!this.package.customWrapVersion)
-      return `"${version}"`
-    return this.package.customWrapVersion.call(this, version);
-  }
-
+  
   getTaggedVersionPrefix() {
     if (this.isTaggedVersion())
       return this.package.meta.tag.name + ': ';

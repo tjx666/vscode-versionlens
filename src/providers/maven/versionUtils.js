@@ -6,7 +6,9 @@ export function buildMapFromVersionList(versions, requestedVersion) {
   versions = versions.sort(compareVersions).reverse()
   versionMap.allVersions = versions.slice()
   versions.forEach(version => {
-    if (/beta|b/i.test(version)) {
+    if (/release/i.test(version)) {
+      versionMap.releases.push(version)
+    } else if (/beta|b/i.test(version)) {
       versionMap.taggedVersions.push(version)
     } else if (/snapshot/i.test(version)) {
       versionMap.taggedVersions.push(version)

@@ -9,9 +9,6 @@ export function mavenPackageParser(name, requestedVersion, appContrib) {
   return mavenGetPackageVersions(name)
     .then((versions) => {
       // console.log(versions);
-      let customWrapVersion = (v) => {
-        return `${v}`
-      }
 
       let versionMeta = buildMapFromVersionList(versions, requestedVersion)
 
@@ -39,8 +36,7 @@ export function mavenPackageParser(name, requestedVersion, appContrib) {
             name,
             requestedVersion,
             meta,
-            null,
-            customWrapVersion
+            null
           );
         });
 

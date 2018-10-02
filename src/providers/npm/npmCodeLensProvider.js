@@ -99,7 +99,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     if (codeLens.isInvalidVersion())
       return CommandFactory.createInvalidCommand(codeLens);
 
-    // check if this entered versions matches a registry versions
+    // check if the entered version matches a registry version
     if (codeLens.versionMatchNotFound())
       return CommandFactory.createVersionMatchNotFoundCommand(codeLens);
 
