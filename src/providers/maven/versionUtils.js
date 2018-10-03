@@ -8,15 +8,15 @@ export function buildMapFromVersionList(versions, requestedVersion) {
   versions.forEach(version => {
     if (/release/i.test(version)) {
       versionMap.releases.push(version)
-    } else if (/beta|b/i.test(version)) {
+    } else if (/beta|(\b|\d)b(\b|\d)/i.test(version)) {
       versionMap.taggedVersions.push(version)
     } else if (/snapshot/i.test(version)) {
       versionMap.taggedVersions.push(version)
     } else if (/ga|final/i.test(version)) {
       versionMap.releases.push(version)
-    } else if (/alpha|a/i.test(version)) {
+    } else if (/alpha|(\b|\d)a(\b|\d)/i.test(version)) {
       versionMap.taggedVersions.push(version)
-    } else if (/milestone|m/i.test(version)) {
+    } else if (/milestone|(\b|\d)m(\b|\d)/i.test(version)) {
       versionMap.taggedVersions.push(version)
     } else if (/cr|rc/i.test(version)) {
       versionMap.taggedVersions.push(version)
@@ -79,13 +79,13 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
 
   let taggedVersions = tagged.map(item => {
     let name = ''
-    if (/beta|b/i.test(item)) {
+    if (/beta|(\b|\d)b(\b|\d)/i.test(item)) {
       name = 'beta'
     } else if (/snapshot/i.test(item)) {
       name = 'snapshot'
-    } else if (/alpha|a/i.test(item)) {
+    } else if (/alpha|(\b|\d)a(\b|\d)/i.test(item)) {
       name = 'alpha'
-    } else if (/milestone|m/i.test(item)) {
+    } else if (/milestone|(\b|\d)m(\b|\d)/i.test(item)) {
       name = 'milestone'
     } else if (/cr|rc/i.test(item)) {
       name = 'rc'
