@@ -27,12 +27,12 @@ export default {
     testContext = {}
 
     // mock defaults
-    npmMock.load = cb => cb(true)
+    npmMock.load = (cli, cb) => cb(true)
     npmMock.commands.view = (name, args, cb) => cb()
   },
 
   "rejects on npm.load error": done => {
-    npmMock.load = cb => cb("load error")
+    npmMock.load = (cli, cb) => cb("load error")
 
     npmViewVersion()
       .then(results => done(new Error("Should not be called")))
@@ -43,7 +43,7 @@ export default {
   },
 
   "rejects on npm.view error": done => {
-    npmMock.load = cb => cb()
+    npmMock.load = (cli, cb) => cb()
     npmMock.commands.view = (n, v, cb) => cb("view error")
 
     npmViewVersion()
@@ -56,7 +56,7 @@ export default {
 
   "returns null for empty responses": done => {
     const response = {}
-    npmMock.load = cb => cb()
+    npmMock.load = (cli, cb) => cb()
     npmMock.commands.view = (n, v, cb) => cb(null, response)
 
     npmViewVersion()
@@ -69,7 +69,7 @@ export default {
 
   "returns single versions": done => {
     const response = { '1.2.3': null }
-    npmMock.load = cb => cb()
+    npmMock.load = (cli, cb) => cb()
     npmMock.commands.view = (n, v, cb) => cb(null, response)
 
     npmViewVersion()
@@ -82,7 +82,7 @@ export default {
 
   "returns latest version first": done => {
     const response = { '1.2.3': null, '5.0.0': null, '1.1.1': null }
-    npmMock.load = cb => cb()
+    npmMock.load = (cli, cb) => cb()
     npmMock.commands.view = (n, v, cb) => cb(null, response)
 
     npmViewVersion()

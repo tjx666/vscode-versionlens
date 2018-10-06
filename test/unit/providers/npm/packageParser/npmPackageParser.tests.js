@@ -36,12 +36,13 @@ export default {
   },
 
   'returns the expected object for non ranged semver versions': done => {
+    const packagePath = '.';
     const name = 'bootstrap';
     const version = '1.2.3';
 
     npmClientModule.npmViewVersion = _ => Promise.resolve('1.2.3')
 
-    const parsedResults = npmPackageParser(name, version, testContext.appContribMock);
+    const parsedResults = npmPackageParser(packagePath, name, version, testContext.appContribMock);
     Promise.resolve(parsedResults)
       .then(results => {
         assert.equal(results[0].name, 'bootstrap', "Expected packageName");
@@ -56,13 +57,14 @@ export default {
   },
 
   'returns the expected object for ranged semver versions': done => {
+    const packagePath = '.';
     const name = 'bootstrap';
     const version = '~1.2.3';
 
     // mock the api
     npmClientModule.npmViewVersion = _ => Promise.resolve("1.2.3")
 
-    const parsedResults = npmPackageParser(name, version, testContext.appContribMock);
+    const parsedResults = npmPackageParser(packagePath, name, version, testContext.appContribMock);
     Promise.resolve(parsedResults)
       .then(results => {
         assert.equal(results[0].name, 'bootstrap', "Expected packageName");
@@ -77,10 +79,11 @@ export default {
   },
 
   'returns the expected object for file versions': done => {
+    const packagePath = '.';
     const name = 'another-project';
     const version = 'file:../another-project';
 
-    const parsedResults = npmPackageParser(name, version, testContext.appContribMock);
+    const parsedResults = npmPackageParser(packagePath, name, version, testContext.appContribMock);
     Promise.resolve(parsedResults)
       .then(result => {
         assert.equal(result.name, 'another-project', `Expected packageName. result.name = ${result.name}`);
@@ -94,10 +97,11 @@ export default {
   },
 
   'returns the expected object for github versions': done => {
+    const packagePath = '.';
     const name = 'bootstrap';
     const version = 'twbs/bootstrap#v10.2.3-alpha';
 
-    const parsedResults = npmPackageParser(name, version, testContext.appContribMock);
+    const parsedResults = npmPackageParser(packagePath, name, version, testContext.appContribMock);
     Promise.resolve(parsedResults)
       .then(results => {
         results.forEach((result, index) => {
@@ -116,10 +120,11 @@ export default {
   },
 
   'returns the expected object for git+http+github versions': done => {
+    const packagePath = '.';
     const name = 'bootstrap';
     const version = 'git+https://git@github.com/twbs/bootstrap.git#v10.2.3-alpha';
 
-    const parsedResults = npmPackageParser(name, version, testContext.appContribMock);
+    const parsedResults = npmPackageParser(packagePath, name, version, testContext.appContribMock);
     Promise.resolve(parsedResults)
       .then(results => {
         results.forEach((result, index) => {

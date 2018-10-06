@@ -113,12 +113,12 @@ export default {
     };
 
     // mock the api
-    npmClientModule.npmViewVersion = viewVersionParam => {
+    npmClientModule.npmViewVersion = (packagePath, viewVersionParam) => {
       const [, packageName, maxSatisfyingVersion] = /(.*)@(.*)/.exec(viewVersionParam)
       return Promise.resolve(maxSatisfyingVersion)
     }
 
-    npmClientModule.npmViewDistTags = packageName => {
+    npmClientModule.npmViewDistTags = (packagePath, packageName) => {
       return Promise.resolve([
         { name: 'latest', version: '5.0.0' },
         { name: 'next', version: '2000.0.0' }

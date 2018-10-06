@@ -27,12 +27,12 @@ export default {
     testContext = {}
 
     // mock defaults
-    npmMock.load = cb => cb(true)
+    npmMock.load = (cli, cb) => cb(true)
     npmMock.commands.view = (name, args, cb) => cb()
   },
 
   "rejects on npm.load error": done => {
-    npmMock.load = cb => cb("load error")
+    npmMock.load = (cli, cb) => cb("load error")
 
     npmViewDistTags()
       .then(results => done(new Error("Should not be called")))
@@ -43,7 +43,7 @@ export default {
   },
 
   "rejects on npm.view error": done => {
-    npmMock.load = cb => cb()
+    npmMock.load = (cli, cb) => cb()
     npmMock.commands.view = (n, v, cb) => cb("view error")
 
     npmViewDistTags()
@@ -56,7 +56,7 @@ export default {
 
   "throws NPM_VIEW_EMPTY_RESPONSE when response is empty": done => {
     const response = {}
-    npmMock.load = cb => cb()
+    npmMock.load = (cli, cb) => cb()
     npmMock.commands.view = (n, v, cb) => cb(null, response)
 
     npmViewDistTags()
@@ -80,7 +80,7 @@ export default {
       }
     }
 
-    npmMock.load = cb => cb()
+    npmMock.load = (cli, cb) => cb()
     npmMock.commands.view = (n, v, cb) => cb(null, testResponse)
 
     npmViewDistTags()
@@ -118,7 +118,7 @@ export default {
       }
     }
 
-    npmMock.load = cb => cb()
+    npmMock.load = (cli, cb) => cb()
     npmMock.commands.view = (n, v, cb) => cb(null, testResponse)
 
     npmViewDistTags()

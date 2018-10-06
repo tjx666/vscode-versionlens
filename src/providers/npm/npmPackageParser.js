@@ -4,25 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 import appSettings from 'common/appSettings';
 import * as PackageFactory from 'common/packageGeneration';
-import {
-  fileDependencyRegex,
-  gitHubDependencyRegex,
-  formatWithExistingLeading
-} from 'common/utils';
-import {
-  filterTagsByName,
-  buildTagsFromVersionMap,
-  resolveVersionAgainstTags
-} from 'common/versionUtils';
-import {
-  npmViewVersion,
-  npmViewDistTags,
-  parseNpmArguments
-} from './npmClient.js'
+import { fileDependencyRegex, gitHubDependencyRegex, formatWithExistingLeading } from 'common/utils';
+import { filterTagsByName, buildTagsFromVersionMap, resolveVersionAgainstTags } from 'common/versionUtils';
+import { npmViewVersion, npmViewDistTags, parseNpmArguments } from './npmClient.js'
 
 const semver = require('semver');
 
-export function npmPackageParser(name, requestedVersion, appContrib) {
+export function npmPackageParser(packagePath, name, requestedVersion, appContrib) {
   return parseNpmArguments(name, requestedVersion)
     .then(npmVersionInfo => {
       // check if we have a directory
@@ -48,6 +36,7 @@ export function npmPackageParser(name, requestedVersion, appContrib) {
 
       // must be a registry version
       return parseNpmRegistryVersion(
+        packagePath,
         name,
         requestedVersion,
         appContrib
@@ -83,16 +72,17 @@ export function npmPackageParser(name, requestedVersion, appContrib) {
     });
 }
 
-export function parseNpmRegistryVersion(name, requestedVersion, appContrib, customGenerateVersion = null) {
+export function parseNpmRegistryVersion(packagePath, name, requestedVersion, appContrib, customGenerateVersion = null) {
   // get the matched version
   const viewVersionArg = `${name}@${requestedVersion}`;
 
-  return npmViewVersion(viewVersionArg)
+  return npmViewVersion(packagePath, viewVersionArg)
     .then(maxSatisfyingVersion => {
       if (requestedVersion === 'latest')
         requestedVersion = maxSatisfyingVersion;
 
       return parseNpmDistTags(
+        packagePath,
         name,
         requestedVersion,
         maxSatisfyingVersion,
@@ -187,9 +177,9 @@ export function customNpmGenerateVersion(packageInfo, newVersion) {
   return `${packageInfo.meta.userRepo}#${preservedLeadingVersion}`
 }
 
-export function parseNpmDistTags(name, requestedVersion, maxSatisfyingVersion, appContrib, customGenerateVersion = null) {
+export function parseNpmDistTags(packagePath, name, requestedVersion, maxSatisfyingVersion, appContrib, customGenerateVersion = null) {
 
-  return npmViewDistTags(name)
+  return npmViewDistTags(packagePath, name)
     .then(distTags => {
       const latestEntry = distTags[0];
 

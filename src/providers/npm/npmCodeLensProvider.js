@@ -52,7 +52,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     const packageCollection = parseDependencyNodes(
       dependencyNodes,
       appContrib,
-      npmPackageParser
+      npmPackageParser.bind(null, this._documentPath)
     );
 
     if (packageCollection.length === 0) 
@@ -137,7 +137,6 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   generateDecoration(codeLens) {
-    const activeEditor = window.activeTextEditor;
     const documentPath = this._documentPath;
     const currentPackageName = codeLens.package.name;
 

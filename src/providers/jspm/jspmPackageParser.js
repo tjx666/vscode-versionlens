@@ -4,16 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 import * as PackageFactory from 'common/packageGeneration';
 import { formatWithExistingLeading } from 'common/utils';
-import {
-  parseNpmRegistryVersion,
-  parseFileVersion,
-  parseGithubVersion
-} from 'providers/npm/npmPackageParser';
+import { parseNpmRegistryVersion, parseGithubVersion } from 'providers/npm/npmPackageParser';
 
 const semver = require('semver');
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;
-export function jspmPackageParser(name, version, appContrib) {
+export function jspmPackageParser(packagePath, name, version, appContrib) {
   // check for supported package resgitries
   const regExpResult = jspmDependencyRegex.exec(version);
   if (!regExpResult) {
@@ -38,6 +34,7 @@ export function jspmPackageParser(name, version, appContrib) {
   }
 
   return parseNpmRegistryVersion(
+    packagePath,
     extractedPkgName,
     newPkgVersion,
     appContrib,

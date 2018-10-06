@@ -14,11 +14,11 @@ export function npmPackageDirExists(packageJsonPath, packageName) {
   return fs.existsSync(npmFormattedPath);
 }
 
-export function npmViewVersion(packageName) {
+export function npmViewVersion(packagePath, packageName) {
   const npm = require('npm');
 
   return new Promise((resolve, reject) => {
-    npm.load(loadError => {
+    npm.load({ prefix: packagePath }, loadError => {
       if (loadError) {
         reject(loadError);
         return;
@@ -55,11 +55,11 @@ export function npmViewVersion(packageName) {
   });
 }
 
-export function npmViewDistTags(packageName) {
+export function npmViewDistTags(packagePath, packageName) {
   const npm = require('npm');
 
   return new Promise((resolve, reject) => {
-    npm.load(loadError => {
+    npm.load({ prefix: packagePath }, loadError => {
       if (loadError) {
         reject(loadError);
         return;
@@ -103,17 +103,16 @@ export function npmViewDistTags(packageName) {
   });
 }
 
-export function npmGetOutdated(npmLocalPath) {
+export function npmGetOutdated(packagePath) {
   const npm = require('npm');
 
   return new Promise((resolve, reject) => {
-    npm.load(loadError => {
+    npm.load({ prefix: packagePath }, loadError => {
       if (loadError) {
         reject(loadError);
         return;
       }
 
-      npm.localPrefix = npmLocalPath;
       npm.config.set('json', true);
       const silent = true;
       npm.commands.outdated(silent, (err, response) => {

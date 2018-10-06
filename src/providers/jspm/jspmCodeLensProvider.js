@@ -30,7 +30,7 @@ export class JspmCodeLensProvider extends NpmCodeLensProvider {
     const packageCollection = parseDependencyNodes(
       dependencyNodes,
       appContrib,
-      jspmPackageParser
+      jspmPackageParser.bind(null, this._documentPath)
     );
 
     appSettings.inProgress = true;

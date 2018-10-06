@@ -38,10 +38,11 @@ export const JSPMPackageParser = {
   'jspmPackageParser': {
 
     'returns the expected object for npm semver versions': done => {
-      const name = 'bluebird',
+      const packagePath = '.';
+      const name = 'bluebird';
       const version = 'npm:bluebird@3.4.6';
 
-      const parsedResults = jspmPackageParser(name, version, testContext.appContribMock);
+      const parsedResults = jspmPackageParser(packagePath, name, version, testContext.appContribMock);
       Promise.resolve(parsedResults)
         .then(results => {
           assert.equal(results[0].name, 'bluebird', "Expected packageName");
@@ -55,10 +56,11 @@ export const JSPMPackageParser = {
     },
 
     'returns the expected object for github versions': done => {
+      const packagePath = '.';
       const name = 'bootstrap';
       const version = 'github:twbs/bootstrap@4.0.0-alpha.4';
 
-      const parsedResults = jspmPackageParser(name, version, testContext.appContribMock);
+      const parsedResults = jspmPackageParser(packagePath, name, version, testContext.appContribMock);
       Promise.resolve(parsedResults)
         .then(results => {
           results.forEach((result, index) => {
