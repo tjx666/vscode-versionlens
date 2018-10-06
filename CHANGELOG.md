@@ -1,3 +1,9 @@
+# 0.22.0
+
+  - Added Maven support. (thanks to https://github.com/fcrespo82)
+  - NPM: Fixed an issue where some prefixed versions were being shown as the latest version when they weren't. See https://github.com/vscode-contrib/vscode-versionlens/issues/113
+  - NPM: Added .npmrc by setting --prefix flag to the currently open package.json file working dir
+
 # 0.21.2
 
   - Dotnet: Prevented unlisted versions from appearing. (thanks to https://github.com/frankyjuang) https://github.com/vscode-contrib/vscode-versionlens/issues/108
