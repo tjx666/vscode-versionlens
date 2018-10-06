@@ -317,14 +317,15 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
   };
   const satisfiesLatest = semver.satisfies(versionMap.maxSatisfyingVersion, latestEntry.version);
   const isFixed = isRequestedVersionValid && isFixedVersion(requestedVersion);
+  const isLatestVersion = satisfiesLatest && requestedVersion.replace(/[\^~]/, '') === latestEntry.version;
 
   // create the satisfies entry
   const satisfiesEntry = {
     name: "satisfies",
     version: versionMap.maxSatisfyingVersion,
     isNewerThanLatest: !satisfiesLatest && versionMap.maxSatisfyingVersion && semver.gt(versionMap.maxSatisfyingVersion, latestEntry.version),
-    isLatestVersion: satisfiesLatest && requestedVersion.includes(latestEntry.version),
-    satisfiesLatest: satisfiesLatest,
+    isLatestVersion,
+    satisfiesLatest,
     isInvalid: !isRequestedVersionValid,
     versionMatchNotFound,
     isFixedVersion: isFixed,

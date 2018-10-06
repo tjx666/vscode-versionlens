@@ -40,6 +40,22 @@ export default {
       );
     })
 
+  },
+
+  "Prerelease is older than released versions": () => {
+    const olderVersion = '1.2.2-beta.1';
+    const newerVersion = '1.2.2';
+
+    assert.ok(
+      isOlderVersion(olderVersion, newerVersion),
+      `${olderVersion} should be older than ${newerVersion}`
+    );
+
+    assert.ok(
+      isOlderVersion(newerVersion, olderVersion) === false,
+      `${newerVersion} should be newer than ${olderVersion}`
+    );
+
   }
 
 }

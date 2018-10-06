@@ -84,6 +84,16 @@ export default {
     assert.ok(resultTags[0].satisfiesLatest === true, "Should install latest version");
   },
 
+  "'satisfies'.latest is false when prerelease is same as release number": () => {
+    const requestedVersion = '^2.0.0-beta.1';
+    const testVersionMap = buildMapFromVersionList(['2.0.0', '2.0.0-beta.1'], requestedVersion);
+    const resultTags = buildTagsFromVersionMap(testVersionMap, requestedVersion);
+
+    assert.ok(resultTags[0].isLatestVersion === false, "Should not be latest version");
+    assert.ok(resultTags[0].satisfiesLatest === true, "Should install latest version");
+    assert.ok(resultTags[1].name === 'latest', "Latest tag should exist")
+  },
+
   "'satisfies' tag entry should not be latest but install latest when requested version satisfies the latest": () => {
     const requestedVersion = '^2.1.0';
     const testVersionMap = buildMapFromVersionList(testContext.testVersions, requestedVersion);
