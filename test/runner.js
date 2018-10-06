@@ -13,7 +13,8 @@ if (!tty.getWindowSize) {
 const runner = new Mocha({
   ui: 'esm',
   reporter: 'spec',
-  useColors: true
+  useColors: true,
+  timeout: 4000,
 });
 
 // set up the global variables
