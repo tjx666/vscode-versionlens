@@ -1,6 +1,6 @@
 # Version Lens
 
-[![Build Status](https://img.shields.io/travis/vscode-contrib/vscode-versionlens/master.svg)](http://travis-ci.org/vscode-contrib/vscode-versionlens "Check this project's build status on TravisCI")
+[![Build Status](https://img.shields.io/travis/vscode-contrib/vscode-versionlens/master.svg)](https://travis-ci.org/vscode-contrib/vscode-versionlens "Check this project's build status on TravisCI")
 [![Known Vulnerabilities](https://snyk.io/test/github/vscode-contrib/vscode-versionlens/badge.svg)](https://snyk.io/test/github/vscode-contrib/vscode-versionlens)
 
 
@@ -14,10 +14,10 @@ Shows package version information for npm, jspm, bower, dub and dotnet core in t
 
 Supports
 
-- bower http://bower.io/
-- dotnet http://www.dotnetfoundation.org/
+- bower https://bower.io/
+- dotnet https://www.dotnetfoundation.org/
 - dub https://code.dlang.org/
-- jspm http://jspm.io/,
+- jspm https://jspm.io/,
 - maven https://maven.apache.org/ and
 - npm https://www.npmjs.com/
 
