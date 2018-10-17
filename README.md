@@ -17,7 +17,8 @@ Supports
 - bower http://bower.io/
 - dotnet http://www.dotnetfoundation.org/
 - dub https://code.dlang.org/
-- jspm http://jspm.io/, and
+- jspm http://jspm.io/,
+- maven https://maven.apache.org/ and
 - npm https://www.npmjs.com/
 
 ## Install

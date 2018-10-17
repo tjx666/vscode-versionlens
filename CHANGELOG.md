@@ -1,8 +1,8 @@
 # 0.22.0
 
-  - Added Maven support. (thanks to https://github.com/fcrespo82)
+  - Added Maven support for Java. (thanks to https://github.com/fcrespo82)
   - NPM: Fixed an issue where some prefixed versions were being shown as the latest version when they weren't. See https://github.com/vscode-contrib/vscode-versionlens/issues/113
-  - NPM: Added .npmrc by setting --prefix flag to the currently open package.json file working dir
+  - NPM: Added .npmrc support by setting --prefix flag to the currently open package.json file working dir
 
 # 0.21.2
 
