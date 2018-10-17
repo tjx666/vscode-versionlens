@@ -20,18 +20,7 @@
     "packages",
     "dependencies",
     "references",
-    "npm",
-    "bower",
-    "dub",
-    "dotnet",
-    "nuget",
-    "jspm",
-    "csharp",
-    "fsharp",
-    "c#",
-    "f#",
-    "java",
-    "maven"
+    "npm, bower, dub, dotnet, nuget, jspm, csharp, fsharp, c#, f#, java, maven"
   ],
   "categories": [
     "Programming Languages",
