@@ -7,7 +7,7 @@ import { bowerDefaultDependencyProperties } from 'providers/bower/config';
 import { dubDefaultDependencyProperties } from 'providers/dub/config';
 import {
   dotnetCSProjDefaultDependencyProperties,
-  dotnetDefaultNuGetFeed
+  dotnetDefaultNuGetFeeds
 } from 'providers/dotnet/config';
 import {
   mavenDefaultDependencyProperties
@@ -62,9 +62,9 @@ export default new class AppContribution {
     return config.get("dotnet.tagFilter", []);
   }
 
-  get dotnetNuGetFeed() {
+  get dotnetNuGetFeeds() {
     const config = workspace.getConfiguration('versionlens');
-    return config.get("dotnet.nugetFeed", dotnetDefaultNuGetFeed);
+    return config.get("dotnet.nugetFeeds", dotnetDefaultNuGetFeeds);
   }
 
   get dotnetIncludePrerelease() {
