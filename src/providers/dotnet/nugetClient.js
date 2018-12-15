@@ -2,11 +2,15 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-const FEED_URL = 'https://api-v2v3search-0.nuget.org/autocomplete';
+const { workspace } = require('vscode');
+
 
 export function nugetGetPackageVersions(packageName) {
   const httpRequest = require('request-light');
-  const queryUrl = `${FEED_URL}?id=${packageName}&prerelease=true&semVerLevel=2.0.0`;
+  const config = workspace.getConfiguration('versionlens.dotnet'); 
+  const feedUrl = config.get('nugetFeed'); 
+  const includePrelease = config.get('includePrerelease'); 
+  const queryUrl = `${feedUrl}?id=${packageName}&prerelease=${includePrelease}&semVerLevel=2.0.0`;
 
   return new Promise(function (resolve, reject) {
     httpRequest.xhr({ url: queryUrl })

@@ -286,6 +286,16 @@
           "default": [],
           "description": "Define which common tagged versions you want to see. i.e. [alpha, beta]. If you don't specify any dist tags then all the dist-tags for a package will be shown."
         },
+        "versionlens.dotnet.nugetFeed": {
+          "type": "string",
+          "default": "https://api-v2v3search-0.nuget.org/autocomplete",
+          "description": "Defines which NuGet feed to use for package search. Has to be 'SearchAutocompleteService' endpoint, which can be found by navigating to feed index (e.g. https://api.nuget.org/v3/index.json) and looking for Url with that type."
+        },
+        "versionlens.dotnet.includePrerelease": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include NuGet pre-release packages"
+        },
         "versionlens.dub.dependencyProperties": {
           "type": "array",
           "items": {
