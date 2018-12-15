@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import appContrib from 'common/appContrib';
+const semver = require('semver');
 
 export function nugetGetPackageVersions(packageName) {
   const httpRequest = require('request-light');
@@ -29,18 +30,17 @@ export function nugetGetPackageVersions(packageName) {
     });
   })
 
-
-  // Invert resolve logic so that first item to resolve is thrown as rejection
-  // More thorough explanation: https://stackoverflow.com/a/37235274/5364746
-  // If 2 or more feeds contain same package but with different available version
-  // this could cause issues and then it would require to fully resolve all feeds. 
   return Promise.all(promises.map(p => {
     return p.then(
-      result => Promise.reject(result),
+      result => Promise.resolve(result),
       error => Promise.resolve(error)
     );
   })).then(
-    errors => Promise.reject(errors[0]),
-    result => Promise.resolve(result)
+    results => {
+      const dataResults = results.filter(result => Array.isArray(result)).sort((a, b) => semver.gt(a[0], b[0])); // Filter arrays and sort by first/highest version
+      if (dataResults.length === 0) return Promise.reject(results[0]); // If no arrays, no successful resolves
+      return Promise.resolve(dataResults[0]);
+    },
+    _ => Promise.reject({ status: 404 })
   )
 }
