@@ -64,8 +64,7 @@ export function dotnetPackageParser(name, requestedVersion, appContrib) {
 
         return PackageFactory.createPackage(
           name,
-          // TODO need nodeRequestedRange to be shown in match not found info
-          requestedVersion,
+          nodeRequestedRange,
           packageInfo
         );
       });
