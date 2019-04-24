@@ -8,6 +8,7 @@ import { BowerCodeLensProvider } from './bower/bowerCodeLensProvider';
 import { DubCodeLensProvider } from './dub/dubCodeLensProvider';
 import { DotNetCodeLensProvider } from './dotnet/dotnetCodeLensProvider';
 import { MavenCodeLensProvider } from './maven/mavenCodeLensProvider';
+import { PubCodeLensProvider } from './pub/pubCodeLensProvider';
 
 const codeLensProviders = [
   new NpmCodeLensProvider,
@@ -15,7 +16,8 @@ const codeLensProviders = [
   new BowerCodeLensProvider,
   new DubCodeLensProvider,
   new DotNetCodeLensProvider,
-  new MavenCodeLensProvider
+  new MavenCodeLensProvider,
+  new PubCodeLensProvider
 ];
 
 export function getProvidersByFileName(fileName) {

@@ -20,7 +20,7 @@
     "packages",
     "dependencies",
     "references",
-    "npm, bower, dub, dotnet, nuget, jspm, csharp, fsharp, c#, f#, java, maven"
+    "npm, bower, dub, dotnet, nuget, jspm, csharp, fsharp, c#, f#, java, maven, pub, dart"
   ],
   "categories": [
     "Programming Languages",
@@ -28,7 +28,8 @@
   ],
   "activationEvents": [
     "onLanguage:json",
-    "onLanguage:xml"
+    "onLanguage:xml",
+    "onLanguage:yaml"
   ],
   "main": "./out/extension-bundle.js",
   "scripts": {
@@ -65,7 +66,8 @@
     "semver": "5.6.0",
     "vscode-contrib-jsonc": "1.0.0-beta.2",
     "vscode-languageclient": "5.2.1",
-    "xmldoc": "1.1.2"
+    "xmldoc": "1.1.2",
+    "yaml": "1.5.0"
   },
   "contributes": {
     "commands": [
@@ -263,6 +265,19 @@
           ],
           "description": "Defines which properties in bower.json should be parsed by this extension"
         },
+        "versionlens.pub.dependencyProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "minItems": 1,
+          "default": [
+            "dependencies",
+            "dev_dependencies"
+          ],
+          "description": "Defines which properties in pubspec.yaml should be parsed by this extension"
+        },
         "versionlens.dotnet.dependencyProperties": {
           "type": "array",
           "items": {
@@ -291,7 +306,9 @@
           "items": {
             "type": "string"
           },
-          "default": [ "https://api-v2v3search-0.nuget.org/autocomplete" ],
+          "default": [
+            "https://api-v2v3search-0.nuget.org/autocomplete"
+          ],
           "description": "Defines which NuGet feeds to use for package search. Has to be 'SearchAutocompleteService' endpoint, which can be found by navigating to feed index (e.g. https://api.nuget.org/v3/index.json) and looking for Url with that type."
         },
         "versionlens.dotnet.includePrerelease": {
