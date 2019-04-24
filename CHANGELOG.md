@@ -1,3 +1,19 @@
+# 0.23.0
+
+ - Maven: Support for repositories defined in pom.xml (not only settings and central)
+ - Maven: Support for local repository (case when a package is not in a repository but only in .m2/repository)
+ - Maven: Better tagged version
+ - Maven: Show when a package is not found
+ - Maven: Use maven binary from path to get effective settings based
+
+ - DotNet: Adds configuration options which allow multiple custom NuGet feeds
+
+ - Bower: Will be removed in the next release
+
+Maven work is all thanks to https://github.com/fcrespo82
+
+DotNet work is all thanks to https://github.com/Hoffs
+
 # 0.22.0
 
   - Added Maven support for Java. (thanks to https://github.com/fcrespo82)
