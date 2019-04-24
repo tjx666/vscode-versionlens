@@ -46,6 +46,9 @@
     <!-- Could not be found -->
     <PackageReference Include="should.not.be.found" Version="[10,11)" />
 
+    <!-- Wild card version (Update attr) -->
+    <PackageReference Update="AngularJS.Core" Version="1.*" />
+
   </ItemGroup>
 
 </Project>
