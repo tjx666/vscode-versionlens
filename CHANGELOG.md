@@ -1,3 +1,7 @@
+# 0.24.0
+
+  - Bower: Removed
+
 # 0.23.0
 
  - Maven: Support for repositories defined in pom.xml (not only settings and central)

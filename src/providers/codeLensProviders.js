@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import { NpmCodeLensProvider } from './npm/npmCodeLensProvider';
 import { JspmCodeLensProvider } from './jspm/jspmCodeLensProvider';
-import { BowerCodeLensProvider } from './bower/bowerCodeLensProvider';
 import { DubCodeLensProvider } from './dub/dubCodeLensProvider';
 import { DotNetCodeLensProvider } from './dotnet/dotnetCodeLensProvider';
 import { MavenCodeLensProvider } from './maven/mavenCodeLensProvider';
@@ -12,7 +11,6 @@ import { MavenCodeLensProvider } from './maven/mavenCodeLensProvider';
 const codeLensProviders = [
   new NpmCodeLensProvider,
   new JspmCodeLensProvider,
-  new BowerCodeLensProvider,
   new DubCodeLensProvider,
   new DotNetCodeLensProvider,
   new MavenCodeLensProvider

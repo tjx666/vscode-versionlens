@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { npmDefaultDependencyProperties } from 'providers/npm/config';
-import { bowerDefaultDependencyProperties } from 'providers/bower/config';
 import { dubDefaultDependencyProperties } from 'providers/dub/config';
 import {
   dotnetCSProjDefaultDependencyProperties,
@@ -45,11 +44,6 @@ export default new class AppContribution {
   get npmDistTagFilter() {
     const config = workspace.getConfiguration('versionlens');
     return config.get("npm.distTagFilter", []);
-  }
-
-  get bowerDependencyProperties() {
-    const config = workspace.getConfiguration('versionlens');
-    return config.get("bower.dependencyProperties", bowerDefaultDependencyProperties);
   }
 
   get dotnetCSProjDependencyProperties() {

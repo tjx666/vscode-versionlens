@@ -16,9 +16,6 @@ export * from './providers/npm/npm.tests.js';
 
 export * from './providers/jspm/jspmPackageParser.tests.js';
 
-export * from './providers/bower/bowerCodeLensProvider.tests.js';
-export * from './providers/bower/bowerPackageParser.tests.js';
-
 export * from './providers/dub/dubCodeLensProvider.tests.js';
 
 export * from './providers/dotnet/dotnet.tests.js';

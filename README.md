@@ -4,7 +4,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/vscode-contrib/vscode-versionlens/badge.svg)](https://snyk.io/test/github/vscode-contrib/vscode-versionlens)
 
 
-Shows package version information for npm, jspm, bower, dub and dotnet core in the [Visual Studio Code](https://github.com/microsoft/vscode) editor.
+Shows package version information for npm, jspm, dub and dotnet core in the [Visual Studio Code](https://github.com/microsoft/vscode) editor.
 
 ### Preview
 
@@ -14,7 +14,6 @@ Shows package version information for npm, jspm, bower, dub and dotnet core in t
 
 Supports
 
-- bower https://bower.io/
 - dotnet https://www.dotnetfoundation.org/
 - dub https://code.dlang.org/
 - jspm https://jspm.io/,
