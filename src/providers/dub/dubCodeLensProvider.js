@@ -39,7 +39,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
 
   provideCodeLenses(document, token) {
     if (appSettings.showVersionLenses === false)
-      return;
+      return [];
 
     this._documentPath = path.dirname(document.uri.fsPath);
 
