@@ -70,7 +70,7 @@ function extractFromVersionAttribute(node, includeRange, document) {
   return {
     start: includeRange.start,
     end: includeRange.end,
-    name: node.attr.Include,
+    name: node.attr.Include || node.attr.Update,
     value: node.attr.Version,
     replaceInfo
   };

@@ -39,7 +39,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
   provideCodeLenses(document, token) {
     if (appSettings.showVersionLenses === false)
-      return;
+      return [];
 
     const path = require('path');
     this._documentPath = path.dirname(document.uri.fsPath);

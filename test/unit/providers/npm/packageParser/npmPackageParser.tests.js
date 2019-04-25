@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { npmPackageParser } from 'providers/npm/npmPackageParser.js';
 import * as npmClientModule from 'providers/npm/npmClient.js';
+import appSettings from 'common/appSettings.js';
 
 const assert = require('assert');
 const mock = require('mock-require');
@@ -31,6 +32,13 @@ export default {
       testContext.appContribMock,
       "githubTaggedCommits", {
         get: () => testContext.githubTaggedCommitsMock
+      }
+    )
+
+    Reflect.defineProperty(
+      appSettings,
+      "showTaggedVersions", {
+        get: () => false
       }
     )
   },

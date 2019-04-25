@@ -14,7 +14,7 @@ export class JspmCodeLensProvider extends NpmCodeLensProvider {
 
   provideCodeLenses(document, token) {
     if (appSettings.showVersionLenses === false)
-      return;
+      return [];
 
     const path = require('path');
     this._documentPath = path.dirname(document.uri.fsPath);

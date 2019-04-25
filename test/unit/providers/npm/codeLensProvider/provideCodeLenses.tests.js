@@ -38,6 +38,14 @@ export default {
         get: () => testContext.showDependencyStatusesMock
       }
     )
+
+    Reflect.defineProperty(
+      appSettings,
+      "showVersionLenses", {
+        get: () => true
+      }
+    )
+
   },
 
 

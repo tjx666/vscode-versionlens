@@ -7,6 +7,7 @@ import { PackageCodeLens } from 'common/packageCodeLens';
 import { dubDefaultDependencyProperties } from 'providers/dub/config';
 import { DubCodeLensProvider } from 'providers/dub/dubCodeLensProvider';
 import * as DubAPIModule from 'providers/dub/dubAPI';
+import appSettings from 'common/appSettings.js';
 
 const assert = require('assert');
 const vscode = require('vscode');
@@ -29,6 +30,13 @@ export const DubCodeLensProviderTests = {
         responseText: null
       });
     }
+
+    Reflect.defineProperty(
+      appSettings,
+      "showVersionLenses", {
+        get: () => true
+      }
+    )
 
   },
 

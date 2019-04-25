@@ -94,7 +94,8 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
     }
     return {
       name: name,
-      version: item
+      version: item,
+      isOlderThanRequested: compareVersions(item, requestedVersion) < 0
     }
   })
 

@@ -8,7 +8,7 @@
   },
   "author": "Peter Flannery",
   "license": "MIT",
-  "version": "0.22.0",
+  "version": "0.23.0",
   "publisher": "pflannery",
   "displayName": "Version Lens",
   "icon": "images/logo.png",
@@ -20,7 +20,7 @@
     "packages",
     "dependencies",
     "references",
-    "npm, bower, dub, dotnet, nuget, jspm, csharp, fsharp, c#, f#, java, maven, pub, dart"
+    "npm, dub, dotnet, nuget, jspm, csharp, fsharp, c#, f#, java, maven, pub, dart"
   ],
   "categories": [
     "Programming Languages",
@@ -46,24 +46,23 @@
     "test": "node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
-    "@types/mocha": "^5.2.5",
-    "@types/node": "^10.12.15",
-    "jshint": "2.9.7",
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^10.14.5",
+    "jshint": "2.10.2",
     "mocha-ui-esm": "1.0.0-alpha.4",
-    "mock-require": "3.0.2",
-    "rimraf": "2.6.2",
-    "typescript": "3.2.2",
-    "vscode": "1.1.26"
+    "mock-require": "3.0.3",
+    "rimraf": "2.6.3",
+    "typescript": "3.4.5",
+    "vscode": "1.1.33"
   },
   "dependencies": {
-    "systemjs": "~0.21.4",
-    "bower": "1.8.4",
+    "systemjs": "~0.21.6",
     "npm": "6.5.0",
     "npm-package-arg": "6.1.0",
     "minimatch": "3.0.4",
     "opener": "1.5.1",
     "request-light": "0.2.4",
-    "semver": "5.6.0",
+    "semver": "6.0.0",
     "vscode-contrib-jsonc": "1.0.0-beta.2",
     "vscode-languageclient": "5.2.1",
     "xmldoc": "1.1.2",
@@ -252,19 +251,6 @@
           "default": [],
           "description": "Define which common dist tags you want to see. i.e. [alpha, beta]. If you don't specify any dist tags then all the dist-tags for a package will be shown."
         },
-        "versionlens.bower.dependencyProperties": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "uniqueItems": true,
-          "minItems": 1,
-          "default": [
-            "dependencies",
-            "devDependencies"
-          ],
-          "description": "Defines which properties in bower.json should be parsed by this extension"
-        },
         "versionlens.pub.dependencyProperties": {
           "type": "array",
           "items": {
@@ -351,6 +337,19 @@
           "type": "string",
           "default": "",
           "description": "Used for making basic read only github api requests. To generate a token see https://help.github.com/articles/creating-an-access-token-for-command-line-use/#creating-a-token. When no token is provided then access to the github api is rate limited to 60 requests every 10 minutes or so."
+        },
+        "versionlens.maven.dependencyProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "minItems": 1,
+          "default": [
+            "dependency",
+            "parent"
+          ],
+          "description": "Defines which properties in pom.xml should be parsed by this extension"
         },
         "versionlens.missingDependencyColour": {
           "type": "string",

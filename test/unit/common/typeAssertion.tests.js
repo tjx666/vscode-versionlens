@@ -19,14 +19,14 @@ export const TypeAssertionTests = {
       let testThrowFn = () => {
         assertInstanceOf([], String, "Array is not an instanceof String");
       };
-      assert.throws(testThrowFn, "Array is not an instanceof String");
+      assert.throws(testThrowFn, /Array is not an instanceof String$/);
     },
 
     "does not throw an error when instanceof is true": () => {
       let testThrowFn = () => {
         assertInstanceOf([], Array, "Array is an instanceof Array");
       };
-      assert.doesNotThrow(testThrowFn, "Array is an instanceof Array");
+      assert.doesNotThrow(testThrowFn, /Array is an instanceof Array$/);
     }
 
   },
@@ -37,7 +37,7 @@ export const TypeAssertionTests = {
       let testThrowFn = () => {
         assertTypeOf("", "object", "String is not an typeof object");
       };
-      assert.throws(testThrowFn, "String is not an typeof object");
+      assert.throws(testThrowFn, /String is not an typeof object$/);
     },
 
     "does not throw an error when assertTypeOf is true": () => {
@@ -55,7 +55,7 @@ export const TypeAssertionTests = {
       let testThrowFn = () => {
         assertDefined(undefined, "parameter is undefined");
       };
-      assert.throws(testThrowFn, "parameter is undefined");
+      assert.throws(testThrowFn, /parameter is undefined$/);
     }
 
   },
@@ -74,12 +74,12 @@ export const TypeAssertionTests = {
       let testThrowFn = () => {
         assertEmpty("", "string is empty");
       };
-      assert.throws(testThrowFn, "string is empty");
+      assert.throws(testThrowFn, /string is empty$/);
 
       testThrowFn = () => {
         assertEmpty([], "array is empty");
       };
-      assert.throws(testThrowFn, "array is empty");
+      assert.throws(testThrowFn, /array is empty$/);
     },
 
     "does not throw an error when assertEmpty is true": () => {

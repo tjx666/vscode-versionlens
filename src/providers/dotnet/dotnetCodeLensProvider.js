@@ -24,7 +24,7 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 
   provideCodeLenses(document, token) {
     if (appSettings.showVersionLenses === false)
-      return;
+      return [];
 
     const dependencyNodes = findNodesInXmlContent(
       document.getText(),
