@@ -2,10 +2,16 @@ import * as CommandFactory from 'commands/factory';
 import appContrib from 'common/appContrib';
 import { generateCodeLenses } from 'common/codeLensGeneration';
 import appSettings from 'common/appSettings';
+import { formatWithExistingLeading } from 'common/utils';
 import { parseDependencyNodes } from 'common/dependencyParser';
 import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
 import { composerGetPackageLatest, readComposerSelections } from './composerAPI';
 import { findNodesInJsonContent } from './composerDependencyParser';
+import {
+  renderMissingDecoration,
+  renderInstalledDecoration,
+  renderOutdatedDecoration
+} from 'editor/decorations';
 
 const path = require('path');
 
@@ -68,6 +74,10 @@ export class ComposerCodeLensProvider extends AbstractCodeLensProvider {
     if (codeLens.package.version === '~master')
       return CommandFactory.createMatchesLatestVersionCommand(codeLens);
 
+    // generate decoration
+    if (appSettings.showDependencyStatuses)
+      this.generateDecoration(codeLens);
+
     return composerGetPackageLatest(codeLens.package.name)
       .then(versionStr => {
         if (typeof versionStr !== "string")
@@ -96,14 +106,55 @@ export class ComposerCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   updateOutdated() {
-    const selectionsFilePath = path.join(this._documentPath, 'composer.json');
+    const selectionsFilePath = path.join(this._documentPath, 'composer.lock');
     return readComposerSelections(selectionsFilePath)
       .then(selectionsJson => {
-        this._outdatedCache = selectionsJson;
+
+        let packages = {};
+
+        for (let onepackage in selectionsJson.packages) {
+          packages[selectionsJson.packages[onepackage].name] = selectionsJson.packages[onepackage].version;
+        }
+
+        this._outdatedCache = packages;
       })
       .catch(err => {
         if (err)
           console.warn(err);
       })
   }
+
+  generateDecoration(codeLens) {
+    const currentPackageName = codeLens.package.name;
+    const currentPackageVersion = codeLens.package.version;
+
+    if (!codeLens.replaceRange)
+      return;
+
+    if (!this._outdatedCache) {
+      renderMissingDecoration(codeLens.replaceRange);
+      return;
+    }
+
+    const currentVersion = this._outdatedCache[currentPackageName];
+    if (!currentVersion) {
+      renderMissingDecoration(codeLens.replaceRange);
+      return;
+    }
+
+    if (formatWithExistingLeading(currentPackageVersion, currentVersion) == currentPackageVersion) {
+      renderInstalledDecoration(
+        codeLens.replaceRange,
+        currentPackageVersion
+      );
+      return;
+    }
+
+    renderOutdatedDecoration(
+      codeLens.replaceRange,
+      currentVersion
+    );
+
+  }
+
 }
