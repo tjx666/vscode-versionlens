@@ -20,7 +20,7 @@
     "packages",
     "dependencies",
     "references",
-    "npm, dub, dotnet, nuget, jspm, csharp, fsharp, c#, f#, java, maven, pub, dart"
+    "npm, dub, dotnet, nuget, jspm, csharp, fsharp, c#, f#, java, maven, pub, dart, composer"
   ],
   "categories": [
     "Programming Languages",
@@ -314,6 +314,19 @@
             "versions"
           ],
           "description": "Defines which properties in dub.json should be parsed by this extension"
+        },
+        "versionlens.composer.dependencyProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "minItems": 1,
+          "default": [
+            "require",
+            "require-dev"
+          ],
+          "description": "Defines which properties in composer.json should be parsed by this extension"
         },
         "versionlens.github.taggedCommits": {
           "type": "array",
