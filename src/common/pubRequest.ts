@@ -10,7 +10,7 @@ class PubRequest {
   constructor() {
     this.cache = new ExpiryCacheMap();
     this.headers = {
-      referer: "https://pub.dartlang.org/packages"
+      referer: "https://pub.dev/packages"
     };
   }
 
@@ -68,7 +68,7 @@ class PubRequest {
   }
 
   generatePubUrl(packageName: string): string {
-    return `https://pub.dartlang.org/api/documentation/${packageName}`;
+    return `https://pub.dev/api/documentation/${packageName}`;
   }
 }
 

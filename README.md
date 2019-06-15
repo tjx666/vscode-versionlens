@@ -19,7 +19,7 @@ Supports
 - jspm https://jspm.io/,
 - maven https://maven.apache.org/ and
 - npm https://www.npmjs.com/
-- pub https://pub.dartlang.org/
+- pub https://pub.dev/
 
 ## Install
 
