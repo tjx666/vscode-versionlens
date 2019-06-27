@@ -22,3 +22,6 @@ export * from './providers/dotnet/dotnet.tests.js';
 
 export * from './providers/maven/mavenCodeLensProvider.tests';
 export * from './providers/maven/mavenAPI.tests';
+
+export * from './providers/pub/pubCodeLensProvider.tests.js';
+export * from './providers/pub/pubPackageParser.tests.js';

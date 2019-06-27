@@ -7,13 +7,15 @@ import { JspmCodeLensProvider } from './jspm/jspmCodeLensProvider';
 import { DubCodeLensProvider } from './dub/dubCodeLensProvider';
 import { DotNetCodeLensProvider } from './dotnet/dotnetCodeLensProvider';
 import { MavenCodeLensProvider } from './maven/mavenCodeLensProvider';
+import { PubCodeLensProvider } from './pub/pubCodeLensProvider';
 
 const codeLensProviders = [
   new NpmCodeLensProvider,
   new JspmCodeLensProvider,
   new DubCodeLensProvider,
   new DotNetCodeLensProvider,
-  new MavenCodeLensProvider
+  new MavenCodeLensProvider,
+  new PubCodeLensProvider
 ];
 
 export function getProvidersByFileName(fileName) {

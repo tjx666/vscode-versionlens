@@ -20,7 +20,7 @@
     "packages",
     "dependencies",
     "references",
-    "npm, dub, dotnet, nuget, jspm, csharp, fsharp, c#, f#, java, maven"
+    "npm, dub, dotnet, nuget, jspm, csharp, fsharp, c#, f#, java, maven, pub, dart"
   ],
   "categories": [
     "Programming Languages",
@@ -28,7 +28,8 @@
   ],
   "activationEvents": [
     "onLanguage:json",
-    "onLanguage:xml"
+    "onLanguage:xml",
+    "onLanguage:yaml"
   ],
   "main": "./out/extension-bundle.js",
   "scripts": {
@@ -64,7 +65,8 @@
     "semver": "6.0.0",
     "vscode-contrib-jsonc": "1.0.0-beta.2",
     "vscode-languageclient": "5.2.1",
-    "xmldoc": "1.1.2"
+    "xmldoc": "1.1.2",
+    "yaml": "1.5.0"
   },
   "contributes": {
     "commands": [
@@ -248,6 +250,19 @@
           "minItems": 0,
           "default": [],
           "description": "Define which common dist tags you want to see. i.e. [alpha, beta]. If you don't specify any dist tags then all the dist-tags for a package will be shown."
+        },
+        "versionlens.pub.dependencyProperties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "minItems": 1,
+          "default": [
+            "dependencies",
+            "dev_dependencies"
+          ],
+          "description": "Defines which properties in pubspec.yaml should be parsed by this extension"
         },
         "versionlens.dotnet.dependencyProperties": {
           "type": "array",
