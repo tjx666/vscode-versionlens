@@ -1,7 +1,8 @@
 # 0.24.0
 
-  - Bower: Removed
+  - Dart+Flutter support added (thanks to https://github.com/Gorniv)
   - DotNet: Added Update attr support. Relates to [#143](https://github.com/vscode-contrib/vscode-versionlens/issues/143)
+  - Bower: Removed
 
 # 0.23.0
 
