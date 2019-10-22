@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ExpiryCacheMap } from "./expiryCacheMap";
+import appContrib from "../common/appContrib";
 
 class PubRequest {
   cache: ExpiryCacheMap;
@@ -10,7 +11,7 @@ class PubRequest {
   constructor() {
     this.cache = new ExpiryCacheMap();
     this.headers = {
-      referer: "https://pub.dev/packages"
+      referer: `${appContrib.pubApiSchema}://${appContrib.pubApiHostPort}/packages`
     };
   }
 
@@ -68,7 +69,7 @@ class PubRequest {
   }
 
   generatePubUrl(packageName: string): string {
-    return `https://pub.dev/api/documentation/${packageName}`;
+    return `${appContrib.pubApiSchema}://${appContrib.pubApiHostPort}/api/documentation/${packageName}`;
   }
 }
 

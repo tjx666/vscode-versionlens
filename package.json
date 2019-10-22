@@ -264,6 +264,16 @@
           ],
           "description": "Defines which properties in pubspec.yaml should be parsed by this extension"
         },
+        "versionlens.pub.apiSchema": {
+          "type": "string",
+          "default": "https",
+          "description": "Defines pub server api schema."
+        },
+        "versionlens.pub.apiHostPort": {
+          "type": "string",
+          "default": "pub.dev",
+          "description": "Defines pub server api host and port."
+        },
         "versionlens.dotnet.dependencyProperties": {
           "type": "array",
           "items": {
