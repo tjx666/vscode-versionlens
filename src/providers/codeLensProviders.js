@@ -2,13 +2,13 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { NpmCodeLensProvider } from "./npm/npmCodeLensProvider";
-import { JspmCodeLensProvider } from "./jspm/jspmCodeLensProvider";
-import { DubCodeLensProvider } from "./dub/dubCodeLensProvider";
-import { DotNetCodeLensProvider } from "./dotnet/dotnetCodeLensProvider";
-import { MavenCodeLensProvider } from "./maven/mavenCodeLensProvider";
-import { PubCodeLensProvider } from "./pub/pubCodeLensProvider";
-import { ComposerCodeLensProvider } from "./composer/composerCodeLensProvider";
+import { NpmCodeLensProvider } from './npm/npmCodeLensProvider';
+import { JspmCodeLensProvider } from './jspm/jspmCodeLensProvider';
+import { DubCodeLensProvider } from './dub/dubCodeLensProvider';
+import { DotNetCodeLensProvider } from './dotnet/dotnetCodeLensProvider';
+import { MavenCodeLensProvider } from './maven/mavenCodeLensProvider';
+import { PubCodeLensProvider } from './pub/pubCodeLensProvider';
+import { ComposerCodeLensProvider } from './composer/composerCodeLensProvider';
 
 const codeLensProviders = [
   new NpmCodeLensProvider(),
@@ -21,8 +21,8 @@ const codeLensProviders = [
 ];
 
 export function getProvidersByFileName(fileName) {
-  const path = require("path");
-  const minimatch = require("minimatch");
+  const path = require('path');
+  const minimatch = require('minimatch');
   const filename = path.basename(fileName);
 
   const filtered = codeLensProviders
@@ -35,7 +35,7 @@ export function getProvidersByFileName(fileName) {
 }
 
 export function reloadActiveProviders() {
-  const { window } = require("vscode");
+  const { window } = require('vscode');
   const fileName = window.activeTextEditor.document.fileName;
   const providers = getProvidersByFileName(fileName);
   if (!providers) return false;
@@ -45,14 +45,12 @@ export function reloadActiveProviders() {
 }
 
 export function reloadActiveProvidersByGroup(group) {
-  const { window } = require("vscode");
+  const { window } = require('vscode');
   const fileName = window.activeTextEditor.document.fileName;
   let providers = getProvidersByFileName(fileName);
   if (!providers) return false;
 
-  providers = providers.filter(provider =>
-    provider.selector.group.include(group)
-  );
+  providers = providers.filter(provider => provider.selector.group.include(group));
   if (providers.length === 0) return false;
 
   providers.forEach(provider => provider.reload());
