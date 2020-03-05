@@ -25,3 +25,4 @@ export * from './providers/maven/mavenAPI.tests';
 
 export * from './providers/pub/pubCodeLensProvider.tests.js';
 export * from './providers/pub/pubPackageParser.tests.js';
+export * from './providers/composer/composerCodeLensProvider.tests.js';

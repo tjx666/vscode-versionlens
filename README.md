@@ -20,6 +20,7 @@ Supports
 - maven https://maven.apache.org/ and
 - npm https://www.npmjs.com/
 - pub https://pub.dev/
+- composer https://getcomposer.org/
 
 ## Install
 

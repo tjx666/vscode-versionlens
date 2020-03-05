@@ -12,6 +12,9 @@ import {
 import {
   mavenDefaultDependencyProperties
 } from 'providers/maven/config';
+import {
+  composerDefaultDependencyProperties
+} from 'providers/composer/config';
 
 const { workspace } = require('vscode');
 
@@ -86,7 +89,12 @@ export default new class AppContribution {
     const config = workspace.getConfiguration('versionlens');
     return config.get("maven.tagFilter", []);
   }
-  
+
+  get composerDependencyProperties() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get("composer.dependencyProperties", composerDefaultDependencyProperties);
+  }
+
   get githubTaggedCommits() {
     const config = workspace.getConfiguration('versionlens');
     return config.get('github.taggedCommits', ['Release', 'Tag']);
