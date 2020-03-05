@@ -1,3 +1,6 @@
+# 0.25.0
+  - Added PHP composer support (thanks to https://github.com/Cerzat43)
+
 # 0.24.0
 
   - Dart+Flutter support added (thanks to https://github.com/Gorniv)
