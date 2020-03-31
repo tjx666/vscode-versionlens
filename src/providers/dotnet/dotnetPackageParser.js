@@ -39,7 +39,7 @@ export function dotnetPackageParser(name, requestedVersion, appContrib) {
         // only show 'satisfies' and 'latest' entries when showTaggedVersions is false
         filteredTags = [
           satisfiesEntry,
-          ...(satisfiesEntry.isLatestVersion ? [] : extractedTags[1])
+          ...(satisfiesEntry.isLatestVersion ? [] : [extractedTags[1]])
         ];
       else if (appContrib.dotnetTagFilter.length > 0)
         // filter the tags using dotnet app config filter
@@ -49,7 +49,7 @@ export function dotnetPackageParser(name, requestedVersion, appContrib) {
             // ensure we have a 'satisfies' entry
             'satisfies',
             // conditionally provide the latest entry
-            ...(satisfiesEntry.isLatestVersion ? [] : 'latest'),
+            ...(satisfiesEntry.isLatestVersion ? [] : ['latest']),
             // all other user tag name filters
             ...appContrib.dotnetTagFilter
           ]

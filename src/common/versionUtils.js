@@ -337,7 +337,7 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
     satisfiesEntry,
 
     // only provide the latest when the satisfiesEntry is not the latest
-    ...(satisfiesEntry.isLatestVersion ? [] : latestEntry),
+    ...(satisfiesEntry.isLatestVersion ? [] : [latestEntry]),
 
     // concat all other tags
     ...applyTagFilterRules(

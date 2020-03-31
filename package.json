@@ -47,12 +47,12 @@
   },
   "devDependencies": {
     "@types/mocha": "^7.0.2",
-    "@types/node": "^10.14.5",
+    "@types/node": "^12",
     "jshint": "2.11.0",
     "mocha-ui-esm": "1.0.0-alpha.4",
     "mock-require": "3.0.3",
     "rimraf": "3.0.2",
-    "typescript": "3.5.2",
+    "typescript": "3.8.3",
     "vscode": "1.1.36"
   },
   "dependencies": {

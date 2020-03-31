@@ -206,7 +206,7 @@ export function parseNpmDistTags(packagePath, name, requestedVersion, maxSatisfy
         // only show 'satisfies' and 'latest' entries when showTaggedVersions is false
         filteredTags = [
           satisfiesEntry,
-          ...(satisfiesEntry.isLatestVersion ? [] : extractedTags[1])
+          ...(satisfiesEntry.isLatestVersion ? [] : [extractedTags[1]])
         ];
       else if (appContrib.npmDistTagFilter.length > 0)
         // filter the tags using npm app config filter
@@ -216,7 +216,7 @@ export function parseNpmDistTags(packagePath, name, requestedVersion, maxSatisfy
             // ensure we have a 'satisfies' entry
             'satisfies',
             // conditionally provide the latest entry
-            ...(satisfiesEntry.isLatestVersion ? [] : 'latest'),
+            ...(satisfiesEntry.isLatestVersion ? [] : ['latest']),
             // all other user tag name filters
             ...appContrib.npmDistTagFilter
           ]
