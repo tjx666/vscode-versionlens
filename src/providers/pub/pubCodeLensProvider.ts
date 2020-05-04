@@ -2,18 +2,15 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { AbstractCodeLensProvider } from "../abstractCodeLensProvider";
-import appContrib from "../../common/appContrib";
-import { generateCodeLenses } from "../../common/codeLensGeneration";
-import appSettings from "../../common/appSettings";
-import {
-  findNodesInYamlContent,
-  extractDependencyNodes,
-  parseDependencyNodes
-} from "./pubDependencyParser";
-import * as CommandFactory from "../../commands/factory";
+import appContrib from "common/appContrib";
+import { generateCodeLenses } from "common/codeLensGeneration";
+import appSettings from "common/appSettings";
+import * as CommandFactory from "commands/factory";
+import { AbstractCodeLensProvider } from "providers/abstract/abstractCodeLensProvider";
+import { parseDependencyNodes } from 'providers/shared/dependencyParser';
+import { extractPackageLensDataFromText } from "./pubPackageParser";
 import { pubGetPackageInfo } from "./pubAPI";
-import { pubPackageParser } from "./pubPackageParser";
+import { resolvePubPackage } from "./pubPackageResolver";
 
 export class PubCodeLensProvider extends AbstractCodeLensProvider {
   get selector() {
@@ -25,20 +22,13 @@ export class PubCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   provideCodeLenses(document) {
-    if (appSettings.showVersionLenses === false) {
-      return;
-    }
+    if (appSettings.showVersionLenses === false) return [];
 
-    const dependencyNodes = findNodesInYamlContent(
-      document,
-      appContrib.pubDependencyProperties
-    );
+    const packageLensData = extractPackageLensDataFromText(document.getText(), appContrib.pubDependencyProperties);
+    if (packageLensData.length === 0) return [];
 
-    const packageCollection = parseDependencyNodes(
-      dependencyNodes,
-      appContrib,
-      pubPackageParser
-    );
+    const packageCollection = parseDependencyNodes(packageLensData, appContrib, resolvePubPackage);
+    if (packageCollection.length === 0) return [];
 
     appSettings.inProgress = true;
     return generateCodeLenses(packageCollection, document).then(codelenses => {

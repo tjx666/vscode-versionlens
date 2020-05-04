@@ -2,10 +2,10 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { pubRequest } from "../../common/pubRequest";
+import pubRequest from "./pubRequest";
 
 export function pubGetPackageInfo(packageName) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     pubRequest
       .httpGet(packageName)
       .then(info => {
@@ -22,7 +22,8 @@ export function pubGetPackageInfo(packageName) {
       .catch(err => {
         reject({
           status: 500,
-          responseText: err
+          responseText: err,
+          packageName
         });
       });
   });

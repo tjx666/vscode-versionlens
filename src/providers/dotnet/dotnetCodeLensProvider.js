@@ -5,11 +5,11 @@
 import * as CommandFactory from 'commands/factory';
 import appSettings from 'common/appSettings';
 import appContrib from 'common/appContrib';
-import { parseDependencyNodes } from 'common/dependencyParser';
 import { generateCodeLenses } from 'common/codeLensGeneration';
-import { AbstractCodeLensProvider } from 'providers/abstractCodeLensProvider';
-import { findNodesInXmlContent } from './dotnetDependencyParser';
-import { dotnetPackageParser } from './dotnetPackageParser.js';
+import { AbstractCodeLensProvider } from 'providers/abstract/abstractCodeLensProvider';
+import { parseDependencyNodes } from 'providers/shared/dependencyParser';
+import { resolveDotnetPackage } from './dotnetPackageResolver.js';
+import { extractDotnetLensDataFromText } from 'dotnetPackageParser'
 
 export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -23,20 +23,13 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   provideCodeLenses(document, token) {
-    if (appSettings.showVersionLenses === false)
-      return [];
+    if (appSettings.showVersionLenses === false) return [];
 
-    const dependencyNodes = findNodesInXmlContent(
-      document.getText(),
-      document,
-      appContrib.dotnetCSProjDependencyProperties
-    );
+    const packageLensData = extractDotnetLensDataFromText(document, appContrib.dotnetCSProjDependencyProperties);
+    if (packageLensData.length === 0) return [];
 
-    const packageCollection = parseDependencyNodes(
-      dependencyNodes,
-      appContrib,
-      dotnetPackageParser
-    );
+    const packageCollection = parseDependencyNodes(packageLensData, appContrib, resolveDotnetPackage);
+    if (packageCollection.length === 0) return [];
 
     appSettings.inProgress = true;
     return generateCodeLenses(packageCollection, document)

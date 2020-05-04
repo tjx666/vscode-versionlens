@@ -7,16 +7,15 @@ import appContrib from 'common/appContrib';
 import { generateCodeLenses } from 'common/codeLensGeneration';
 import appSettings from 'common/appSettings';
 import { formatWithExistingLeading } from 'common/utils';
-import { parseDependencyNodes } from 'common/dependencyParser';
-import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
-import { dubGetPackageLatest, readDubSelections } from './dubAPI';
-import { findNodesInJsonContent } from './dubDependencyParser';
-
+import { parseDependencyNodes } from 'providers/shared/dependencyParser';
+import { extractPackageLensDataFromText } from 'providers/shared/jsonPackageParser'
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
   renderOutdatedDecoration
 } from 'editor/decorations';
+import { AbstractCodeLensProvider } from 'providers/abstract/abstractCodeLensProvider';
+import { dubGetPackageLatest, readDubSelections } from './dubAPI';
 
 const path = require('path');
 
@@ -38,23 +37,17 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   provideCodeLenses(document, token) {
-    if (appSettings.showVersionLenses === false)
-      return [];
+    if (appSettings.showVersionLenses === false) return [];
 
     this._documentPath = path.dirname(document.uri.fsPath);
 
-    const dependencyNodes = findNodesInJsonContent(
-      document.getText(),
-      appContrib.dubDependencyProperties
-    );
+    const packageLensData = extractPackageLensDataFromText(document.getText(), appContrib.dubDependencyProperties);
+    if (packageLensData.length === 0) return [];
 
-    const packageCollection = parseDependencyNodes(
-      dependencyNodes,
-      appContrib
-    );
-
-    if (packageCollection.length === 0)
-      return [];
+    // TODO fix subPackages
+    
+    const packageCollection = parseDependencyNodes(packageLensData, appContrib);
+    if (packageCollection.length === 0) return [];
 
     appSettings.inProgress = true;
     return this.updateOutdated()

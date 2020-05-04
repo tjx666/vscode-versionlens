@@ -2,14 +2,11 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { AbstractCodeLensProvider } from 'providers/abstractCodeLensProvider';
-import { npmPackageParser } from './npmPackageParser';
 import appSettings from 'common/appSettings';
 import appContrib from 'common/appContrib';
 import { generateCodeLenses } from 'common/codeLensGeneration';
-import { findNodesInJsonContent, parseDependencyNodes } from 'common/dependencyParser';
+import { parseDependencyNodes } from 'providers/shared/dependencyParser';
 import * as CommandFactory from 'commands/factory';
-import { npmGetOutdated, npmPackageDirExists } from './npmClient.js';
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
@@ -17,8 +14,10 @@ import {
   renderNeedsUpdateDecoration,
   renderPrereleaseInstalledDecoration
 } from 'editor/decorations';
-
-const { window } = require('vscode');
+import { AbstractCodeLensProvider } from 'providers/abstract/abstractCodeLensProvider';
+import { extractPackageLensDataFromText } from 'providers/shared/jsonPackageParser'
+import { npmGetOutdated, npmPackageDirExists } from './npmClient.js';
+import { resolveNpmPackage } from './npmPackageResolver';
 
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -38,27 +37,26 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   provideCodeLenses(document, token) {
-    if (appSettings.showVersionLenses === false)
-      return [];
+    if (appSettings.showVersionLenses === false) return [];
 
     const path = require('path');
     this._documentPath = path.dirname(document.uri.fsPath);
 
-    const dependencyNodes = findNodesInJsonContent(
-      document.getText(),
-      appContrib.npmDependencyProperties
-    );
+    // extract package lens data
+    const packageLensData = extractPackageLensDataFromText(document.getText(), appContrib.npmDependencyProperties)
+    if (packageLensData.length === 0) return [];
 
+    // resolve package lenses (as promises)
     const packageCollection = parseDependencyNodes(
-      dependencyNodes,
+      packageLensData,
       appContrib,
-      npmPackageParser.bind(null, this._documentPath)
+      resolveNpmPackage.bind(null, this._documentPath)
     );
-
-    if (packageCollection.length === 0) 
-      return [];
+    if (packageCollection.length === 0) return [];
 
     appSettings.inProgress = true;
+
+    // create code lenses from package lenses
     return generateCodeLenses(packageCollection, document)
       .then(codeLenses => {
         if (appSettings.showDependencyStatuses)

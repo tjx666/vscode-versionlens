@@ -1,11 +1,11 @@
 import * as CommandFactory from 'commands/factory';
 import appSettings from 'common/appSettings';
 import appContrib from 'common/appContrib';
-import { parseDependencyNodes } from 'common/dependencyParser';
+import { parseDependencyNodes } from 'providers/shared/dependencyParser';
 import { generateCodeLenses } from 'common/codeLensGeneration';
-import { AbstractCodeLensProvider } from 'providers/abstractCodeLensProvider';
-import { findNodesInXmlContent } from './mavenDependencyParser';
-import { mavenPackageParser } from './mavenPackageParser';
+import { AbstractCodeLensProvider } from 'providers/abstract/abstractCodeLensProvider';
+import { extractMavenLensDataFromText } from './mavenPackageParser';
+import { resolveMavenPackage } from './mavenPackageResolver';
 import { loadMavenRepositories } from './mavenAPI';
 
 export class MavenCodeLensProvider extends AbstractCodeLensProvider {
@@ -20,22 +20,15 @@ export class MavenCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   provideCodeLenses(document, token) {
-    if (appSettings.showVersionLenses === false)
-      return [];
+    if (appSettings.showVersionLenses === false) return [];
 
     return loadMavenRepositories().then(_ => {
-      const dependencyNodes = findNodesInXmlContent(
-        document.getText(),
-        document,
-        appContrib.mavenDependencyProperties
-      );
-  
-      const packageCollection = parseDependencyNodes(
-        dependencyNodes,
-        appContrib,
-        mavenPackageParser
-      );
-  
+      const packageLensData = extractMavenLensDataFromText(document, appContrib.mavenDependencyProperties);
+      if (packageLensData.length === 0) return [];
+
+      const packageCollection = parseDependencyNodes(packageLensData, appContrib, resolveMavenPackage);
+      if (packageCollection.length === 0) return [];
+
       appSettings.inProgress = true;
       return generateCodeLenses(packageCollection, document)
         .then(codelenses => {

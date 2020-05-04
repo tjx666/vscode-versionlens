@@ -3,15 +3,16 @@ import appContrib from 'common/appContrib';
 import { generateCodeLenses } from 'common/codeLensGeneration';
 import appSettings from 'common/appSettings';
 import { formatWithExistingLeading } from 'common/utils';
-import { parseDependencyNodes } from 'common/dependencyParser';
-import { AbstractCodeLensProvider } from '../abstractCodeLensProvider';
-import { composerGetPackageLatest, readComposerSelections } from './composerAPI';
-import { findNodesInJsonContent } from './composerDependencyParser';
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
   renderOutdatedDecoration
 } from 'editor/decorations';
+import { AbstractCodeLensProvider } from 'providers/abstract/abstractCodeLensProvider';
+import { parseDependencyNodes } from 'providers/shared/dependencyParser';
+import { extractPackageLensDataFromText } from 'providers/shared/jsonPackageParser'
+import { composerGetPackageLatest, readComposerSelections } from './composerAPI';
+
 
 const path = require('path');
 
@@ -33,35 +34,26 @@ export class ComposerCodeLensProvider extends AbstractCodeLensProvider {
   }
 
   provideCodeLenses(document, token) {
-    if (appSettings.showVersionLenses === false)
-      return [];
+    if (appSettings.showVersionLenses === false) return [];
 
     this._documentPath = path.dirname(document.uri.fsPath);
 
-    const dependencyNodes = findNodesInJsonContent(
-      document.getText(),
-      appContrib.composerDependencyProperties
-    );
+    const packageLensData = extractPackageLensDataFromText(document.getText(), appContrib.composerDependencyProperties);
+    if (packageLensData.length === 0) return [];
 
-    const packageCollection = parseDependencyNodes(
-      dependencyNodes,
-      appContrib
-    );
-
-    if (packageCollection.length === 0)
-      return [];
+    const packageCollection = parseDependencyNodes(packageLensData, appContrib);
+    if (packageCollection.length === 0) return [];
 
     appSettings.inProgress = true;
     return this.updateOutdated()
       .then(_ => {
         appSettings.inProgress = false;
-        return generateCodeLenses(packageCollection, document)
+        return generateCodeLenses(packageCollection, document);
       })
       .catch(err => {
         appSettings.inProgress = false;
-        console.log(err)
+        console.log(err);
       });
-
   }
 
   evaluateCodeLens(codeLens) {

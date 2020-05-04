@@ -5,33 +5,28 @@
 import appSettings from 'common/appSettings';
 import appContrib from 'common/appContrib';
 import { generateCodeLenses } from 'common/codeLensGeneration';
-import { parseDependencyNodes } from 'common/dependencyParser';
+import { parseDependencyNodes } from 'providers/shared/dependencyParser';
 import { NpmCodeLensProvider } from '../npm/npmCodeLensProvider';
-import { findNodesInJsonContent } from './jspmDependencyParser';
-import { jspmPackageParser } from './jspmPackageParser';
+import { extractJspmLensDataFromText } from './jspmPackageParser';
+import { resolveJspmPackage } from './jspmPackageResolver';
 
 export class JspmCodeLensProvider extends NpmCodeLensProvider {
 
   provideCodeLenses(document, token) {
-    if (appSettings.showVersionLenses === false)
-      return [];
+    if (appSettings.showVersionLenses === false) return [];
 
     const path = require('path');
     this._documentPath = path.dirname(document.uri.fsPath);
 
-    const dependencyNodes = findNodesInJsonContent(
-      document.getText(),
-      appContrib.npmDependencyProperties
-    );
-
-    if(dependencyNodes.length === 0)
-      return [];
+    const packageLensData = extractJspmLensDataFromText(document.getText(), appContrib.npmDependencyProperties);
+    if (packageLensData.length === 0) return [];
 
     const packageCollection = parseDependencyNodes(
-      dependencyNodes,
+      packageLensData,
       appContrib,
-      jspmPackageParser.bind(null, this._documentPath)
+      resolveJspmPackage.bind(null, this._documentPath)
     );
+    if (packageCollection.length === 0) return [];
 
     appSettings.inProgress = true;
     return generateCodeLenses(packageCollection, document)

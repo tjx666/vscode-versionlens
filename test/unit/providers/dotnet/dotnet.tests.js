@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 // dotnet utils
-import parseVersionSpec from './utils/parseVersionSpec.tests.js';
-import convertNugetToNodeRange from './utils/convertNugetToNodeRange.tests.js';
+import parseVersionSpec from './dotnetUtils/parseVersionSpec.tests.js';
+import convertNugetToNodeRange from './dotnetUtils/convertNugetToNodeRange.tests.js';
 export const DotNetUtils = {
   parseVersionSpec,
   convertNugetToNodeRange,
@@ -18,7 +18,7 @@ export const DotNetNugetClient = {
 }
 
 // dotnet codelens provider
-import evaluateCodeLens from './codeLensProvider/evaluateCodeLens.tests.js';
+import evaluateCodeLens from './dotnetCodeLensProvider/evaluateCodeLens.tests.js';
 export const DotNetCodeLensProvider = {
   evaluateCodeLens,
 }

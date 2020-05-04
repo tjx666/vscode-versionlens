@@ -41,8 +41,8 @@ export function generateCodeLenses(packageCollection, document) {
 
 function createPackageFromNode(node) {
   return {
-    name: node.name,
-    version: node.replaceInfo.value || node.value,
+    name: node.packageInfo.name,
+    version: node.packageInfo.version,
     meta: {
       tag: {
         name: 'latest',
@@ -55,14 +55,14 @@ function createPackageFromNode(node) {
 }
 
 function createCodeLensFromEntry(entry, document, documentUrl) {
-  const commandRangePos = entry.node.start + entry.package.order;
+  const commandRangePos = entry.node.lensRange.start + entry.package.order;
   const commandRange = new Range(
     document.positionAt(commandRangePos),
     document.positionAt(commandRangePos)
   );
   const replaceRange = new Range(
-    document.positionAt(entry.node.replaceInfo.start),
-    document.positionAt(entry.node.replaceInfo.end)
+    document.positionAt(entry.node.versionRange.start),
+    document.positionAt(entry.node.versionRange.end)
   );
   return new PackageCodeLens(
     commandRange,
