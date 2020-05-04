@@ -1,3 +1,6 @@
+# 0.26.0
+  - NPM: Added module aliasing support e.g. "<alias>@npm:<name>" (reported in [#174](https://github.com/vscode-contrib/vscode-versionlens/issues/174))
+
 # 0.25.0
   - Added PHP composer support (thanks to https://github.com/Cerzat43)
 
