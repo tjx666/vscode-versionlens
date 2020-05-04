@@ -31,15 +31,15 @@ export default {
     Reflect.defineProperty(
       testContext.appContribMock,
       "githubTaggedCommits", {
-        get: () => testContext.githubTaggedCommitsMock
-      }
+      get: () => testContext.githubTaggedCommitsMock
+    }
     )
 
     Reflect.defineProperty(
       appSettings,
       "showTaggedVersions", {
-        get: () => false
-      }
+      get: () => false
+    }
     )
   },
 
@@ -49,6 +49,7 @@ export default {
     const version = '1.2.3';
 
     npmClientModule.npmViewVersion = _ => Promise.resolve('1.2.3')
+    npmClientModule.npmViewDistTags = _ => Promise.resolve([{ name, version: '1.2.3' }])
 
     const parsedResults = npmPackageParser(packagePath, name, version, testContext.appContribMock);
     Promise.resolve(parsedResults)
@@ -70,7 +71,8 @@ export default {
     const version = '~1.2.3';
 
     // mock the api
-    npmClientModule.npmViewVersion = _ => Promise.resolve("1.2.3")
+    npmClientModule.npmViewVersion = _ => Promise.resolve('1.2.3')
+    npmClientModule.npmViewDistTags = _ => Promise.resolve([{ name, version: '1.2.3' }])
 
     const parsedResults = npmPackageParser(packagePath, name, version, testContext.appContribMock);
     Promise.resolve(parsedResults)
@@ -148,6 +150,29 @@ export default {
         done();
       })
       .catch(err => done(err));
-  }
+  },
+
+  'returns the expected object for aliased-module versions': done => {
+    const packagePath = '.';
+    const name = 'aliased-module';
+    const version = 'npm:typescript@1.2.3';
+
+    // mock the api
+    npmClientModule.npmViewVersion = _ => Promise.resolve('1.2.3')
+    npmClientModule.npmViewDistTags = _ => Promise.resolve([{ name, version: '1.2.3' }])
+
+    const parsedResults = npmPackageParser(packagePath, name, version, testContext.appContribMock);
+    Promise.resolve(parsedResults)
+      .then(result => {
+        assert.equal(result[0].name, 'typescript', `Expected packageName. result.name = ${result[0].name}`);
+        assert.equal(result[0].version, '1.2.3', `Expected packageVersion. result.version = ${result[0].packageVersion}`);
+        assert.equal(result[0].meta.type, 'npm', `Expected meta.type. result.meta.type = ${result[0].meta.type}`);
+        assert.notEqual(result[0].customGenerateVersion, null, "Expected customGenerateVersion");
+        assert.equal(result[0].customGenerateVersion.name, 'customNpmAliasedGenerateVersion', "Expected customNpmAliasedGenerateVersion");
+
+        done();
+      })
+      .catch(err => done(err));
+  },
 
 }

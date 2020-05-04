@@ -4,6 +4,7 @@
   "dependencies": {},
   "devDependencies": {
     "typescript": "^2.3.4",
+    "aliased": "npm:typescript@2.0.0",
     "bootstrap": "twbs/bootstrap#v3.3.0",
     "test": "file:../../../src",
     "@types/angular": "~1.5",

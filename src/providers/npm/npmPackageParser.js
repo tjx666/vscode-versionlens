@@ -32,6 +32,14 @@ export function npmPackageParser(packagePath, name, requestedVersion, appContrib
           requestedVersion,
           'npm'
         );
+      } else if (npmVersionInfo.isAliased) {
+        return parseNpmRegistryVersion(
+          packagePath,
+          npmVersionInfo.aliasedName,
+          npmVersionInfo.aliasedVersion,
+          appContrib,
+          customNpmAliasedGenerateVersion
+        );
       }
 
       // must be a registry version
@@ -78,8 +86,7 @@ export function parseNpmRegistryVersion(packagePath, name, requestedVersion, app
 
   return npmViewVersion(packagePath, viewVersionArg)
     .then(maxSatisfyingVersion => {
-      if (requestedVersion === 'latest')
-        requestedVersion = maxSatisfyingVersion;
+      if (requestedVersion === 'latest') requestedVersion = maxSatisfyingVersion;
 
       return parseNpmDistTags(
         packagePath,
@@ -90,7 +97,11 @@ export function parseNpmRegistryVersion(packagePath, name, requestedVersion, app
         customGenerateVersion
       );
 
+    })
+    .catch(error => {
+      throw new Error("NPM: npmViewVersion " + error.message)
     });
+
 }
 
 export function parseFileVersion(name, version) {
@@ -177,9 +188,15 @@ export function customNpmGenerateVersion(packageInfo, newVersion) {
   return `${packageInfo.meta.userRepo}#${preservedLeadingVersion}`
 }
 
+export function customNpmAliasedGenerateVersion(packageInfo, newVersion) {
+  // preserve the leading symbol from the existing version
+  const preservedLeadingVersion = formatWithExistingLeading(packageInfo.version, newVersion)
+  return `npm:${packageInfo.name}@${preservedLeadingVersion}`;
+}
+
 export function parseNpmDistTags(packagePath, name, requestedVersion, maxSatisfyingVersion, appContrib, customGenerateVersion = null) {
 
-  return npmViewDistTags(packagePath, name)
+  return npmViewDistTags(packagePath, name + "@" + requestedVersion)
     .then(distTags => {
       const latestEntry = distTags[0];
 

@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 const semver = require('semver');
 const path = require('path');
+const aliasDependencyRegex = /^(npm):(.*)@(.*)$/;
 
 export function npmPackageDirExists(packageJsonPath, packageName) {
   const fs = require('fs');
@@ -136,11 +137,29 @@ export function parseNpmArguments(packageName, packageVersion) {
 
   return new Promise(function (resolve, reject) {
     try {
-      const npaParsed = npa.resolve(packageName, packageVersion);
+      let resolveName = packageName;
+      let resolveVersion = packageVersion;
+
+      // check if the version is an alias
+      const isAliasResult = aliasDependencyRegex.exec(packageVersion);
+      if (isAliasResult) {
+        resolveName = isAliasResult[2];
+        resolveVersion = isAliasResult[3];
+      }
+
+      const npaParsed = npa.resolve(resolveName, resolveVersion);
       if (!npaParsed) {
         reject({ code: 'EUNSUPPORTEDPROTOCOL' });
         return;
       }
+
+      // store any alias info
+      if (isAliasResult) {
+        npaParsed.isAliased = true;
+        npaParsed.aliasedName = resolveName;
+        npaParsed.aliasedVersion = resolveVersion;
+      }
+
       resolve(npaParsed);
     } catch (err) {
       reject(err);
