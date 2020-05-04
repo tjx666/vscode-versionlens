@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { parseDependencyNodes } from 'providers/shared/dependencyParser';
+import { resolvePackageLensData } from 'providers/shared/dependencyParser';
 
 const assert = require('assert');
 
@@ -18,7 +18,7 @@ export default {
     const appContrib = {};
     let funcCalled = false;
 
-    const promiseCollection = parseDependencyNodes(
+    const packageLensResolvers = resolvePackageLensData(
       dependencyNodes, appContrib,
       (testName, testVersion, testConfig) => {
         funcCalled = true;
@@ -35,7 +35,7 @@ export default {
     assert.ok(funcCalled, 'customVersionParser: was not called');
 
     // check that the result of the customParser is returned in a promise
-    Promise.all(promiseCollection)
+    Promise.all(packageLensResolvers)
       .then(results => {
         assert.ok(results[0][0].node === dependencyNodes[0], 'customVersionParser: node does not match');
         done();
@@ -47,16 +47,16 @@ export default {
   'returns a collection of nodes wrapped in promises when no customVersionParser is specified': done => {
     const dependencyNodes = [{}, {}, {}];
     const appContrib = {};
-    const promiseCollection = parseDependencyNodes(
+    const packageLensResolvers = resolvePackageLensData(
       dependencyNodes,
       appContrib
     );
 
-    Promise.all(promiseCollection)
+    Promise.all(packageLensResolvers)
       .then(results => {
-        assert.ok(results[0].node === dependencyNodes[0], 'parseDependencyNodes: node does not match');
-        assert.ok(results[1].node === dependencyNodes[1], 'parseDependencyNodes: node does not match');
-        assert.ok(results[2].node === dependencyNodes[2], 'parseDependencyNodes: node does not match');
+        assert.ok(results[0].node === dependencyNodes[0], 'resolvePackageLensData: node does not match');
+        assert.ok(results[1].node === dependencyNodes[1], 'resolvePackageLensData: node does not match');
+        assert.ok(results[2].node === dependencyNodes[2], 'resolvePackageLensData: node does not match');
         done();
       })
       .catch(err => done(err));

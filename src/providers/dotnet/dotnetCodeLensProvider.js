@@ -5,9 +5,9 @@
 import * as CommandFactory from 'commands/factory';
 import appSettings from 'common/appSettings';
 import appContrib from 'common/appContrib';
-import { generateCodeLenses } from 'common/codeLensGeneration';
 import { AbstractCodeLensProvider } from 'providers/abstract/abstractCodeLensProvider';
-import { parseDependencyNodes } from 'providers/shared/dependencyParser';
+import { resolvePackageLensData } from 'providers/shared/dependencyParser';
+import { generateCodeLenses } from 'providers/shared/codeLensGeneration';
 import { resolveDotnetPackage } from './dotnetPackageResolver.js';
 import { extractDotnetLensDataFromText } from 'dotnetPackageParser'
 
@@ -28,11 +28,11 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
     const packageLensData = extractDotnetLensDataFromText(document, appContrib.dotnetCSProjDependencyProperties);
     if (packageLensData.length === 0) return [];
 
-    const packageCollection = parseDependencyNodes(packageLensData, appContrib, resolveDotnetPackage);
-    if (packageCollection.length === 0) return [];
+    const packageLensResolvers = resolvePackageLensData(packageLensData, appContrib, resolveDotnetPackage);
+    if (packageLensResolvers.length === 0) return [];
 
     appSettings.inProgress = true;
-    return generateCodeLenses(packageCollection, document)
+    return generateCodeLenses(packageLensResolvers, document)
       .then(codelenses => {
         appSettings.inProgress = false;
         return codelenses;

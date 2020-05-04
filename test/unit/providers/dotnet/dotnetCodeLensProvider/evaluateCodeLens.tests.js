@@ -3,8 +3,8 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import { generatePackage } from 'test/unit/utils.js';
-import { PackageCodeLens } from 'common/packageCodeLens.js';
 import { DotNetCodeLensProvider } from 'providers/dotnet/dotnetCodeLensProvider.js';
+import { PackageCodeLens } from 'providers/shared/packageCodeLens';
 
 const assert = require('assert');
 const vscode = require('vscode');

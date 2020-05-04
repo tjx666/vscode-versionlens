@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { PackageLensData } from "common/packageLensData";
+import { PackageLensData } from "providers/shared/packageLensData";
 import { extractPackageLensDataFromNodes } from 'providers/shared/jsonPackageParser'
 
 const jsonParser = require("jsonc-parser");

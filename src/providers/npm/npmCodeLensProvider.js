@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import appSettings from 'common/appSettings';
 import appContrib from 'common/appContrib';
-import { generateCodeLenses } from 'common/codeLensGeneration';
-import { parseDependencyNodes } from 'providers/shared/dependencyParser';
+import { generateCodeLenses } from 'providers/shared/codeLensGeneration';
+import { resolvePackageLensData } from 'providers/shared/dependencyParser';
 import * as CommandFactory from 'commands/factory';
 import {
   renderMissingDecoration,
@@ -47,17 +47,17 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     if (packageLensData.length === 0) return [];
 
     // resolve package lenses (as promises)
-    const packageCollection = parseDependencyNodes(
+    const packageLensResolvers = resolvePackageLensData(
       packageLensData,
       appContrib,
       resolveNpmPackage.bind(null, this._documentPath)
     );
-    if (packageCollection.length === 0) return [];
+    if (packageLensResolvers.length === 0) return [];
 
     appSettings.inProgress = true;
 
     // create code lenses from package lenses
-    return generateCodeLenses(packageCollection, document)
+    return generateCodeLenses(packageLensResolvers, document)
       .then(codeLenses => {
         if (appSettings.showDependencyStatuses)
           return this.updateOutdated()

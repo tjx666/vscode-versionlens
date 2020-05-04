@@ -1,7 +1,7 @@
-import { PackageCodeLens } from 'common/packageCodeLens';
+import appSettings from 'common/appSettings.js';
+import { PackageCodeLens } from 'providers/shared/packageCodeLens';
 import { ComposerCodeLensProvider } from 'providers/composer/composerCodeLensProvider';
 import * as ComposerAPIModule from 'providers/composer/composerAPI';
-import appSettings from 'common/appSettings.js';
 
 const assert = require('assert');
 

@@ -1,6 +1,5 @@
 import * as CommandFactory from 'commands/factory';
 import appContrib from 'common/appContrib';
-import { generateCodeLenses } from 'common/codeLensGeneration';
 import appSettings from 'common/appSettings';
 import { formatWithExistingLeading } from 'common/utils';
 import {
@@ -9,8 +8,9 @@ import {
   renderOutdatedDecoration
 } from 'editor/decorations';
 import { AbstractCodeLensProvider } from 'providers/abstract/abstractCodeLensProvider';
-import { parseDependencyNodes } from 'providers/shared/dependencyParser';
+import { resolvePackageLensData } from 'providers/shared/dependencyParser';
 import { extractPackageLensDataFromText } from 'providers/shared/jsonPackageParser'
+import { generateCodeLenses } from 'providers/shared/codeLensGeneration';
 import { composerGetPackageLatest, readComposerSelections } from './composerAPI';
 
 
@@ -41,14 +41,14 @@ export class ComposerCodeLensProvider extends AbstractCodeLensProvider {
     const packageLensData = extractPackageLensDataFromText(document.getText(), appContrib.composerDependencyProperties);
     if (packageLensData.length === 0) return [];
 
-    const packageCollection = parseDependencyNodes(packageLensData, appContrib);
-    if (packageCollection.length === 0) return [];
+    const packageLensResolvers = resolvePackageLensData(packageLensData, appContrib);
+    if (packageLensResolvers.length === 0) return [];
 
     appSettings.inProgress = true;
     return this.updateOutdated()
       .then(_ => {
         appSettings.inProgress = false;
-        return generateCodeLenses(packageCollection, document);
+        return generateCodeLenses(packageLensResolvers, document);
       })
       .catch(err => {
         appSettings.inProgress = false;

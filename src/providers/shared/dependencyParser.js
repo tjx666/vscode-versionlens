@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-export function parseDependencyNodes(dependencyNodes, appContrib, customPackageParser = null) {
+export function resolvePackageLensData(dependencyNodes, appContrib, customPackageParser = null) {
   const collector = [];
 
   dependencyNodes.forEach(

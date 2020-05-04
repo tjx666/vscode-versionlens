@@ -1,4 +1,4 @@
-import { PackageLensData } from "common/packageLensData";
+import { PackageLensData } from "providers/shared/packageLensData";
 
 const xmldoc = require('xmldoc');
 const { window } = require('vscode');

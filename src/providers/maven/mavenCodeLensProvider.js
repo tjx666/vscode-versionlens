@@ -1,9 +1,9 @@
 import * as CommandFactory from 'commands/factory';
 import appSettings from 'common/appSettings';
 import appContrib from 'common/appContrib';
-import { parseDependencyNodes } from 'providers/shared/dependencyParser';
-import { generateCodeLenses } from 'common/codeLensGeneration';
 import { AbstractCodeLensProvider } from 'providers/abstract/abstractCodeLensProvider';
+import { generateCodeLenses } from 'providers/shared/codeLensGeneration';
+import { resolvePackageLensData } from 'providers/shared/dependencyParser';
 import { extractMavenLensDataFromText } from './mavenPackageParser';
 import { resolveMavenPackage } from './mavenPackageResolver';
 import { loadMavenRepositories } from './mavenAPI';
@@ -26,11 +26,11 @@ export class MavenCodeLensProvider extends AbstractCodeLensProvider {
       const packageLensData = extractMavenLensDataFromText(document, appContrib.mavenDependencyProperties);
       if (packageLensData.length === 0) return [];
 
-      const packageCollection = parseDependencyNodes(packageLensData, appContrib, resolveMavenPackage);
-      if (packageCollection.length === 0) return [];
+      const packageLensResolvers = resolvePackageLensData(packageLensData, appContrib, resolveMavenPackage);
+      if (packageLensResolvers.length === 0) return [];
 
       appSettings.inProgress = true;
-      return generateCodeLenses(packageCollection, document)
+      return generateCodeLenses(packageLensResolvers, document)
         .then(codelenses => {
           appSettings.inProgress = false;
           return codelenses;

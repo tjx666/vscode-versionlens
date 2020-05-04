@@ -2,8 +2,8 @@
  * Copyright (c) Peter Flannery. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import { PackageCodeLens } from 'common/packageCodeLens';
 import * as CommandFactory from 'commands/factory';
+import { PackageCodeLens } from 'providers/shared/packageCodeLens';
 
 const assert = require('assert');
 const semver = require('semver');

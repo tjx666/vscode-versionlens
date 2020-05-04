@@ -2,7 +2,7 @@
  * Copyright (c) Peter Flannery. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import { PackageCodeLens } from "common/packageCodeLens";
+import { PackageCodeLens } from 'providers/shared/packageCodeLens';
 import { PubCodeLensProvider } from "providers/pub/pubCodeLensProvider";
 import * as PubAPIModule from "providers/pub/pubAPI";
 

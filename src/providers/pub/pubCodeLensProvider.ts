@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import appContrib from "common/appContrib";
-import { generateCodeLenses } from "common/codeLensGeneration";
 import appSettings from "common/appSettings";
 import * as CommandFactory from "commands/factory";
 import { AbstractCodeLensProvider } from "providers/abstract/abstractCodeLensProvider";
-import { parseDependencyNodes } from 'providers/shared/dependencyParser';
+import { resolvePackageLensData } from 'providers/shared/dependencyParser';
+import { generateCodeLenses } from 'providers/shared/codeLensGeneration';
 import { extractPackageLensDataFromText } from "./pubPackageParser";
 import { pubGetPackageInfo } from "./pubAPI";
 import { resolvePubPackage } from "./pubPackageResolver";
@@ -27,11 +27,11 @@ export class PubCodeLensProvider extends AbstractCodeLensProvider {
     const packageLensData = extractPackageLensDataFromText(document.getText(), appContrib.pubDependencyProperties);
     if (packageLensData.length === 0) return [];
 
-    const packageCollection = parseDependencyNodes(packageLensData, appContrib, resolvePubPackage);
-    if (packageCollection.length === 0) return [];
+    const packageLensResolvers = resolvePackageLensData(packageLensData, appContrib, resolvePubPackage);
+    if (packageLensResolvers.length === 0) return [];
 
     appSettings.inProgress = true;
-    return generateCodeLenses(packageCollection, document).then(codelenses => {
+    return generateCodeLenses(packageLensResolvers, document).then(codelenses => {
       appSettings.inProgress = false;
       return codelenses;
     });

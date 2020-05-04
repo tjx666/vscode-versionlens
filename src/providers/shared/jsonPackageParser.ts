@@ -1,4 +1,4 @@
-import { PackageLensData } from "common/packageLensData";
+import { PackageLensData } from "providers/shared/packageLensData";
 
 const jsonParser = require("jsonc-parser");
 

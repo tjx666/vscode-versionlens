@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 import * as CommandFactory from 'commands/factory';
 import appContrib from 'common/appContrib';
-import { generateCodeLenses } from 'common/codeLensGeneration';
 import appSettings from 'common/appSettings';
 import { formatWithExistingLeading } from 'common/utils';
-import { parseDependencyNodes } from 'providers/shared/dependencyParser';
+import { resolvePackageLensData } from 'providers/shared/dependencyParser';
+import { generateCodeLenses } from 'providers/shared/codeLensGeneration';
 import { extractPackageLensDataFromText } from 'providers/shared/jsonPackageParser'
 import {
   renderMissingDecoration,
@@ -45,15 +45,15 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     if (packageLensData.length === 0) return [];
 
     // TODO fix subPackages
-    
-    const packageCollection = parseDependencyNodes(packageLensData, appContrib);
-    if (packageCollection.length === 0) return [];
+
+    const packageLensResolvers = resolvePackageLensData(packageLensData, appContrib);
+    if (packageLensResolvers.length === 0) return [];
 
     appSettings.inProgress = true;
     return this.updateOutdated()
       .then(_ => {
         appSettings.inProgress = false;
-        return generateCodeLenses(packageCollection, document)
+        return generateCodeLenses(packageLensResolvers, document)
       })
       .catch(err => {
         appSettings.inProgress = false;

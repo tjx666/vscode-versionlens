@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 import appSettings from 'common/appSettings.js';
 import { generatePackage } from 'test/unit/utils.js';
-import { PackageCodeLens } from 'common/packageCodeLens.js';
+import { PackageCodeLens } from 'providers/shared/packageCodeLens';
 import { NpmCodeLensProvider } from 'providers/npm/npmCodeLensProvider.js';
 
 const assert = require('assert');

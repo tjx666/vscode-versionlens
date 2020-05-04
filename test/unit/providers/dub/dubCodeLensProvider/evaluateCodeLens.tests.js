@@ -2,17 +2,12 @@
  * Copyright (c) Peter Flannery. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import { TestFixtureMap } from 'test/unit/utils';
-import { PackageCodeLens } from 'common/packageCodeLens';
-import { dubDefaultDependencyProperties } from 'providers/dub/config';
+import { PackageCodeLens } from 'providers/shared/packageCodeLens';
 import { DubCodeLensProvider } from 'providers/dub/dubCodeLensProvider';
 import * as DubAPIModule from 'providers/dub/dubAPI';
 import appSettings from 'common/appSettings.js';
 
 const assert = require('assert');
-const vscode = require('vscode');
-
-const fixtureMap = new TestFixtureMap('./fixtures');
 
 let testContext = null;
 
