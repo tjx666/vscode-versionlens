@@ -132,7 +132,7 @@ export function npmGetOutdated(packagePath) {
   });
 }
 
-export function parseNpmArguments(packageName, packageVersion) {
+export function parseNpmArguments(packagePath, packageName, packageVersion) {
   const npa = require('npm-package-arg');
 
   return new Promise(function (resolve, reject) {
@@ -147,7 +147,7 @@ export function parseNpmArguments(packageName, packageVersion) {
         resolveVersion = isAliasResult[3];
       }
 
-      const npaParsed = npa.resolve(resolveName, resolveVersion);
+      const npaParsed = npa.resolve(resolveName, resolveVersion, packagePath);
       if (!npaParsed) {
         reject({ code: 'EUNSUPPORTEDPROTOCOL' });
         return;

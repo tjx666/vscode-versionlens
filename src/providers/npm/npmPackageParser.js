@@ -11,7 +11,7 @@ import { npmViewVersion, npmViewDistTags, parseNpmArguments } from './npmClient.
 const semver = require('semver');
 
 export function npmPackageParser(packagePath, name, requestedVersion, appContrib) {
-  return parseNpmArguments(name, requestedVersion)
+  return parseNpmArguments(packagePath, name, requestedVersion)
     .then(npmVersionInfo => {
       // check if we have a directory
       if (npmVersionInfo.type === 'directory')

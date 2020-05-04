@@ -33,7 +33,7 @@ export default {
   "rejects when result is undefined": done => {
     npaMock.resolve = (tname, tspec, twhere, targ) => undefined
 
-    parseNpmArguments("testName", "testVersion")
+    parseNpmArguments("testPackagePath", "testName", "testVersion")
       .then(results => done(new Error("Should not be called")))
       .catch(actual => {
         assert.equal(actual.code, 'EUNSUPPORTEDPROTOCOL', `actual = ${actual}`)
@@ -45,7 +45,7 @@ export default {
     const testResult = { type: 'tag' }
     npaMock.resolve = (tname, tspec, twhere, targ) => testResult
 
-    parseNpmArguments("testName", "testVersion")
+    parseNpmArguments("testPackagePath", "testName", "testVersion")
     .then(actual => {
       assert.equal(actual, testResult, `actual = ${actual}`)
       done()
