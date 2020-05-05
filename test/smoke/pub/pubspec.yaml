@@ -21,7 +21,12 @@ dependencies:
   cupertino_icons: 0.1.2
   flutter_bloc: 0.10.1
   equatable: ^0.2.0
+  sqflite:
+    git: 
+      url: https://github.com/tekartik/sqflite
+      path: sqflite
   cached_network_image: 0.6.0-beta+1
+  http:
 
 dev_dependencies:
   flutter_test:

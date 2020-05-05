@@ -117,7 +117,7 @@ export default {
         assert.equal(
           collection.length,
           5,
-          "codeLens should be an array containing 7 items."
+          "codeLens should be an array containing 5 items."
         );
 
         collection.forEach((entry, index) => {
