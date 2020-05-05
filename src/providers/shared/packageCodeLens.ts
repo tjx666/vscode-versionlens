@@ -2,14 +2,23 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { formatWithExistingLeading } from 'common/utils';
-import appSettings from 'common/appSettings';
+import { formatWithExistingLeading } from '../../common/utils';
+import appSettings from '../../appSettings';
+import { IPackageCodeLens, Package, PackageErrors } from './definitions';
 
 const { CodeLens } = require('vscode');
 
-export class PackageCodeLens extends CodeLens {
+export class PackageCodeLens extends CodeLens implements IPackageCodeLens {
 
-  constructor(commandRange, replaceRange, packageInfo, documentUrl) {
+  replaceRange: any;
+
+  package: Package;
+
+  documentUrl: string;
+
+  command: any;
+
+  constructor(commandRange, replaceRange, packageInfo: Package, documentUrl: string) {
     super(commandRange);
     this.replaceRange = replaceRange || commandRange;
     this.package = packageInfo;
@@ -23,7 +32,7 @@ export class PackageCodeLens extends CodeLens {
 
     return this.package.customGenerateVersion.call(this, this.package, newVersion);
   }
-  
+
   getTaggedVersionPrefix() {
     if (this.isTaggedVersion())
       return this.package.meta.tag.name + ': ';
@@ -70,11 +79,15 @@ export class PackageCodeLens extends CodeLens {
   }
 
   packageNotFound() {
-    return this.package.meta.packageNotFound;
+    return this.package.meta.error == PackageErrors.NotFound;
   }
 
   packageNotSupported() {
-    return this.package.meta.packageNotSupported;
+    return this.package.meta.error == PackageErrors.NotSupported;
+  }
+
+  packageUnexpectedError() {
+    return this.package.meta.error == PackageErrors.Unexpected;
   }
 
   versionMatchNotFound() {

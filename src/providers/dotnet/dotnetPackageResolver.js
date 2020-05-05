@@ -2,15 +2,12 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import appSettings from 'common/appSettings';
-import * as PackageFactory from 'common/packageGeneration';
+import appSettings from '../../appSettings';
+import { filterTagsByName, buildTagsFromVersionMap, buildMapFromVersionList } from '../shared/versionUtils';
+import * as PackageFactory from '../shared/packageFactory';
+import { logErrorToConsole } from '../shared/utils';
 import { nugetGetPackageVersions } from './nugetClient.js';
 import { convertNugetToNodeRange } from './dotnetUtils.js';
-import {
-  filterTagsByName,
-  buildTagsFromVersionMap,
-  buildMapFromVersionList
-} from 'common/versionUtils';
 
 export function resolveDotnetPackage(name, requestedVersion, appContrib) {
   // convert a nuget range to node semver range
@@ -65,10 +62,11 @@ export function resolveDotnetPackage(name, requestedVersion, appContrib) {
         return PackageFactory.createPackage(
           name,
           nodeRequestedRange,
-          packageInfo
+          packageInfo,
+          null
         );
       });
-      
+
     })
     .catch(error => {
       // show the 404 to the user; otherwise throw the error
@@ -80,8 +78,8 @@ export function resolveDotnetPackage(name, requestedVersion, appContrib) {
         );
       }
 
-      console.error(error);
-      throw error;
+      logErrorToConsole("DotNet", "nugetGetPackageVersions", name, error);
+      return PackageFactory.createUnexpectedError(name, error);
     });
 
 }

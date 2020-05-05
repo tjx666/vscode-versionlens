@@ -2,12 +2,12 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { PackageLensData } from "providers/shared/packageLensData";
+import { PackageLensData } from "../shared/packageLensData";
 const yamlParser = require("yaml");
 
 export function extractPackageLensDataFromText(packageYamlText: string, filterPropertyNames: string[]): PackageLensData[] {
   const yamlDoc = yamlParser.parseDocument(packageYamlText);
-  if (!yamlDoc || !yamlDoc.contents|| yamlDoc.errors.length > 0) return [];
+  if (!yamlDoc || !yamlDoc.contents || yamlDoc.errors.length > 0) return [];
 
   return extractPackageLensDataFromNodes(yamlDoc.contents.items, filterPropertyNames);
 }

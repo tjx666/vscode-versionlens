@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { TestFixtureMap } from 'test/unit/utils';
-import { buildMapFromVersionList, buildTagsFromVersionMap } from 'common/versionUtils';
+import { buildMapFromVersionList, buildTagsFromVersionMap } from 'providers/shared/versionUtils';
 
 const assert = require('assert');
 

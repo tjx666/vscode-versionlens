@@ -2,14 +2,15 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as CommandFactory from 'commands/factory';
-import appSettings from 'common/appSettings';
-import appContrib from 'common/appContrib';
-import { AbstractCodeLensProvider } from 'providers/abstract/abstractCodeLensProvider';
-import { resolvePackageLensData } from 'providers/shared/dependencyParser';
-import { generateCodeLenses } from 'providers/shared/codeLensGeneration';
-import { resolveDotnetPackage } from './dotnetPackageResolver.js';
-import { extractDotnetLensDataFromText } from 'dotnetPackageParser'
+import * as CommandFactory from '../../commands/factory';
+import appSettings from '../../appSettings';
+import appContrib from '../../appContrib';
+import { AbstractCodeLensProvider } from '../abstract/abstractCodeLensProvider';
+import { resolvePackageLensData } from '../shared/dependencyParser';
+import { generateCodeLenses } from '../shared/codeLensGeneration';
+import { IPackageCodeLens } from '../shared/definitions';
+import { resolveDotnetPackage } from './dotnetPackageResolver';
+import { extractDotnetLensDataFromText } from './dotnetPackageParser'
 
 export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -39,7 +40,11 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
       });
   }
 
-  evaluateCodeLens(codeLens) {
+  evaluateCodeLens(codeLens: IPackageCodeLens) {
+
+    if (codeLens.packageUnexpectedError()) 
+      return CommandFactory.createPackageUnexpectedError(codeLens);
+
     // check if this package was found
     if (codeLens.packageNotFound())
       return CommandFactory.createPackageNotFoundCommand(codeLens);
@@ -50,7 +55,7 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 
     // check if this install a tagged version
     if (codeLens.isInvalidVersion())
-      return CommandFactory.createInvalidCommand(codeLens);
+      return CommandFactory.createInvalidVersionCommand(codeLens);
 
     // check if this entered versions matches a registry versions
     if (codeLens.versionMatchNotFound())

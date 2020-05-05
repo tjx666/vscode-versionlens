@@ -2,9 +2,9 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import appSettings from 'common/appSettings';
-import { clearDecorations } from 'editor/decorations';
-import * as CodeLensProviders from 'providers/codeLensProviders';
+import appSettings from '../appSettings';
+import { clearDecorations } from '../editor/decorations';
+import * as CodeLensProviders from '../providers/codeLensProviders';
 
 export function showTaggedVersions(file) {
   appSettings.showTaggedVersions = true;

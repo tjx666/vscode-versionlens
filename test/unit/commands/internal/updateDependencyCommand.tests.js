@@ -33,7 +33,7 @@ export const updateDependencyCommandTests = {
   },
 
   'replaces given range with version': () => {
-    const called = 0
+    let called = 0
     const codeLensMock = {
       replaceRange: "expected range"
     }
@@ -53,7 +53,7 @@ export const updateDependencyCommandTests = {
   },
 
   'vscode workspaceEdit sets expected url and change list': () => {
-    const called = 0
+    let called = 0
     const codeLensMock = {
       documentUrl: 'expected url'
     }
@@ -75,7 +75,7 @@ export const updateDependencyCommandTests = {
   },
 
   'vscode workspace applies expected edit': () => {
-    const called = 0
+    let called = 0
     const expectedClass = vscodeMock.WorkspaceEdit = class {
       constructor() {
         this.check = 'edit'

@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2017",
     "module": "system",
     "outFile": "../out/test/index.js",
     "lib": [
@@ -12,6 +12,9 @@
     "experimentalDecorators": true,
     "baseUrl": ".",
     "paths": {
+      "/*": [
+        "../src/*"
+      ],
       "commands/*": [
         "../src/commands/*"
       ],

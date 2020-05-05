@@ -1,27 +1,25 @@
-import * as CommandFactory from 'commands/factory';
-import appContrib from 'common/appContrib';
-import appSettings from 'common/appSettings';
-import { formatWithExistingLeading } from 'common/utils';
-import {
-  renderMissingDecoration,
-  renderInstalledDecoration,
-  renderOutdatedDecoration
-} from 'editor/decorations';
-import { AbstractCodeLensProvider } from 'providers/abstract/abstractCodeLensProvider';
-import { resolvePackageLensData } from 'providers/shared/dependencyParser';
-import { extractPackageLensDataFromText } from 'providers/shared/jsonPackageParser'
-import { generateCodeLenses } from 'providers/shared/codeLensGeneration';
+import * as CommandFactory from '../../commands/factory';
+import appContrib from '../../appContrib';
+import appSettings from '../../appSettings';
+import { formatWithExistingLeading } from '../../common/utils';
+import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from '../../editor/decorations';
+import { AbstractCodeLensProvider } from '../abstract/abstractCodeLensProvider';
+import { resolvePackageLensData } from '../shared/dependencyParser';
+import { extractPackageLensDataFromText } from '../shared/jsonPackageParser'
+import { generateCodeLenses } from '../shared/codeLensGeneration';
 import { composerGetPackageLatest, readComposerSelections } from './composerAPI';
-
+import { logErrorToConsole as logPackageError } from '../shared/utils';
+import { IPackageCodeLens } from '../shared/definitions';
+import * as PackageFactory from '../shared/packageFactory';
 
 const path = require('path');
 
 export class ComposerCodeLensProvider extends AbstractCodeLensProvider {
+  _outdatedCache: {};
+  _documentPath: '';
 
   constructor() {
     super();
-    this._outdatedCache = [];
-    this._documentPath = '';
   }
 
   get selector() {
@@ -56,7 +54,7 @@ export class ComposerCodeLensProvider extends AbstractCodeLensProvider {
       });
   }
 
-  evaluateCodeLens(codeLens) {
+  evaluateCodeLens(codeLens: IPackageCodeLens) {
     if (codeLens.command && codeLens.command.command.includes('updateDependenciesCommand'))
       return codeLens;
 
@@ -85,15 +83,16 @@ export class ComposerCodeLensProvider extends AbstractCodeLensProvider {
         );
       })
       .catch(response => {
-        if (response.status == 404)
-          return CommandFactory.createPackageNotFoundCommand(codeLens);
+        if (response.status == 404) return CommandFactory.createPackageNotFoundCommand(codeLens);
 
         const respObj = JSON.parse(response.responseText);
-        console.error(respObj.statusMessage);
-        return CommandFactory.createErrorCommand(
-          "An error occurred retrieving this package.",
-          codeLens
+        logPackageError(
+          "Composer",
+          "composerGetPackageLatest",
+          codeLens.package.name,
+          respObj.statusMessage
         );
+        return PackageFactory.createUnexpectedError(codeLens.package.name, respObj.statusMessage);
       });
   }
 

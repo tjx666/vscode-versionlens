@@ -14,7 +14,7 @@
     <PackageReference Include="Microsoft.Azure.ServiceBus" Version="(3.0,)" />
 
     <!-- Exact version match -->
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="[2.1]" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="[2.10]" />
 
     <!-- Maximum version, inclusive -->
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="(,1.1]" />

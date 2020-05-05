@@ -5,6 +5,7 @@
 import { generatePackage } from 'test/unit/utils.js';
 import { DotNetCodeLensProvider } from 'providers/dotnet/dotnetCodeLensProvider.js';
 import { PackageCodeLens } from 'providers/shared/packageCodeLens';
+import { PackageErrors } from 'providers/shared/definitions';
 
 const assert = require('assert');
 const vscode = require('vscode');
@@ -23,10 +24,18 @@ export default {
     testContext.testProvider = new DotNetCodeLensProvider();
   },
 
-  "returns not found": () => {
-    const codeLens = new PackageCodeLens(testContext.testRange, null, generatePackage('SomePackage', null, { type: 'nuget', packageNotFound: true }), null);
+  "returns not found command": () => {
+    const codeLens = new PackageCodeLens(testContext.testRange, null, generatePackage('SomePackage', null, { type: 'nuget', error: PackageErrors.NotFound }), null);
     const result = testContext.testProvider.evaluateCodeLens(codeLens, null)
     assert.equal(result.command.title, 'SomePackage could not be found', "Expected command.title failed.");
+    assert.equal(result.command.command, undefined);
+    assert.equal(result.command.arguments, undefined);
+  },
+
+  "returns unexpected command": () => {
+    const codeLens = new PackageCodeLens(testContext.testRange, null, generatePackage('SomePackage', null, { type: 'nuget', error: PackageErrors.Unexpected, message: "" }), null);
+    const result = testContext.testProvider.evaluateCodeLens(codeLens, null)
+    assert.equal(result.command.title, 'Unexpected error. See dev tools console', "Expected command.title failed.");
     assert.equal(result.command.command, undefined);
     assert.equal(result.command.arguments, undefined);
   },

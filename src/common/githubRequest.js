@@ -2,8 +2,8 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { ExpiryCacheMap } from './expiryCacheMap';
-import appContrib from './appContrib';
+import { ExpiryCacheMap } from './caching/expiryCacheMap';
+import appContrib from '../appContrib';
 
 class GithubRequest {
 

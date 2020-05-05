@@ -2,8 +2,9 @@
  * Copyright (c) Peter Flannery. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import appSettings from 'common/appSettings.js';
+import appSettings from '/appSettings';
 import { generatePackage } from 'test/unit/utils.js';
+import { PackageErrors } from 'providers/shared/definitions';
 import { PackageCodeLens } from 'providers/shared/packageCodeLens';
 import { NpmCodeLensProvider } from 'providers/npm/npmCodeLensProvider.js';
 
@@ -33,10 +34,26 @@ export default {
     )
   },
 
-  "returns not found": () => {
-    const codeLens = new PackageCodeLens(testContext.testRange, null, generatePackage('SomePackage', null, { type: 'npm', packageNotFound: true }), null);
+  "returns not found command": () => {
+    const codeLens = new PackageCodeLens(testContext.testRange, null, generatePackage('SomePackage', null, { type: 'npm', error: PackageErrors.NotFound }), null);
     const result = testContext.testProvider.evaluateCodeLens(codeLens, null)
     assert.equal(result.command.title, 'SomePackage could not be found', "Expected command.title failed.");
+    assert.equal(result.command.command, undefined);
+    assert.equal(result.command.arguments, undefined);
+  },
+
+  "returns not supported command": () => {
+    const codeLens = new PackageCodeLens(testContext.testRange, null, generatePackage('SomePackage', null, { type: 'npm', error: PackageErrors.NotSupported, message: "Not supported" }), null);
+    const result = testContext.testProvider.evaluateCodeLens(codeLens, null)
+    assert.equal(result.command.title, 'Not supported', "Expected command.title failed.");
+    assert.equal(result.command.command, undefined);
+    assert.equal(result.command.arguments, undefined);
+  },
+
+  "returns unexpected command": () => {
+    const codeLens = new PackageCodeLens(testContext.testRange, null, generatePackage('SomePackage', null, { type: 'npm', error: PackageErrors.Unexpected, message: "" }), null);
+    const result = testContext.testProvider.evaluateCodeLens(codeLens, null)
+    assert.equal(result.command.title, 'Unexpected error. See dev tools console', "Expected command.title failed.");
     assert.equal(result.command.command, undefined);
     assert.equal(result.command.arguments, undefined);
   },

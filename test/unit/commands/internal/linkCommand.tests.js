@@ -35,7 +35,7 @@ export const LinkCommandTests = {
   },
 
   'opens remoteUrl when meta.type is not a file': () => {
-    const called = 0
+    let called = 0
     const codeLensMock = {
       package: {
         meta: {
@@ -62,7 +62,7 @@ export const LinkCommandTests = {
   },
 
   'opens file path when meta.type is a file': () => {
-    const called = 0
+    let called = 0
     const codeLensMock = {
       documentUrl: {
         fsPath: 'expected path'

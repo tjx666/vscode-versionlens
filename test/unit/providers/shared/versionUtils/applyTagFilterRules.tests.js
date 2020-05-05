@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { TestFixtureMap } from 'test/unit/utils';
-import { applyTagFilterRules } from 'common/versionUtils';
+import { applyTagFilterRules } from 'providers/shared/versionUtils';
 
 const fixtureMap = new TestFixtureMap('./fixtures');
 

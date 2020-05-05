@@ -2,7 +2,7 @@
  * Copyright (c) Peter Flannery. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import appSettings from 'common/appSettings.js';
+import appSettings from '/appSettings';
 import { TestFixtureMap } from 'test/unit/utils.js';
 import { NpmCodeLensProvider } from 'providers/npm/npmCodeLensProvider.js';
 import * as npmClientModule from 'providers/npm/npmClient.js';

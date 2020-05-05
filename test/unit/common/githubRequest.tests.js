@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { TestFixtureMap } from 'test/unit/utils'
 import { githubRequest } from 'common/githubRequest'
-import appContribMock from 'common/appContrib'
+import appContribMock from '/appContrib'
 
 const assert = require('assert')
 const mock = require('mock-require')

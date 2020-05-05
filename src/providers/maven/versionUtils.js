@@ -71,6 +71,7 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
 
   let taggedReleases = releases.map(item => {
     return {
+      name: null,
       isPrimaryTag: true,
       version: item,
       isOlderThanRequested: compareVersions(item, requestedVersion) < 0

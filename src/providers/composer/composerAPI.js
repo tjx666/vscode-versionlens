@@ -1,9 +1,9 @@
 const fs = require('fs');
 const semver = require('semver');
-const httpRequest = require('request-light');
 const FEED_URL = 'https://repo.packagist.org/p';
 
 export function composerGetPackageLatest(packageName) {
+  const httpRequest = require('request-light');
 
   const queryUrl = `${FEED_URL}/${packageName}.json`;
   return new Promise(function (resolve, reject) {

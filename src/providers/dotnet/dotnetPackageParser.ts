@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { PackageLensData } from "providers/shared/packageLensData";
+import { PackageLensData } from "../shared/packageLensData";
 
 const xmldoc = require('xmldoc');
 const { Range } = require('vscode');

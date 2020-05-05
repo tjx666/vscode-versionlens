@@ -2,24 +2,27 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import appSettings from 'common/appSettings';
-import appContrib from 'common/appContrib';
-import { generateCodeLenses } from 'providers/shared/codeLensGeneration';
-import { resolvePackageLensData } from 'providers/shared/dependencyParser';
-import * as CommandFactory from 'commands/factory';
+import appSettings from '../../appSettings';
+import appContrib from '../../appContrib';
+import * as CommandFactory from '../../commands/factory';
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
   renderOutdatedDecoration,
   renderNeedsUpdateDecoration,
   renderPrereleaseInstalledDecoration
-} from 'editor/decorations';
-import { AbstractCodeLensProvider } from 'providers/abstract/abstractCodeLensProvider';
-import { extractPackageLensDataFromText } from 'providers/shared/jsonPackageParser'
+} from '../../editor/decorations';
+import { AbstractCodeLensProvider } from '../abstract/abstractCodeLensProvider';
+import { extractPackageLensDataFromText } from '../shared/jsonPackageParser'
+import { IPackageCodeLens } from '../shared/definitions';
+import { generateCodeLenses } from '../shared/codeLensGeneration';
+import { resolvePackageLensData } from '../shared/dependencyParser';
 import { npmGetOutdated, npmPackageDirExists } from './npmClient.js';
 import { resolveNpmPackage } from './npmPackageResolver';
 
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
+  _outdatedCache: Array<any>;
+  _documentPath: '';
 
   constructor() {
     super();
@@ -70,18 +73,19 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       })
   }
 
-  evaluateCodeLens(codeLens) {
+  evaluateCodeLens(codeLens: IPackageCodeLens) {
     if (codeLens.isMetaType('github'))
       return CommandFactory.createGithubCommand(codeLens);
 
     if (codeLens.isMetaType('file'))
       return CommandFactory.createLinkCommand(codeLens);
 
-    // check if this package was found
+    if (codeLens.packageUnexpectedError())
+      return CommandFactory.createPackageUnexpectedError(codeLens);
+
     if (codeLens.packageNotFound())
       return CommandFactory.createPackageNotFoundCommand(codeLens);
 
-    // check if this package is supported
     if (codeLens.packageNotSupported())
       return CommandFactory.createPackageNotSupportedCommand(codeLens);
 
@@ -95,7 +99,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
 
     // check if the entered version is valid
     if (codeLens.isInvalidVersion())
-      return CommandFactory.createInvalidCommand(codeLens);
+      return CommandFactory.createInvalidVersionCommand(codeLens);
 
     // check if the entered version matches a registry version
     if (codeLens.versionMatchNotFound())
@@ -147,7 +151,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     Promise.resolve(this._outdatedCache)
       .then(outdated => {
         const findIndex = outdated.findIndex(
-          entry => entry.name === currentPackageName
+          (entry: any) => entry.name === currentPackageName
         );
 
         if (findIndex === -1) {
@@ -174,8 +178,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
             // up to date
             renderInstalledDecoration(
               codeLens.replaceRange,
-              current,
-              entered
+              current
             );
           else if (codeLens.matchesPrereleaseVersion())
             // ahead of latest

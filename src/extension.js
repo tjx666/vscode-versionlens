@@ -2,8 +2,8 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import registerCommands from 'commands/register'
-import codeLensProviders from 'providers/codeLensProviders'
+import registerCommands from './commands/register'
+import codeLensProviders from './providers/codeLensProviders'
 import subscribeToEditorEvents from './editor/events'
 
 export function activate(context) {

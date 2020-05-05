@@ -2,7 +2,8 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as PackageFactory from "../../common/packageGeneration";
+import * as PackageFactory from "../shared/packageFactory";
+import { PackageErrors } from "../shared/definitions";
 
 const semver = require("semver");
 
@@ -12,6 +13,8 @@ export function resolvePubPackage(name, version, appContrib) {
 
   const meta = {
     type: "pub",
+    error: PackageErrors.Unexpected,
+    message: null,
     tag: {
       name: "latest",
       version: "latest",
@@ -19,5 +22,5 @@ export function resolvePubPackage(name, version, appContrib) {
     }
   };
 
-  return PackageFactory.createPackage(name, version, meta);
+  return PackageFactory.createPackage(name, version, meta, null);
 }

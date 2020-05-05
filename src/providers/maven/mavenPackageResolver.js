@@ -1,6 +1,7 @@
+import appSettings from '../../appSettings';
+import { logErrorToConsole } from '../shared/utils';
+import * as PackageFactory from '../shared/packageFactory';
 import { mavenGetPackageVersions } from './mavenAPI';
-import appSettings from 'common/appSettings';
-import * as PackageFactory from 'common/packageGeneration';
 import { buildMapFromVersionList, buildTagsFromVersionMap } from './versionUtils'
 
 export function resolveMavenPackage(name, requestedVersion, appContrib) {
@@ -58,8 +59,8 @@ export function resolveMavenPackage(name, requestedVersion, appContrib) {
         );
       }
 
-      console.error(error);
-      throw error;
+      logErrorToConsole("Maven", "mavenGetPackageVersions", name, error);
+      return PackageFactory.createUnexpectedError(name, error);
     });
 
 }

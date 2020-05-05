@@ -4,7 +4,7 @@
   "dependencies": {},
   "devDependencies": {
     "typescript": "^2.3.4",
-    "aliased": "npm:typescript@2.0.0",
+    "aliased": "npm:typescript@2.3.4",
     "bootstrap": "twbs/bootstrap#v3.3.0",
     "test": "file:../../../src",
     "@types/angular": "~1.5",
@@ -15,7 +15,8 @@
     "npm": ">=4.5.1",
     "invalid": "git+https://git@github.com/testuser/test.git",
     "invalid2": ">=4.5.",
-    "invalid3": "git+ssh://git@some.com/testuser/test.git"
+    "invalid3": "git+ssh://git@some.com/testuser/test.git",
+    "@could-not-be-found/a": "^1.0.0"
   },
   "customDependencies": {
     "@types/hammerjs": "2.0.33"

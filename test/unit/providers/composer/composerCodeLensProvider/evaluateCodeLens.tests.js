@@ -1,4 +1,4 @@
-import appSettings from 'common/appSettings.js';
+import appSettings from '/appSettings';
 import { PackageCodeLens } from 'providers/shared/packageCodeLens';
 import { ComposerCodeLensProvider } from 'providers/composer/composerCodeLensProvider';
 import * as ComposerAPIModule from 'providers/composer/composerAPI';

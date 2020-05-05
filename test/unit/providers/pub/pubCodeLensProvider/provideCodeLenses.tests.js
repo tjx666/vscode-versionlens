@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import { TestFixtureMap } from "../../../utils";
-import appSettings from 'common/appSettings.js';
+import appSettings from '/appSettings';
 import { PubCodeLensProvider } from "providers/pub/pubCodeLensProvider";
 import * as PubAPIModule from "providers/pub/pubAPI";
 

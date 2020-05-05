@@ -2,10 +2,17 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import appSettings from 'common/appSettings';
-import { PackageCodeLens } from 'providers/shared/packageCodeLens';
+/// <reference path="../../../node_modules/@types/vscode/index.d.ts" />
 
-export class AbstractCodeLensProvider {
+import appSettings from '../../appSettings';
+import { PackageCodeLens } from '../shared/packageCodeLens';
+import { IPackageCodeLens } from '../shared/definitions';
+import { EventEmitter, CancellationToken } from 'vscode';
+
+export abstract class AbstractCodeLensProvider  {
+
+  _onChangeCodeLensesEmitter: EventEmitter<void>;
+  onDidChangeCodeLenses: any;
 
   constructor() {
     const { EventEmitter } = require('vscode');
@@ -17,14 +24,16 @@ export class AbstractCodeLensProvider {
     this._onChangeCodeLensesEmitter.fire();
   }
 
-  resolveCodeLens(codeLens, token) {
+  abstract evaluateCodeLens(codeLens: IPackageCodeLens, token: CancellationToken);
+
+  resolveCodeLens(codeLens: IPackageCodeLens, token: CancellationToken) {
     if (codeLens instanceof PackageCodeLens) {
 
       // set in progress
       appSettings.inProgress = true;
 
       // evaluate the code lens
-      const evaluated = this.evaluateCodeLens(codeLens);
+      const evaluated = this.evaluateCodeLens(codeLens, token);
 
       // update the progress
       if (evaluated instanceof Promise) {

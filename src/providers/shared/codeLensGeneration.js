@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { PackageCodeLens } from 'providers/shared/packageCodeLens';
+import { PackageCodeLens } from './packageCodeLens';
 
 const { Range, Uri } = require('vscode');
 

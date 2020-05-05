@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { resolveNpmPackage } from 'providers/npm/npmPackageResolver.js';
 import * as npmClientModule from 'providers/npm/npmClient.js';
-import appSettings from 'common/appSettings.js';
+import appSettings from '/appSettings';
 
 const assert = require('assert');
 const mock = require('mock-require');

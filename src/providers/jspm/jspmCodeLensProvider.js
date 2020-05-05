@@ -2,10 +2,10 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import appSettings from 'common/appSettings';
-import appContrib from 'common/appContrib';
-import { generateCodeLenses } from 'providers/shared/codeLensGeneration';
-import { resolvePackageLensData } from 'providers/shared/dependencyParser';
+import appSettings from '../../appSettings';
+import appContrib from '../../appContrib';
+import { generateCodeLenses } from '../shared/codeLensGeneration';
+import { resolvePackageLensData } from '../shared/dependencyParser';
 import { NpmCodeLensProvider } from '../npm/npmCodeLensProvider';
 import { extractJspmLensDataFromText } from './jspmPackageParser';
 import { resolveJspmPackage } from './jspmPackageResolver';

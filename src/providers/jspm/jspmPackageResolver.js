@@ -2,9 +2,9 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as PackageFactory from 'common/packageGeneration';
-import { formatWithExistingLeading } from 'common/utils';
-import { parseNpmRegistryVersion, parseGithubVersion } from 'providers/npm/npmPackageResolver';
+import { formatWithExistingLeading } from '../../common/utils';
+import * as PackageFactory from '../shared/packageFactory';
+import { parseNpmRegistryVersion, parseGithubVersion } from '../npm/npmPackageResolver';
 
 const semver = require('semver');
 

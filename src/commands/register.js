@@ -1,4 +1,4 @@
-import appSettings from 'common/appSettings';
+import appSettings from '../appSettings';
 import * as EditorIconsCommands from './editorIcons';
 import * as InternalCommands from './internal';
 

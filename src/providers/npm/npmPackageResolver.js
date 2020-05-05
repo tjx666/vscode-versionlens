@@ -2,10 +2,11 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import appSettings from 'common/appSettings';
-import * as PackageFactory from 'common/packageGeneration';
-import { fileDependencyRegex, gitHubDependencyRegex, formatWithExistingLeading } from 'common/utils';
-import { filterTagsByName, buildTagsFromVersionMap, resolveVersionAgainstTags } from 'common/versionUtils';
+import appSettings from '../../appSettings';
+import { logErrorToConsole } from '../shared/utils';
+import * as PackageFactory from '../shared/packageFactory';
+import { fileDependencyRegex, gitHubDependencyRegex, formatWithExistingLeading } from '../../common/utils';
+import { filterTagsByName, buildTagsFromVersionMap, resolveVersionAgainstTags } from '../shared/versionUtils';
 import { npmViewVersion, npmViewDistTags, parseNpmArguments } from './npmClient.js'
 
 const semver = require('semver');
@@ -76,7 +77,8 @@ export function resolveNpmPackage(packagePath, name, requestedVersion, appContri
         );
       }
 
-      throw new Error("NPM: parseNpmArguments " + error);
+      logErrorToConsole("NPM", "parseNpmArguments", name, error);
+      return PackageFactory.createUnexpectedError(name, error);
     });
 }
 
@@ -98,10 +100,6 @@ export function parseNpmRegistryVersion(packagePath, name, requestedVersion, app
       );
 
     })
-    .catch(error => {
-      throw new Error("NPM: npmViewVersion " + error.message)
-    });
-
 }
 
 export function parseFileVersion(name, version) {

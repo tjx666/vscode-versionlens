@@ -6,28 +6,10 @@ import {
   formatTagNameRegex,
   sortDescending,
   createChainMutator
-} from './utils.js';
+} from '../../common/utils.js';
+import { TaggedVersion, VersionInfo, VersionMap } from './definitions.js';
 
 const semver = require('semver');
-
-/**
- * @typedef {Object} TaggedVersion
- * @property {String>} name
- * @property {String} version
- */
-
-/**
- * @typedef {Object} VersionMap
- * @property {Array<String>} releases
- * @property {Array<TaggedVersion>} taggedVersions
- */
-
-/**
- * @typedef {Object} VersionInfo
- * @property {String>} version
- * @property {Boolean} isPrerelease
- * @property {String} prereleaseGroup
- */
 
 /**
  * @export
@@ -39,34 +21,15 @@ export function removeExactVersions(version) {
   return this.filter(tag => tag.version !== version);
 }
 
-/**
- * @export
- * @param {Array<TaggedVersion>} tags 
- * @param {String} version 
- * @returns {Array<TaggedVersion>}
- */
-export function removeTagsWithName(name) {
-  return this.filter(tag => tag.name !== name);
+export function removeTagsWithName(name: string): Array<TaggedVersion> {
+  return this.filter((tag: TaggedVersion) => tag.name !== name);
 }
 
-/**
- * @export
- * @param {Array<TaggedVersion>} tags
- * @param {String} versionRange
- * @returns {Array<TaggedVersion>}
- */
-export function removeOlderVersions(versionRange) {
-  return this.filter(tag => !isOlderVersion(tag.version, versionRange));
+export function removeOlderVersions(versionRange: string): Array<TaggedVersion> {
+  return this.filter((tag: TaggedVersion) => !isOlderVersion(tag.version, versionRange));
 }
 
-/**
- * @export
- * @param {Array<TaggedVersion>} tags 
- * @param {String} tagName 
- * @param {String} defaultVersion 
- * @returns {String}
- */
-export function resolveVersionAgainstTags(tags, tagName, defaultVersion) {
+export function resolveVersionAgainstTags(tags: Array<TaggedVersion>, tagName: string, defaultVersion: string): string {
   const tagIndex = tags.findIndex(item => item.name === tagName);
   if (tagIndex > -1)
     return tags[tagIndex].version;
@@ -74,12 +37,7 @@ export function resolveVersionAgainstTags(tags, tagName, defaultVersion) {
     return defaultVersion;
 }
 
-/**
- * @export
- * @param {Array<String>} versions 
- * @returns {Array<String>}
- */
-export function pluckSemverVersions(versions) {
+export function pluckSemverVersions(versions: Array<string>): Array<string> {
   const semverVersions = [];
   versions.forEach(version => {
     if (semver.validRange(version))
@@ -88,12 +46,7 @@ export function pluckSemverVersions(versions) {
   return semverVersions;
 }
 
-/**
- * @export
- * @param {String} version 
- * @returns {VersionInfo}
- */
-export function parseVersion(version) {
+export function parseVersion(version: string): VersionInfo {
   const prereleaseComponents = semver.prerelease(version);
   const isPrerelease = !!prereleaseComponents && prereleaseComponents.length > 0;
   let prereleaseGroup = '';
@@ -111,23 +64,12 @@ export function parseVersion(version) {
   };
 }
 
-/**
- * @export
- * @param {String} versionToCheck 
- * @returns {Boolean}
- */
-export function isFixedVersion(versionToCheck) {
+export function isFixedVersion(versionToCheck: string): boolean {
   const testRange = new semver.Range(versionToCheck);
   return testRange.set[0][0].operator === "";
 }
 
-/**
- * @export
- * @param {String} version 
- * @param {String} requestedVersion 
- * @returns {Boolean}
- */
-export function isOlderVersion(version, requestedVersion) {
+export function isOlderVersion(version: string, requestedVersion: string): boolean {
   let testVersion = version;
 
   const requestedVersionComponents = semver.prerelease(requestedVersion);
@@ -148,13 +90,7 @@ export function isOlderVersion(version, requestedVersion) {
   return semver.ltr(testVersion, requestedVersion);
 }
 
-/**
- * @export
- * @param {String} tagA 
- * @param {String} tagB 
- * @returns {Number}
- */
-export function sortTagsByRecentVersion(tagA, tagB) {
+export function sortTagsByRecentVersion(tagA: TaggedVersion, tagB: TaggedVersion): number {
   const a = tagA.version;
   const b = tagB.version;
 
@@ -167,12 +103,7 @@ export function sortTagsByRecentVersion(tagA, tagB) {
   return sortDescending(tagA.name, tagB.name);
 }
 
-/**
- * @export
- * @param {Array<String>} versions 
- * @returns {VersionMap}
- */
-export function pluckTagsAndReleases(versions) {
+export function pluckTagsAndReleases(versions: Array<string>): VersionMap {
   const releases = [];
   const taggedVersions = [];
 
@@ -180,7 +111,7 @@ export function pluckTagsAndReleases(versions) {
   const parsedVersions = versions.map(parseVersion);
 
   // determine releases and tags
-  parsedVersions.forEach(versionInfo => {
+  parsedVersions.forEach((versionInfo: VersionInfo) => {
     if (!versionInfo.isPrerelease) {
       releases.push(versionInfo.version);
       return;
@@ -199,12 +130,7 @@ export function pluckTagsAndReleases(versions) {
   };
 }
 
-/**
- * @export
- * @param {Array<any>} list 
- * @returns {Array<any>}
- */
-export function reduceTagsByUniqueNames() {
+export function reduceTagsByUniqueNames(): Array<any> {
   return this.reduce(
     function (unique, current, currentIndex, original) {
       if (unique.findIndex(x => x.name === current.name) === -1) {
@@ -217,10 +143,7 @@ export function reduceTagsByUniqueNames() {
   );
 }
 
-/**
- * @returns {Array<TaggedVersion>}
- */
-export function removeAmbiguousTagNames() {
+export function removeAmbiguousTagNames(): Array<TaggedVersion> {
   return this.reduce(
     function (results, current, currentIndex, original) {
       let { name, version } = current;
@@ -259,13 +182,7 @@ export function filterTagsByName(taggedVersions, tagNamesToMatch) {
   });
 }
 
-
-/**
- * @export
- * @param {Array<String>} versions 
- * @returns {VersionMap}
- */
-export function buildMapFromVersionList(versions, requestedVersion) {
+export function buildMapFromVersionList(versions: Array<string>, requestedVersion: string): VersionMap {
   // filter out any non semver versions
   const semverList = pluckSemverVersions(versions);
 
@@ -278,13 +195,7 @@ export function buildMapFromVersionList(versions, requestedVersion) {
   return versionMap;
 }
 
-/**
- * @export
- * @param {Array<String>} versions 
- * @param {String} requestedVersion 
- * @returns {String}
- */
-export function deduceMaxSatisfyingFromSemverList(semverList, requestedVersion) {
+export function deduceMaxSatisfyingFromSemverList(semverList: Array<string>, requestedVersion: string): string {
   // see which version the requested version satisfies
   let maxSatisfyingVersion = requestedVersion;
   try {
@@ -297,13 +208,7 @@ export function deduceMaxSatisfyingFromSemverList(semverList, requestedVersion) 
   return maxSatisfyingVersion;
 }
 
-/**
- * @export
- * @param {VersionMap} versionMap 
- * @param {String} requestedVersion 
- * @returns {Array<TaggedVersion>}
- */
-export function buildTagsFromVersionMap(versionMap, requestedVersion) {
+export function buildTagsFromVersionMap(versionMap: VersionMap, requestedVersion: string): Array<TaggedVersion> {
   // check if this is a valid range
   const isRequestedVersionValid = semver.validRange(requestedVersion);
   const versionMatchNotFound = !versionMap.maxSatisfyingVersion;
@@ -350,20 +255,21 @@ export function buildTagsFromVersionMap(versionMap, requestedVersion) {
   ];
 }
 
-const versionTagFilterRules = createChainMutator([
-  removeExactVersions,
-  removeOlderVersions,
-  removeTagsWithName,
-  removeAmbiguousTagNames,
-  reduceTagsByUniqueNames
-]);
+// const versionTagFilterRules = createChainMutator([
+//   removeExactVersions,
+//   removeOlderVersions,
+//   removeTagsWithName,
+//   removeAmbiguousTagNames,
+//   reduceTagsByUniqueNames
+// ]);
 
-/**
- * @export
- * @param {Array<TaggedVersion>} taggedVersions
- * @returns {Array<TaggedVersion>}
- */
-export function applyTagFilterRules(taggedVersions, requestedVersion, satisifiesVersion, latestVersion, versionMatchNotFound) {
+
+export function applyTagFilterRules(
+  taggedVersions: Array<TaggedVersion>,
+  requestedVersion: string,
+  satisifiesVersion: string,
+  latestVersion: string,
+  versionMatchNotFound: boolean): Array<TaggedVersion> {
   let filterVersions = taggedVersions.slice()
 
   if (semver.validRange(requestedVersion)) {

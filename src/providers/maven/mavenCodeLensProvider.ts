@@ -1,12 +1,13 @@
-import * as CommandFactory from 'commands/factory';
-import appSettings from 'common/appSettings';
-import appContrib from 'common/appContrib';
-import { AbstractCodeLensProvider } from 'providers/abstract/abstractCodeLensProvider';
-import { generateCodeLenses } from 'providers/shared/codeLensGeneration';
-import { resolvePackageLensData } from 'providers/shared/dependencyParser';
+import * as CommandFactory from '../../commands/factory';
+import appSettings from '../../appSettings';
+import appContrib from '../../appContrib';
+import { AbstractCodeLensProvider } from '../abstract/abstractCodeLensProvider';
+import { generateCodeLenses } from '../shared/codeLensGeneration';
+import { resolvePackageLensData } from '../shared/dependencyParser';
 import { extractMavenLensDataFromText } from './mavenPackageParser';
 import { resolveMavenPackage } from './mavenPackageResolver';
 import { loadMavenRepositories } from './mavenAPI';
+import { IPackageCodeLens } from '../shared/definitions';
 
 export class MavenCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -38,7 +39,7 @@ export class MavenCodeLensProvider extends AbstractCodeLensProvider {
     });
   }
 
-  evaluateCodeLens(codeLens) {
+  evaluateCodeLens(codeLens: IPackageCodeLens) {
     // check if this package was found
     if (codeLens.packageNotFound())
       return CommandFactory.createPackageNotFoundCommand(codeLens);
@@ -49,7 +50,7 @@ export class MavenCodeLensProvider extends AbstractCodeLensProvider {
 
     // check if this install a tagged version
     if (codeLens.isInvalidVersion())
-      return CommandFactory.createInvalidCommand(codeLens);
+      return CommandFactory.createInvalidVersionCommand(codeLens);
 
     // check if this entered versions matches a registry versions
     if (codeLens.versionMatchNotFound())

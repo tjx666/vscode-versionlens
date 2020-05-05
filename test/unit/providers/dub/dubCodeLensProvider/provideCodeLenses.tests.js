@@ -5,7 +5,7 @@
 import { TestFixtureMap } from 'test/unit/utils';
 import { DubCodeLensProvider } from 'providers/dub/dubCodeLensProvider';
 import * as DubAPIModule from 'providers/dub/dubAPI';
-import appSettings from 'common/appSettings.js';
+import appSettings from '/appSettings';
 
 const assert = require('assert');
 const vscode = require('vscode');

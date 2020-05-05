@@ -2,28 +2,30 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as CommandFactory from 'commands/factory';
-import appContrib from 'common/appContrib';
-import appSettings from 'common/appSettings';
-import { formatWithExistingLeading } from 'common/utils';
-import { resolvePackageLensData } from 'providers/shared/dependencyParser';
-import { generateCodeLenses } from 'providers/shared/codeLensGeneration';
-import { extractPackageLensDataFromText } from 'providers/shared/jsonPackageParser'
-import {
-  renderMissingDecoration,
-  renderInstalledDecoration,
-  renderOutdatedDecoration
-} from 'editor/decorations';
-import { AbstractCodeLensProvider } from 'providers/abstract/abstractCodeLensProvider';
+import * as CommandFactory from '../../commands/factory';
+import appContrib from '../../appContrib';
+import appSettings from '../../appSettings';
+import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from '../../editor/decorations';
+import { formatWithExistingLeading } from '../../common/utils';
+import { IPackageCodeLens } from '../shared/definitions';
+import { logErrorToConsole as logPackageError } from '../shared/utils';
+import { resolvePackageLensData } from '../shared/dependencyParser';
+import { generateCodeLenses } from '../shared/codeLensGeneration';
+import { extractPackageLensDataFromText } from '../shared/jsonPackageParser'
+import { AbstractCodeLensProvider } from '../abstract/abstractCodeLensProvider';
 import { dubGetPackageLatest, readDubSelections } from './dubAPI';
+import * as PackageFactory from '../shared/packageFactory';
 
 const path = require('path');
 
 export class DubCodeLensProvider extends AbstractCodeLensProvider {
 
+  _outdatedCache: any;
+  _documentPath: '';
+
   constructor() {
     super();
-    this._outdatedCache = [];
+    this._outdatedCache = {};
     this._documentPath = '';
   }
 
@@ -62,7 +64,7 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
 
   }
 
-  evaluateCodeLens(codeLens) {
+  evaluateCodeLens(codeLens: IPackageCodeLens) {
     if (codeLens.command && codeLens.command.command.includes('updateDependenciesCommand'))
       return codeLens;
 
@@ -91,15 +93,17 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
         );
       })
       .catch(response => {
-        if (response.status == 404)
-          return CommandFactory.createPackageNotFoundCommand(codeLens);
+        if (response.status == 404) return CommandFactory.createPackageNotFoundCommand(codeLens);
 
         const respObj = JSON.parse(response.responseText);
-        console.error(respObj.statusMessage);
-        return CommandFactory.createErrorCommand(
-          "An error occurred retrieving this package.",
-          codeLens
+        logPackageError(
+          "Dub",
+          "dubGetPackageLatest",
+          codeLens.package.name,
+          respObj.statusMessage
         );
+
+        return CommandFactory.createPackageUnexpectedError(codeLens.package.name);
       });
   }
 

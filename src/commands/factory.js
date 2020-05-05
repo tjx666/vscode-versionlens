@@ -2,9 +2,9 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { stripSymbolFromVersionRegex, semverLeadingChars } from 'common/utils';
-import { githubRequest } from 'common/githubRequest';
-import appSettings from 'common/appSettings';
+import { stripSymbolFromVersionRegex, semverLeadingChars } from '../common/utils';
+import { githubRequest } from '../common/githubRequest';
+import appSettings from '../appSettings';
 
 const path = require('path');
 const fs = require('fs');
@@ -21,7 +21,7 @@ export function createVersionCommand(localVersion, serverVersion, codeLens) {
   const isServerValidRange = semver.validRange(serverVersion);
 
   if (!isLocalValid && !isLocalValidRange && localVersion !== 'latest')
-    return createInvalidCommand(codeLens);
+    return createInvalidVersionCommand(codeLens);
 
   if (!isServerValid && !isServerValidRange && serverVersion !== 'latest')
     return createErrorCommand("Invalid semver server version received, " + serverVersion, codeLens);
@@ -152,8 +152,7 @@ export function createTaggedVersionCommand(codeLens) {
 
 export function createFixedVersionCommand(codeLens) {
   const version = codeLens.package.meta.tag.version;
-  if (!version)
-    return createInvalidCommand(codeLens);
+  if (!version) return createInvalidVersionCommand(codeLens);
 
   return createTagCommand(`Fixed to ${version}`, codeLens);
 }
@@ -170,13 +169,21 @@ export function createMatchesPrereleaseVersionCommand(codeLens) {
   return createTagCommand(`Prerelease ${codeLens.package.version}`, codeLens);
 }
 
-export function createInvalidCommand(codeLens) {
+export function createInvalidVersionCommand(codeLens) {
   return createTagCommand(`Invalid version entered`, codeLens);
 }
 
 export function createPackageNotFoundCommand(codeLens) {
   return createErrorCommand(
     `${codeLens.package.name} could not be found`,
+    codeLens
+  );
+}
+
+export function createPackageUnexpectedError(codeLens) {
+  // An error occurred retrieving this package.
+  return createErrorCommand(
+    `Unexpected error. See dev tools console`,
     codeLens
   );
 }
