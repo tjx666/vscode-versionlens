@@ -29,6 +29,10 @@ export function extractPackageLensDataFromNodes(topLevelNodes, filterPropertyNam
 function collectDependencyNodes(nodes, collector = []) {
   nodes.forEach(
     function (pair) {
+      if (!pair.value) {
+        // node may be in the form "no_version_dep:", which we ignore
+        return;
+      }
       if (typeof pair.value.value === 'string') {
         const packageLens = createPackageLensFromProperty(pair);
         collector.push(packageLens);
