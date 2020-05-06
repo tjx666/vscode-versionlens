@@ -17,7 +17,7 @@ import { extractPackageLensDataFromText } from '../shared/jsonPackageParser'
 import { IPackageCodeLens } from '../shared/definitions';
 import { generateCodeLenses } from '../shared/codeLensGeneration';
 import { resolvePackageLensData } from '../shared/dependencyParser';
-import { npmGetOutdated, npmPackageDirExists } from './npmClient.js';
+import { npmGetOutdated, npmPackageDirExists } from './npmClientApiCached.js';
 import { resolveNpmPackage } from './npmPackageResolver';
 
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {

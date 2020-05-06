@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 export * from './common/typeAssertion.tests.js';
-export * from './common/caching/expiryCacheMap.tests.js';
+export * from './common/expiryCacheMap.tests.js';
 export * from './common/githubRequest.tests.js';
 
 export * from './commands/internal/updateDependencyCommand.tests.js';

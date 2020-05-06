@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { ExpiryCacheMap } from "../../common/caching/expiryCacheMap";
+import { ExpiryCacheMap } from "../../common/expiryCacheMap";
 
 class PubRequest {
 
@@ -23,9 +23,8 @@ class PubRequest {
       return this.request("GET", packageName);
     } catch (error) {
       // handles any 404 errors during a request for the latest release
-      if (error.status === 404) {
-        return this.cache.set(url, null);
-      }
+      if (error.status === 404) return this.cache.set(url, null);
+      
       // check if the request was not found and report back
       error.resourceNotFound = error.status =
         404 && error.data.message.includes("Not Found");
@@ -44,7 +43,7 @@ class PubRequest {
     const url = this.generatePubUrl(packageName);
     const cacheKey = method + "_" + url;
 
-    if (this.cache.expired(url) === false) {
+    if (this.cache.hasExpired(url) === false) {
       return Promise.resolve(this.cache.get(cacheKey));
     }
     const requestLight = require("request-light");

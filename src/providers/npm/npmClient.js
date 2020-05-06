@@ -159,7 +159,7 @@ export function parseNpmArguments(packagePath, packageName, packageVersion) {
         npaParsed.aliasedName = resolveName;
         npaParsed.aliasedVersion = resolveVersion;
       }
-
+      
       resolve(npaParsed);
     } catch (err) {
       reject(err);

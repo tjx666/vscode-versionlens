@@ -7,7 +7,7 @@ import { logErrorToConsole } from '../shared/utils';
 import * as PackageFactory from '../shared/packageFactory';
 import { fileDependencyRegex, gitHubDependencyRegex, formatWithExistingLeading } from '../../common/utils';
 import { filterTagsByName, buildTagsFromVersionMap, resolveVersionAgainstTags } from '../shared/versionUtils';
-import { npmViewVersion, npmViewDistTags, parseNpmArguments } from './npmClient.js'
+import { npmViewVersion, npmViewDistTags, parseNpmArguments } from './npmClientApiCached.js'
 
 const semver = require('semver');
 
@@ -98,7 +98,6 @@ export function parseNpmRegistryVersion(packagePath, name, requestedVersion, app
         appContrib,
         customGenerateVersion
       );
-
     })
 }
 

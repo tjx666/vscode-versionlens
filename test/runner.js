@@ -14,7 +14,7 @@ const runner = new Mocha({
   ui: 'esm',
   reporter: 'spec',
   useColors: true,
-  timeout: 4000,
+  timeout: 60000,
 });
 
 // set up the global variables

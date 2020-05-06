@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { ExpiryCacheMap } from './caching/expiryCacheMap';
+import { ExpiryCacheMap } from './expiryCacheMap';
 import appContrib from '../appContrib';
 
 class GithubRequest {
@@ -125,7 +125,7 @@ class GithubRequest {
     const url = generateGithubUrl(userRepo, category, queryParams);
     const cacheKey = method + '_' + url;
 
-    if (this.cache.expired(url) === false)
+    if (this.cache.hasExpired(url) === false)
       return Promise.resolve(this.cache.get(cacheKey));
 
     return require('request-light').xhr({ url, type: method, headers: this.headers })

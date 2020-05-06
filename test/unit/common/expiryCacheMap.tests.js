@@ -2,34 +2,40 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { ExpiryCacheMap } from 'common/caching/expiryCacheMap';
+import { ExpiryCacheMap } from 'common/expiryCacheMap';
 
 const assert = require('assert');
 
+let testCacheMap
+
 export const ExpiryCacheMapTests = {
 
-  "expired(key)": {
+  beforeEach: () => {
+    // setup the client cache
+    testCacheMap = new ExpiryCacheMap(60000)
+  },
+
+  "hasExpired(key)": {
 
     "returns true when no key exists": () => {
       const testKey = 'missing';
-      const testCacheMap = new ExpiryCacheMap(60000);
-      assert.ok(testCacheMap.expired(testKey), 'ExpiryCacheMap.expired(key): A missing key should be expired');
+      assert.ok(testCacheMap.hasExpired(testKey), 'ExpiryCacheMap.hasExpired(key): A missing key should be expired');
     },
 
     "returns false when the a cache entry is still within the cache duration": () => {
       const testKey = 'key1';
-      const testCacheMap = new ExpiryCacheMap(60000);
       testCacheMap.set(testKey, {});
-      const actual = testCacheMap.expired(testKey);
-      assert.ok(actual === false, 'ExpiryCacheMap.expired(key): A cache entry within the cache duration should NOT be expired');
+      const actual = testCacheMap.hasExpired(testKey);
+      assert.ok(actual === false, 'ExpiryCacheMap.hasExpired(key): A cache entry within the cache duration should NOT be expired');
     },
 
     "returns true when the cache entry is beyond the cache duration": () => {
       const testKey = 'key1';
-      const testCacheMap = new ExpiryCacheMap(-1);
+
+      testCacheMap = new ExpiryCacheMap(-1);
       testCacheMap.set(testKey, {});
-      const actual = testCacheMap.expired(testKey);
-      assert.ok(actual, 'ExpiryCacheMap.expired(key): A cache entry beyond the cache duration should be expired');
+      const actual = testCacheMap.hasExpired(testKey);
+      assert.ok(actual, 'ExpiryCacheMap.hasExpired(key): A cache entry beyond the cache duration should be expired');
     }
 
   },
@@ -38,7 +44,6 @@ export const ExpiryCacheMapTests = {
 
     "returns undefined if the key does not exist": () => {
       const testKey = 'missing';
-      const testCacheMap = new ExpiryCacheMap(60000);
       const actual = testCacheMap.get(testKey);
       assert.equal(actual, undefined, 'ExpiryCacheMap.get(key): Should return undefined when the key doesnt exist');
     },
@@ -46,7 +51,8 @@ export const ExpiryCacheMapTests = {
     "returns the data by the key": () => {
       const testKey = 'key1';
       const testData = {};
-      const testCacheMap = new ExpiryCacheMap(-1);
+
+      testCacheMap = new ExpiryCacheMap(-1);
       testCacheMap.set(testKey, testData);
       const actual = testCacheMap.get(testKey);
       assert.equal(actual, testData, 'ExpiryCacheMap.set(key, data): Should store the data by the key');
@@ -59,7 +65,6 @@ export const ExpiryCacheMapTests = {
     "stores the data by the key": () => {
       const testKey = 'key1';
       const testData = {};
-      const testCacheMap = new ExpiryCacheMap(60000);
       testCacheMap.set(testKey, testData);
       const actual = testCacheMap.get(testKey);
       assert.equal(actual, testData, 'ExpiryCacheMap.set(key, data): Should store the data by the key');
@@ -68,9 +73,24 @@ export const ExpiryCacheMapTests = {
     "returns the data that was set": () => {
       const testKey = 'key1';
       const testData = {};
-      const testCacheMap = new ExpiryCacheMap(60000);
       const actual = testCacheMap.set(testKey, testData);
       assert.equal(actual, testData, 'ExpiryCacheMap.set(key, data): Should return the data');
+    }
+
+  },
+
+  "expire(key)": {
+
+    "expires items in the cache": () => {
+      const testKey = 'key1';
+      const testData = "initial data";
+      
+      testCacheMap.set(testKey, testData);
+      testCacheMap.expire(testKey);
+      assert.ok( testCacheMap.hasExpired(testKey), true, 'ExpiryCacheMap.expire(key): Should expiry the item');
+
+      testCacheMap.set(testKey, "new data"); 
+      assert.ok( testCacheMap.get(testKey), "new data", 'ExpiryCacheMap.get(key): Should contain new data');
     }
 
   }

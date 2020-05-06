@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { resolveNpmPackage } from 'providers/npm/npmPackageResolver.js';
-import * as npmClientModule from 'providers/npm/npmClient.js';
+import * as NpmClientApiMock from 'providers/npm/npmClient.js';
 import appSettings from '/appSettings';
 
 const assert = require('assert');
@@ -13,9 +13,6 @@ let testContext = {}
 
 export default {
 
-  // reset all require mocks
-  afterAll: () => mock.stopAll,
-
   beforeAll: () => {
     testContext = {}
 
@@ -23,8 +20,11 @@ export default {
     testContext.githubTaggedCommitsMock = ['Commit', 'Release', 'Tag']
 
     // default api mock
-    npmClientModule.npmViewVersion = _ => Promise.resolve(null)
+    NpmClientApiMock.npmViewVersion = _ => Promise.resolve(null)
   },
+
+  // reset all require mocks
+  afterAll: () => mock.stopAll(),
 
   beforeEach: () => {
     testContext.appContribMock = {}
@@ -48,8 +48,8 @@ export default {
     const name = 'bootstrap';
     const version = '1.2.3';
 
-    npmClientModule.npmViewVersion = _ => Promise.resolve('1.2.3')
-    npmClientModule.npmViewDistTags = _ => Promise.resolve([{ name, version: '1.2.3' }])
+    NpmClientApiMock.npmViewVersion = _ => Promise.resolve('1.2.3')
+    NpmClientApiMock.npmViewDistTags = _ => Promise.resolve([{ name, version: '1.2.3' }])
 
     const parsedResults = resolveNpmPackage(packagePath, name, version, testContext.appContribMock);
     Promise.resolve(parsedResults)
@@ -71,8 +71,8 @@ export default {
     const version = '~1.2.3';
 
     // mock the api
-    npmClientModule.npmViewVersion = _ => Promise.resolve('1.2.3')
-    npmClientModule.npmViewDistTags = _ => Promise.resolve([{ name, version: '1.2.3' }])
+    NpmClientApiMock.npmViewVersion = _ => Promise.resolve('1.2.3')
+    NpmClientApiMock.npmViewDistTags = _ => Promise.resolve([{ name, version: '1.2.3' }])
 
     const parsedResults = resolveNpmPackage(packagePath, name, version, testContext.appContribMock);
     Promise.resolve(parsedResults)
@@ -155,11 +155,12 @@ export default {
   'returns the expected object for aliased-module versions': done => {
     const packagePath = '.';
     const name = 'aliased-module';
-    const version = 'npm:typescript@1.2.3';
+    const aliased = "typescript";
+    const version = `npm:${aliased}@1.2.3`;
 
     // mock the api
-    npmClientModule.npmViewVersion = _ => Promise.resolve('1.2.3')
-    npmClientModule.npmViewDistTags = _ => Promise.resolve([{ name, version: '1.2.3' }])
+    NpmClientApiMock.npmViewVersion = _ => Promise.resolve('1.2.3')
+    NpmClientApiMock.npmViewDistTags = _ => Promise.resolve([{ name, version: '1.2.3' }])
 
     const parsedResults = resolveNpmPackage(packagePath, name, version, testContext.appContribMock);
     Promise.resolve(parsedResults)

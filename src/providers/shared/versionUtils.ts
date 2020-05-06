@@ -2,23 +2,13 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  formatTagNameRegex,
-  sortDescending,
-  createChainMutator
-} from '../../common/utils.js';
+import { formatTagNameRegex, sortDescending, createChainMutator } from '../../common/utils.js';
 import { TaggedVersion, VersionInfo, VersionMap } from './definitions.js';
 
 const semver = require('semver');
 
-/**
- * @export
- * @param {Array<TaggedVersion>} tags 
- * @param {String} version 
- * @returns {Array<TaggedVersion>}
- */
-export function removeExactVersions(version) {
-  return this.filter(tag => tag.version !== version);
+export function removeExactVersions(version: string): Array<TaggedVersion> {
+  return this.filter((tag: TaggedVersion) => tag.version !== version);
 }
 
 export function removeTagsWithName(name: string): Array<TaggedVersion> {
