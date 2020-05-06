@@ -15,17 +15,19 @@ const runner = new Mocha({
 });
 
 // set up the global variables
-runner.useColors(true);
+runner.color(true);
 runner.suite.emit('global-mocha-context', runner);
 runner.suite.emit('support-only', runner.options);
 runner.suite.emit('modules', TestModules);
 require('source-map-support').install();
 
-export async function run(testRoot) {
-  return await new Promise(function (resolve, reject) {
+export function run() {
+  return new Promise(function (resolve, reject) {
     runner.run(function (failures) {
-      if (failures) return reject(failures);
-      resolve();
+      if (failures)
+        reject(failures);
+      else
+        resolve(0);
     });
   });
 }
