@@ -1,7 +1,11 @@
+# 0.26.2
+
+- NPM: Fixed issue where "npm view" would crash the plugin (Reported in [#190](https://github.com/vscode-contrib/vscode-versionlens/issues/190))
+
 # 0.26.1
 
 - Dart: Fixed the issue where code lenses were appearing in the wrong locations in the editor
-- NPM: Fixes a "Credentials not used" error when using .npmrc (Reported in  [#185](https://github.com/vscode-contrib/vscode-versionlens/issues/185))
+- NPM: Fixes a "Credentials not used" error when using .npmrc (Reported in [#185](https://github.com/vscode-contrib/vscode-versionlens/issues/185))
 
 # 0.26.0
   - NPM: Added module aliasing support e.g. "<alias>@npm:<name>" (reported in [#174](https://github.com/vscode-contrib/vscode-versionlens/issues/174))
