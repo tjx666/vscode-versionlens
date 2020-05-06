@@ -13,7 +13,7 @@
   "displayName": "Version Lens",
   "icon": "images/logo.png",
   "engines": {
-    "vscode": "^1.23.0"
+    "vscode": "^1.44.0"
   },
   "keywords": [
     "versions",
@@ -33,17 +33,16 @@
   ],
   "main": "./out/extension-bundle.js",
   "scripts": {
-    "teardown": "npm run -s clean && rimraf ./node_modules",
+    "teardown": "npm run -s clean && rimraf ./node_modules && rm ./package-lock.json",
     "vscode:prepublish": "npm run -s compile",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
     "clean": "rimraf ./out",
     "precompile": "npm run -s clean && jshint ./src",
     "precompile:test": "npm run -s precompile",
-    "compile": "tsc -p ./src/bundle.json",
-    "compile:test": "tsc -p ./test/bundle.test.json",
+    "compile": "tsc -p ./src/compiler.json",
+    "compile:test": "tsc -p ./test/compiler.test.json",
     "pretest": "npm run -s compile:test",
-    "test": "node ./node_modules/vscode/bin/test"
+    "test": "node ./out/test/index.js"
   },
   "devDependencies": {
     "@types/mocha": "^7.0.2",
@@ -54,7 +53,9 @@
     "mock-require": "3.0.3",
     "rimraf": "3.0.2",
     "typescript": "3.8.3",
-    "vscode": "1.1.36"
+    "mocha": "7.1.2",
+    "source-map-support": "0.5.19",
+    "vscode-test": "^1.3.0"
   },
   "dependencies": {
     "systemjs": "~0.21.6",
