@@ -14,10 +14,11 @@ if (process.env.VSCODE_LAUNCHER != "1") {
 
   // tell vscode where our compiled test file lives
   runTests({
+    version: "insiders",
     extensionDevelopmentPath: path.resolve(__dirname, '../..'),
     extensionTestsPath: path.resolve(__dirname, '../test/index.js'),
     launchArgs: [
-      '--disable-extensions',
+      __dirname
     ]
   }).catch(error => {
     console.error('Something went wrong!', error);
