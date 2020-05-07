@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { npmDefaultDependencyProperties } from './providers/npm/config';
-import { pubDefaultDependencyProperties } from './providers/pub/config';
+import { pubDefaultDependencyProperties, pubDefaultApiUrl } from './providers/pub/config';
 import { dubDefaultDependencyProperties } from './providers/dub/config';
 import { dotnetCSProjDefaultDependencyProperties, dotnetDefaultNuGetFeeds } from './providers/dotnet/config';
 import { mavenDefaultDependencyProperties } from './providers/maven/config';
@@ -46,6 +46,11 @@ export default new class AppContribution {
   get pubDependencyProperties() {
     const config = workspace.getConfiguration('versionlens');
     return config.get("pub.dependencyProperties", pubDefaultDependencyProperties);
+  }
+
+  get pubApiUrl() {
+    const config = workspace.getConfiguration('versionlens');
+    return config.get("pub.apiUrl", pubDefaultApiUrl);
   }
 
   get dotnetCSProjDependencyProperties() {
