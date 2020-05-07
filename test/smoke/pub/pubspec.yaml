@@ -26,7 +26,9 @@ dependencies:
       url: https://github.com/tekartik/sqflite
       path: sqflite
   cached_network_image: 0.6.0-beta+1
-  http:
+  http: # blank entry with comment
+  glob: # version child property
+    version: 1.2.*
 
 dev_dependencies:
   flutter_test:

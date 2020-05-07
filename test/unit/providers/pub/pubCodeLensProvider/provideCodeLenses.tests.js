@@ -116,7 +116,7 @@ export default {
         );
         assert.equal(
           collection.length,
-          5,
+          7,
           "codeLens should be an array containing 5 items."
         );
 

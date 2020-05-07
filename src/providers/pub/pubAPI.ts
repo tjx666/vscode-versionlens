@@ -21,7 +21,7 @@ export function pubGetPackageInfo(packageName) {
       })
       .catch(err => {
         reject({
-          status: 500,
+          status: !err || !err.status ? 500 : err.status,
           responseText: err,
           packageName
         });

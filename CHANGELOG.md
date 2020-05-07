@@ -1,3 +1,11 @@
+# 0.27.0
+
+- Pub: Added ability to set the pub api url for searching packages using `versionlens.pub.apiUrl` (thanks to https://github.com/hanabi1224)
+- Pub: Now inspects "version" child properties
+- Pub: Fixed crash when package versions were blank (thanks to https://github.com/davidmartos96)
+- Pub: Stopped "no commands" code lenses appearing when the package doesn't exist
+- Dotnet: Prevented invalid analysis on 4 segmented (non-semver) versions eg. 1.2.3.4 (reported in [#119](https://github.com/vscode-contrib/vscode-versionlens/issues/119) and [#169](https://github.com/vscode-contrib/vscode-versionlens/issues/169))
+
 # 0.26.2
 
 - NPM: Fixed issue where "npm view" would crash the plugin (Reported in [#190](https://github.com/vscode-contrib/vscode-versionlens/issues/190))

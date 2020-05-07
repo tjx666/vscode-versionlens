@@ -24,10 +24,12 @@ dependencies:
   gitdep:
     git: git://github.com/someuser/somerepo.git
   dep4: 0.6.0-beta+1
-  depnoversion: 
+  dep5: # depnoversion 
+  dep6: # dep with child object version 
+    version: "1.2.3"
 
 dev_dependencies:
-  dep5: 0.10.3+4
+  dep7: 0.10.3+4
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
 
