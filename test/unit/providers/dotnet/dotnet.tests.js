@@ -5,10 +5,10 @@
 
 // dotnet utils
 import parseVersionSpec from './dotnetUtils/parseVersionSpec.tests.js';
-import convertNugetToNodeRange from './dotnetUtils/convertNugetToNodeRange.tests.js';
+import convertVersionSpecToString from './dotnetUtils/convertVersionSpecToString.tests.js';
 export const DotNetUtils = {
   parseVersionSpec,
-  convertNugetToNodeRange,
+  convertVersionSpecToString,
 }
 
 // nuget client

@@ -2,15 +2,18 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-export function resolvePackageLensData(dependencyNodes, appContrib, customPackageParser = null) {
+export function resolvePackageLensData(packageLenses, appContrib, customPackageResolver = null) {
   const collector = [];
 
-  dependencyNodes.forEach(
+  packageLenses.forEach(
     function (node) {
       let result = null;
-      if (customPackageParser) {
+      if (customPackageResolver) {
         const { name, version } = node.packageInfo;
-        result = customPackageParser(name, version, appContrib);
+        result = customPackageResolver(name, version, appContrib);
+
+        // if the package wasn't resolved then skip
+        if (!result) return;
 
         // ensure the result is a promise
         result = Promise.resolve(result)

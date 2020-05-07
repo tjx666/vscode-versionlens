@@ -7,26 +7,24 @@ import { filterTagsByName, buildTagsFromVersionMap, buildMapFromVersionList } fr
 import * as PackageFactory from '../shared/packageFactory';
 import { logErrorToConsole } from '../shared/utils';
 import { nugetGetPackageVersions } from './nugetClient.js';
-import { convertNugetToNodeRange } from './dotnetUtils.js';
+import { parseVersionSpec, convertVersionSpecToString } from './dotnetUtils.js';
 
 export function resolveDotnetPackage(name, requestedVersion, appContrib) {
-  // convert a nuget range to node semver range
-  const nodeRequestedRange = requestedVersion && convertNugetToNodeRange(requestedVersion)
+  // parse the version
+  const versionSpec = parseVersionSpec(requestedVersion);
+  if (versionSpec && versionSpec.hasFourSegments) return null;
+
+  // convert spec to string
+  const nodeRequestedRange = versionSpec && convertVersionSpecToString(versionSpec)
 
   // get all the versions for the package
   return nugetGetPackageVersions(name)
     .then(versions => {
       // map from version list
-      const versionMap = buildMapFromVersionList(
-        versions,
-        nodeRequestedRange
-      );
+      const versionMap = buildMapFromVersionList(versions, nodeRequestedRange);
 
       // get all the tag entries
-      const extractedTags = buildTagsFromVersionMap(
-        versionMap,
-        nodeRequestedRange
-      );
+      const extractedTags = buildTagsFromVersionMap(versionMap, nodeRequestedRange);
 
       // grab the satisfiesEntry
       const satisfiesEntry = extractedTags[0];
@@ -53,7 +51,7 @@ export function resolveDotnetPackage(name, requestedVersion, appContrib) {
         );
 
       // map the tags to package dependencies
-      return filteredTags.map((tag, index) => {
+      return filteredTags.map(tag => {
         const packageInfo = {
           type: 'nuget',
           tag

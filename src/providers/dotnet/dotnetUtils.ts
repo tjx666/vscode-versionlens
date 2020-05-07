@@ -2,6 +2,17 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { isFourSegmentedVersion } from '../shared/versionUtils'
+
+export type NugetVersionSpec = {
+  version?: string;
+  hasFourSegments?: boolean;
+  isMinInclusive?: boolean;
+  isMaxInclusive?: boolean;
+  minVersionSpec?: NugetVersionSpec;
+  maxVersionSpec?: NugetVersionSpec;
+}
+
 export function expandShortVersion(value) {
   if (!value ||
     value.indexOf('[') !== -1 ||
@@ -32,26 +43,38 @@ export function expandShortVersion(value) {
   return fmtValue;
 }
 
-export function parseVersionSpec(value) {
+export function parseVersionSpec(value): NugetVersionSpec {
   let formattedValue = expandShortVersion(value.trim());
-  if (!formattedValue)
-    return null;
+  if (!formattedValue) return null;
 
   const semver = require('semver');
+
+  // test if the version is in semver format
   const parsedSemver = semver.parse(formattedValue);
   if (parsedSemver) {
     return {
       version: formattedValue,
       isMinInclusive: true,
-      isMaxInclusive: true
+      isMaxInclusive: true,
     };
   }
 
-  const versionSpec = {};
+  try {
+    // test if the version is a semver range format
+    const parsedNodeRange = semver.validRange(formattedValue);
+    if (parsedNodeRange) {
+      return {
+        version: parsedNodeRange,
+        isMinInclusive: true,
+        isMaxInclusive: true,
+      };
+    }
+  } catch { }
 
   // fail if the string is too short
-  if (formattedValue.length < 3)
-    return null;
+  if (formattedValue.length < 3) return null;
+
+  const versionSpec: NugetVersionSpec = {};
 
   // first character must be [ or (
   const first = formattedValue[0];
@@ -59,6 +82,8 @@ export function parseVersionSpec(value) {
     versionSpec.isMinInclusive = true;
   else if (first === '(')
     versionSpec.isMinInclusive = false;
+  else if (isFourSegmentedVersion(formattedValue))
+    return { hasFourSegments: true }
   else
     return null;
 
@@ -89,68 +114,55 @@ export function parseVersionSpec(value) {
   // parse the min version
   if (minVersion) {
     const parsedVersion = parseVersionSpec(minVersion);
-    if (!parsedVersion)
-      return null;
+    if (!parsedVersion) return null;
 
     versionSpec.minVersionSpec = parsedVersion;
+    versionSpec.hasFourSegments = parsedVersion.hasFourSegments;
   }
 
   // parse the max version
   if (maxVersion) {
     const parsedVersion = parseVersionSpec(maxVersion);
-    if (!parsedVersion)
-      return null;
+    if (!parsedVersion) return null;
 
     versionSpec.maxVersionSpec = parsedVersion;
+    versionSpec.hasFourSegments = parsedVersion.hasFourSegments;
   }
 
   return versionSpec;
 }
 
-export function convertNugetToNodeRange(nugetVersion) {
-  let builder = '';
-
-  const nugetVersionSpec = parseVersionSpec(nugetVersion);
-  if (!nugetVersionSpec) {
-
-    // handle basic floating ranges
-    const semver = require('semver');
-    const validNodeRange = semver.validRange(nugetVersion);
-    if (validNodeRange)
-      return validNodeRange;
-
-    return null;
-  }
-
+export function convertVersionSpecToString(versionSpec: NugetVersionSpec) {
   // x.x.x cases
-  if (nugetVersionSpec.version
-    && nugetVersionSpec.isMinInclusive
-    && nugetVersionSpec.isMaxInclusive)
-    return `${nugetVersionSpec.version}`;
+  if (versionSpec.version
+    && versionSpec.isMinInclusive
+    && versionSpec.isMaxInclusive)
+    return versionSpec.version;
 
   // [x.x.x] cases
-  if (nugetVersionSpec.minVersionSpec
-    && nugetVersionSpec.maxVersionSpec
-    && nugetVersionSpec.minVersionSpec.version === nugetVersionSpec.maxVersionSpec.version
-    && nugetVersionSpec.isMinInclusive
-    && nugetVersionSpec.isMaxInclusive)
-    return `${nugetVersionSpec.minVersionSpec.version}`;
+  if (versionSpec.minVersionSpec
+    && versionSpec.maxVersionSpec
+    && versionSpec.minVersionSpec.version === versionSpec.maxVersionSpec.version
+    && versionSpec.isMinInclusive
+    && versionSpec.isMaxInclusive)
+    return versionSpec.minVersionSpec.version;
 
+  let rangeBuilder = '';
 
-  if (nugetVersionSpec.minVersionSpec) {
-    builder += '>';
-    if (nugetVersionSpec.isMinInclusive)
-      builder += '=';
-    builder += nugetVersionSpec.minVersionSpec.version
+  if (versionSpec.minVersionSpec) {
+    rangeBuilder += '>';
+    if (versionSpec.isMinInclusive)
+      rangeBuilder += '=';
+    rangeBuilder += versionSpec.minVersionSpec.version
   }
 
-  if (nugetVersionSpec.maxVersionSpec) {
-    builder += builder.length > 0 ? ' ' : '';
-    builder += '<';
-    if (nugetVersionSpec.isMaxInclusive)
-      builder += '=';
-    builder += nugetVersionSpec.maxVersionSpec.version
+  if (versionSpec.maxVersionSpec) {
+    rangeBuilder += rangeBuilder.length > 0 ? ' ' : '';
+    rangeBuilder += '<';
+    if (versionSpec.isMaxInclusive)
+      rangeBuilder += '=';
+    rangeBuilder += versionSpec.maxVersionSpec.version
   }
 
-  return builder;
+  return rangeBuilder;
 }

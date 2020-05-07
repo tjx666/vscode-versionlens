@@ -54,6 +54,10 @@ export function parseVersion(version: string): VersionInfo {
   };
 }
 
+export function isFourSegmentedVersion(versionToCheck: string): boolean {
+  return /^(\d+\.)(\d+\.)(\d+\.)(\*|\d+)$/g.test(versionToCheck);
+}
+
 export function isFixedVersion(versionToCheck: string): boolean {
   const testRange = new semver.Range(versionToCheck);
   return testRange.set[0][0].operator === "";
