@@ -14,7 +14,6 @@ export const updateDependencyCommandTests = {
   beforeAll: () => {
     // mock require modules
     vscodeMock = {
-      TextEdit: {},
       WorkspaceEdit: class { },
       workspace: {}
     }
@@ -25,50 +24,34 @@ export const updateDependencyCommandTests = {
 
   beforeEach: () => {
     // reset mocks
-    vscodeMock.TextEdit.replace = (source, subst) => { }
     vscodeMock.WorkspaceEdit = class {
-      set(docUrl, changeList) { }
+      replace(docUrl, source, subst) { }
     }
-    vscodeMock.workspace.applyEdit = (docUrl, changeList) => { }
+    vscodeMock.workspace = class {
+      applyEdit(docUrl, changeList) { }
+    }
   },
 
   'replaces given range with version': () => {
     let called = 0
     const codeLensMock = {
+      documentUrl: "expected document url",
       replaceRange: "expected range"
     }
     const expectedVersion = '1.2.3'
+    vscodeMock.workspace.applyEdit = () => Promise.resolve();
 
-    vscodeMock.TextEdit.replace = (actualRange, actualVersion) => {
-      assert.equal(actualRange, codeLensMock.replaceRange, `actual = ${actualRange}`)
-      assert.equal(actualVersion, expectedVersion, `actual = ${actualVersion}`)
-      called++
-    }
-
-    // test
-    InternalCommands.updateDependencyCommand(codeLensMock, expectedVersion)
-
-    // ensure we called the method under test
-    assert.equal(called, 1, `actual = ${called}`)
-  },
-
-  'vscode workspaceEdit sets expected url and change list': () => {
-    let called = 0
-    const codeLensMock = {
-      documentUrl: 'expected url'
-    }
-    const expectedEdit = {}
-    vscodeMock.TextEdit.replace = (actualRange, actualVersion) => expectedEdit
     vscodeMock.WorkspaceEdit = class {
-      set(actualUrl, actualChangeList) {
-        assert.equal(actualUrl, codeLensMock.documentUrl, `actual = ${actualUrl}`)
-        assert.equal(actualChangeList[0], expectedEdit, `actual = ${actualChangeList}`)
+      replace = (actualDocumentUrl, actualRange, actualVersion) => {
+        assert.equal(actualDocumentUrl, codeLensMock.documentUrl, `actual = ${actualDocumentUrl}`)
+        assert.equal(actualRange, codeLensMock.replaceRange, `actual = ${actualRange}`)
+        assert.equal(actualVersion, expectedVersion, `actual = ${actualVersion}`)
         called++
       }
     }
 
     // test
-    InternalCommands.updateDependencyCommand(codeLensMock, '')
+    InternalCommands.updateDependencyCommand(codeLensMock, expectedVersion)
 
     // ensure we called the method under test
     assert.equal(called, 1, `actual = ${called}`)
@@ -80,13 +63,14 @@ export const updateDependencyCommandTests = {
       constructor() {
         this.check = 'edit'
       }
-      set(docUrl, changeList) { }
+      replace(actualUrl, actualRange, actualVersion) { }
     }
 
     vscodeMock.workspace.applyEdit = function (actualEdit) {
       assert.ok(actualEdit instanceof expectedClass, `actual = ${actualEdit}`)
       assert.equal(actualEdit.check, 'edit', `actual = ${actualEdit}`)
       called++
+      return Promise.resolve();
     }
 
     // test

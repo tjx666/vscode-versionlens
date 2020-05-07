@@ -5,6 +5,8 @@ out/test/**
 test/**
 src/**
 grunt/**
+node_modules/**/*.md
+node_modules/**/*.html
 gruntfile.js
 .travis*
 **/*.map

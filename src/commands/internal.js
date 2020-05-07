@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 export function updateDependencyCommand(codeLens, packageVersion) {
-  const { workspace, TextEdit, WorkspaceEdit } = require('vscode');
-  const edits = TextEdit.replace(codeLens.replaceRange, packageVersion);
+  if (codeLens.__replaced) return Promise.resolve();
+  const { workspace, WorkspaceEdit } = require('vscode');
   const edit = new WorkspaceEdit();
-  edit.set(codeLens.documentUrl, [edits]);
-  workspace.applyEdit(edit);
+  edit.replace(codeLens.documentUrl, codeLens.replaceRange, packageVersion);
+  return workspace.applyEdit(edit)
+    .then(done => codeLens.__replaced = true);
 }
 
 export function linkCommand(codeLens) {
