@@ -266,6 +266,11 @@
           ],
           "description": "Defines which properties in pubspec.yaml should be parsed by this extension"
         },
+        "versionlens.pub.apiUrl": {
+          "type": "string",
+          "default": "https://pub.dev/",
+          "description": "Defines the pub api to use for package searching."
+        },
         "versionlens.dotnet.dependencyProperties": {
           "type": "array",
           "items": {
