@@ -1,4 +1,5 @@
 export enum PackageErrors {
+  None,
   NotFound,
   NotSupported,
   InvalidVersion,
@@ -35,9 +36,7 @@ export interface IPackageCodeLens {
   satisfiesLatestVersion: () => boolean,
   matchesPrereleaseVersion: () => boolean,
   getTaggedVersion: () => boolean,
-  packageNotFound: () => boolean,
-  packageNotSupported: () => boolean,
-  packageUnexpectedError: () => boolean,
+  hasPackageError: (error: PackageErrors) => boolean,
   versionMatchNotFound: () => boolean,
   getInstallIndicator: () => string,
   setCommand: (string, { }, []) => any,

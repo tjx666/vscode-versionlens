@@ -8,7 +8,7 @@ import appContrib from '../../appContrib';
 import { AbstractCodeLensProvider } from '../abstract/abstractCodeLensProvider';
 import { resolvePackageLensData } from '../shared/dependencyParser';
 import { generateCodeLenses } from '../shared/codeLensGeneration';
-import { IPackageCodeLens } from '../shared/definitions';
+import { IPackageCodeLens, PackageErrors } from '../shared/definitions';
 import { resolveDotnetPackage } from './dotnetPackageResolver';
 import { extractDotnetLensDataFromText } from './dotnetPackageParser'
 
@@ -42,11 +42,11 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
 
   evaluateCodeLens(codeLens: IPackageCodeLens) {
 
-    if (codeLens.packageUnexpectedError()) 
+    if (codeLens.hasPackageError(PackageErrors.Unexpected))
       return CommandFactory.createPackageUnexpectedError(codeLens);
 
     // check if this package was found
-    if (codeLens.packageNotFound())
+    if (codeLens.hasPackageError(PackageErrors.NotFound))
       return CommandFactory.createPackageNotFoundCommand(codeLens);
 
     // check if this is a tagged version

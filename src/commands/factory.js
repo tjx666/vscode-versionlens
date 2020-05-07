@@ -174,10 +174,7 @@ export function createInvalidVersionCommand(codeLens) {
 }
 
 export function createPackageNotFoundCommand(codeLens) {
-  return createErrorCommand(
-    `${codeLens.package.name} could not be found`,
-    codeLens
-  );
+  return createErrorCommand(`${codeLens.package.name} could not be found`, codeLens);
 }
 
 export function createPackageUnexpectedError(codeLens) {

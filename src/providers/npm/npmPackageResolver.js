@@ -15,8 +15,7 @@ export function resolveNpmPackage(packagePath, name, requestedVersion, appContri
   return parseNpmArguments(packagePath, name, requestedVersion)
     .then(npmVersionInfo => {
       // check if we have a directory
-      if (npmVersionInfo.type === 'directory')
-        return parseFileVersion(name, requestedVersion);
+      if (npmVersionInfo.type === 'directory') return parseFileVersion(name, requestedVersion);
 
       // check if we have a github version
       if (npmVersionInfo.type === 'git' && (npmVersionInfo.hosted && npmVersionInfo.hosted.type === 'github')) {
@@ -127,8 +126,7 @@ export function parseFileVersion(name, version) {
 
 export function parseGithubVersion(name, version, githubTaggedVersions, customGenerateVersion) {
   const gitHubRegExpResult = gitHubDependencyRegex.exec(version.replace('github:', ''));
-  if (!gitHubRegExpResult)
-    return;
+  if (!gitHubRegExpResult) return;
 
   const proto = "https";
   const user = gitHubRegExpResult[1];
@@ -193,20 +191,20 @@ export function customNpmAliasedGenerateVersion(packageInfo, newVersion) {
 
 export function parseNpmDistTags(packagePath, name, requestedVersion, maxSatisfyingVersion, appContrib, customGenerateVersion = null) {
 
-  return npmViewDistTags(packagePath, name + "@" + requestedVersion)
-    .then(distTags => {
-      const latestEntry = distTags[0];
-
-      // map the versions
-      const versionMap = {
-        releases: [latestEntry.version],
-        taggedVersions: distTags,
-        maxSatisfyingVersion
+  return npmViewDistTags(packagePath, name)
+    .then(taggedVersions => {
+      // is the requestedVersion a latest tag ?
+      if (requestedVersion !== 'latest') {
+        requestedVersion = resolveVersionAgainstTags(taggedVersions, requestedVersion, requestedVersion);
       }
 
-      // is the requestedVersion a dist tag ?
-      if (requestedVersion !== 'latest') {
-        requestedVersion = resolveVersionAgainstTags(distTags, requestedVersion, requestedVersion);
+      const latestEntry = taggedVersions[0];
+
+      // create a version map
+      const versionMap = {
+        releases: [latestEntry.version],
+        taggedVersions,
+        maxSatisfyingVersion
       }
 
       // build tags
@@ -237,21 +235,20 @@ export function parseNpmDistTags(packagePath, name, requestedVersion, maxSatisfy
         );
 
       // map the tags to packages
-      return filteredTags
-        .map((tag, index) => {
-          // generate the package data for each tag
-          const meta = {
-            type: 'npm',
-            tag
-          };
+      return filteredTags.map((tag, index) => {
+        // generate the package data for each tag
+        const meta = {
+          type: 'npm',
+          tag
+        };
 
-          return PackageFactory.createPackage(
-            name,
-            requestedVersion,
-            meta,
-            customGenerateVersion
-          );
-        });
+        return PackageFactory.createPackage(
+          name,
+          requestedVersion,
+          meta,
+          customGenerateVersion
+        );
+      });
     });
 
 }

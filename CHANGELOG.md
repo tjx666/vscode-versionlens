@@ -4,6 +4,7 @@
 - Pub: Now inspects "version" child properties
 - Pub: Fixed crash when package versions were blank (thanks to https://github.com/davidmartos96)
 - Pub: Stopped "no commands" code lenses appearing when the package doesn't exist
+- NPM: fixed missing latest codelenses when the version was valid but didn't exist in registry
 - Dotnet: Prevented invalid analysis on 4 segmented (non-semver) versions eg. 1.2.3.4 (reported in [#119](https://github.com/vscode-contrib/vscode-versionlens/issues/119) and [#169](https://github.com/vscode-contrib/vscode-versionlens/issues/169))
 
 # 0.26.2

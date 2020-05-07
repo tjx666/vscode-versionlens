@@ -193,10 +193,7 @@ export function deduceMaxSatisfyingFromSemverList(semverList: Array<string>, req
   // see which version the requested version satisfies
   let maxSatisfyingVersion = requestedVersion;
   try {
-    maxSatisfyingVersion = semver.maxSatisfying(
-      semverList,
-      requestedVersion
-    );
+    maxSatisfyingVersion = semver.maxSatisfying(semverList, requestedVersion);
   } catch (err) { }
 
   return maxSatisfyingVersion;

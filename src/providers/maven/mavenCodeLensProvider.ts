@@ -7,7 +7,7 @@ import { resolvePackageLensData } from '../shared/dependencyParser';
 import { extractMavenLensDataFromText } from './mavenPackageParser';
 import { resolveMavenPackage } from './mavenPackageResolver';
 import { loadMavenRepositories } from './mavenAPI';
-import { IPackageCodeLens } from '../shared/definitions';
+import { IPackageCodeLens, PackageErrors } from '../shared/definitions';
 
 export class MavenCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -41,7 +41,7 @@ export class MavenCodeLensProvider extends AbstractCodeLensProvider {
 
   evaluateCodeLens(codeLens: IPackageCodeLens) {
     // check if this package was found
-    if (codeLens.packageNotFound())
+    if (codeLens.hasPackageError(PackageErrors.NotFound))
       return CommandFactory.createPackageNotFoundCommand(codeLens);
 
     // check if this is a tagged version

@@ -14,7 +14,7 @@ import {
 } from '../../editor/decorations';
 import { AbstractCodeLensProvider } from '../abstract/abstractCodeLensProvider';
 import { extractPackageLensDataFromText } from '../shared/jsonPackageParser'
-import { IPackageCodeLens } from '../shared/definitions';
+import { IPackageCodeLens, PackageErrors } from '../shared/definitions';
 import { generateCodeLenses } from '../shared/codeLensGeneration';
 import { resolvePackageLensData } from '../shared/dependencyParser';
 import { npmGetOutdated, npmPackageDirExists } from './npmClientApiCached.js';
@@ -80,13 +80,13 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     if (codeLens.isMetaType('file'))
       return CommandFactory.createLinkCommand(codeLens);
 
-    if (codeLens.packageUnexpectedError())
+    if (codeLens.hasPackageError(PackageErrors.Unexpected))
       return CommandFactory.createPackageUnexpectedError(codeLens);
 
-    if (codeLens.packageNotFound())
+    if (codeLens.hasPackageError(PackageErrors.NotFound))
       return CommandFactory.createPackageNotFoundCommand(codeLens);
 
-    if (codeLens.packageNotSupported())
+    if (codeLens.hasPackageError(PackageErrors.NotSupported))
       return CommandFactory.createPackageNotSupportedCommand(codeLens);
 
     // check if this is a tagged version

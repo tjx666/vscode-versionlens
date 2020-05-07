@@ -78,6 +78,10 @@ export class PackageCodeLens extends CodeLens implements IPackageCodeLens {
     return this.package.meta.tag.version;
   }
 
+  hasPackageError(error: PackageErrors) {
+    return this.package.meta.error == error;
+  }
+
   packageNotFound() {
     return this.package.meta.error == PackageErrors.NotFound;
   }
