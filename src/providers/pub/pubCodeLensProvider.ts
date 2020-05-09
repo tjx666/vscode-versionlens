@@ -10,7 +10,6 @@ import { IPackageCodeLens } from '../shared/definitions';
 import { logErrorToConsole } from "../shared/utils";
 import { resolvePackageLensData } from '../shared/dependencyParser';
 import { generateCodeLenses } from '../shared/codeLensGeneration';
-import * as PackageFactory from '../shared/packageFactory';
 import { extractPackageLensDataFromText } from "./pubPackageParser";
 import { pubGetPackageInfo } from "./pubAPI";
 import { resolvePubPackage } from "./pubPackageResolver";

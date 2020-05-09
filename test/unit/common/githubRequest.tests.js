@@ -17,16 +17,6 @@ export const GithubRequestTests = {
 
   beforeAll: () => {
     testContext = {}
-
-    testContext.githubAccessTokenMock = null
-
-    Reflect.defineProperty(
-      appContribMock,
-      "githubAccessToken", {
-        get: () => testContext.githubAccessTokenMock
-      }
-    )
-
     // mock require modules
     requestLightMock = {}
     mock('request-light', requestLightMock)
@@ -35,8 +25,6 @@ export const GithubRequestTests = {
   afterAll: () => mock.stopAll(),
 
   beforeEach: () => {
-    testContext.githubAccessTokenMock = null
-
     requestLightMock.xhr = _ => { throw new Error("Not implemented") }
   },
 
@@ -55,42 +43,6 @@ export const GithubRequestTests = {
       };
 
       githubRequest.httpGet('testRepo', 'testCategory')
-        .catch(err => done(err));
-    },
-
-    "generates the expected url with access token": done => {
-      testContext.githubAccessTokenMock = 123;
-
-      requestLightMock.xhr = options => {
-        assert.equal(options.url, 'https://api.github.com/repos/testRepo/testCategory?access_token=123', "Expected httpRequest.xhr(options.url) but failed.");
-        assert.equal(options.type, 'GET');
-        assert.equal(options.headers['user-agent'], 'vscode-contrib/vscode-versionlens');
-        done();
-        return Promise.resolve({
-          status: 200,
-          responseText: null
-        })
-      };
-
-      githubRequest.httpGet('testRepo', 'testCategory')
-        .catch(err => done(err));
-    },
-
-    "generates the expected url with access token with query params": done => {
-      testContext.githubAccessTokenMock = 2345;
-
-      requestLightMock.xhr = options => {
-        assert.equal(options.url, 'https://api.github.com/repos/testRepo/testCategory?page=1&per_page=1&access_token=2345', "Expected httpRequest.xhr(options.url) but failed.");
-        assert.equal(options.type, 'GET');
-        assert.equal(options.headers['user-agent'], 'vscode-contrib/vscode-versionlens');
-        done();
-        return Promise.resolve({
-          status: 200,
-          responseText: null
-        })
-      };
-
-      githubRequest.httpGet('testRepo', 'testCategory', { page: 1, per_page: 1 })
         .catch(err => done(err));
     },
 

@@ -5,7 +5,7 @@
 import { TestFixtureMap } from 'test/unit/utils';
 import { applyTagFilterRules } from 'providers/shared/versionUtils';
 
-const fixtureMap = new TestFixtureMap('./fixtures');
+const npmFixtures = new TestFixtureMap('./unit/providers/npm/fixtures');
 
 const assert = require('assert');
 
@@ -17,7 +17,7 @@ export default {
       "lts"
     ];
 
-    const distTags = JSON.parse(fixtureMap.read('npm/npm.json').content).distTags;
+    const distTags = JSON.parse(npmFixtures.read('./npm.json').content).distTags;
     const results = applyTagFilterRules(distTags, '1', '1.4.29', '4.6.1', false);
 
     assert.equal(

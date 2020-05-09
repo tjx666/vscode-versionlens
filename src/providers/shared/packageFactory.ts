@@ -43,6 +43,19 @@ export function createInvalidVersion(name: string, version: string, type: string
   return createPackage(name, version, meta, null);
 }
 
+export function createGitFailed(name: string, message: string, type: string): Package {
+  const meta = {
+    type,
+    error: PackageErrors.GitNotFound,
+    message: `Could not find git repo: ${message}`,
+    tag: {
+      isPrimaryTag: true
+    }
+  };
+
+  return createPackage(name, message, meta, null);
+}
+
 export function createUnexpectedError(name: string, message: string): Package {
   const meta = {
     type: null,

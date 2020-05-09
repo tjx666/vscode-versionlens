@@ -14,7 +14,6 @@ import { generateCodeLenses } from '../shared/codeLensGeneration';
 import { extractPackageLensDataFromText } from '../shared/jsonPackageParser'
 import { AbstractCodeLensProvider } from '../abstract/abstractCodeLensProvider';
 import { dubGetPackageLatest, readDubSelections } from './dubAPI';
-import * as PackageFactory from '../shared/packageFactory';
 
 const path = require('path');
 

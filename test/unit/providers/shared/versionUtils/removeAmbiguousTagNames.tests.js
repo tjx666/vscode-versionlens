@@ -5,7 +5,7 @@
 import { TestFixtureMap } from 'test/unit/utils';
 import { removeAmbiguousTagNames } from 'providers/shared/versionUtils';
 
-const fixtureMap = new TestFixtureMap('./fixtures');
+const npmFixtures = new TestFixtureMap('./unit/providers/npm/fixtures');
 
 const assert = require('assert');
 
@@ -28,7 +28,7 @@ export default {
       "latest"
     ];
 
-    const distTags = JSON.parse(fixtureMap.read('npm/npm.json').content).distTags;
+    const distTags = JSON.parse(npmFixtures.read('./npm.json').content).distTags;
     const results = removeAmbiguousTagNames.call(distTags);
     assert.equal(
       results.length,

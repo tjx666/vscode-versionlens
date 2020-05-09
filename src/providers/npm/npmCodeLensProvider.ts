@@ -17,7 +17,7 @@ import { extractPackageLensDataFromText } from '../shared/jsonPackageParser'
 import { IPackageCodeLens, PackageErrors } from '../shared/definitions';
 import { generateCodeLenses } from '../shared/codeLensGeneration';
 import { resolvePackageLensData } from '../shared/dependencyParser';
-import { npmGetOutdated, npmPackageDirExists } from './npmClientApiCached.js';
+import { npmGetOutdated, npmPackageDirExists } from './npmClient.js';
 import { resolveNpmPackage } from './npmPackageResolver';
 
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
@@ -87,7 +87,10 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
       return CommandFactory.createPackageNotFoundCommand(codeLens);
 
     if (codeLens.hasPackageError(PackageErrors.NotSupported))
-      return CommandFactory.createPackageNotSupportedCommand(codeLens);
+      return CommandFactory.createPackageMessageCommand(codeLens);
+
+    if (codeLens.hasPackageError(PackageErrors.GitNotFound))
+      return CommandFactory.createPackageMessageCommand(codeLens);
 
     // check if this is a tagged version
     if (codeLens.isTaggedVersion())

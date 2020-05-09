@@ -185,7 +185,7 @@ export function createPackageUnexpectedError(codeLens) {
   );
 }
 
-export function createPackageNotSupportedCommand(codeLens) {
+export function createPackageMessageCommand(codeLens) {
   return createErrorCommand(
     `${codeLens.package.meta.message}`,
     codeLens

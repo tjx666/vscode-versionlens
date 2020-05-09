@@ -2,11 +2,14 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { TestFixtureMap } from 'test/unit/utils';
 import { resolveJspmPackage, customJspmGenerateVersion } from 'providers/jspm/jspmPackageResolver';
-import * as npmClientModule from 'providers/npm/npmClient.js';
+
+const jspmFixtures = new TestFixtureMap('./unit/providers/jspm/fixtures');
 
 const assert = require('assert');
-
+const mock = require('mock-require');
+let pacoteMock = null
 let testContext = null;
 
 export default {
@@ -14,9 +17,16 @@ export default {
   beforeAll: () => {
     testContext = {}
     testContext.githubTaggedCommitsMock = ['Commit', 'Release', 'Tag'];
+    pacoteMock = {
+      packument: {}
+    }
+    mock('pacote', pacoteMock)
   },
 
   beforeEach: () => {
+    // mock defaults
+    pacoteMock.packument = (npaResult, opts) => { }
+
     testContext.appContribMock = {}
     Reflect.defineProperty(
       testContext.appContribMock,
@@ -24,21 +34,14 @@ export default {
       get: () => testContext.githubTaggedCommitsMock
     }
     )
-
-    // default api mocks
-    npmClientModule.npmViewDistTags = _ => {
-      return Promise.resolve([
-        { name: 'latest', version: '1.2.3' },
-        { name: 'alpha', version: '1.2.5-alpha.1' },
-        { name: 'beta', version: '1.2.5-beta.1' }
-      ]);
-    }
   },
 
   'returns the expected object for npm semver versions': done => {
     const packagePath = '.';
     const name = 'bluebird';
     const version = 'npm:bluebird@3.4.6';
+
+    pacoteMock.packument = (npaResult, opts) => Promise.resolve(jspmFixtures.readJSON('./pacote.json').expectedSemverVersion)
 
     const parsedResults = resolveJspmPackage(packagePath, name, version, testContext.appContribMock);
     Promise.resolve(parsedResults)
@@ -58,11 +61,13 @@ export default {
     const name = 'bootstrap';
     const version = 'github:twbs/bootstrap@4.0.0-alpha.4';
 
+    pacoteMock.packument = (npaResult, opts) => Promise.resolve(jspmFixtures.readJSON('./pacote.json').expectedGithubVersion)
+
     const parsedResults = resolveJspmPackage(packagePath, name, version, testContext.appContribMock);
     Promise.resolve(parsedResults)
       .then(results => {
         results.forEach((result, index) => {
-          assert.equal(result.name, 'twbs/bootstrap', "Expected packageName");
+          assert.equal(result.name, 'bootstrap', "Expected packageName");
           assert.equal(result.version, 'twbs/bootstrap#4.0.0-alpha.4', "Expected packageName");
           assert.equal(result.meta.category, testContext.githubTaggedCommitsMock[index], `Expected meta.category ${result.meta.category} == ${testContext.githubTaggedCommitsMock[index]}`);
           assert.equal(result.meta.type, 'github', "Expected meta.type");

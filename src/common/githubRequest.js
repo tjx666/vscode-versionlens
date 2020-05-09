@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ExpiryCacheMap } from './expiryCacheMap';
-import appContrib from '../appContrib';
 
 class GithubRequest {
 
@@ -117,11 +116,6 @@ class GithubRequest {
   }
 
   request(method, userRepo, category, queryParams) {
-    if (appContrib.githubAccessToken) {
-      if (!queryParams) queryParams = {};
-      queryParams.access_token = appContrib.githubAccessToken;
-    }
-
     const url = generateGithubUrl(userRepo, category, queryParams);
     const cacheKey = method + '_' + url;
 

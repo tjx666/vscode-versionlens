@@ -5,12 +5,13 @@
 import appSettings from '/appSettings';
 import { TestFixtureMap } from 'test/unit/utils.js';
 import { NpmCodeLensProvider } from 'providers/npm/npmCodeLensProvider.js';
-import * as npmClientModule from 'providers/npm/npmClient.js';
 
 const assert = require('assert');
 const vscode = require('vscode');
+const mock = require('mock-require');
+let pacoteMock = null
 
-const fixtureMap = new TestFixtureMap('./fixtures');
+const commonFixtures = new TestFixtureMap('./fixtures');
 
 let testContext = null;
 
@@ -26,31 +27,30 @@ export default {
     );
 
     // default api mocks
-    npmClientModule.npmGetOutdated = _ => Promise.resolve({})
-    npmClientModule.npmViewVersion = _ => Promise.resolve({})
-    npmClientModule.npmViewDistTags = _ => Promise.resolve([])
+    pacoteMock = {
+      packument: {}
+    }
+    mock('pacote', pacoteMock)
 
     // mock app settings
     testContext.showDependencyStatusesMock = false;
     Reflect.defineProperty(
       appSettings,
       "showDependencyStatuses", {
-        get: () => testContext.showDependencyStatusesMock
-      }
+      get: () => testContext.showDependencyStatusesMock
+    }
     )
 
     Reflect.defineProperty(
       appSettings,
       "showVersionLenses", {
-        get: () => true
-      }
+      get: () => true
+    }
     )
-
   },
 
-
   "returns empty array when the document json is invalid": done => {
-    let fixture = fixtureMap.read('package-invalid.json');
+    let fixture = commonFixtures.read('package-invalid.json');
 
     let testDocument = {
       getText: range => fixture.content,
@@ -88,7 +88,7 @@ export default {
   },
 
   "returns empty array when the package has no dependencies": done => {
-    let fixture = fixtureMap.read('package-no-deps.json');
+    let fixture = commonFixtures.read('package-no-deps.json');
 
     let testDocument = {
       getText: range => fixture.content,
@@ -109,7 +109,7 @@ export default {
   },
 
   "returns array of given dependencies to be resolved": done => {
-    let fixture = fixtureMap.read('package-with-deps.json');
+    let fixture = commonFixtures.read('package-with-deps.json');
 
     let testDocument = {
       getText: range => fixture.content,
@@ -121,17 +121,19 @@ export default {
     };
 
     // mock the api
-    npmClientModule.npmViewVersion = (packagePath, viewVersionParam) => {
-      const [, packageName, maxSatisfyingVersion] = /(.*)@(.*)/.exec(viewVersionParam)
-      return Promise.resolve(maxSatisfyingVersion)
-    }
-
-    npmClientModule.npmViewDistTags = (packagePath, packageName) => {
-      return Promise.resolve([
-        { name: 'latest', version: '5.0.0' },
-        { name: 'next', version: '2000.0.0' }
-      ])
-    }
+    pacoteMock.packument = (npaResult, opts) => {
+      return Promise.resolve({
+        "name": npaResult.name,
+        versions: {
+          '1.2.3': {},
+          '5.0.0': {}
+        },
+        'dist-tags': {
+          'latest': '5.0.0',
+          'next':  '2000.0.0'
+        }
+      })
+    };
 
     let codeLenses = testContext.testProvider.provideCodeLenses(testDocument, null);
     Promise.resolve(codeLenses)

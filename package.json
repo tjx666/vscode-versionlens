@@ -33,7 +33,7 @@
   ],
   "main": "./out/extension-bundle.js",
   "scripts": {
-    "teardown": "npm run -s clean && rimraf ./node_modules && rm ./package-lock.json",
+    "teardown": "npm run -s clean && rimraf ./node_modules && rm -f ./package-lock.json",
     "vscode:prepublish": "npm run -s compile",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
     "clean": "rimraf ./out",
@@ -60,6 +60,8 @@
   "dependencies": {
     "systemjs": "~0.21.6",
     "npm": "6.5.0",
+    "libnpmconfig": "1.2.1",
+    "pacote": "10.1.6",
     "npm-package-arg": "8.0.1",
     "minimatch": "3.0.4",
     "opener": "1.5.1",

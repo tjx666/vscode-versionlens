@@ -2,9 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-const semver = require('semver');
 const path = require('path');
-const aliasDependencyRegex = /^(npm):(.*)@(.*)$/;
 
 export function npmPackageDirExists(packageJsonPath, packageName) {
   const fs = require('fs');
@@ -15,98 +13,9 @@ export function npmPackageDirExists(packageJsonPath, packageName) {
   return fs.existsSync(npmFormattedPath);
 }
 
-export function npmViewVersion(packagePath, packageName) {
-  const npm = require('npm');
-
-  return new Promise((resolve, reject) => {
-    npm.load({ prefix: packagePath }, loadError => {
-      if (loadError) {
-        reject(loadError);
-        return;
-      }
-
-      const silent = true;
-      npm.commands.view([packageName, 'version'], silent, (viewError, response) => {
-        if (viewError) {
-          reject(viewError);
-          return;
-        }
-
-        // get the keys from the object returned
-        let keys = Object.keys(response);
-
-        // ensure the version keys are semver sorted
-        keys.sort((a, b) => {
-          if (semver.gt(a, b))
-            return 1;
-          else if (semver.lt(a, b))
-            return -1;
-
-          return 0;
-        });
-
-        // take the last and most recent version key
-        let lastKey = null;
-        if (keys.length > 0)
-          lastKey = keys[keys.length - 1];
-
-        resolve(lastKey);
-      });
-    });
-  });
-}
-
-export function npmViewDistTags(packagePath, packageName) {
-  const npm = require('npm');
-
-  return new Promise((resolve, reject) => {
-    npm.load({ prefix: packagePath }, loadError => {
-      if (loadError) {
-        reject(loadError);
-        return;
-      }
-
-      const silent = true;
-      npm.commands.view([packageName, 'dist-tags'], silent, (viewError, response) => {
-        if (viewError) {
-          reject(viewError);
-          return;
-        }
-
-        // get the keys from the object returned
-        const keys = Object.keys(response);
-        if (!keys.length)
-          return reject({
-            code: 'NPM_VIEW_EMPTY_RESPONSE',
-            message: `NPM view did not return any tags for ${packageName}`
-          })
-
-        // take the first key and return the dist-tags keys
-        const distTags = response[keys[0]]['dist-tags'];
-        const tags = Object.keys(distTags)
-          .map(key => ({
-            name: key,
-            version: distTags[key]
-          }))
-
-        // fixes a case where npm doesn't publish latest as the first dist-tag
-        const latestIndex = tags.findIndex(item => item.name === 'latest');
-        if (latestIndex > 0) {
-          // extract the entry
-          const latestEntry = tags.splice(latestIndex, 1);
-          // re insert the entry at the start
-          tags.splice(0, 0, latestEntry[0]);
-        }
-
-        resolve(tags);
-      });
-    });
-  });
-}
-
 export function npmGetOutdated(packagePath) {
   const npm = require('npm');
-
+  
   return new Promise((resolve, reject) => {
     npm.load({ prefix: packagePath }, loadError => {
       if (loadError) {
@@ -137,29 +46,12 @@ export function parseNpmArguments(packagePath, packageName, packageVersion) {
 
   return new Promise(function (resolve, reject) {
     try {
-      let resolveName = packageName;
-      let resolveVersion = packageVersion;
-
-      // check if the version is an alias
-      const isAliasResult = aliasDependencyRegex.exec(packageVersion);
-      if (isAliasResult) {
-        resolveName = isAliasResult[2];
-        resolveVersion = isAliasResult[3];
-      }
-
-      const npaParsed = npa.resolve(resolveName, resolveVersion, packagePath);
+      const npaParsed = npa.resolve(packageName, packageVersion, packagePath);
       if (!npaParsed) {
         reject({ code: 'EUNSUPPORTEDPROTOCOL' });
         return;
       }
 
-      // store any alias info
-      if (isAliasResult) {
-        npaParsed.isAliased = true;
-        npaParsed.aliasedName = resolveName;
-        npaParsed.aliasedVersion = resolveVersion;
-      }
-      
       resolve(npaParsed);
     } catch (err) {
       reject(err);

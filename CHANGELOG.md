@@ -1,3 +1,8 @@
+# 0.28.0
+
+- Npm: Replaced npm client api with [npm pacote api](https://github.com/npm/pacote) 
+- Npm: Removed legacy githubAccessToken from contributions. Pacote uses [npm/git](https://github.com/npm/git) which prompts for credentials
+
 # 0.27.0
 
 - All: Fixed an issue where repeatedly clicking a code lens would spawn addition numbers in the version field. (reported in [#154](https://github.com/vscode-contrib/vscode-versionlens/issues/154))

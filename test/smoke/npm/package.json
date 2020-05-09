@@ -6,6 +6,7 @@
     "typescript": "^2.3.4",
     "aliased": "npm:typescript@2.3.4",
     "bootstrap": "twbs/bootstrap#v3.3.0",
+    "p5": "processing/p5.js#semver:1.*",
     "test": "file:../../../src",
     "@types/angular": "~1.5",
     "@types/node": "latest",

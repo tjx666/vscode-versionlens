@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { formatWithExistingLeading } from '../../common/utils';
 import * as PackageFactory from '../shared/packageFactory';
-import { parseNpmRegistryVersion, parseGithubVersion } from '../npm/npmPackageResolver';
+import { resolveNpmPackage } from '../npm/npmPackageResolver';
 
 const semver = require('semver');
 
@@ -13,11 +13,7 @@ export function resolveJspmPackage(packagePath, name, version, appContrib) {
   // check for supported package resgitries
   const regExpResult = jspmDependencyRegex.exec(version);
   if (!regExpResult) {
-    return PackageFactory.createPackageNotSupported(
-      name,
-      version,
-      'jspm'
-    );
+    return PackageFactory.createPackageNotSupported(name, version, 'jspm');
   }
 
   const packageManager = regExpResult[1];
@@ -25,15 +21,16 @@ export function resolveJspmPackage(packagePath, name, version, appContrib) {
   const newPkgVersion = regExpResult[3];
 
   if (packageManager === 'github') {
-    return parseGithubVersion(
-      extractedPkgName,
+    return resolveNpmPackage(
+      packagePath,
+      name,
       `${extractedPkgName}#${newPkgVersion}`,
-      appContrib.githubTaggedCommits,
+      appContrib,
       customJspmGenerateVersion
     );
   }
 
-  return parseNpmRegistryVersion(
+  return resolveNpmPackage(
     packagePath,
     extractedPkgName,
     newPkgVersion,

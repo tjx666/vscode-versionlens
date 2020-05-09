@@ -98,11 +98,6 @@ export default new class AppContribution {
     return config.get('github.taggedCommits', ['Release', 'Tag']);
   }
 
-  get githubAccessToken() {
-    const config = workspace.getConfiguration('versionlens');
-    return config.get('github.accessToken', null);
-  }
-
   get missingDependencyColour() {
     const config = workspace.getConfiguration('versionlens');
     return config.get('missingDependencyColour', 'red');

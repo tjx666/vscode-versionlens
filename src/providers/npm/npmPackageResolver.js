@@ -3,112 +3,80 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import appSettings from '../../appSettings';
+import { ExpiryCacheMap } from '../../common/expiryCacheMap';
+import { fileDependencyRegex, formatWithExistingLeading } from '../../common/utils';
+import { filterTagsByName, buildTagsFromVersionMap, resolveVersionAgainstTags } from '../shared/versionUtils';
 import { logErrorToConsole } from '../shared/utils';
 import * as PackageFactory from '../shared/packageFactory';
-import { fileDependencyRegex, gitHubDependencyRegex, formatWithExistingLeading } from '../../common/utils';
-import { filterTagsByName, buildTagsFromVersionMap, resolveVersionAgainstTags } from '../shared/versionUtils';
-import { npmViewVersion, npmViewDistTags, parseNpmArguments } from './npmClientApiCached.js'
+import { PackageSourceTypes } from '../core/models/packageDocument';
+import { fetchPackage } from './pacoteClientApi.js'
+
+const cache = new ExpiryCacheMap();
 
 const semver = require('semver');
 
-export function resolveNpmPackage(packagePath, name, requestedVersion, appContrib) {
-  return parseNpmArguments(packagePath, name, requestedVersion)
-    .then(npmVersionInfo => {
-      // check if we have a directory
-      if (npmVersionInfo.type === 'directory') return parseFileVersion(name, requestedVersion);
+export function resolveNpmPackage(packagePath, name, requestedVersion, appContrib, customGenerateVersion) {
 
-      // check if we have a github version
-      if (npmVersionInfo.type === 'git' && (npmVersionInfo.hosted && npmVersionInfo.hosted.type === 'github')) {
-        return parseGithubVersion(
-          name,
-          npmVersionInfo.hosted.path({ noCommittish: false }),
-          appContrib.githubTaggedCommits,
-          customNpmGenerateVersion
-        );
-      } else if (npmVersionInfo.type === 'git') {
-        // TODO: implement raw git url support
-        return PackageFactory.createPackageNotSupported(
-          name,
-          requestedVersion,
-          'npm'
-        );
-      } else if (npmVersionInfo.isAliased) {
-        return parseNpmRegistryVersion(
-          packagePath,
-          npmVersionInfo.aliasedName,
-          npmVersionInfo.aliasedVersion,
+  const cacheKey = `resolveNpmPackage_${name}@${requestedVersion}_${packagePath}`;
+  if (cache.hasExpired(cacheKey) === false) {
+    return Promise.resolve(cache.get(cacheKey));
+  }
+
+  return fetchPackage(packagePath, name, requestedVersion)
+    .then(pack => {
+
+      if (pack.source === PackageSourceTypes.directory)
+        return createDirectoryPackage(pack);
+      else if (pack.source === PackageSourceTypes.git) {
+        return createGithubPackage(pack, appContrib.githubTaggedCommits, customNpmGenerateVersion);
+      } else if (pack.type === 'alias') {
+        return createNpmRegistryPackage(
+          pack,
           appContrib,
           customNpmAliasedGenerateVersion
         );
       }
 
       // must be a registry version
-      return parseNpmRegistryVersion(
-        packagePath,
-        name,
-        requestedVersion,
-        appContrib
-      );
-
-    })
-    .catch(error => {
-      if (error.code === 'EUNSUPPORTEDPROTOCOL') {
-        return PackageFactory.createPackageNotSupported(
-          name,
-          requestedVersion,
-          'npm'
-        );
-      }
-
-      if (error.code === 'E404') {
-        return PackageFactory.createPackageNotFound(
-          name,
-          requestedVersion,
-          'npm'
-        );
-      }
-
-      if (error.code === 'EINVALIDTAGNAME' || error.message.includes('Invalid comparator:')) {
-        return PackageFactory.createInvalidVersion(
-          name,
-          requestedVersion,
-          'npm'
-        );
-      }
-
-      logErrorToConsole("NPM", "parseNpmArguments", name, error);
-      return PackageFactory.createUnexpectedError(name, error);
-    });
-}
-
-export function parseNpmRegistryVersion(packagePath, name, requestedVersion, appContrib, customGenerateVersion = null) {
-  // get the matched version
-  const viewVersionArg = `${name}@${requestedVersion}`;
-
-  return npmViewVersion(packagePath, viewVersionArg)
-    .then(maxSatisfyingVersion => {
-      if (requestedVersion === 'latest') requestedVersion = maxSatisfyingVersion;
-
-      return parseNpmDistTags(
-        packagePath,
-        name,
-        requestedVersion,
-        maxSatisfyingVersion,
+      return createNpmRegistryPackage(
+        pack,
         appContrib,
         customGenerateVersion
       );
+
     })
+    .then(pack => {
+      return cache.set(cacheKey, pack);
+    })
+    .catch(result => {
+      const { npaResult, reason } = result;
+
+      if (reason.code === 'E404') {
+        return PackageFactory.createPackageNotFound(name, requestedVersion, 'npm');
+      }
+
+      if (reason.code === 'EUNSUPPORTEDPROTOCOL') {
+        return PackageFactory.createPackageNotSupported(name, requestedVersion, 'npm');
+      }
+
+      if (reason.code === 'EINVALIDTAGNAME' || reason.message.includes('Invalid comparator:')) {
+        return PackageFactory.createInvalidVersion(name, requestedVersion, 'npm');
+      }
+
+      if (reason.code === 128 && npaResult.type === 'git') {
+        return PackageFactory.createGitFailed(npaResult.rawSpec, reason.message, 'npm');
+      }
+
+      logErrorToConsole("NPM", "resolveNpmPackage", name, reason);
+      return PackageFactory.createUnexpectedError(name, reason);
+    });
 }
 
-export function parseFileVersion(name, version) {
+export function createDirectoryPackage(pack) {
+  const { name, version } = pack.given;
+
   const fileRegExpResult = fileDependencyRegex.exec(version);
-  if (!fileRegExpResult) {
-    return PackageFactory.createInvalidVersion(
-      name,
-      version,
-      'npm'
-    );
-  }
+  if (!fileRegExpResult) return PackageFactory.createInvalidVersion(name, version, 'npm');
 
   const meta = {
     type: "file",
@@ -121,20 +89,15 @@ export function parseFileVersion(name, version) {
     meta,
     null
   );
-
 }
 
-export function parseGithubVersion(name, version, githubTaggedVersions, customGenerateVersion) {
-  const gitHubRegExpResult = gitHubDependencyRegex.exec(version.replace('github:', ''));
-  if (!gitHubRegExpResult) return;
+export function createGithubPackage(pack, githubTaggedVersions, customGenerateVersion) {
+  const { given: { name }, gitSpec } = pack;
 
-  const proto = "https";
-  const user = gitHubRegExpResult[1];
-  const repo = gitHubRegExpResult[3];
-  const userRepo = `${user}/${repo}`;
-  const commitish = gitHubRegExpResult[4] ? gitHubRegExpResult[4].substring(1) : '';
-  const commitishSlug = commitish ? `/commit/${commitish}` : '';
-  const remoteUrl = `${proto}://github.com/${user}/${repo}${commitishSlug}`;
+  const version = gitSpec.path({ noCommittish: false });
+  const userRepo = `${gitSpec.user}/${gitSpec.project}`;
+  const commitishSlug = gitSpec.committish ? `/commit/${gitSpec.committish}` : '';
+  const remoteUrl = `https://github.com/${userRepo}${commitishSlug}`;
 
   // take a copy of the app config tagged versions
   let taggedVersions = githubTaggedVersions.slice();
@@ -152,20 +115,78 @@ export function parseGithubVersion(name, version, githubTaggedVersions, customGe
       type: "github",
       remoteUrl,
       userRepo,
-      commitish,
+      commitish: gitSpec.committish ? gitSpec.committish : '',
       tag: {
         isPrimaryTag: index === 0
       }
     };
 
-    const parseResult = PackageFactory.createPackage(
+    return PackageFactory.createPackage(
       name,
       version,
       meta,
       customGenerateVersion
     );
+  });
+}
 
-    return parseResult;
+export function createNpmRegistryPackage(pack, appContrib, customGenerateVersion = null) {
+  const maxSatisfyingVersion = pack.versions[pack.versions.length - 1];
+
+  let requestedVersion = pack.given.version === 'latest' ? maxSatisfyingVersion : pack.resolved.version;
+
+  requestedVersion = resolveVersionAgainstTags(pack.tags, requestedVersion, requestedVersion);
+
+  const latestEntry = pack.tags[0];
+
+  // create a version map
+  const versionMap = {
+    releases: [latestEntry.version],
+    taggedVersions: pack.tags,
+    maxSatisfyingVersion
+  }
+
+  // build tags
+  const extractedTags = buildTagsFromVersionMap(versionMap, requestedVersion);
+
+  // grab the satisfiesEntry
+  const satisfiesEntry = extractedTags[0];
+
+  let filteredTags = extractedTags;
+  if (appSettings.showTaggedVersions === false)
+    // only show 'satisfies' and 'latest' entries when showTaggedVersions is false
+    filteredTags = [
+      satisfiesEntry,
+      ...(satisfiesEntry.isLatestVersion ? [] : [extractedTags[1]])
+    ];
+  else if (appContrib.npmDistTagFilter.length > 0)
+    // filter the tags using npm app config filter
+    filteredTags = filterTagsByName(
+      extractedTags,
+      [
+        // ensure we have a 'satisfies' entry
+        'satisfies',
+        // conditionally provide the latest entry
+        ...(satisfiesEntry.isLatestVersion ? [] : ['latest']),
+        // all other user tag name filters
+        ...appContrib.npmDistTagFilter
+      ]
+    );
+
+  // map the tags to packages
+  return filteredTags.map((tag, index) => {
+    // generate the package data for each tag
+    const meta = {
+      type: 'npm',
+      tag
+    };
+
+    return PackageFactory.createPackage(
+      pack.resolved.name,
+      requestedVersion,
+      meta,
+      customGenerateVersion
+    );
   });
 }
 
@@ -187,68 +208,4 @@ export function customNpmAliasedGenerateVersion(packageInfo, newVersion) {
   // preserve the leading symbol from the existing version
   const preservedLeadingVersion = formatWithExistingLeading(packageInfo.version, newVersion)
   return `npm:${packageInfo.name}@${preservedLeadingVersion}`;
-}
-
-export function parseNpmDistTags(packagePath, name, requestedVersion, maxSatisfyingVersion, appContrib, customGenerateVersion = null) {
-
-  return npmViewDistTags(packagePath, name)
-    .then(taggedVersions => {
-      // is the requestedVersion a latest tag ?
-      if (requestedVersion !== 'latest') {
-        requestedVersion = resolveVersionAgainstTags(taggedVersions, requestedVersion, requestedVersion);
-      }
-
-      const latestEntry = taggedVersions[0];
-
-      // create a version map
-      const versionMap = {
-        releases: [latestEntry.version],
-        taggedVersions,
-        maxSatisfyingVersion
-      }
-
-      // build tags
-      const extractedTags = buildTagsFromVersionMap(versionMap, requestedVersion);
-
-      // grab the satisfiesEntry
-      const satisfiesEntry = extractedTags[0];
-
-      let filteredTags = extractedTags;
-      if (appSettings.showTaggedVersions === false)
-        // only show 'satisfies' and 'latest' entries when showTaggedVersions is false
-        filteredTags = [
-          satisfiesEntry,
-          ...(satisfiesEntry.isLatestVersion ? [] : [extractedTags[1]])
-        ];
-      else if (appContrib.npmDistTagFilter.length > 0)
-        // filter the tags using npm app config filter
-        filteredTags = filterTagsByName(
-          extractedTags,
-          [
-            // ensure we have a 'satisfies' entry
-            'satisfies',
-            // conditionally provide the latest entry
-            ...(satisfiesEntry.isLatestVersion ? [] : ['latest']),
-            // all other user tag name filters
-            ...appContrib.npmDistTagFilter
-          ]
-        );
-
-      // map the tags to packages
-      return filteredTags.map((tag, index) => {
-        // generate the package data for each tag
-        const meta = {
-          type: 'npm',
-          tag
-        };
-
-        return PackageFactory.createPackage(
-          name,
-          requestedVersion,
-          meta,
-          customGenerateVersion
-        );
-      });
-    });
-
 }

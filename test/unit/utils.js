@@ -11,12 +11,13 @@ const fs = require('fs');
 //   content: string;
 // }
 
+export const testPath = path.join(__dirname, '../../test');
+
 export class TestFixtureMap {
   cache;
   fixtureRootPath;
 
   constructor(relativeFixtureRootPath) {
-    const testPath = path.join(__dirname, '../../test');
     this.fixtureRootPath = path.join(testPath, relativeFixtureRootPath);
     if (fs.existsSync(this.fixtureRootPath) === false) {
       throw new ReferenceError("Fixture root path not found. " + this.fixtureRootPath);
@@ -41,11 +42,16 @@ export class TestFixtureMap {
         basename: path.basename(fullPath),
         content: fs.readFileSync(fullPath).toString()
       };
-      
+
       this.cache[fixtureRelativePath] = cachedEntry;
     }
 
     return cachedEntry;
+  }
+
+  readJSON(fixtureRelativePath) {
+    const entry = this.read(fixtureRelativePath);
+    return JSON.parse(entry.content);
   }
 
 }

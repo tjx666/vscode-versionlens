@@ -2,6 +2,7 @@ export enum PackageErrors {
   None,
   NotFound,
   NotSupported,
+  GitNotFound,
   InvalidVersion,
   Unexpected,
 };
