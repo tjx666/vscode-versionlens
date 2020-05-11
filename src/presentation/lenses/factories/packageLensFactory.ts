@@ -22,7 +22,7 @@ export function createPackageLens(pack: PackageDocument, replaceVersionFn = null
   })
 }
 
-export function createPackageNotSupported(provider: string, requested: PackageNameVersion, type: string): PackageLens {
+export function createPackageNotSupported(provider: string, requested: PackageNameVersion): PackageLens {
   const error: PackageLens = {
     provider,
     requested,
@@ -32,18 +32,15 @@ export function createPackageNotSupported(provider: string, requested: PackageNa
   return error;
 }
 
-// export function createPackageNotFound(name: string, version: string, type: string): PackageLens {
-//   const meta = {
-//     type,
-//     error: PackageErrors.NotFound,
-//     message: `${name} could not be found`,
-//     tag: {
-//       isPrimaryTag: true
-//     }
-//   };
-
-//   return createPackage(name, version, meta, null);
-// }
+export function createPackageNotFound(provider: string, requested: PackageNameVersion): PackageLens {
+  const error: PackageLens = {
+    provider,
+    requested,
+    error: PackageErrors.NotFound,
+    errorMessage: "Package not found",
+  };
+  return error;
+}
 
 // export function createInvalidVersion(name: string, version: string, type: string): PackageLens {
 //   const meta = {

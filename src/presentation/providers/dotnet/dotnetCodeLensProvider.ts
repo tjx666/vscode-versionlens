@@ -6,7 +6,7 @@ import appSettings from '../../../appSettings';
 import appContrib from '../../../appContrib';
 import { AbstractCodeLensProvider } from '../../lenses/definitions/abstractCodeLensProvider';
 import { resolvePackageLensData } from '../../../providers/shared/dependencyParser';
-import { createCodeLenses } from '../../lenses/factories/codeLensFactory';
+import * as CodeLensFactory from '../../lenses/factories/codeLensFactory';
 import { resolveDotnetPackage } from './dotnetPackageResolver';
 import { extractDotnetLensDataFromText } from 'core/providers/dotnet/dotnetPackageParser'
 
@@ -40,7 +40,7 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
     if (packageLensResolvers.length === 0) return [];
 
     appSettings.inProgress = true;
-    return createCodeLenses(packageLensResolvers, document)
+    return CodeLensFactory.createCodeLenses(packageLensResolvers, document)
       .then(codelenses => {
         appSettings.inProgress = false;
         return codelenses;

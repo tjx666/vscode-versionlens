@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { TestFixtureMap } from 'test/unit/utils';
-import { resolveJspmPackage, customJspmGenerateVersion } from 'providers/jspm/jspmPackageResolver';
+import { resolveJspmPackage, customJspmGenerateVersion } from 'presentation/providers/jspm/jspmPackageResolver';
 
 const jspmFixtures = new TestFixtureMap('./unit/providers/jspm/fixtures');
 

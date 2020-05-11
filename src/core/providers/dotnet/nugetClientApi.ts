@@ -13,7 +13,7 @@ import {
 import { parseVersionSpec } from './dotnetUtils.js';
 import { DotNetVersionSpec } from './models/versionSpec';
 
-export async function fetchPackage(packagePath, packageName, packageVersion): Promise<PackageDocument> {
+export async function fetchPackage(packagePath: string, packageName: string, packageVersion:  string): Promise<PackageDocument> {
   const dotnetSpec = parseVersionSpec(packageVersion);
 
   // const nugetFeeds = 
@@ -36,8 +36,8 @@ function createRemotePackageDocument(packagePath: string, rawName: string, rawVe
         });
       }
 
-      const packu = JSON.parse(response.responseText);
-      if (packu.totalHits === 0) return Promise.reject({ status: 404 });
+      const packageInfo = JSON.parse(response.responseText);
+      if (packageInfo.totalHits === 0) return Promise.reject({ status: 404 });
 
       const versionRange = dotnetSpec.resolvedVersion;
 
@@ -52,7 +52,7 @@ function createRemotePackageDocument(packagePath: string, rawName: string, rawVe
       };
 
       // sanitize to semver only versions
-      const rawVersions = removeFourSegmentVersionsFromArray(packu.data);
+      const rawVersions = removeFourSegmentVersionsFromArray(packageInfo.data);
 
       // seperate versions to releases and prereleases
       const { releases, prereleases } = splitReleasesFromArray(rawVersions)

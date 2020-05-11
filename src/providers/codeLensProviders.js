@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { NpmCodeLensProvider } from '../presentation/providers/npm/npmCodeLensProvider';
 import { JspmCodeLensProvider } from '../presentation/providers/jspm/jspmCodeLensProvider';
-import { DubCodeLensProvider } from './dub/dubCodeLensProvider';
+import { DubCodeLensProvider } from '../presentation/providers/dub/dubCodeLensProvider';
 import { DotNetCodeLensProvider } from '../presentation/providers/dotnet/dotnetCodeLensProvider';
 import { MavenCodeLensProvider } from './maven/mavenCodeLensProvider';
 import { PubCodeLensProvider } from './pub/pubCodeLensProvider';

@@ -49,9 +49,10 @@ export function mapToPnvArray(distTags: { [key: string]: string }): Array<Packag
     .sort();
 }
 
-export function comparePnvLoose(a: PackageNameVersion, b: PackageNameVersion) {
-  const { SemVer } = require('semver');
-  return new SemVer(a.version, true).compare(new SemVer(b.version, true))
+export function extractVersions(versions: Array<PackageNameVersion>): Array<string> {
+  return versions.map(function (pnv: PackageNameVersion) {
+    return pnv.version;
+  });
 }
 
 export function extractTaggedVersions(versions: Array<string>): Array<PackageNameVersion> {

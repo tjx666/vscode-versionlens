@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import appSettings from '../../../appSettings';
 import appContrib from '../../../appContrib';
-import { createCodeLenses } from '../../lenses/factories/codeLensFactory';
+import * as CodeLensFactory from '../../lenses/factories/codeLensFactory';
 import { resolvePackageLensData } from '../../../providers/shared/dependencyParser';
 import { NpmCodeLensProvider } from '../npm/npmCodeLensProvider';
 import { extractJspmLensDataFromText } from './jspmPackageParser';
@@ -29,7 +29,7 @@ export class JspmCodeLensProvider extends NpmCodeLensProvider {
     if (packageLensResolvers.length === 0) return [];
 
     appSettings.inProgress = true;
-    return createCodeLenses(packageLensResolvers, document)
+    return CodeLensFactory.createCodeLenses(packageLensResolvers, document)
       .then(codelenses => {
         return codelenses;
       });

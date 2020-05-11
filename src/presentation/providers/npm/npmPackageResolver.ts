@@ -57,7 +57,11 @@ export function resolveNpmPackage(packagePath: string, name: string, requestedVe
       // }
 
       logErrorToConsole("NPM", "resolveNpmPackage", name, reason);
-      return PackageLensFactory.createUnexpectedError('npm', { name, version: requestedVersion }, reason);
+      return PackageLensFactory.createUnexpectedError(
+        'npm',
+        { name, version: requestedVersion },
+        reason
+      );
     });
 }
 

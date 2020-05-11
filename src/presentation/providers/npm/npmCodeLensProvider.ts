@@ -18,7 +18,7 @@ import { extractPackageLensDataFromText } from 'core/packages/parsers/jsonPackag
 import { npmGetOutdated, npmPackageDirExists } from 'core/providers/npm/npmClient.js';
 
 import { resolvePackageLensData } from 'providers/shared/dependencyParser';
-import { createCodeLenses } from 'presentation/lenses/factories/codeLensFactory';
+import * as CodeLensFactory from '../../lenses/factories/codeLensFactory';
 import { resolveNpmPackage } from './npmPackageResolver';
 
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
@@ -62,7 +62,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     appSettings.inProgress = true;
 
     // create code lenses from package lenses
-    return createCodeLenses(packageLensResolvers, document)
+    return CodeLensFactory.createCodeLenses(packageLensResolvers, document)
       .then(codeLenses => {
         if (appSettings.showDependencyStatuses) {
           return this.updateOutdated()

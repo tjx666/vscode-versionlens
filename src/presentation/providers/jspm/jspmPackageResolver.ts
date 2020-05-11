@@ -13,7 +13,7 @@ export function resolveJspmPackage(packagePath, name, version) {
   // check for supported package resgitries
   const regExpResult = jspmDependencyRegex.exec(version);
   if (!regExpResult) {
-    return PackageLensFactory.createPackageNotSupported(name, version, 'jspm');
+    return PackageLensFactory.createPackageNotSupported('jspm', { name, version });
   }
 
   const packageManager = regExpResult[1];
