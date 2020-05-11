@@ -5,7 +5,7 @@
 import { TestFixtureMap } from 'test/unit/utils';
 import { removeAmbiguousTagNames } from 'providers/shared/versionUtils';
 
-const npmFixtures = new TestFixtureMap('./unit/providers/npm/fixtures');
+const npmFixtures = new TestFixtureMap('./unit/core/npm/fixtures');
 
 const assert = require('assert');
 

@@ -2,17 +2,18 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { PackageLensData } from "../shared/packageLensData";
+import { PackageDependencyLens } from "core/packages/models/PackageDependencyLens";
+
 const yamlParser = require("yaml");
 
-export function extractPackageLensDataFromText(packageYamlText: string, filterPropertyNames: string[]): PackageLensData[] {
+export function extractPackageLensDataFromText(packageYamlText: string, filterPropertyNames: string[]): PackageDependencyLens[] {
   const yamlDoc = yamlParser.parseDocument(packageYamlText);
   if (!yamlDoc || !yamlDoc.contents || yamlDoc.errors.length > 0) return [];
 
   return extractPackageLensDataFromNodes(yamlDoc.contents.items, filterPropertyNames);
 }
 
-export function extractPackageLensDataFromNodes(topLevelNodes, filterPropertyNames: string[]): PackageLensData[] {
+export function extractPackageLensDataFromNodes(topLevelNodes, filterPropertyNames: string[]): PackageDependencyLens[] {
   const collector = [];
 
   topLevelNodes.forEach(
@@ -72,7 +73,7 @@ export function createPackageLensFromMapType(nodes, parentKey, collector) {
 
 }
 
-export function createPackageLensFromPlainType(pair): PackageLensData {
+export function createPackageLensFromPlainType(pair): PackageDependencyLens {
   const lensRange = createRange(pair.key.range[0], pair.key.range[0], null);
   const versionRange = createRange(pair.value.range[0], pair.value.range[1], pair.value.type);
   const packageInfo = {

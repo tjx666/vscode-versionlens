@@ -1,13 +1,14 @@
-import * as CommandFactory from '../../commands/factory';
+import * as CommandFactory from 'presentation/commands/factory';
 import appSettings from '../../appSettings';
 import appContrib from '../../appContrib';
-import { AbstractCodeLensProvider } from '../abstract/abstractCodeLensProvider';
-import { generateCodeLenses } from '../shared/codeLensGeneration';
+import { AbstractCodeLensProvider } from 'presentation/lenses/definitions/abstractCodeLensProvider';
+import { createCodeLenses } from 'presentation/lenses/factories/codeLensFactory';
 import { resolvePackageLensData } from '../shared/dependencyParser';
 import { extractMavenLensDataFromText } from './mavenPackageParser';
 import { resolveMavenPackage } from './mavenPackageResolver';
 import { loadMavenRepositories } from './mavenAPI';
-import { IPackageCodeLens, PackageErrors } from '../shared/definitions';
+import { IVersionCodeLens } from "presentation/lenses/definitions/IVersionCodeLens";
+import { PackageErrors } from 'presentation/lenses/definitions/packageLens';
 
 export class MavenCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -31,7 +32,7 @@ export class MavenCodeLensProvider extends AbstractCodeLensProvider {
       if (packageLensResolvers.length === 0) return [];
 
       appSettings.inProgress = true;
-      return generateCodeLenses(packageLensResolvers, document)
+      return createCodeLenses(packageLensResolvers, document)
         .then(codelenses => {
           appSettings.inProgress = false;
           return codelenses;
@@ -39,7 +40,8 @@ export class MavenCodeLensProvider extends AbstractCodeLensProvider {
     });
   }
 
-  evaluateCodeLens(codeLens: IPackageCodeLens) {
+  evaluateCodeLens(codeLens: IVersionCodeLens) {
+    /*
     // check if this package was found
     if (codeLens.hasPackageError(PackageErrors.NotFound))
       return CommandFactory.createPackageNotFoundCommand(codeLens);
@@ -77,6 +79,7 @@ export class MavenCodeLensProvider extends AbstractCodeLensProvider {
       tagVersion,
       codeLens
     );
+    */
   }
 
 }

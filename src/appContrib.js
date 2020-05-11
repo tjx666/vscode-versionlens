@@ -2,10 +2,10 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { npmDefaultDependencyProperties } from './providers/npm/config';
+import { npmDefaultDependencyProperties } from './core/providers/npm/config';
 import { pubDefaultDependencyProperties, pubDefaultApiUrl } from './providers/pub/config';
 import { dubDefaultDependencyProperties } from './providers/dub/config';
-import { dotnetCSProjDefaultDependencyProperties, dotnetDefaultNuGetFeeds } from './providers/dotnet/config';
+import { dotnetCSProjDefaultDependencyProperties, dotnetDefaultNuGetFeeds } from './core/providers/dotnet/config';
 import { mavenDefaultDependencyProperties } from './providers/maven/config';
 import { composerDefaultDependencyProperties } from './providers/composer/config';
 

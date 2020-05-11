@@ -1,9 +1,9 @@
-import { PackageLensData } from "../shared/packageLensData";
+import { PackageDependencyLens } from "core/packages/models/PackageDependencyLens";
 
 const xmldoc = require('xmldoc');
 const { window } = require('vscode');
 
-export function extractMavenLensDataFromText(document, filterPropertyNames: string[]): PackageLensData[] {
+export function extractMavenLensDataFromText(document, filterPropertyNames: string[]): PackageDependencyLens[] {
   const xmlDoc = new xmldoc.XmlDocument(document.getText());
   if (!xmlDoc) return [];
 

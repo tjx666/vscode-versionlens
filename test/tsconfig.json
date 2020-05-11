@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "system",
+    "outFile": "../out/test/index.js",
+    "lib": [
+      "ES2020"
+    ],
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "/*": [
+        "../src/*"
+      ],
+      "core/*": [
+        "../src/core/*"
+      ],
+      "presentation/*": [
+        "../src/presentation/*"
+      ],
+      "providers/*": [
+        "../src/providers/*"
+      ],
+      "common/*": [
+        "../src/common/*"
+      ],
+      "test/unit/*": [
+        "unit/*"
+      ]
+    }
+  },
+  "files": [
+    "loader.js",
+    "runner.js"
+  ]
+}

@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { clearDecorations } from '../editor/decorations';
+import { clearDecorations } from '../presentation/editor/decorations';
 
 const { workspace } = require('vscode');
 
@@ -43,54 +43,10 @@ export function refreshCodeLens() {
 
 }
 
-export function flatMap(array, lambda) {
-  return [].concat(
-    ...array.map(lambda)
-  );
-}
-
 export function sortDescending(a, b) {
   if (a > b)
     return -1;
   if (a < b)
     return 1;
   return 0;
-}
-
-export function createChainMutator(mutators) {
-  const propertyMap = {
-    state: {
-      value: null,
-      enumerable: false,
-      writable: true
-    },
-    toValue: {
-      value: function () {
-        return this.state;
-      }
-    },
-    set: {
-      value: function (newState) {
-        this.state = newState;
-        return this;
-      }
-    },
-    log: {
-      value: function (...args) {
-        console.log.call(console, ...args, this.state);
-        return this;
-      }
-    },
-  };
-
-  mutators.forEach(fn => {
-    propertyMap[fn.name] = {
-      value: function (...args) {
-        this.state = fn.call(this.state, ...args);
-        return this;
-      }
-    }
-  });
-
-  return Object.create({}, propertyMap);
 }

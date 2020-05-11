@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { formatTagNameRegex, sortDescending, createChainMutator } from '../../common/utils.js';
+import { formatTagNameRegex, sortDescending } from '../../common/utils.js';
 import { TaggedVersion, VersionInfo, VersionMap } from './definitions.js';
 
 const semver = require('semver');
@@ -52,10 +52,6 @@ export function parseVersion(version: string): VersionInfo {
     isPrerelease,
     prereleaseGroup
   };
-}
-
-export function isFourSegmentedVersion(versionToCheck: string): boolean {
-  return /^(\d+\.)(\d+\.)(\d+\.)(\*|\d+)$/g.test(versionToCheck);
 }
 
 export function isFixedVersion(versionToCheck: string): boolean {

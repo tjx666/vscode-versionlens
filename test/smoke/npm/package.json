@@ -3,23 +3,6 @@
   "title": "smoke test",
   "dependencies": {},
   "devDependencies": {
-    "typescript": "^2.3.4",
-    "aliased": "npm:typescript@2.3.4",
-    "bootstrap": "twbs/bootstrap#v3.3.0",
-    "p5": "processing/p5.js#semver:1.*",
-    "test": "file:../../../src",
-    "@types/angular": "~1.5",
-    "@types/node": "latest",
-    "@angular/core": "2.2.1",
-    "webpack": "next",
-    "semver": "5.3.0",
-    "npm": ">=4.5.1",
-    "invalid": "git+https://git@github.com/testuser/test.git",
-    "invalid2": ">=4.5.",
-    "invalid3": "git+ssh://git@some.com/testuser/test.git",
-    "@could-not-be-found/a": "^1.0.0"
-  },
-  "customDependencies": {
-    "@types/hammerjs": "2.0.33"
+    "typescript": "^3.8.3"
   }
 }

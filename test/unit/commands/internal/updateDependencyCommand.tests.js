@@ -2,10 +2,10 @@
  * Copyright (c) Peter Flannery. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import * as InternalCommands from 'commands/internal'
+import * as InternalCommands from './node_modules/commands/internal'
 
 const assert = require('assert')
-const mock = require('mock-require')
+const mock = require('./node_modules/test/unit/presentation/commands/internal/mock-require')
 
 let vscodeMock
 

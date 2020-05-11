@@ -2,10 +2,10 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { NpmCodeLensProvider } from './npm/npmCodeLensProvider';
-import { JspmCodeLensProvider } from './jspm/jspmCodeLensProvider';
+import { NpmCodeLensProvider } from '../presentation/providers/npm/npmCodeLensProvider';
+import { JspmCodeLensProvider } from '../presentation/providers/jspm/jspmCodeLensProvider';
 import { DubCodeLensProvider } from './dub/dubCodeLensProvider';
-import { DotNetCodeLensProvider } from './dotnet/dotnetCodeLensProvider';
+import { DotNetCodeLensProvider } from '../presentation/providers/dotnet/dotnetCodeLensProvider';
 import { MavenCodeLensProvider } from './maven/mavenCodeLensProvider';
 import { PubCodeLensProvider } from './pub/pubCodeLensProvider';
 import { ComposerCodeLensProvider } from './composer/composerCodeLensProvider';

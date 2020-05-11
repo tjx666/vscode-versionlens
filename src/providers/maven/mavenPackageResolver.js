@@ -1,6 +1,6 @@
 import appSettings from '../../appSettings';
 import { logErrorToConsole } from '../shared/utils';
-import * as PackageFactory from '../shared/packageFactory';
+import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
 import { mavenGetPackageVersions } from './mavenAPI';
 import { buildMapFromVersionList, buildTagsFromVersionMap } from './versionUtils'
 
@@ -26,7 +26,7 @@ export function resolveMavenPackage(name, requestedVersion, appContrib) {
       }
 
       if (versionMeta.allVersions.length === 0) {
-        return PackageFactory.createPackageNotFound(
+        return PackageLensFactory.createPackageNotFound(
           name,
           requestedVersion,
           'maven'
@@ -40,7 +40,7 @@ export function resolveMavenPackage(name, requestedVersion, appContrib) {
             tag
           };
 
-          return PackageFactory.createPackage(
+          return PackageLensFactory.createPackage(
             name,
             requestedVersion,
             meta,
@@ -52,7 +52,7 @@ export function resolveMavenPackage(name, requestedVersion, appContrib) {
     .catch(error => {
       // show the 404 to the user; otherwise throw the error
       if (error.status === 404) {
-        return PackageFactory.createPackageNotFound(
+        return PackageLensFactory.createPackageNotFound(
           name,
           requestedVersion,
           'maven'
@@ -60,7 +60,7 @@ export function resolveMavenPackage(name, requestedVersion, appContrib) {
       }
 
       logErrorToConsole("Maven", "mavenGetPackageVersions", name, error);
-      return PackageFactory.createUnexpectedError(name, error);
+      return PackageLensFactory.createUnexpectedError(name, error);
     });
 
 }

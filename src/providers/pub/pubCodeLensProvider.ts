@@ -4,12 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 import appContrib from "../../appContrib";
 import appSettings from "../../appSettings";
-import * as CommandFactory from "../../commands/factory";
-import { AbstractCodeLensProvider } from "../abstract/abstractCodeLensProvider";
-import { IPackageCodeLens } from '../shared/definitions';
+import { AbstractCodeLensProvider } from "presentation/lenses/definitions/abstractCodeLensProvider";
+import { IVersionCodeLens } from "presentation/lenses/definitions/IVersionCodeLens";
+import { createCodeLenses } from 'presentation/lenses/factories/codeLensFactory';
 import { logErrorToConsole } from "../shared/utils";
 import { resolvePackageLensData } from '../shared/dependencyParser';
-import { generateCodeLenses } from '../shared/codeLensGeneration';
 import { extractPackageLensDataFromText } from "./pubPackageParser";
 import { pubGetPackageInfo } from "./pubAPI";
 import { resolvePubPackage } from "./pubPackageResolver";
@@ -33,13 +32,14 @@ export class PubCodeLensProvider extends AbstractCodeLensProvider {
     if (packageLensResolvers.length === 0) return [];
 
     appSettings.inProgress = true;
-    return generateCodeLenses(packageLensResolvers, document).then(codelenses => {
+    return createCodeLenses(packageLensResolvers, document).then(codelenses => {
       appSettings.inProgress = false;
       return codelenses;
     });
   }
 
-  evaluateCodeLens(codeLens: IPackageCodeLens) {
+  evaluateCodeLens(codeLens: IVersionCodeLens) {
+    /*
     if (
       codeLens.command &&
       codeLens.command.command.includes("updateDependenciesCommand")
@@ -65,5 +65,6 @@ export class PubCodeLensProvider extends AbstractCodeLensProvider {
         logErrorToConsole("Pub", "evaluateCodeLens", codeLens.package.name, error);
         return CommandFactory.createPackageUnexpectedError(codeLens.package.name);
       });
+      */
   }
 }

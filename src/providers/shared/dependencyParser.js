@@ -2,36 +2,37 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-export function resolvePackageLensData(packageLenses, appContrib, customPackageResolver = null) {
+export function resolvePackageLensData(packagePath, packageDepsLenses, customPackageResolver = null) {
   const collector = [];
 
-  packageLenses.forEach(
-    function (node) {
-      let result = null;
+  packageDepsLenses.forEach(
+    function (lens) {
+      let packageEntries = null;
+
       if (customPackageResolver) {
-        const { name, version } = node.packageInfo;
-        result = customPackageResolver(name, version, appContrib);
+        const { name, version } = lens.packageInfo;
+        packageEntries = customPackageResolver(packagePath, name, version);
 
         // if the package wasn't resolved then skip
-        if (!result) return;
+        if (!packageEntries) throw new Error("hmmmmmm");
 
-        // ensure the result is a promise
-        result = Promise.resolve(result)
-          .then(function (packageOrPackages) {
-            if (Array.isArray(packageOrPackages) === false)
-              return [{ node, package: packageOrPackages }];
+        // // ensure the result is a promise
+        packageEntries = Promise.resolve(packageEntries)
+          .then(function (reportItem) {
+            if (Array.isArray(reportItem) === false)
+              return [{ node: lens, package: reportItem }];
 
-            return packageOrPackages.map(
+            return reportItem.map(
               pkg => {
-                return { node, package: pkg }
+                return { node: lens, package: pkg }
               }
             );
           });
       }
 
-      if (!result) result = Promise.resolve({ node });
+      if (!packageEntries) packageEntries = Promise.resolve({ node: lens });
 
-      collector.push(result);
+      collector.push(packageEntries);
     }
   );
 

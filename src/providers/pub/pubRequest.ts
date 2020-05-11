@@ -2,7 +2,7 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { ExpiryCacheMap } from "../../common/expiryCacheMap";
+import { ExpiryCacheMap } from "../../core/caching/expiryCacheMap";
 import appContrib from "../../appContrib";
 
 class PubRequest {

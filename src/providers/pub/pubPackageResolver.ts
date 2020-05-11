@@ -2,8 +2,8 @@
  *  Copyright (c) Peter Flannery. All rights reserved.
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as PackageFactory from "../shared/packageFactory";
-import { PackageErrors } from "../shared/definitions";
+import * as PackageLensFactory from "presentation/lenses/factories/packageLensFactory";
+import { PackageErrors } from "presentation/lenses/definitions/packageLens";
 
 const semver = require("semver");
 
@@ -22,5 +22,5 @@ export function resolvePubPackage(name, version, appContrib) {
     }
   };
 
-  return PackageFactory.createPackage(name, version, meta, null);
+  // return PackageLensFactory.createPackage(name, version, meta, null);
 }
