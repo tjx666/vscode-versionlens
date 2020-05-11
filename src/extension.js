@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Peter Flannery. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
 import registerCommands from './presentation/commands/register'
 import subscribeToEditorEvents from './presentation/editor/events'
 import codeLensProviders from './providers/codeLensProviders'

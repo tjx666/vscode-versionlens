@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Peter Flannery. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
 import { customNpmGenerateVersion } from 'core/providers/npm/npmPackageResolver.js';
 import * as npmClientModule from 'core/providers/npm/npmClient.js';
 

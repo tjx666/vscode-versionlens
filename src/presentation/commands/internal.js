@@ -1,9 +1,5 @@
 import { PackageSourceTypes } from 'core/packages/models/packageDocument';
 
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Peter Flannery. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
 export function updateDependencyCommand(codeLens, packageVersion) {
   if (codeLens.__replaced) return Promise.resolve();
   const { workspace, WorkspaceEdit } = require('vscode');

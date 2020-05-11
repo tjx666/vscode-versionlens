@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Peter Flannery. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
 import { deduceMaxSatisfyingFromSemverList } from 'providers/shared/versionUtils';
 
 const assert = require('assert');

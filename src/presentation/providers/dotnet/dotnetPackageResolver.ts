@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Peter Flannery. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
 import * as PackageLensFactory from '../../lenses/factories/packageLensFactory';
 import { logErrorToConsole } from '../../../providers/shared/utils';
 import { fetchPackage } from 'core/providers/dotnet/nugetClientApi.js';

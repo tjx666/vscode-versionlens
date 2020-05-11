@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Peter Flannery. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
 import { npmDefaultDependencyProperties } from './core/providers/npm/config';
 import { pubDefaultDependencyProperties, pubDefaultApiUrl } from './providers/pub/config';
 import { dubDefaultDependencyProperties } from './core/providers/dub/config';

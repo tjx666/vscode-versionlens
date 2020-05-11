@@ -1,11 +1,6 @@
 import { PackageSourceTypes, PackageVersionTypes, PackageDocument } from 'core/packages/models/packageDocument';
 import { extractVersions, splitReleasesFromArray, createVersionTags } from 'core/packages/helpers/versionHelpers';
-import { version } from 'vscode';
 
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Peter Flannery. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
 const fs = require('fs');
 
 const FEED_URL = 'https://code.dlang.org/api/packages';

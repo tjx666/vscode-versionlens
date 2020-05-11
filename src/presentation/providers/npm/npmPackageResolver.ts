@@ -1,8 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Peter Flannery. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 import { formatWithExistingLeading } from '../../../common/utils';
 import { logErrorToConsole } from '../../../providers/shared/utils';
 import { ReplaceVersionFunction } from '../../lenses/models/packageLens';
