@@ -4,7 +4,7 @@ import { DubCodeLensProvider } from '../presentation/providers/dub/dubCodeLensPr
 import { DotNetCodeLensProvider } from '../presentation/providers/dotnet/dotnetCodeLensProvider';
 import { MavenCodeLensProvider } from './maven/mavenCodeLensProvider';
 import { PubCodeLensProvider } from './pub/pubCodeLensProvider';
-import { ComposerCodeLensProvider } from './composer/composerCodeLensProvider';
+import { ComposerCodeLensProvider } from '../presentation/providers/composer/composerCodeLensProvider';
 
 const codeLensProviders = [
   new NpmCodeLensProvider(),

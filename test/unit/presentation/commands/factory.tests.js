@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import * as CommandFactory from 'presentation/commands/factory';
-import { VersionLens } from 'presentation/common/models/VersionLens';
+import { VersionLens } from 'presentation/lenses/models/VersionLens';
 
 const assert = require('assert');
 

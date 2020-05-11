@@ -1,10 +1,9 @@
 import * as ErrorFactory from 'core/errors/factory';
-import { fetchPackage } from 'core/providers/dub/dubClientApi';
+import { fetchPackage } from 'core/providers/composer/composerClientApi';
 import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
-import { ReplaceVersionFunction, PackageLens } from 'presentation/lenses/models/packageLens';
-import { FetchError } from 'core/clients/model/fetch';
+import { PackageLens, ReplaceVersionFunction } from 'presentation/lenses/models/packageLens';
 
-export function resolveDubPackage(
+export function resolveComposerPackage(
   packagePath: string,
   packageName: string,
   packageVersion: string,
@@ -16,27 +15,25 @@ export function resolveDubPackage(
     packageVersion
   };
 
+  // get all the versions for the package
   return fetchPackage(request)
-    .then(pack => {
-      return PackageLensFactory.createPackageLens(pack, null);
-    })
+    .then(pack => PackageLensFactory.createPackageLens(pack, null))
     .catch(error => {
-      const { request, response }: FetchError = error;
+      const { request, response } = error;
 
       const requested = {
-        name: request.packageName,
-        version: request.packageVersion
+        name: packageName,
+        version: packageVersion
       }
 
       // show the 404 to the user; otherwise throw the error
       if (response.status === 404) {
-        return PackageLensFactory.createPackageNotFound('dub', requested);
+        return PackageLensFactory.createPackageNotFound('composer', requested);
       }
 
-      
-      ErrorFactory.createConsoleError('dub', resolveDubPackage.name, requested.name, error);
+      ErrorFactory.createConsoleError('composer', resolveComposerPackage.name, packageName, error);
       return PackageLensFactory.createUnexpectedError(
-        'dub',
+        'composer',
         requested,
         error
       );

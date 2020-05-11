@@ -1,4 +1,4 @@
-import { resolvePackageLensData } from 'providers/shared/dependencyParser';
+import { createPackageLensResolvers } from 'presentation/lenses/factories/packageLensData';
 
 const assert = require('assert');
 
@@ -14,7 +14,7 @@ export default {
     const appContrib = {};
     let funcCalled = false;
 
-    const packageLensResolvers = resolvePackageLensData(
+    const packageLensResolvers = createPackageLensResolvers(
       dependencyNodes, appContrib,
       (testName, testVersion, testConfig) => {
         funcCalled = true;
@@ -43,16 +43,16 @@ export default {
   'returns a collection of nodes wrapped in promises when no customVersionParser is specified': done => {
     const dependencyNodes = [{}, {}, {}];
     const appContrib = {};
-    const packageLensResolvers = resolvePackageLensData(
+    const packageLensResolvers = createPackageLensResolvers(
       dependencyNodes,
       appContrib
     );
 
     Promise.all(packageLensResolvers)
       .then(results => {
-        assert.ok(results[0].node === dependencyNodes[0], 'resolvePackageLensData: node does not match');
-        assert.ok(results[1].node === dependencyNodes[1], 'resolvePackageLensData: node does not match');
-        assert.ok(results[2].node === dependencyNodes[2], 'resolvePackageLensData: node does not match');
+        assert.ok(results[0].node === dependencyNodes[0]);
+        assert.ok(results[1].node === dependencyNodes[1]);
+        assert.ok(results[2].node === dependencyNodes[2]);
         done();
       })
       .catch(err => done(err));

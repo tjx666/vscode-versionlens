@@ -1,7 +1,7 @@
 import { formatWithExistingLeading } from '../../../common/utils';
+import { PackageSourceTypes, PackageVersionStatus } from 'core/packages/models/packageDocument';
 import { IVersionCodeLens } from "../definitions/IVersionCodeLens";
 import { PackageLens, PackageErrors } from './packageLens';
-import { PackageSourceTypes, PackageVersionStatus } from 'core/packages/models/packageDocument';
 
 const { CodeLens } = require('vscode');
 

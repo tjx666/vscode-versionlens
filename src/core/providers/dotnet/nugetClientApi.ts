@@ -1,49 +1,53 @@
-import { PackageDocument, PackageSourceTypes, } from '../../packages/models/packageDocument';
-
+import * as ErrorFactory from 'core/clients/errors/factory';
+import * as PackageDocumentFactory from 'core/packages/factories/packageDocumentFactory';
+import { PackageDocument, PackageSourceTypes, } from 'core/packages/models/packageDocument';
+import { FetchRequest } from 'core/clients/model/fetch';
 import {
   splitReleasesFromArray,
   removeFourSegmentVersionsFromArray,
   createVersionTags
-} from '../../packages/helpers/versionHelpers';
-
+} from 'core/packages/helpers/versionHelpers';
 import { parseVersionSpec } from './dotnetUtils.js';
-import { DotNetVersionSpec } from './models/versionSpec';
+import { DotNetVersionSpec } from './definitions/versionSpec';
 
-export async function fetchPackage(packagePath: string, packageName: string, packageVersion:  string): Promise<PackageDocument> {
-  const dotnetSpec = parseVersionSpec(packageVersion);
+export async function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
+  const dotnetSpec = parseVersionSpec(request.packageVersion);
 
   // const nugetFeeds = 
   // const queryUrl = `${feed}?id=${packageName}&prerelease=${appContrib.dotnetIncludePrerelease}&semVerLevel=2.0.0`;
   // const nugetResult = resolveNuget()
 
-  return createRemotePackageDocument(packagePath, packageName, packageVersion, dotnetSpec);
+  return createRemotePackageDocument(request, dotnetSpec);
 }
 
-function createRemotePackageDocument(packagePath: string, rawName: string, rawVersion: string, dotnetSpec: DotNetVersionSpec): Promise<PackageDocument> {
-  const url = `https://azuresearch-usnc.nuget.org/autocomplete?id=${rawName}&prerelease=true&semVerLevel=2.0.0`;
+function createRemotePackageDocument(request: FetchRequest, dotnetSpec: DotNetVersionSpec): Promise<PackageDocument> {
+  const url = `https://azuresearch-usnc.nuget.org/autocomplete?id=${request.packageName}&prerelease=true&semVerLevel=2.0.0`;
 
   const httpRequest = require('request-light')
   return httpRequest.xhr({ url })
     .then(response => {
       if (response.status != 200) {
-        return Promise.reject({
-          status: response.status,
-          responseText: response.responseText
-        });
+        return Promise.reject(ErrorFactory.createFetchError(request, response, dotnetSpec));
       }
 
       const packageInfo = JSON.parse(response.responseText);
-      if (packageInfo.totalHits === 0) return Promise.reject({ status: 404 });
+      if (packageInfo.totalHits === 0) {
+        return Promise.reject(ErrorFactory.createFetchError(
+          request,
+          { responseText: '', status: 404 },
+          dotnetSpec
+        ));
+      }
 
       const versionRange = dotnetSpec.resolvedVersion;
 
       const requested = {
-        name: rawName,
-        version: rawVersion
+        name: request.packageName,
+        version: request.packageVersion
       };
 
       const resolved = {
-        name: rawName,
+        name: request.packageName,
         version: versionRange,
       };
 
@@ -67,6 +71,21 @@ function createRemotePackageDocument(packagePath: string, rawName: string, rawVe
         tags,
       };
     })
-    .catch(reason => Promise.reject({ reason, dotnetSpec }));
+    .catch(error => {
+      const { response } = error;
+
+      const requested = {
+        name: request.packageName,
+        version: request.packageVersion
+      };
+
+      if (error.status === 404 || response?.status === 404) {
+        return PackageDocumentFactory.createNotFound('dotnet', requested, null);
+      }
+
+      if (!response) return Promise.reject(ErrorFactory.createFetchError(request, error, dotnetSpec))
+
+      return Promise.reject(error);
+    });
 
 }

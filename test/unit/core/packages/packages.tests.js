@@ -1,18 +1,17 @@
 import filterVersionsWithinRange from './helpers/versionHelpers/filterVersionsWithinRange.tests';
 import filterTagsWithinRange from './helpers/versionHelpers/filterTagsWithinRange.tests';
-import mapToPnvArray from './helpers/versionHelpers/mapToPnvArray.tests';
-import comparePnvLoose from './helpers/versionHelpers/comparePnvLoose.tests';
 import extractTaggedVersions from './helpers/versionHelpers/extractTaggedVersions.tests';
+import rollupPrereleases from './helpers/versionHelpers/filterPrereleasesWithinRange.tests';
 import splitReleasesFromArray from './helpers/versionHelpers/splitReleasesFromArray.tests';
 import removeFourSegmentVersionsFromArray from './helpers/versionHelpers/removeFourSegmentVersionsFromArray.tests';
-
+import friendlifyPrereleaseName from './helpers/versionHelpers/friendlifyPrereleaseName.tests';
 
 export const VersionHelperTests = {
   filterVersionsWithinRange,
   filterTagsWithinRange,
-  mapToPnvArray,
-  comparePnvLoose,
   extractTaggedVersions,
+  rollupPrereleases,
   splitReleasesFromArray,
   removeFourSegmentVersionsFromArray,
+  friendlifyPrereleaseName,
 }

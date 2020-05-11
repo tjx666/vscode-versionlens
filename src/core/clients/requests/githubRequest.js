@@ -1,4 +1,4 @@
-import { ExpiryCacheMap } from '../core/caching/expiryCacheMap';
+import { ExpiryCacheMap } from '../../../core/caching/expiryCacheMap';
 
 class GithubRequest {
 

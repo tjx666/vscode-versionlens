@@ -1,4 +1,4 @@
-import { removeFourSegmentVersionsFromArray } from 'core/common/helpers/versionHelpers';
+import { removeFourSegmentVersionsFromArray } from 'core/packages/helpers/versionHelpers';
 
 const assert = require('assert');
 

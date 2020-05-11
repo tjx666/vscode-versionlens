@@ -1,33 +1,38 @@
-import * as PackageLensFactory from '../../lenses/factories/packageLensFactory';
-import { logErrorToConsole } from '../../../providers/shared/utils';
+import * as ErrorFactory from 'core/errors/factory';
 import { fetchPackage } from 'core/providers/dotnet/nugetClientApi.js';
+import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
+import { ReplaceVersionFunction, PackageLens } from 'presentation/lenses/models/packageLens';
 
-export function resolveDotnetPackage(packagePath, name, requestedVersion) {
+export function resolveDotnetPackage(
+  packagePath: string,
+  packageName: string,
+  packageVersion: string,
+  replaceVersionFn: ReplaceVersionFunction): Promise<Array<PackageLens> | PackageLens> {
 
-  // get all the versions for the package
-  return fetchPackage(packagePath, name, requestedVersion)
+  const request = {
+    packagePath,
+    packageName,
+    packageVersion
+  };
+
+  return fetchPackage(request)
     .then(pack => {
       // must be a registry version
-      return PackageLensFactory.createPackageLens(pack, null);
+      return PackageLensFactory.createPackageLens(pack, replaceVersionFn);
     })
     .catch(error => {
-      const { dotnetSpec, reason } = error;
+      const { request } = error;
 
       const requested = {
-        name,
-        version: requestedVersion
+        name: request.packageName,
+        version: request.packageVersion
       }
 
-      // show the 404 to the user; otherwise throw the error
-      if (reason.status === 404) {
-        return PackageLensFactory.createPackageNotFound('dotnet', requested);
-      }
-
-      logErrorToConsole('dotnet', 'resolveDotnetPackage', name, reason);
+      ErrorFactory.createConsoleError('dotnet', resolveDotnetPackage.name, requested.name, error);
       return PackageLensFactory.createUnexpectedError(
         'dotnet',
         requested,
-        reason
+        error
       );
     });
 }

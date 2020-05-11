@@ -1,13 +1,24 @@
-import { PackageNameVersion, PackageVersionStatus, PackageTag, PackageTagFlags } from "../models/packageDocument";
+import {
+  PackageNameVersion,
+  PackageVersionStatus,
+  PackageTag,
+  PackageTagFlags,
+  PackageVersionTypes,
+  PackagePrereleaseDictionary
+} from "../models/packageDocument";
+
+import { SemverSpec } from "../definitions/semverSpec";
 
 export const formatTagNameRegex = /^[^0-9\-]*/;
+
+const loosePrereleases = { loose: true, includePrerelease: true };
 
 export function filterVersionsWithinRange(range: string, versions: Array<string>): Array<string> {
   const { valid, validRange, Range } = require("semver");
   // make sure we have a valid version or range
   if (valid(range) === null && validRange(range) === null) return versions;
 
-  const filterRange = new Range(range, { includePrerelease: true, loose: true });
+  const filterRange = new Range(range, loosePrereleases);
   return versions.filter(function (version: string) {
     return filterRange.test(version)
   });
@@ -19,7 +30,7 @@ export function filterTagsWithinRange(range: string, tags: Array<PackageNameVers
   // make sure we have a valid version or range
   if (valid(range) === null && validRange(range) === null) return tags;
 
-  const filterRange = new Range(range, { includePrerelease: true, loose: true });
+  const filterRange = new Range(range, loosePrereleases);
   return tags.filter(
     function (pvm: PackageNameVersion) {
       return filterRange.test(pvm.version)
@@ -38,18 +49,7 @@ export function filterPrereleasesFromDistTags(distTags: { [key: string]: string 
   return prereleases;
 }
 
-export function mapToPnvArray(distTags: { [key: string]: string }): Array<PackageNameVersion> {
-  return Object.keys(distTags)
-    .map(function (name): PackageNameVersion {
-      return {
-        name,
-        version: distTags[name]
-      };
-    })
-    .sort();
-}
-
-export function extractVersions(versions: Array<PackageNameVersion>): Array<string> {
+export function extractVersionsFromMap(versions: Array<PackageNameVersion>): Array<string> {
   return versions.map(function (pnv: PackageNameVersion) {
     return pnv.version;
   });
@@ -108,6 +108,67 @@ export function isFourSegmentedVersion(versionToCheck: string): boolean {
   return ifourSegmentVersionRegex.test(versionToCheck);
 }
 
+const commonPrereleaseNames = [
+  'alpha', 'a',
+  'beta', 'b',
+  'final', 'ga',
+  'legacy',
+  'milestone', 'm',
+  'next',
+  'snapshot', 'sp',
+  'release',
+  'rc', 'cr',
+];
+export function friendlifyPrereleaseName(prereleaseName: string): string {
+  const filteredNames = commonPrereleaseNames.filter(
+    commonName => new RegExp(`(.+-)${commonName}`, 'i').test(prereleaseName)
+  );
+
+  return (filteredNames.length === 0) ?
+    null :
+    filteredNames[0];
+}
+
+export function parseSemver(packageVersion: string): SemverSpec {
+  const { valid, validRange } = require('semver');
+  const isVersion = valid(packageVersion);
+  const isRange = validRange(packageVersion);
+  return {
+    rawVersion: packageVersion,
+    type: !!isVersion ?
+      PackageVersionTypes.version :
+      !!isRange ? PackageVersionTypes.range :
+        null,
+  };
+}
+
+export function filterPrereleasesWithinRange(versionRange: string, prereleases: Array<string>): Array<string> {
+  const { SemVer, maxSatisfying } = require('semver');
+  const prereleaseGroupMap: PackagePrereleaseDictionary = {};
+
+  // for each prerelease version;
+  // group prereleases by x.x.x-{name*}.x
+  prereleases.forEach(function (prereleaseVersion) {
+    const spec = new SemVer(prereleaseVersion, loosePrereleases)
+    const prereleaseKey = friendlifyPrereleaseName(prereleaseVersion) || spec.prerelease[0];
+
+    prereleaseGroupMap[prereleaseKey] = prereleaseGroupMap[prereleaseKey] || [];
+    prereleaseGroupMap[prereleaseKey].push(prereleaseVersion);
+  });
+
+  // for each group; 
+  // extract maxSatisfying from version array;
+  const filterPrereleases = [];
+  Object.keys(prereleaseGroupMap)
+    .forEach(function (prereleaseKey) {
+      const versions = prereleaseGroupMap[prereleaseKey];
+      const satisfiesVersion = maxSatisfying(versions, versionRange, loosePrereleases);
+      if (satisfiesVersion) filterPrereleases.push(satisfiesVersion)
+    });
+
+  return filterPrereleases;
+}
+
 export function createVersionTags(versionRange: string, releases: string[], prereleases: string[]): Array<PackageTag> {
   const { maxSatisfying } = require("semver");
   const tags: Array<PackageTag> = [];
@@ -119,7 +180,7 @@ export function createVersionTags(versionRange: string, releases: string[], prer
   if ((releases.length === 0 && prereleases.length === 0) || !satisfiesVersion)
     tags.push({
       name: PackageVersionStatus.nomatch,
-      version: versionRange,
+      version: '',
       flags: PackageTagFlags.readOnly,
     });
   else if (isLatest) {
@@ -155,11 +216,11 @@ export function createVersionTags(versionRange: string, releases: string[], prer
     });
   }
 
-  // filter versions to the range
-  const prereleasesInRange = filterVersionsWithinRange(versionRange, prereleases);
+  // roll up prereleases
+  const maxSatisfyingPrereleases = filterPrereleasesWithinRange(versionRange, prereleases);
 
-  // extract named versions and add to report
-  const taggedVersions = extractTaggedVersions(prereleasesInRange);
+  // group prereleases
+  const taggedVersions = extractTaggedVersions(maxSatisfyingPrereleases);
   taggedVersions.forEach((pvn) => {
     if (pvn.name === 'latest') return;
     if (pvn.version === satisfiesVersion) return;

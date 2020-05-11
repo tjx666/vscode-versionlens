@@ -1,5 +1,11 @@
 import { PackageSourceTypes, PackageNameVersion, PackageVersionTypes } from "core/packages/models/packageDocument";
 
+export type PackageLensResolverFunction = (
+  packagePath: string,
+  name: string,
+  version: string,
+  replaceVersionFn: ReplaceVersionFunction) => Promise<Array<PackageLens> | PackageLens>;
+
 export type ReplaceVersionFunction = (packageLens: PackageLens, version: string) => string;
 
 export enum PackageErrors {

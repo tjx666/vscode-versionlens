@@ -1,21 +1,31 @@
 import { formatWithExistingLeading } from '../../../common/utils';
-import { logErrorToConsole } from '../../../providers/shared/utils';
-import { ReplaceVersionFunction } from '../../lenses/models/packageLens';
-import * as PackageLensFactory from '../../lenses/factories/packageLensFactory';
-import { PackageSourceTypes, PackageDocument, PackageVersionTypes } from 'core/packages/models/packageDocument';
+import * as ErrorFactory from 'core/errors/factory';
+import { PackageSourceTypes, PackageVersionTypes } from 'core/packages/models/packageDocument';
 import { ExpiryCacheMap } from 'core/caching/expiryCacheMap';
 import { fetchPackage } from 'core/providers/npm/pacoteClientApi'
+import { ReplaceVersionFunction, PackageLens } from 'presentation/lenses/models/packageLens';
+import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
 
 const cache = new ExpiryCacheMap();
 
-export function resolveNpmPackage(packagePath: string, name: string, requestedVersion: string, replaceVersionFn: ReplaceVersionFunction): Promise<PackageDocument> {
+export function resolveNpmPackage(
+  packagePath: string,
+  packageName: string,
+  packageVersion: string,
+  replaceVersionFn: ReplaceVersionFunction): Promise<Array<PackageLens> | PackageLens> {
 
-  const cacheKey = `resolveNpmPackage_${name}@${requestedVersion}_${packagePath}`;
+  const cacheKey = `resolveNpmPackage_${packageName}@${packageVersion}_${packagePath}`;
   // if (cache.hasExpired(cacheKey) === false) {
   //   return Promise.resolve(cache.get(cacheKey));
   // }
 
-  return fetchPackage(packagePath, name, requestedVersion)
+  const request = {
+    packagePath,
+    packageName,
+    packageVersion
+  };
+
+  return fetchPackage(request)
     .then(pack => {
       let replaceFn: ReplaceVersionFunction;
       if (replaceVersionFn === null) {
@@ -32,30 +42,17 @@ export function resolveNpmPackage(packagePath: string, name: string, requestedVe
     .then(pack => {
       return cache.set(cacheKey, pack);
     })
-    .catch(result => {
-      const { npaResult, reason } = result;
+    .catch(error => {
+      const { request, response } = error;
 
-      // if (reason.code === 'E404') {
-      //   return PackageLensFactory.createPackageNotFound(name, requestedVersion, 'npm');
-      // }
-
-      // if (reason.code === 'EUNSUPPORTEDPROTOCOL') {
-      //   return PackageLensFactory.createPackageNotSupported(name, requestedVersion, 'npm');
-      // }
-
-      // if (reason.code === 'EINVALIDTAGNAME' || reason.message.includes('Invalid comparator:')) {
-      //   return PackageLensFactory.createInvalidVersion(name, requestedVersion, 'npm');
-      // }
-
-      // if (reason.code === 128 && npaResult.type === 'git') {
-      //   return PackageLensFactory.createGitFailed(npaResult.rawSpec, reason.message, 'npm');
-      // }
-
-      logErrorToConsole("NPM", "resolveNpmPackage", name, reason);
+      ErrorFactory.createConsoleError('npm,', resolveNpmPackage.name, request.packageName, error);
       return PackageLensFactory.createUnexpectedError(
         'npm',
-        { name, version: requestedVersion },
-        reason
+        {
+          name: request.packageName,
+          version: request.packageVersion
+        },
+        error
       );
     });
 }

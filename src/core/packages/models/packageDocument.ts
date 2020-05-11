@@ -17,6 +17,7 @@ export enum PackageVersionTypes {
 
 export enum PackageVersionStatus {
   notfound = 'package not found',
+  notsupported = 'not supported',
   invalid = 'invalid entry',
   nomatch = 'no match',
   satisifies = 'satisifies',
@@ -33,6 +34,10 @@ export enum PackageTagFlags {
   // bitwise
   updatable = 1,
   readOnly = 2,
+}
+
+export type PackagePrereleaseDictionary = {
+  [tagName: string]: Array<string>
 }
 
 export type PackageTag = {

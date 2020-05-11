@@ -23,15 +23,6 @@ export function resolveVersionAgainstTags(tags: Array<TaggedVersion>, tagName: s
     return defaultVersion;
 }
 
-export function pluckSemverVersions(versions: Array<string>): Array<string> {
-  const semverVersions = [];
-  versions.forEach(version => {
-    if (semver.validRange(version))
-      semverVersions.push(version);
-  });
-  return semverVersions;
-}
-
 export function parseVersion(version: string): VersionInfo {
   const prereleaseComponents = semver.prerelease(version);
   const isPrerelease = !!prereleaseComponents && prereleaseComponents.length > 0;

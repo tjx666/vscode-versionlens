@@ -9,12 +9,10 @@ import {
 } from 'presentation/editor/decorations';
 
 import { AbstractCodeLensProvider } from 'presentation/lenses/definitions/abstractCodeLensProvider';
-
 import { extractPackageLensDataFromText } from 'core/packages/parsers/jsonPackageParser';
 import { npmGetOutdated, npmPackageDirExists } from 'core/providers/npm/npmClient.js';
-
-import { resolvePackageLensData } from 'providers/shared/dependencyParser';
 import * as CodeLensFactory from '../../lenses/factories/codeLensFactory';
+import * as PackageLensFactory from '../../lenses/factories/packageLensFactory';
 import { resolveNpmPackage } from './npmPackageResolver';
 
 export class NpmCodeLensProvider extends AbstractCodeLensProvider {
@@ -48,7 +46,7 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     if (packageDepsLenses.length === 0) return [];
 
     // resolve package dependencies (as promises)
-    const packageLensResolvers = resolvePackageLensData(
+    const packageLensResolvers = PackageLensFactory.createPackageLensResolvers(
       this.packagePath,
       packageDepsLenses,
       resolveNpmPackage

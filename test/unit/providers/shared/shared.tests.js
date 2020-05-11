@@ -1,5 +1,5 @@
-import resolvePackageLensData from './dependencyParser/resolvePackageLensData.tests.js';
+import createPackageLensResolvers from './dependencyParser/createPackageLensResolvers.tests.js';
 
 export const SharedDependencyParser = {
-  resolvePackageLensData,
+  createPackageLensResolvers,
 }

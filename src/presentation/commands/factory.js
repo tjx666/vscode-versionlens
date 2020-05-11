@@ -1,5 +1,5 @@
 import { stripSymbolFromVersionRegex, semverLeadingChars } from '../../common/utils';
-import { githubRequest } from '../../common/githubRequest';
+import { githubRequest } from 'core/clients/requests/githubRequest';
 import appSettings from '../../appSettings';
 import { PackageSourceTypes, PackageTagFlags } from 'core/packages/models/packageDocument';
 

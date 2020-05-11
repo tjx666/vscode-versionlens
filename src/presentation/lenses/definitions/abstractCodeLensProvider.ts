@@ -1,10 +1,10 @@
+import { EventEmitter, CancellationToken } from 'vscode';
 import appSettings from '../../../appSettings';
+import { PackageSourceTypes } from 'core/packages/models/packageDocument';
+import * as CommandFactory from 'presentation/commands/factory';
 import { IVersionCodeLens } from "./IVersionCodeLens";
 import { VersionLens } from '../models/versionLens';
-import { EventEmitter, CancellationToken } from 'vscode';
 import { PackageErrors } from '../models/packageLens';
-import * as CommandFactory from 'presentation/commands/factory';
-import { PackageSourceTypes } from 'core/packages/models/packageDocument';
 
 export abstract class AbstractCodeLensProvider {
 

@@ -1,4 +1,4 @@
-import { extractTaggedVersions } from 'core/common/helpers/versionHelpers';
+import { extractTaggedVersions } from 'core/packages/helpers/versionHelpers';
 
 const assert = require('assert');
 

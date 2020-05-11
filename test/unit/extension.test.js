@@ -1,11 +1,13 @@
+
+export * from './core/clients/requests/githubRequest.tests.js';
+
 export * from './core/caching/expiryCacheMap.tests.js';
-export * from './common/githubRequest.tests.js';
+export * from './core/packages/packages.tests.js';
 
 export * from './presentation/commands/internal/updateDependencyCommand.tests.js';
-export * from './presentation/commands/internal/linkCommand.tests.js';
-export * from './presentation/commands/factory.tests.js';
+// export * from './presentation/commands/internal/linkCommand.tests.js';
+// export * from './presentation/commands/factory.tests.js';
 
-export * from './core/common/common.tests.js';
 
 // export * from './core/providers/npm/npm.tests.js';
 // export * from './core/providers/dotnet/dotnet.tests.js';

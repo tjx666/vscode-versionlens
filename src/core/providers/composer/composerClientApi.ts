@@ -1,36 +1,32 @@
 import * as ErrorFactory from 'core/clients/errors/factory';
 import * as PackageDocumentFactory from 'core/packages/factories/packageDocumentFactory';
-import { PackageSourceTypes, PackageDocument } from 'core/packages/models/packageDocument';
+import { FetchRequest } from 'core/clients/model/fetch';
+import { PackageDocument, PackageSourceTypes } from "core/packages/models/packageDocument";
 import {
-  extractVersionsFromMap,
   splitReleasesFromArray,
   createVersionTags,
   parseSemver
-} from 'core/packages/helpers/versionHelpers';
-import { SemverSpec } from 'core/packages/definitions/semverSpec';
-import { FetchRequest } from 'core/clients/model/fetch';
+} from "core/packages/helpers/versionHelpers";
+import { SemverSpec } from "core/packages/definitions/semverSpec";
 
 const fs = require('fs');
+const FEED_URL = 'https://repo.packagist.org/p';
 
-const FEED_URL = 'https://code.dlang.org/api/packages';
-
-export function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
+export async function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
   const semverSpec: SemverSpec = parseSemver(request.packageVersion);
 
-  const url = `${FEED_URL}/${encodeURIComponent(request.packageName)}/info?minimize=true`;
   const httpRequest = require('request-light');
+  const url = `${FEED_URL}/${request.packageName}.json`;
   return httpRequest.xhr({ url })
     .then(response => {
       if (response.status != 200) {
-        return Promise.reject(
-          ErrorFactory.createFetchError(request, response, semverSpec)
-        );
+        return Promise.reject(ErrorFactory.createFetchError(request, response, semverSpec));
       }
 
-      const packageInfo = JSON.parse(response.responseText);
-      if (!packageInfo || packageInfo.versions.length === 0) {
-        return Promise.reject({ semverSpec, reason: { status: 404 } });
-      }
+      const data = JSON.parse(response.responseText);
+      if (!data) return Promise.reject(ErrorFactory.createFetchError(request, { responseText: '', status: 404 }, semverSpec));
+
+      const packageInfo = data.packages[request.packageName];
 
       const versionRange = semverSpec.rawVersion;
 
@@ -44,17 +40,16 @@ export function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
         version: versionRange,
       };
 
-      const rawVersions = extractVersionsFromMap(packageInfo.versions)
-        .filter(version => version !== '~master'); // todo handle ~master entries
+      const rawVersions = Object.keys(packageInfo);
 
       // seperate versions to releases and prereleases
-      const { releases, prereleases } = splitReleasesFromArray(rawVersions)
+      const { releases, prereleases } = splitReleasesFromArray(pluckSemverVersions(rawVersions))
 
       // anaylse and report
       const tags = createVersionTags(versionRange, releases, prereleases);
 
       return {
-        provider: 'dub',
+        provider: 'composer',
         source: PackageSourceTypes.registry,
         type: semverSpec.type,
         requested,
@@ -63,6 +58,7 @@ export function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
         prereleases,
         tags,
       };
+
     })
     .catch(error => {
       const { response } = error;
@@ -77,14 +73,14 @@ export function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
       }
 
       if (!response) {
-        return Promise.reject(ErrorFactory.createFetchError(request, error, semverSpec))
+        return Promise.reject(ErrorFactory.createFetchError(request, error, null))
       }
 
       return Promise.reject(error);
     });
 }
 
-export function readDubSelections(filePath) {
+export function readComposerSelections(filePath) {
 
   return new Promise(function (resolve, reject) {
     if (fs.existsSync(filePath) === false) {
@@ -99,14 +95,20 @@ export function readDubSelections(filePath) {
       }
 
       const selectionsJson = JSON.parse(data.toString());
-      if (selectionsJson.fileVersion != 1) {
-        reject(new Error(`Unknown dub.selections.json file version ${selectionsJson.fileVersion}`))
-        return;
-      }
 
       resolve(selectionsJson);
     });
 
   });
 
+}
+
+
+export function pluckSemverVersions(versions: Array<string>): Array<string> {
+  const { validRange } = require('semver');
+  const semverVersions = [];
+  versions.forEach(version => {
+    if (validRange(version)) semverVersions.push(version);
+  });
+  return semverVersions;
 }

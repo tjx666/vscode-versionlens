@@ -2,9 +2,8 @@ import appContrib from "../../appContrib";
 import appSettings from "../../appSettings";
 import { AbstractCodeLensProvider } from "presentation/lenses/definitions/abstractCodeLensProvider";
 import { IVersionCodeLens } from "presentation/lenses/definitions/IVersionCodeLens";
-import { createCodeLenses } from 'presentation/lenses/factories/codeLensFactory';
-import { logErrorToConsole } from "../shared/utils";
-import { resolvePackageLensData } from '../shared/dependencyParser';
+import * as CodeLensFactory from 'presentation/lenses/factories/codeLensFactory';
+import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
 import { extractPackageLensDataFromText } from "./pubPackageParser";
 import { pubGetPackageInfo } from "./pubAPI";
 import { resolvePubPackage } from "./pubPackageResolver";
@@ -21,14 +20,19 @@ export class PubCodeLensProvider extends AbstractCodeLensProvider {
   provideCodeLenses(document) {
     if (appSettings.showVersionLenses === false) return [];
 
-    const packageLensData = extractPackageLensDataFromText(document.getText(), appContrib.pubDependencyProperties);
-    if (packageLensData.length === 0) return [];
+    const packageDepsLenses = extractPackageLensDataFromText(document.getText(), appContrib.pubDependencyProperties);
+    if (packageDepsLenses.length === 0) return [];
 
-    const packageLensResolvers = resolvePackageLensData(packageLensData, appContrib, resolvePubPackage);
+    const packageLensResolvers = PackageLensFactory.createPackageLensResolvers(
+      '',
+      packageDepsLenses,
+      null
+    );
+
     if (packageLensResolvers.length === 0) return [];
 
     appSettings.inProgress = true;
-    return createCodeLenses(packageLensResolvers, document).then(codelenses => {
+    return CodeLensFactory.createCodeLenses(packageLensResolvers, document).then(codelenses => {
       appSettings.inProgress = false;
       return codelenses;
     });

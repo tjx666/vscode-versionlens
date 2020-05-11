@@ -1,6 +1,6 @@
 import { isFourSegmentedVersion } from '../../packages/helpers/versionHelpers'
 import { PackageVersionTypes } from '../../packages/models/packageDocument';
-import { DotNetVersionSpec, NugetVersionSpec } from './models/versionSpec';
+import { DotNetVersionSpec, NugetVersionSpec } from './definitions/versionSpec';
 
 export function expandShortVersion(value) {
   if (!value ||

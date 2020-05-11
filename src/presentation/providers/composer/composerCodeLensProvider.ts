@@ -2,32 +2,31 @@ import appContrib from '../../../appContrib';
 import appSettings from '../../../appSettings';
 import { formatWithExistingLeading } from '../../../common/utils';
 import { extractPackageLensDataFromText } from 'core/packages/parsers/jsonPackageParser';
-import { readDubSelections } from 'core/providers/dub/dubClientApi';
+import { readComposerSelections } from 'core/providers/composer/composerClientApi';
 import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from 'presentation/editor/decorations';
 import { AbstractCodeLensProvider } from 'presentation/lenses/definitions/abstractCodeLensProvider';
-import * as CodeLensFactory from 'presentation/lenses/factories/codeLensFactory';
+import { createCodeLenses } from 'presentation/lenses/factories/codeLensFactory';
 import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
-import { resolveDubPackage } from './dubPackageResolver';
+import { resolveComposerPackage } from './composerPackageResolver';
 
 const path = require('path');
 
-export class DubCodeLensProvider extends AbstractCodeLensProvider {
+export class ComposerCodeLensProvider extends AbstractCodeLensProvider {
 
-  _outdatedCache: any;
+  _outdatedCache: {};
+
   packagePath: '';
 
   constructor() {
     super();
-    this._outdatedCache = {};
-    this.packagePath = '';
   }
 
   get selector() {
     return {
       language: 'json',
       scheme: 'file',
-      pattern: '**/{dub.json,dub.selections.json}',
-      group: ['statuses'],
+      pattern: '**/composer.json',
+      group: ['tags'],
     };
   }
 
@@ -36,25 +35,26 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
 
     this.packagePath = path.dirname(document.uri.fsPath);
 
-    const packageLensData = extractPackageLensDataFromText(document.getText(), appContrib.dubDependencyProperties);
-    if (packageLensData.length === 0) return [];
-
-    // TODO fix subPackages
-
-    const packageDepsLenses = PackageLensFactory.createPackageLensResolvers(this.packagePath, packageLensData, resolveDubPackage);
+    const packageDepsLenses = extractPackageLensDataFromText(document.getText(), appContrib.composerDependencyProperties);
     if (packageDepsLenses.length === 0) return [];
+
+    const packageLensResolvers = PackageLensFactory.createPackageLensResolvers(
+      this.packagePath,
+      packageDepsLenses,
+      resolveComposerPackage
+    );
+    if (packageLensResolvers.length === 0) return [];
 
     appSettings.inProgress = true;
     return this.updateOutdated()
       .then(_ => {
         appSettings.inProgress = false;
-        return CodeLensFactory.createCodeLenses(packageDepsLenses, document)
+        return createCodeLenses(packageLensResolvers, document);
       })
       .catch(err => {
         appSettings.inProgress = false;
-        console.log(err)
+        console.log(err);
       });
-
   }
   /*
 evaluateCodeLens(codeLens: IVersionCodeLens) {
@@ -72,9 +72,9 @@ evaluateCodeLens(codeLens: IVersionCodeLens) {
   if (appSettings.showDependencyStatuses)
     this.generateDecoration(codeLens);
 
-  return dubGetPackageLatest(codeLens.package.name)
-    .then(verionStr => {
-      if (typeof verionStr !== "string")
+  return composerGetPackageLatest(codeLens.package.name)
+    .then(versionStr => {
+      if (typeof versionStr !== "string")
         return CommandFactory.createErrorCommand(
           "Invalid object returned from server",
           codeLens
@@ -82,7 +82,7 @@ evaluateCodeLens(codeLens: IVersionCodeLens) {
 
       return CommandFactory.createVersionCommand(
         codeLens.package.version,
-        verionStr,
+        versionStr,
         codeLens
       );
     })
@@ -91,24 +91,30 @@ evaluateCodeLens(codeLens: IVersionCodeLens) {
 
       const respObj = JSON.parse(response.responseText);
       logPackageError(
-        "Dub",
-        "dubGetPackageLatest",
+        "Composer",
+        "composerGetPackageLatest",
         codeLens.package.name,
         respObj.statusMessage
       );
-
-      return CommandFactory.createPackageUnexpectedError(codeLens.package.name);
+      return PackageLensFactory.createUnexpectedError(codeLens.package.name, respObj.statusMessage);
     });
 
 }
 
     */
-  // get the outdated packages and cache them
+
   updateOutdated() {
-    const selectionsFilePath = path.join(this.packagePath, 'dub.selections.json');
-    return readDubSelections(selectionsFilePath)
+    const selectionsFilePath = path.join(this.packagePath, 'composer.lock');
+    return readComposerSelections(selectionsFilePath)
       .then(selectionsJson => {
-        this._outdatedCache = selectionsJson;
+
+        let packages = {};
+
+        // for (let onepackage in selectionsJson.packages) {
+        //   packages[selectionsJson.packages[onepackage].name] = selectionsJson.packages[onepackage].version;
+        // }
+
+        this._outdatedCache = packages;
       })
       .catch(err => {
         if (err)
@@ -128,7 +134,7 @@ evaluateCodeLens(codeLens: IVersionCodeLens) {
       return;
     }
 
-    const currentVersion = this._outdatedCache.versions[currentPackageName];
+    const currentVersion = this._outdatedCache[currentPackageName];
     if (!currentVersion) {
       renderMissingDecoration(codeLens.replaceRange);
       return;
@@ -148,4 +154,5 @@ evaluateCodeLens(codeLens: IVersionCodeLens) {
     );
 
   }
+
 }

@@ -1,15 +1,23 @@
 import { formatWithExistingLeading } from '../../../common/utils';
+import { PackageSourceTypes } from 'core/packages/models/packageDocument';
 import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
 import { resolveNpmPackage } from 'presentation/providers/npm/npmPackageResolver';
-import { PackageLens } from 'presentation/lenses/models/packageLens';
-import { PackageSourceTypes } from 'core/packages/models/packageDocument';
+import { PackageLens, ReplaceVersionFunction } from 'presentation/lenses/models/packageLens';
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;
-export function resolveJspmPackage(packagePath, name, version) {
+
+export function resolveJspmPackage(
+  packagePath: string,
+  packageName: string,
+  packageVersion: string,
+  replaceVersionFn: ReplaceVersionFunction): Promise<Array<PackageLens> | PackageLens> {
+
   // check for supported package resgitries
-  const regExpResult = jspmDependencyRegex.exec(version);
+  const regExpResult = jspmDependencyRegex.exec(packageVersion);
   if (!regExpResult) {
-    return PackageLensFactory.createPackageNotSupported('jspm', { name, version });
+    return Promise.resolve(
+      PackageLensFactory.createPackageNotSupported('jspm', { name: packageName, version: packageVersion })
+    );
   }
 
   const packageManager = regExpResult[1];
@@ -19,7 +27,7 @@ export function resolveJspmPackage(packagePath, name, version) {
   if (packageManager === 'github') {
     return resolveNpmPackage(
       packagePath,
-      name,
+      packageName,
       `${extractedPkgName}#${newPkgVersion}`,
       customJspmReplaceVersion
     );

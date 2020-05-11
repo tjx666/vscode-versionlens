@@ -29,9 +29,8 @@ export class ExpiryCacheMap {
 
   expire(key: string): any {
     const entry = this.cacheMap[key];
-    if (!entry) return true;
-
-    delete this.cacheMap[key];
+    if (entry) delete this.cacheMap[key];
+    return entry;
   }
 
   get(key: string): any {

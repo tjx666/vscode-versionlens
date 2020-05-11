@@ -1,14 +1,12 @@
-import * as CommandFactory from 'presentation/commands/factory';
 import appSettings from '../../appSettings';
 import appContrib from '../../appContrib';
 import { AbstractCodeLensProvider } from 'presentation/lenses/definitions/abstractCodeLensProvider';
 import { createCodeLenses } from 'presentation/lenses/factories/codeLensFactory';
-import { resolvePackageLensData } from '../shared/dependencyParser';
+import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
 import { extractMavenLensDataFromText } from './mavenPackageParser';
 import { resolveMavenPackage } from './mavenPackageResolver';
 import { loadMavenRepositories } from './mavenAPI';
 import { IVersionCodeLens } from "presentation/lenses/definitions/IVersionCodeLens";
-import { PackageErrors } from 'presentation/lenses/models/packageLens';
 
 export class MavenCodeLensProvider extends AbstractCodeLensProvider {
 
@@ -25,10 +23,14 @@ export class MavenCodeLensProvider extends AbstractCodeLensProvider {
     if (appSettings.showVersionLenses === false) return [];
 
     return loadMavenRepositories().then(_ => {
-      const packageLensData = extractMavenLensDataFromText(document, appContrib.mavenDependencyProperties);
-      if (packageLensData.length === 0) return [];
+      const packageDepsLenses = extractMavenLensDataFromText(document, appContrib.mavenDependencyProperties);
+      if (packageDepsLenses.length === 0) return [];
 
-      const packageLensResolvers = resolvePackageLensData(packageLensData, appContrib, resolveMavenPackage);
+      const packageLensResolvers = PackageLensFactory.createPackageLensResolvers(
+        '',
+        packageDepsLenses,
+        resolveMavenPackage
+      );
       if (packageLensResolvers.length === 0) return [];
 
       appSettings.inProgress = true;

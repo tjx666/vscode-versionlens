@@ -1,48 +1,56 @@
+
+import * as ErrorFactory from 'core/clients/errors/factory';
+import { FetchRequest } from 'core/clients/model/fetch';
+import { filterPrereleasesFromDistTags, createVersionTags, filterPrereleasesWithinRange } from '../../packages/helpers/versionHelpers';
 import {
   PackageDocument,
   PackageVersionTypes,
   PackageSourceTypes,
   PackageTag,
-  PackageVersionStatus,
   PackageTagFlags
 } from '../../packages/models/packageDocument';
+import * as PackageDocumentFactory from '../../packages/factories/packageDocumentFactory'
 
-import { filterPrereleasesFromDistTags, createVersionTags } from '../../packages/helpers/versionHelpers';
-
-export async function fetchPackage(packagePath, packageName, packageVersion): Promise<PackageDocument> {
+export async function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
   const npa = require('npm-package-arg');
   let npaResult;
 
   try {
-    npaResult = npa.resolve(packageName, packageVersion, packagePath);
-  } catch (reason) {
-    return Promise.reject({ npaResult, reason });
+    npaResult = npa.resolve(request.packageName, request.packageVersion, request.packagePath);
+  } catch (error) {
+    return Promise.reject(
+      ErrorFactory.createFetchError(
+        request,
+        { status: error.code, responseText: error.message },
+        npaResult
+      )
+    );
   }
 
   if (npaResult.type === PackageSourceTypes.directory || npaResult.type === PackageSourceTypes.file)
-    return createDirectoryPackageDocument(packageName, packageVersion, npaResult);
+    return createDirectoryPackageDocument(request.packageName, request.packageVersion, npaResult);
 
-  return createRemotePackageDocument(packagePath, packageName, packageVersion, npaResult);
+  return createRemotePackageDocument(request, npaResult);
 }
 
-function createRemotePackageDocument(where: string, rawName: string, rawVersion: string, npaResult: any): Promise<PackageDocument> {
+function createRemotePackageDocument(request: FetchRequest, npaResult: any): Promise<PackageDocument> {
   const pacote = require('pacote');
   const npmConfig = require('libnpmconfig');
 
   const requested = {
-    name: rawName,
-    version: rawVersion
+    name: request.packagePath,
+    version: request.packageVersion
   };
 
   // get npm config
   const npmOpts = npmConfig.read(
     {
-      where,
+      where: request.packagePath,
       fullMetadata: false,
       // 'prefer-online': true,
     },
     {
-      cwd: where,
+      cwd: request.packagePath,
     }
   );
 
@@ -65,7 +73,7 @@ function createRemotePackageDocument(where: string, rawName: string, rawVersion:
       // extract releases
       const releases = Object.keys(packu.versions || {}).sort(compareLoose);
 
-      // extract prereleases
+      // extract prereleases from dist tags
       const prereleases = filterPrereleasesFromDistTags(packu['dist-tags'] || {}).sort(compareLoose)
 
       // anaylse and report
@@ -75,7 +83,7 @@ function createRemotePackageDocument(where: string, rawName: string, rawVersion:
         provider: 'npm',
         source,
         type,
-        requested: requested,
+        requested,
         resolved,
         gitSpec,
         tags,
@@ -83,16 +91,32 @@ function createRemotePackageDocument(where: string, rawName: string, rawVersion:
         prereleases,
       };
     })
-    .catch(reason => {
-      if (reason.code === 'E404') {
-        return createPackageDocumentNotFound(requested, npaResult);
+    .catch(error => {
+      const { response, data: npaResult } = error
+
+      if (error.code === 'E404') {
+        return PackageDocumentFactory.createNotFound('npm', requested, null);
       }
 
-      if (reason.code === 'EINVALIDTAGNAME' || reason.message.includes('Invalid comparator:')) {
-        return createPackageDocumentInvalidVersion(requested, npaResult);
+      if (error.code === 'EINVALIDTAGNAME' || error.message.includes('Invalid comparator:')) {
+        return PackageDocumentFactory.createInvalidVersion('npm', requested, null);
       }
 
-      return Promise.reject({ reason, npaResult });
+      if (error.code === 'EUNSUPPORTEDPROTOCOL') {
+        return PackageDocumentFactory.createNotSupported('npm', requested, null);
+      }
+
+      if (error.code === 128) {
+        return PackageDocumentFactory.createGitFailed('npm', requested, null);
+      }
+
+      if (!response) {
+        return Promise.reject(
+          ErrorFactory.createFetchError(request, response, npaResult)
+        );
+      }
+
+      return Promise.reject(error);
     });
 }
 
@@ -142,7 +166,13 @@ export const fileDependencyRegex = /^file:(.*)$/;
 function createDirectoryPackageDocument(rawName: string, rawVersion: string, npaResult: any): PackageDocument {
 
   const fileRegExpResult = fileDependencyRegex.exec(rawVersion);
-  if (!fileRegExpResult) return createPackageDocumentInvalidVersion({ name: rawName, version: rawVersion }, npaResult);
+  if (!fileRegExpResult) {
+    return PackageDocumentFactory.createInvalidVersion(
+      'npm',
+      { name: rawName, version: rawVersion },
+      npaResult.type
+    );
+  }
 
   const source = PackageSourceTypes.directory;
   const type = PackageVersionTypes.version;
@@ -165,46 +195,8 @@ function createDirectoryPackageDocument(rawName: string, rawVersion: string, npa
     provider: 'npm',
     source,
     type,
-    requested: requested,
-    resolved,
-    tags
-  };
-}
-
-function createPackageDocumentNotFound(requested, npaResult): PackageDocument {
-  const source: PackageSourceTypes = getSourceFromNpaResult(npaResult);
-  const type: PackageVersionTypes = getVersionTypeFromNpaResult(npaResult);
-
-  const tags: Array<PackageTag> = [
-    { name: PackageVersionStatus.notfound, version: requested.version, flags: PackageTagFlags.readOnly },
-    { name: PackageVersionStatus.latest, version: 'latest', flags: PackageTagFlags.updatable | PackageTagFlags.readOnly },
-  ]
-
-  return {
-    provider: 'npm',
-    source,
-    type,
-    requested: requested,
-    resolved: null,
-    tags
-  };
-}
-
-function createPackageDocumentInvalidVersion(requested, npaResult): PackageDocument {
-  const source: PackageSourceTypes = getSourceFromNpaResult(npaResult);
-  const type: PackageVersionTypes = getVersionTypeFromNpaResult(npaResult);
-
-  const tags: Array<PackageTag> = [
-    { name: PackageVersionStatus.invalid, version: requested.version, flags: PackageTagFlags.readOnly },
-    { name: PackageVersionStatus.latest, version: 'latest', flags: PackageTagFlags.updatable | PackageTagFlags.readOnly },
-  ]
-
-  return {
-    provider: 'npm',
-    source,
-    type,
     requested,
-    resolved: null,
+    resolved,
     tags
   };
 }

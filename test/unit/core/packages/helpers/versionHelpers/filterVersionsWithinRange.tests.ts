@@ -1,4 +1,4 @@
-import { filterVersionsWithinRange } from 'core/common/helpers/versionHelpers';
+import { filterVersionsWithinRange } from 'core/packages/helpers/versionHelpers';
 
 const assert = require('assert');
 

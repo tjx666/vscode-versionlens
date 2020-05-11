@@ -1,4 +1,4 @@
-import { splitReleasesFromArray } from 'core/common/helpers/versionHelpers';
+import { splitReleasesFromArray } from 'core/packages/helpers/versionHelpers';
 
 const assert = require('assert');
 

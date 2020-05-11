@@ -1,5 +1,49 @@
-import { PackageLens, PackageErrors, } from "../models/packageLens";
 import { PackageNameVersion, PackageDocument } from "core/packages/models/packageDocument";
+import { PackageDependencyLens } from "core/packages/models/PackageDependencyLens";
+import { PackageLens, PackageErrors, PackageLensResolverFunction, } from "../models/packageLens";
+
+export function createPackageLensResolvers(
+  packagePath: string,
+  packageDepsLenses: Array<PackageDependencyLens>,
+  customPackageResolver: PackageLensResolverFunction = null) {
+
+  const collector = [];
+
+  packageDepsLenses.forEach(
+    function (lens) {
+      let packageEntries = null;
+
+      if (customPackageResolver) {
+        const { name, version } = lens.packageInfo;
+        packageEntries = customPackageResolver(packagePath, name, version, null);
+
+        // if the package wasn't resolved then skip
+        if (!packageEntries) throw new Error("hmmmmmm");
+
+        // // ensure the result is a promise
+        packageEntries = Promise.resolve(packageEntries)
+          .then(function (reportItem) {
+            if (Array.isArray(reportItem) === false)
+              return [{ node: lens, package: reportItem }];
+
+            return reportItem.map(
+              pkg => {
+                return { node: lens, package: pkg }
+              }
+            );
+          });
+      }
+
+      if (!packageEntries) packageEntries = Promise.resolve({ node: lens });
+
+      collector.push(packageEntries);
+    }
+  );
+
+  return collector;
+}
+
+
 
 export function createPackageLens(pack: PackageDocument, replaceVersionFn = null): Array<PackageLens> {
   // map the tags to packages

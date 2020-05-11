@@ -1,4 +1,4 @@
-import { filterTagsWithinRange } from 'core/common/helpers/versionHelpers';
+import { filterTagsWithinRange } from 'core/packages/helpers/versionHelpers';
 
 const assert = require('assert');
 

@@ -3,7 +3,7 @@ import { pubDefaultDependencyProperties, pubDefaultApiUrl } from './providers/pu
 import { dubDefaultDependencyProperties } from './core/providers/dub/config';
 import { dotnetCSProjDefaultDependencyProperties, dotnetDefaultNuGetFeeds } from './core/providers/dotnet/config';
 import { mavenDefaultDependencyProperties } from './providers/maven/config';
-import { composerDefaultDependencyProperties } from './providers/composer/config';
+import { composerDefaultDependencyProperties } from './core/providers/composer/config';
 
 const { workspace } = require('vscode');
 

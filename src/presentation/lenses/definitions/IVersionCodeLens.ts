@@ -1,5 +1,5 @@
-import { PackageLens, PackageErrors } from "../models/packageLens";
 import { PackageSourceTypes, PackageVersionStatus } from "core/packages/models/packageDocument";
+import { PackageLens, PackageErrors } from "../models/packageLens";
 
 export interface IVersionCodeLens {
   replaceRange: any;
