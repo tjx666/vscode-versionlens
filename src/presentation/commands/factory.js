@@ -1,7 +1,7 @@
 import { stripSymbolFromVersionRegex, semverLeadingChars } from '../../common/utils';
 import { githubRequest } from 'core/clients/requests/githubRequest';
 import appSettings from '../../appSettings';
-import { PackageSourceTypes, PackageTagFlags } from 'core/packages/models/packageDocument';
+import { PackageSuggestionFlags } from 'core/packages/models/packageDocument';
 
 const semver = require('semver');
 
@@ -118,12 +118,12 @@ export function createGithubCommand(codeLens) {
 
 export function createTaggedVersionCommand(codeLens) {
   const { name, version, flags } = codeLens.package.tag;
-  const updatable = flags & PackageTagFlags.updatable;
-  const readOnly = flags & PackageTagFlags.readOnly;
+  const isStatus = flags & PackageSuggestionFlags.status;
+  const isPrerelease = flags & PackageSuggestionFlags.prerelease;
+  const isTag = flags & PackageSuggestionFlags.tag;
 
-  if (updatable) {
-    // linked codelens
-    const replaceWithVersion = readOnly ? version : codeLens.replaceVersionFn(version);
+  if (isStatus === false) {
+    const replaceWithVersion = (isPrerelease || isTag) ? version : codeLens.replaceVersionFn(version);
     return codeLens.setCommand(
       `${name}: ${appSettings.updateIndicator} ${version}`,
       `${appSettings.extensionName}.updateDependencyCommand`,
@@ -131,7 +131,7 @@ export function createTaggedVersionCommand(codeLens) {
     );
   }
 
-  // non-linked codelens
+  // show the status
   return createTagCommand(`${name} ${version}`, codeLens);
 }
 

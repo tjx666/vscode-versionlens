@@ -15,7 +15,6 @@ export function resolveComposerPackage(
     packageVersion
   };
 
-  // get all the versions for the package
   return fetchPackage(request)
     .then(pack => PackageLensFactory.createPackageLens(pack, null))
     .catch(error => {
@@ -24,9 +23,8 @@ export function resolveComposerPackage(
       const requested = {
         name: packageName,
         version: packageVersion
-      }
+      };
 
-      // show the 404 to the user; otherwise throw the error
       if (response.status === 404) {
         return PackageLensFactory.createPackageNotFound('composer', requested);
       }

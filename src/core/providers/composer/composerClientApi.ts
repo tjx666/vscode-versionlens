@@ -1,11 +1,12 @@
 import * as ErrorFactory from 'core/clients/errors/factory';
 import * as PackageDocumentFactory from 'core/packages/factories/packageDocumentFactory';
-import { FetchRequest } from 'core/clients/model/fetch';
+import { FetchRequest } from 'core/clients/models/fetch';
 import { PackageDocument, PackageSourceTypes } from "core/packages/models/packageDocument";
 import {
   splitReleasesFromArray,
-  createVersionTags,
-  parseSemver
+  createSuggestionTags,
+  parseSemver,
+  filterSemverVersions
 } from "core/packages/helpers/versionHelpers";
 import { SemverSpec } from "core/packages/definitions/semverSpec";
 
@@ -42,11 +43,14 @@ export async function fetchPackage(request: FetchRequest): Promise<PackageDocume
 
       const rawVersions = Object.keys(packageInfo);
 
+      // extract semver versions only
+      const semverVersions = filterSemverVersions(rawVersions);
+
       // seperate versions to releases and prereleases
-      const { releases, prereleases } = splitReleasesFromArray(pluckSemverVersions(rawVersions))
+      const { releases, prereleases } = splitReleasesFromArray(filterSemverVersions(semverVersions))
 
       // anaylse and report
-      const tags = createVersionTags(versionRange, releases, prereleases);
+      const tags = createSuggestionTags(versionRange, releases, prereleases);
 
       return {
         provider: 'composer',
@@ -103,12 +107,3 @@ export function readComposerSelections(filePath) {
 
 }
 
-
-export function pluckSemverVersions(versions: Array<string>): Array<string> {
-  const { validRange } = require('semver');
-  const semverVersions = [];
-  versions.forEach(version => {
-    if (validRange(version)) semverVersions.push(version);
-  });
-  return semverVersions;
-}

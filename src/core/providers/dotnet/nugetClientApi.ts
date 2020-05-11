@@ -1,11 +1,11 @@
 import * as ErrorFactory from 'core/clients/errors/factory';
 import * as PackageDocumentFactory from 'core/packages/factories/packageDocumentFactory';
 import { PackageDocument, PackageSourceTypes, } from 'core/packages/models/packageDocument';
-import { FetchRequest } from 'core/clients/model/fetch';
+import { FetchRequest } from 'core/clients/models/fetch';
 import {
   splitReleasesFromArray,
   removeFourSegmentVersionsFromArray,
-  createVersionTags
+  createSuggestionTags
 } from 'core/packages/helpers/versionHelpers';
 import { parseVersionSpec } from './dotnetUtils.js';
 import { DotNetVersionSpec } from './definitions/versionSpec';
@@ -58,7 +58,7 @@ function createRemotePackageDocument(request: FetchRequest, dotnetSpec: DotNetVe
       const { releases, prereleases } = splitReleasesFromArray(rawVersions)
 
       // anaylse and report
-      const tags = createVersionTags(versionRange, releases, prereleases);
+      const tags = createSuggestionTags(versionRange, releases, prereleases);
 
       return {
         provider: 'dotnet',

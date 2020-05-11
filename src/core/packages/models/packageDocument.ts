@@ -20,7 +20,7 @@ export enum PackageVersionStatus {
   notsupported = 'not supported',
   invalid = 'invalid entry',
   nomatch = 'no match',
-  satisifies = 'satisifies',
+  satisfies = 'satisfies',
   latest = 'latest',
   fixed = 'fixed',
 }
@@ -30,20 +30,23 @@ export type PackageNameVersion = {
   version: string,
 }
 
-export enum PackageTagFlags {
-  // bitwise
-  updatable = 1,
-  readOnly = 2,
-}
 
 export type PackagePrereleaseDictionary = {
   [tagName: string]: Array<string>
 }
 
-export type PackageTag = {
+export enum PackageSuggestionFlags {
+  // bitwise
+  status = 1,
+  release = 2,
+  prerelease = 4,
+  tag = 8,
+}
+
+export type PackageSuggestion = {
   name: string,
   version: string,
-  flags: PackageTagFlags,
+  flags: PackageSuggestionFlags,
 }
 
 export type PackageDocument = {
@@ -52,7 +55,7 @@ export type PackageDocument = {
   type: PackageVersionTypes,
   requested: PackageNameVersion,
   resolved: PackageNameVersion,
-  tags: Array<PackageTag>,
+  tags: Array<PackageSuggestion>,
   releases?: Array<string>,
   prereleases?: Array<string>,
   gitSpec?: any,

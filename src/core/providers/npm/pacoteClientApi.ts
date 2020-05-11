@@ -1,13 +1,13 @@
 
 import * as ErrorFactory from 'core/clients/errors/factory';
-import { FetchRequest } from 'core/clients/model/fetch';
-import { filterPrereleasesFromDistTags, createVersionTags, filterPrereleasesWithinRange } from '../../packages/helpers/versionHelpers';
+import { FetchRequest } from 'core/clients/models/fetch';
+import { filterPrereleasesFromDistTags, createSuggestionTags, filterPrereleasesWithinRange } from '../../packages/helpers/versionHelpers';
 import {
   PackageDocument,
   PackageVersionTypes,
   PackageSourceTypes,
-  PackageTag,
-  PackageTagFlags
+  PackageSuggestion,
+  PackageSuggestionFlags
 } from '../../packages/models/packageDocument';
 import * as PackageDocumentFactory from '../../packages/factories/packageDocumentFactory'
 
@@ -63,12 +63,25 @@ function createRemotePackageDocument(request: FetchRequest, npaResult: any): Pro
       let versionRange: string = getRangeFromNpaResult(npaResult);
       let gitSpec: any = source === PackageSourceTypes.git ? npaResult.hosted : null
 
+
+      const distTags = packu['dist-tags'] || {};
+
       const resolved = {
         name: npaResult.name,
         version: versionRange,
       };
 
-      if (npaResult.type === "alias") resolved.name = npaResult.subSpec.name;
+      if (npaResult.type === PackageVersionTypes.alias) resolved.name = npaResult.subSpec.name;
+
+      if (npaResult.type === PackageVersionTypes.tag) {
+        versionRange = distTags[requested.version];
+        if (!versionRange) return PackageDocumentFactory.createNoMatch(
+          'npm', 
+          source, 
+          type, 
+          requested
+        );
+      }
 
       // extract releases
       const releases = Object.keys(packu.versions || {}).sort(compareLoose);
@@ -77,7 +90,7 @@ function createRemotePackageDocument(request: FetchRequest, npaResult: any): Pro
       const prereleases = filterPrereleasesFromDistTags(packu['dist-tags'] || {}).sort(compareLoose)
 
       // anaylse and report
-      const tags = createVersionTags(versionRange, releases, prereleases);
+      const tags = createSuggestionTags(versionRange, releases, prereleases);
 
       return {
         provider: 'npm',
@@ -146,7 +159,7 @@ function getVersionTypeFromNpaResult(npaResult): PackageVersionTypes {
 }
 
 function getRangeFromNpaResult(npaResult): string {
-  if (npaResult.type === "git") {
+  if (npaResult.type === PackageSourceTypes.git) {
     if (npaResult.gitRange) {
       return npaResult.gitRange;
     } else if (npaResult.gitCommittish) {
@@ -154,7 +167,7 @@ function getRangeFromNpaResult(npaResult): string {
     } else {
       return npaResult.rawSpec;
     }
-  } else if (npaResult.type === "alias") {
+  } else if (npaResult.type === PackageVersionTypes.alias) {
     return npaResult.subSpec.rawSpec;
   } else {
     return npaResult.rawSpec;
@@ -187,8 +200,8 @@ function createDirectoryPackageDocument(rawName: string, rawVersion: string, npa
     version: fileRegExpResult[1],
   };
 
-  const tags: Array<PackageTag> = [
-    { name: 'file://', version: resolved.version, flags: PackageTagFlags.readOnly },
+  const tags: Array<PackageSuggestion> = [
+    { name: 'file://', version: resolved.version, flags: PackageSuggestionFlags.prerelease },
   ]
 
   return {

@@ -4,11 +4,11 @@ import { PackageSourceTypes, PackageDocument } from 'core/packages/models/packag
 import {
   extractVersionsFromMap,
   splitReleasesFromArray,
-  createVersionTags,
+  createSuggestionTags,
   parseSemver
 } from 'core/packages/helpers/versionHelpers';
 import { SemverSpec } from 'core/packages/definitions/semverSpec';
-import { FetchRequest } from 'core/clients/model/fetch';
+import { FetchRequest } from 'core/clients/models/fetch';
 
 const fs = require('fs');
 
@@ -44,14 +44,15 @@ export function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
         version: versionRange,
       };
 
-      const rawVersions = extractVersionsFromMap(packageInfo.versions)
-        .filter(version => version !== '~master'); // todo handle ~master entries
+      const rawVersions = extractVersionsFromMap(packageInfo.versions);
 
       // seperate versions to releases and prereleases
       const { releases, prereleases } = splitReleasesFromArray(rawVersions)
 
       // anaylse and report
-      const tags = createVersionTags(versionRange, releases, prereleases);
+      const tags = createSuggestionTags(versionRange, releases, prereleases);
+
+      // todo return a ~master entry when no matches found
 
       return {
         provider: 'dub',

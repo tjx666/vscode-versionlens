@@ -2,26 +2,18 @@ import {
   PackageNameVersion,
   PackageVersionTypes,
   PackageSourceTypes,
-  PackageVersionStatus,
-  PackageTagFlags,
   PackageDocument,
-  PackageTag
+  PackageSuggestion
 } from '../models/packageDocument'
 
-export function createNotFound(provider: string, requested: PackageNameVersion, type: PackageVersionTypes): PackageDocument {
-  const source: PackageSourceTypes = PackageSourceTypes.directory;
+import * as SuggestFactory from '../factories/packageSuggestionFactory'
 
-  const tags: Array<PackageTag> = [
-    {
-      name: PackageVersionStatus.notfound,
-      version: requested.version,
-      flags: PackageTagFlags.readOnly
-    },
-    {
-      name: PackageVersionStatus.latest,
-      version: 'latest',
-      flags: PackageTagFlags.updatable | PackageTagFlags.readOnly
-    },
+export function createNotFound(provider: string, requested: PackageNameVersion, type: PackageVersionTypes): PackageDocument {
+  const source: PackageSourceTypes = PackageSourceTypes.registry;
+
+  const suggestions: Array<PackageSuggestion> = [
+    SuggestFactory.createNotFound(requested.version),
+    SuggestFactory.createLatest(),
   ];
 
   return {
@@ -30,24 +22,16 @@ export function createNotFound(provider: string, requested: PackageNameVersion, 
     type,
     requested,
     resolved: null,
-    tags
+    tags: suggestions
   };
 }
 
 export function createInvalidVersion(provider: string, requested: PackageNameVersion, type: PackageVersionTypes): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.registry;
-  const tags: Array<PackageTag> = [
-    {
-      name: PackageVersionStatus.invalid,
-      version: requested.version,
-      flags: PackageTagFlags.readOnly
-    },
-    {
-      name: PackageVersionStatus.latest,
-      version: 'latest',
-      flags: PackageTagFlags.updatable | PackageTagFlags.readOnly
-    },
-  ]
+  const suggestions: Array<PackageSuggestion> = [
+    SuggestFactory.createInvalid(requested.version),
+    SuggestFactory.createLatest(),
+  ];
 
   return {
     provider: 'npm',
@@ -55,23 +39,15 @@ export function createInvalidVersion(provider: string, requested: PackageNameVer
     type,
     requested,
     resolved: null,
-    tags
+    tags: suggestions
   };
 }
 
 export function createNotSupported(provider: string, requested: PackageNameVersion, type: PackageVersionTypes): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.registry;
-  const tags: Array<PackageTag> = [
-    {
-      name: PackageVersionStatus.notsupported,
-      version: requested.version,
-      flags: PackageTagFlags.readOnly
-    },
-    {
-      name: PackageVersionStatus.latest,
-      version: 'latest',
-      flags: PackageTagFlags.updatable | PackageTagFlags.readOnly
-    },
+  const suggestions: Array<PackageSuggestion> = [
+    SuggestFactory.createNotSupported(requested.version),
+    SuggestFactory.createLatest(),
   ];
 
   return {
@@ -80,19 +56,15 @@ export function createNotSupported(provider: string, requested: PackageNameVersi
     type,
     requested,
     resolved: null,
-    tags
+    tags: suggestions
   };
 }
 
 export function createGitFailed(provider: string, requested: PackageNameVersion, type: PackageVersionTypes): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.git;
-
-  const tags: Array<PackageTag> = [
-    {
-      name: PackageVersionStatus.notfound,
-      version: requested.version,
-      flags: PackageTagFlags.readOnly
-    },
+  const suggestions = [
+    SuggestFactory.createNotFound(requested.version),
+    SuggestFactory.createLatest(),
   ]
 
   return {
@@ -101,6 +73,22 @@ export function createGitFailed(provider: string, requested: PackageNameVersion,
     type,
     requested,
     resolved: null,
-    tags
+    tags: suggestions
+  };
+}
+
+export function createNoMatch(provider: string, source: PackageSourceTypes, type: PackageVersionTypes, requested: PackageNameVersion, ): PackageDocument {
+  const suggestions: Array<PackageSuggestion> = [
+    SuggestFactory.createNoMatch(),
+    SuggestFactory.createLatest(),
+  ];
+
+  return {
+    provider,
+    source,
+    type,
+    requested,
+    resolved: null,
+    tags: suggestions
   };
 }

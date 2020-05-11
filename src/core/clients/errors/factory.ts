@@ -1,4 +1,4 @@
-import { FetchRequest, FetchResponse, FetchError } from '../model/fetch';
+import { FetchRequest, FetchResponse, FetchError } from '../models/fetch';
 
 export function createFetchError(request: FetchRequest, response: FetchResponse, data: any): FetchError {
   return {

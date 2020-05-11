@@ -2,7 +2,7 @@ import * as ErrorFactory from 'core/errors/factory';
 import { fetchPackage } from 'core/providers/dub/dubClientApi';
 import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
 import { ReplaceVersionFunction, PackageLens } from 'presentation/lenses/models/packageLens';
-import { FetchError } from 'core/clients/model/fetch';
+import { FetchError } from 'core/clients/models/fetch';
 
 export function resolveDubPackage(
   packagePath: string,

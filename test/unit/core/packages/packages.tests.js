@@ -5,6 +5,8 @@ import rollupPrereleases from './helpers/versionHelpers/filterPrereleasesWithinR
 import splitReleasesFromArray from './helpers/versionHelpers/splitReleasesFromArray.tests';
 import removeFourSegmentVersionsFromArray from './helpers/versionHelpers/removeFourSegmentVersionsFromArray.tests';
 import friendlifyPrereleaseName from './helpers/versionHelpers/friendlifyPrereleaseName.tests';
+import filterSemverVersions from './helpers/versionHelpers/filterSemverVersions.tests';
+import createSuggestionTags from './helpers/versionHelpers/createSuggestionTags.tests';
 
 export const VersionHelperTests = {
   filterVersionsWithinRange,
@@ -14,4 +16,6 @@ export const VersionHelperTests = {
   splitReleasesFromArray,
   removeFourSegmentVersionsFromArray,
   friendlifyPrereleaseName,
+  filterSemverVersions,
+  createSuggestionTags,
 }
