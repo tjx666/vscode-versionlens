@@ -7,20 +7,6 @@ export interface IVersionCodeLens {
   documentUrl: string;
   command: any;
   replaceVersionFn: (string) => string;
-
-  // getTaggedVersionPrefix: (string) => string;
-  // isInvalidVersion: () => boolean;
-  // isTaggedVersion: () => boolean;
-  // isTagName: (string) => boolean;
-  // isFixedVersion: () => boolean;
-  // isSource: (string) => boolean;
-  // matchesLatestVersion: () => boolean;
-  // satisfiesLatestVersion: () => boolean;
-  // matchesPrereleaseVersion: () => boolean;
-  // getTaggedVersion: () => boolean;
-  // versionMatchNotFound: () => boolean;
-  // getInstallIndicator: () => string;
-
   hasPackageSource: (source: PackageSourceTypes) => boolean;
   hasPackageStatus: (source: PackageVersionStatus) => boolean;
   hasPackageError: (error: PackageErrors) => boolean;
