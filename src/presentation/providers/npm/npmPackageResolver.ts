@@ -5,7 +5,7 @@
 
 import { formatWithExistingLeading } from '../../../common/utils';
 import { logErrorToConsole } from '../../../providers/shared/utils';
-import { ReplaceVersionFunction } from '../../lenses/definitions/packageLens';
+import { ReplaceVersionFunction } from '../../lenses/models/packageLens';
 import * as PackageLensFactory from '../../lenses/factories/packageLensFactory';
 import { PackageSourceTypes, PackageDocument, PackageVersionTypes } from 'core/packages/models/packageDocument';
 import { ExpiryCacheMap } from 'core/caching/expiryCacheMap';

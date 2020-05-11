@@ -5,7 +5,7 @@
 import { formatWithExistingLeading } from '../../../common/utils';
 import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
 import { resolveNpmPackage } from 'presentation/providers/npm/npmPackageResolver';
-import { PackageLens } from 'presentation/lenses/definitions/packageLens';
+import { PackageLens } from 'presentation/lenses/models/packageLens';
 import { PackageSourceTypes } from 'core/packages/models/packageDocument';
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;

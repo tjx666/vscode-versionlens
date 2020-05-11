@@ -1,4 +1,4 @@
-import { PackageLens, PackageErrors } from "./packageLens";
+import { PackageLens, PackageErrors } from "../models/packageLens";
 import { PackageSourceTypes, PackageVersionStatus } from "core/packages/models/packageDocument";
 
 export interface IVersionCodeLens {

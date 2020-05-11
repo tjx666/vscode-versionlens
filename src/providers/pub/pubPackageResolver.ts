@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as PackageLensFactory from "presentation/lenses/factories/packageLensFactory";
-import { PackageErrors } from "presentation/lenses/definitions/packageLens";
+import { PackageErrors } from "presentation/lenses/models/packageLens";
 
 const semver = require("semver");
 

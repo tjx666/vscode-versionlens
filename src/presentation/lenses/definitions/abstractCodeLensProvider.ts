@@ -6,7 +6,7 @@ import appSettings from '../../../appSettings';
 import { IVersionCodeLens } from "./IVersionCodeLens";
 import { VersionLens } from '../models/versionLens';
 import { EventEmitter, CancellationToken } from 'vscode';
-import { PackageErrors } from './packageLens';
+import { PackageErrors } from '../models/packageLens';
 import * as CommandFactory from 'presentation/commands/factory';
 import { PackageSourceTypes } from 'core/packages/models/packageDocument';
 

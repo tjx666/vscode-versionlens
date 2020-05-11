@@ -8,7 +8,7 @@ import { extractMavenLensDataFromText } from './mavenPackageParser';
 import { resolveMavenPackage } from './mavenPackageResolver';
 import { loadMavenRepositories } from './mavenAPI';
 import { IVersionCodeLens } from "presentation/lenses/definitions/IVersionCodeLens";
-import { PackageErrors } from 'presentation/lenses/definitions/packageLens';
+import { PackageErrors } from 'presentation/lenses/models/packageLens';
 
 export class MavenCodeLensProvider extends AbstractCodeLensProvider {
 
