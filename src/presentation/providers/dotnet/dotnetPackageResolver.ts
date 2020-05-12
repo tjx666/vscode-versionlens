@@ -17,7 +17,6 @@ export function resolveDotnetPackage(
 
   return fetchPackage(request)
     .then(pack => {
-      // must be a registry version
       return PackageLensFactory.createPackageLens(pack, replaceVersionFn);
     })
     .catch(error => {

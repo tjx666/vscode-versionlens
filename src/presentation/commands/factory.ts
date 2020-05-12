@@ -25,7 +25,7 @@ export function createDirectoryLinkCommand(codeLens) {
   let cmd = `${appSettings.extensionName}.linkCommand`;
   const path = require('path');
   const fs = require('fs');
-  const filePath = path.resolve(path.dirname(codeLens.documentUrl.fsPath), codeLens.package.tag.version);
+  const filePath = path.resolve(path.dirname(codeLens.documentUrl.fsPath), codeLens.package.suggestion.version);
   const fileExists = fs.existsSync(filePath);
   if (fileExists === false)
     title = (cmd = null) || 'Specified resource does not exist';
@@ -71,21 +71,25 @@ export function createGithubCommand(codeLens) {
 
 export function createSuggestedVersionCommand(codeLens: VersionLens) {
   const { name, version, flags } = codeLens.package.suggestion;
-  const isStatus = flags & PackageSuggestionFlags.status;
+  const isStatus = (flags & PackageSuggestionFlags.status);
+  const isTag = (flags & PackageSuggestionFlags.tag);
   const isPrerelease = flags & PackageSuggestionFlags.prerelease;
-  const isTag = flags & PackageSuggestionFlags.tag;
 
   if (!isStatus) {
-    const replaceWithVersion = (isPrerelease || isTag) ? version : codeLens.replaceVersionFn(version);
+    const replaceWithVersion: string = isPrerelease || isTag ?
+      version :
+      codeLens.replaceVersionFn(version);
+
+    const prefix = isTag ? '' : name + ': ';
     return codeLens.setCommand(
-      `${name}: ${appSettings.updateIndicator} ${version}`,
+      `${prefix}${appSettings.updateIndicator} ${version}`,
       `${appSettings.extensionName}.updateDependencyCommand`,
       [codeLens, `${replaceWithVersion}`]
     );
   }
 
   // show the status
-  return createTagCommand(`${name} ${version}`, codeLens);
+  return createTagCommand(`${name} ${version}`.trimEnd(), codeLens);
 }
 
 export function createPackageNotFoundCommand(codeLens: VersionLens) {

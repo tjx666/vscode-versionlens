@@ -16,32 +16,63 @@ export async function fetchPackage(request: FetchRequest): Promise<PackageDocume
   const npa = require('npm-package-arg');
   let npaResult;
 
-  try {
-    npaResult = npa.resolve(request.packageName, request.packageVersion, request.packagePath);
-  } catch (error) {
-    return Promise.reject(
-      ErrorFactory.createFetchError(
-        request,
-        { status: error.code, responseText: error.message },
-        npaResult
-      )
-    );
-  }
+  return new Promise<PackageDocument>(function (resolve, reject) {
 
-  if (npaResult.type === PackageSourceTypes.directory || npaResult.type === PackageSourceTypes.file)
-    return createDirectoryPackageDocument(request.packageName, request.packageVersion, npaResult);
+    try {
+      npaResult = npa.resolve(request.packageName, request.packageVersion, request.packagePath);
+    } catch (error) {
+      reject(
+        ErrorFactory.createFetchError(
+          request,
+          { status: error.code, responseText: error.message },
+          npaResult
+        )
+      );
+      return;
+    }
 
-  return createRemotePackageDocument(request, npaResult);
+    if (npaResult.type === PackageSourceTypes.directory || npaResult.type === PackageSourceTypes.file)
+      resolve(createDirectoryPackageDocument(request.packageName, request.packageVersion, npaResult));
+    else
+      resolve(createRemotePackageDocument(request, npaResult));
+
+  }).catch(error => {
+    const { response, data: npaResult } = error
+
+    const requested = {
+      name: request.packageName,
+      version: request.packageVersion
+    };
+
+    if (!response) {
+      return Promise.reject(
+        ErrorFactory.createFetchError(request, response, npaResult)
+      );
+    }
+
+    if (response.status === 'E404') {
+      return PackageDocumentFactory.createNotFound('npm', requested, null);
+    }
+
+    if (response.status === 'EINVALIDTAGNAME' || response.responseText.includes('Invalid comparator:')) {
+      return PackageDocumentFactory.createInvalidVersion('npm', requested, null);
+    }
+
+    if (response.status === 'EUNSUPPORTEDPROTOCOL') {
+      return PackageDocumentFactory.createNotSupported('npm', requested, null);
+    }
+
+    if (response.status === 128) {
+      return PackageDocumentFactory.createGitFailed('npm', requested, null);
+    }
+    return Promise.reject(error);
+  });
+
 }
 
 function createRemotePackageDocument(request: FetchRequest, npaResult: any): Promise<PackageDocument> {
   const pacote = require('pacote');
   const npmConfig = require('libnpmconfig');
-
-  const requested = {
-    name: request.packagePath,
-    version: request.packageVersion
-  };
 
   // get npm config
   const npmOpts = npmConfig.read(
@@ -64,6 +95,10 @@ function createRemotePackageDocument(request: FetchRequest, npaResult: any): Pro
       let versionRange: string = getRangeFromNpaResult(npaResult);
       let gitSpec: any = source === PackageSourceTypes.git ? npaResult.hosted : null
 
+      const requested = {
+        name: request.packageName,
+        version: request.packageVersion
+      };
 
       const distTags = packu['dist-tags'] || {};
 
@@ -74,21 +109,24 @@ function createRemotePackageDocument(request: FetchRequest, npaResult: any): Pro
 
       if (npaResult.type === PackageVersionTypes.alias) resolved.name = npaResult.subSpec.name;
 
+      // extract releases
+      const releases = Object.keys(packu.versions || {}).sort(compareLoose);
+
+      // extract prereleases from dist tags
+      const prereleases = filterPrereleasesFromDistTags(packu['dist-tags'] || {}).sort(compareLoose)
+
+      // check if the version requested is a tag. eg latest|next
       if (npaResult.type === PackageVersionTypes.tag) {
         versionRange = distTags[requested.version];
         if (!versionRange) return PackageDocumentFactory.createNoMatch(
           'npm',
           source,
           type,
-          requested
+          requested,
+          releases.length > 0 ? releases[releases.length - 1] : null
         );
       }
 
-      // extract releases
-      const releases = Object.keys(packu.versions || {}).sort(compareLoose);
-
-      // extract prereleases from dist tags
-      const prereleases = filterPrereleasesFromDistTags(packu['dist-tags'] || {}).sort(compareLoose)
 
       // analyse suggestions
       const suggestions = createSuggestionTags(versionRange, releases, prereleases);
@@ -104,33 +142,9 @@ function createRemotePackageDocument(request: FetchRequest, npaResult: any): Pro
         releases,
         prereleases,
       };
-    })
-    .catch(error => {
-      const { response, data: npaResult } = error
-
-      if (error.code === 'E404') {
-        return PackageDocumentFactory.createNotFound('npm', requested, null);
-      }
-
-      if (error.code === 'EINVALIDTAGNAME' || error.message.includes('Invalid comparator:')) {
-        return PackageDocumentFactory.createInvalidVersion('npm', requested, null);
-      }
-
-      if (error.code === 'EUNSUPPORTEDPROTOCOL') {
-        return PackageDocumentFactory.createNotSupported('npm', requested, null);
-      }
-
-      if (error.code === 128) {
-        return PackageDocumentFactory.createGitFailed('npm', requested, null);
-      }
-
-      if (!response) {
-        return Promise.reject(
-          ErrorFactory.createFetchError(request, response, npaResult)
-        );
-      }
-
-      return Promise.reject(error);
+    }).catch(error => {
+      const response = { responseText: error.message, status: error.code };
+      return Promise.reject(ErrorFactory.createFetchError(request, response, npaResult));
     });
 }
 

@@ -1,6 +1,6 @@
 import * as ErrorFactory from 'core/clients/errors/factory';
 import * as PackageDocumentFactory from 'core/packages/factories/packageDocumentFactory';
-import { PackageDocument, PackageSourceTypes } from 'core/packages/models/packageDocument';
+import { PackageDocument, PackageSourceTypes, PackageVersionTypes } from 'core/packages/models/packageDocument';
 import { FetchRequest } from 'core/clients/models/fetch';
 import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
 import {
@@ -12,7 +12,6 @@ import { DotNetVersionSpec } from './definitions/versionSpec';
 
 export async function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
   const dotnetSpec = parseVersionSpec(request.packageVersion);
-
   // const nugetFeeds = 
   // const queryUrl = `${feed}?id=${packageName}&prerelease=${appContrib.dotnetIncludePrerelease}&semVerLevel=2.0.0`;
   // const nugetResult = resolveNuget()
@@ -39,12 +38,20 @@ function createRemotePackageDocument(request: FetchRequest, dotnetSpec: DotNetVe
         ));
       }
 
-      const versionRange = dotnetSpec.resolvedVersion;
-
       const requested = {
         name: request.packageName,
         version: request.packageVersion
       };
+
+      if (dotnetSpec.spec.hasFourSegments) {
+        return Promise.resolve(PackageDocumentFactory.createFourSegment(
+          'dotnet',
+          requested,
+          dotnetSpec.type,
+        ))
+      }
+
+      const versionRange = dotnetSpec.resolvedVersion;
 
       const resolved = {
         name: request.packageName,

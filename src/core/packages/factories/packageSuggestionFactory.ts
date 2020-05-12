@@ -17,6 +17,7 @@ export function createSuggestionTags(versionRange: string, releases: string[], p
   const satisfiesVersion = maxSatisfying(releases, versionRange);
   const containsVersion = versionRange.includes(satisfiesVersion);
   const isLatest = latestVersion === satisfiesVersion;
+
   if (releases.length === 0 && prereleases.length === 0)
     // no match and nothing else to suggest
     suggestions.push(createNoMatch())
@@ -98,10 +99,10 @@ export function createSuggestionTags(versionRange: string, releases: string[], p
   return suggestions;
 }
 
-export function createNotFound(requestedVersion: string): PackageSuggestion {
+export function createNotFound(): PackageSuggestion {
   return {
     name: PackageVersionStatus.notfound,
-    version: requestedVersion,
+    version: '',
     flags: PackageSuggestionFlags.status
   };
 }
