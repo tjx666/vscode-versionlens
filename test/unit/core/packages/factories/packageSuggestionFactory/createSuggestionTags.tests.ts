@@ -61,8 +61,8 @@ export default {
       const expected = [
         {
           name: PackageVersionStatus.latest,
-          version: 'latest',
-          flags: PackageSuggestionFlags.tag
+          version: '',
+          flags: PackageSuggestionFlags.status
         }
       ]
 

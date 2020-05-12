@@ -55,8 +55,8 @@ export default {
 
   'handles floating ranges': () => {
     const expectedList = [
-      "1.*", ">=1.0.0 <2.0.0-0",
-      "1.0.*", ">=1.0.0 <1.1.0-0"
+      "1.*", ">=1.0.0-0 <2.0.0-0",
+      "1.0.*", ">=1.0.0-0 <1.1.0-0"
     ];
 
     for (let i = 0; i < expectedList.length; i += 2) {
