@@ -123,10 +123,10 @@ function createRemotePackageDocument(request: FetchRequest, npaResult: any): Pro
           source,
           type,
           requested,
+          // suggest the latest release if available
           releases.length > 0 ? releases[releases.length - 1] : null
         );
       }
-
 
       // analyse suggestions
       const suggestions = createSuggestionTags(versionRange, releases, prereleases);

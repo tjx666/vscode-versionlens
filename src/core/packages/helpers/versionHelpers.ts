@@ -6,12 +6,10 @@ import {
   PackageVersionTypes,
   PackagePrereleaseDictionary
 } from "../models/packageDocument";
-import * as SuggestFactory from '../factories/packageSuggestionFactory'
 import { SemverSpec } from "../definitions/semverSpec";
 
 export const formatTagNameRegex = /^[^0-9\-]*/;
-
-const loosePrereleases = { loose: true, includePrerelease: true };
+export const loosePrereleases = { loose: true, includePrerelease: true };
 
 export function filterVersionsWithinRange(range: string, versions: Array<string>): Array<string> {
   const { valid, validRange, Range } = require("semver");

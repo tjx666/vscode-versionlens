@@ -1,4 +1,4 @@
-import { isFourSegmentedVersion } from '../../packages/helpers/versionHelpers'
+import { isFourSegmentedVersion, loosePrereleases } from '../../packages/helpers/versionHelpers'
 import { PackageVersionTypes } from '../../packages/models/packageDocument';
 import { DotNetVersionSpec, NugetVersionSpec } from './definitions/versionSpec';
 
@@ -34,7 +34,6 @@ export function expandShortVersion(value) {
 
 export function parseVersionSpec(rawVersion: string): DotNetVersionSpec {
   const spec = buildVersionSpec(rawVersion);
-  // if (spec && spec.hasFourSegments) return null;
 
   let version: string;
   let isValidVersion = false;
@@ -42,13 +41,15 @@ export function parseVersionSpec(rawVersion: string): DotNetVersionSpec {
 
   if (spec && !spec.hasFourSegments) {
     // convert spec to semver
-    const semver = require('semver');
+    const { valid, validRange } = require('semver');
     version = convertVersionSpecToString(spec);
-    isValidVersion = semver.valid(version);
-    isValidRange = !isValidVersion && semver.validRange(version) !== null;
+    isValidVersion = valid(version, loosePrereleases);
+    isValidRange = !isValidVersion && validRange(version, loosePrereleases) !== null;
   }
 
-  const type: PackageVersionTypes = isValidVersion ? PackageVersionTypes.version : isValidRange ? PackageVersionTypes.range : null
+  const type: PackageVersionTypes = isValidVersion ?
+    PackageVersionTypes.version :
+    isValidRange ? PackageVersionTypes.range : null
 
   const resolvedVersion = spec ? version : '';
 
@@ -66,23 +67,25 @@ export function buildVersionSpec(value): NugetVersionSpec {
 
   // test if the version is in semver format
   const semver = require('semver');
-  const parsedSemver = semver.parse(formattedValue);
+  const parsedSemver = semver.parse(formattedValue, loosePrereleases);
   if (parsedSemver) {
     return {
       version: formattedValue,
       isMinInclusive: true,
       isMaxInclusive: true,
+      hasFourSegments: false,
     };
   }
 
   try {
     // test if the version is a semver range format
-    const parsedNodeRange = semver.validRange(formattedValue);
+    const parsedNodeRange = semver.validRange(formattedValue, loosePrereleases);
     if (parsedNodeRange) {
       return {
         version: parsedNodeRange,
         isMinInclusive: true,
         isMaxInclusive: true,
+        hasFourSegments: false,
       };
     }
   } catch { }

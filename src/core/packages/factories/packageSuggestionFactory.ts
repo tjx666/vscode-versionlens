@@ -7,29 +7,39 @@ import {
 import {
   filterPrereleasesWithinRange,
   extractTaggedVersions,
-  isFixedVersion
+  isFixedVersion,
+  loosePrereleases
 } from "../helpers/versionHelpers";
 
 export function createSuggestionTags(versionRange: string, releases: string[], prereleases: string[]): Array<PackageSuggestion> {
   const { maxSatisfying } = require("semver");
   const suggestions: Array<PackageSuggestion> = [];
+
+  // check for a release
+  let satisfiesVersion = maxSatisfying(releases, versionRange, loosePrereleases);
+  if (!satisfiesVersion) {
+    // lookup prereleases
+    satisfiesVersion = maxSatisfying(prereleases, versionRange, loosePrereleases);
+  }
+
+  // get the latest release
   const latestVersion = maxSatisfying(releases, "*");
-  const satisfiesVersion = maxSatisfying(releases, versionRange);
-  const containsVersion = versionRange.includes(satisfiesVersion);
   const isLatest = latestVersion === satisfiesVersion;
+  const noSuggestionNeeded = versionRange.includes(satisfiesVersion);
 
   if (releases.length === 0 && prereleases.length === 0)
-    // no match and nothing else to suggest
+    // no match
     suggestions.push(createNoMatch())
   else if (!satisfiesVersion)
-    // no match and suggest latest
+    // no match
     suggestions.push(
       createNoMatch(),
+      // suggest latestVersion
       createLatest(latestVersion),
     )
-  else if (isLatest && containsVersion)
+  else if (isLatest && noSuggestionNeeded)
     // latest
-    suggestions.push(createLatest());
+    suggestions.push(createLatestStatus());
   else if (isLatest)
     suggestions.push(
       // satisfies latest
@@ -38,7 +48,7 @@ export function createSuggestionTags(versionRange: string, releases: string[], p
         'latest',
         PackageSuggestionFlags.status
       ),
-      // updatable to latest@version
+      // suggest latestVersion
       createLatest(latestVersion),
     );
   else if (satisfiesVersion) {
@@ -52,7 +62,7 @@ export function createSuggestionTags(versionRange: string, releases: string[], p
           versionRange,
           PackageSuggestionFlags.status
         ),
-        // updatable to latest@version
+        // suggest latestVersion
         createLatest(latestVersion),
       );
 
@@ -63,11 +73,11 @@ export function createSuggestionTags(versionRange: string, releases: string[], p
         createSuggestion(
           PackageVersionStatus.satisfies,
           satisfiesVersion,
-          containsVersion ?
+          noSuggestionNeeded ?
             PackageSuggestionFlags.status :
             PackageSuggestionFlags.release
         ),
-        // updatable to latest@version
+        // suggest latestVersion
         createLatest(latestVersion),
       );
 
@@ -84,10 +94,6 @@ export function createSuggestionTags(versionRange: string, releases: string[], p
     if (pvn.name === 'latest') return;
     if (pvn.version === satisfiesVersion) return;
     if (versionRange.includes(pvn.version)) return;
-
-    // let flags: PackageTagFlags = (pvn.name === 'next') ?
-    //   PackageTagFlags.updatable | PackageTagFlags.readOnly :
-    //   PackageTagFlags.updatable;
 
     suggestions.push({
       name: pvn.name,
@@ -132,12 +138,20 @@ export function createNoMatch(): PackageSuggestion {
 }
 
 export function createLatest(requestedVersion?: string): PackageSuggestion {
-  // when there is no requestedVersion then use the 'latest' tag
-  // otherwise it's the latest release version
+  // treats requestedVersion as latest version
+  // if no requestedVersion then uses the 'latest' tag instead
   return {
     name: PackageVersionStatus.latest,
     version: requestedVersion || 'latest',
     flags: requestedVersion ? PackageSuggestionFlags.release : PackageSuggestionFlags.tag
+  };
+}
+
+export function createLatestStatus(): PackageSuggestion {
+  return {
+    name: PackageVersionStatus.latest,
+    version: '',
+    flags: PackageSuggestionFlags.status
   };
 }
 

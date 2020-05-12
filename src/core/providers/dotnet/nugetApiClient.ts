@@ -5,7 +5,7 @@ import { FetchRequest } from 'core/clients/models/fetch';
 import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
 import {
   splitReleasesFromArray,
-  removeFourSegmentVersionsFromArray,
+  filterSemverVersions,
 } from 'core/packages/helpers/versionHelpers';
 import { parseVersionSpec } from './dotnetUtils.js';
 import { DotNetVersionSpec } from './definitions/versionSpec';
@@ -29,6 +29,8 @@ function createRemotePackageDocument(request: FetchRequest, dotnetSpec: DotNetVe
         return Promise.reject(ErrorFactory.createFetchError(request, response, dotnetSpec));
       }
 
+      const source = PackageSourceTypes.registry;
+
       const packageInfo = JSON.parse(response.responseText);
       if (packageInfo.totalHits === 0) {
         return Promise.reject(ErrorFactory.createFetchError(
@@ -43,13 +45,34 @@ function createRemotePackageDocument(request: FetchRequest, dotnetSpec: DotNetVe
         version: request.packageVersion
       };
 
-      if (dotnetSpec.spec.hasFourSegments) {
+      // sanitize to semver only versions
+      const rawVersions = filterSemverVersions(packageInfo.data);
+
+      // seperate versions to releases and prereleases
+      const { releases, prereleases } = splitReleasesFromArray(rawVersions)
+
+      // four segment is not supported
+      if (dotnetSpec.spec && dotnetSpec.spec.hasFourSegments) {
         return Promise.resolve(PackageDocumentFactory.createFourSegment(
           'dotnet',
           requested,
           dotnetSpec.type,
         ))
       }
+
+      // no match if null type
+      if (dotnetSpec.type === null) {
+        return Promise.resolve(PackageDocumentFactory.createNoMatch(
+          'dotnet',
+          source,
+          PackageVersionTypes.version,
+          requested,
+          // suggest the latest release if available
+          releases.length > 0 ? releases[releases.length - 1] : null,
+        ))
+      }
+
+
 
       const versionRange = dotnetSpec.resolvedVersion;
 
@@ -58,18 +81,12 @@ function createRemotePackageDocument(request: FetchRequest, dotnetSpec: DotNetVe
         version: versionRange,
       };
 
-      // sanitize to semver only versions
-      const rawVersions = removeFourSegmentVersionsFromArray(packageInfo.data);
-
-      // seperate versions to releases and prereleases
-      const { releases, prereleases } = splitReleasesFromArray(rawVersions)
-
       // analyse suggestions
       const suggestions = createSuggestionTags(versionRange, releases, prereleases);
 
       return {
         provider: 'dotnet',
-        source: PackageSourceTypes.registry,
+        source,
         type: dotnetSpec.type,
         requested,
         resolved,
