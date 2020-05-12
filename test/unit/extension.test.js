@@ -9,8 +9,8 @@ export * from './presentation/commands/internal/updateDependencyCommand.tests.js
 // export * from './presentation/commands/factory.tests.js';
 
 
-// export * from './core/providers/npm/npm.tests.js';
-// export * from './core/providers/dotnet/dotnet.tests.js';
+export * from './core/providers/npm/npm.tests.js';
+export * from './core/providers/dotnet/dotnet.tests.js';
 // export * from './core/providers/shared/shared.tests.js';
 // export * from './core/providers/shared/versionsUtils.tests.js';
 // export * from './core/providers/composer/composer.tests.js';

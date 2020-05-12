@@ -24,9 +24,6 @@
       "providers/*": [
         "../src/providers/*"
       ],
-      "common/*": [
-        "../src/common/*"
-      ],
       "test/unit/*": [
         "unit/*"
       ]

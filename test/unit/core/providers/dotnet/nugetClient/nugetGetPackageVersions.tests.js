@@ -1,4 +1,4 @@
-import { nugetGetPackageVersions } from 'core/dotnet/nugetClient';
+import { nugetGetPackageVersions } from 'core/providers/dotnet/nugetApiClient';
 
 const assert = require('assert');
 const mock = require('mock-require');
