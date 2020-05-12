@@ -1,6 +1,6 @@
-enum PubContributions {
-  DependencyProperties = 'pub.dependencyProperties',
-  ApiUrl = 'pub.apiUrl',
+enum DubContributions {
+  DependencyProperties = 'dub.dependencyProperties',
+  ApiUrl = 'dub.apiUrl',
 }
 
 export default new class {
@@ -12,26 +12,29 @@ export default new class {
   defaultApiUrl: string;
 
   constructor() {
-    this.provider = 'pub';
+    this.provider = 'dub';
 
     this.defaultDependencyProperties = [
       'dependencies',
-      'dev_dependencies'
+      'versions'
     ];
 
-    this.defaultApiUrl = 'https://pub.dev/';
+    this.defaultApiUrl = 'https://code.dlang.org/api/packages';
   }
 
   getDependencyProperties() {
     const { workspace } = require('vscode');
     const config = workspace.getConfiguration('versionlens');
-    return config.get(PubContributions.DependencyProperties, this.defaultDependencyProperties);
+    return config.get(
+      DubContributions.DependencyProperties,
+      this.defaultDependencyProperties
+    );
   }
 
   getApiUrl() {
     const { workspace } = require('vscode');
     const config = workspace.getConfiguration('versionlens');
-    return config.get(PubContributions.ApiUrl, this.defaultApiUrl);
+    return config.get(DubContributions.ApiUrl, this.defaultApiUrl);
   }
 
 }

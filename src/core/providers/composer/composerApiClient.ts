@@ -9,21 +9,35 @@ import {
   filterSemverVersions,
 } from 'core/packages/helpers/versionHelpers';
 import { SemverSpec } from "core/packages/definitions/semverSpec";
-import { JsonHttpRequest } from '../../clients/requests/jsonHttpRequest';
+import { HttpResponse, HttpRequestMethods } from 'core/clients/requests/httpRequest';
+import { JsonHttpRequest } from 'core/clients/requests/jsonHttpRequest';
+import ComposerConfig from './config'
 
 const jsonRequest = new JsonHttpRequest({}, 0);
 const fs = require('fs');
-const FEED_URL = 'https://repo.packagist.org/p';
 
 export async function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
   const semverSpec = parseSemver(request.packageVersion);
-  return createRemotePackageDocument(request, semverSpec);
+
+  return createRemotePackageDocument(request, semverSpec)
+    .catch((error: HttpResponse) => {
+      const requested = {
+        name: request.packageName,
+        version: request.packageVersion
+      };
+
+      if (error.status === 404) {
+        return PackageDocumentFactory.createNotFound(ComposerConfig.provider, requested, null);
+      }
+
+      return Promise.reject(ErrorFactory.createFetchError(request, error, semverSpec))
+    });
 }
 
 export async function createRemotePackageDocument(request: FetchRequest, semverSpec: SemverSpec): Promise<PackageDocument> {
-  const url = `${FEED_URL}/${request.packageName}.json`;
+  const url = `${ComposerConfig.getApiUrl()}/${request.packageName}.json`;
 
-  return jsonRequest.getJson(url)
+  return jsonRequest.requestJson(HttpRequestMethods.get, url)
     .then(response => {
       const packageInfo = response.data.packages[request.packageName];
 
@@ -51,7 +65,7 @@ export async function createRemotePackageDocument(request: FetchRequest, semverS
       const suggestions = createSuggestionTags(versionRange, releases, prereleases);
 
       return {
-        provider: 'composer',
+        provider: ComposerConfig.provider,
         source: PackageSourceTypes.registry,
         type: semverSpec.type,
         requested,
@@ -61,25 +75,8 @@ export async function createRemotePackageDocument(request: FetchRequest, semverS
         suggestions,
       };
 
-    })
-    .catch(error => {
-      const { response } = error;
-
-      const requested = {
-        name: request.packageName,
-        version: request.packageVersion
-      };
-
-      if (error.status === 404 || response?.status === 404) {
-        return PackageDocumentFactory.createNotFound('composer', requested, null);
-      }
-
-      if (!response) {
-        return Promise.reject(ErrorFactory.createFetchError(request, error, null))
-      }
-
-      return Promise.reject(error);
     });
+
 }
 
 export function readComposerSelections(filePath) {

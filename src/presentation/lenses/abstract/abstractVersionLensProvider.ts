@@ -2,12 +2,12 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import appSettings from '../../../appSettings';
+import appSettings from 'appSettings';
 import { PackageSourceTypes } from 'core/packages/models/packageDocument';
+import { PackageResponseErrors } from 'core/packages/models/packageResponse';
 import * as CommandFactory from 'presentation/commands/factory';
 import { IVersionCodeLens } from "../definitions/IVersionCodeLens";
 import { VersionLens } from '../models/versionLens';
-import { PackageResponseErrors } from '../../../core/packages/models/packageResponse';
 
 export type VersionLensFetchResponse = Promise<VersionLens[] | null>;
 
@@ -35,7 +35,10 @@ export abstract class AbstractVersionLensProvider {
     this._onChangeCodeLensesEmitter.fire();
   }
 
-  provideCodeLenses(document: VsCodeTypes.TextDocument, token: VsCodeTypes.CancellationToken): Promise<VersionLens[] | null> {
+  provideCodeLenses(
+    document: VsCodeTypes.TextDocument,
+    token: VsCodeTypes.CancellationToken
+  ): Promise<VersionLens[] | null> {
     if (appSettings.showVersionLenses === false) return null;
 
     const { dirname } = require('path');
@@ -44,7 +47,7 @@ export abstract class AbstractVersionLensProvider {
     // set in progress
     appSettings.inProgress = true;
 
-    return this.fetchVersionLenses(packagePath, document, token)
+    return this.fetchVersionLenses(packagePath, document, token);
   }
 
   resolveCodeLens(codeLens: IVersionCodeLens, token: VsCodeTypes.CancellationToken) {

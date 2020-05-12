@@ -1,4 +1,4 @@
-import { mavenGetPackageVersions } from 'providers/maven/mavenAPI.js';
+import { mavenGetPackageVersions } from 'providers/providers/maven/mavenAPI.js';
 
 const assert = require('assert');
 

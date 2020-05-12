@@ -1,8 +1,8 @@
-import appSettings from '../../appSettings';
+import appSettings from '../../../appSettings';
 import * as ErrorFactory from 'core/errors/factory';
 import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
-import { mavenGetPackageVersions } from './mavenAPI';
-import { buildMapFromVersionList, buildTagsFromVersionMap } from './versionUtils'
+import { mavenGetPackageVersions } from 'core/providers/maven/mavenAPI';
+import { buildMapFromVersionList, buildTagsFromVersionMap } from 'core/providers/maven/versionUtils'
 
 export function resolveMavenPackage(name, requestedVersion, appContrib) {
 

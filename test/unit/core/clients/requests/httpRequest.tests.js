@@ -58,7 +58,7 @@ export const HttpRequestTests = {
       )
 
     },
-    only: true,
+
     "caches url response on success": async () => {
       const testUrl = 'https://test.url.example/path';
       const testQueryParams = {}
@@ -113,6 +113,8 @@ export const HttpRequestTests = {
           responseText: JSON.stringify({ "message": "cached test" })
         })
       };
+
+      testContext.rut = new HttpRequest({}, 0);
 
       await testContext.rut.request(
         HttpRequestMethods.get,

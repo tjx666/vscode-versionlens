@@ -2,15 +2,11 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import appContrib from '../../../appContrib';
-import { formatWithExistingLeading } from '../../../common/utils';
-import { extractPackageLensDataFromText } from 'core/packages/parsers/jsonPackageParser';
-import { readDubSelections } from 'core/providers/dub/dubApiClient';
-import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from 'presentation/editor/decorations';
+import DubConfig from 'core/providers/dub/config';
+import { extractPackageDependenciesFromJson } from 'core/packages/parsers/jsonPackageParser';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/lenses/abstract/abstractVersionLensProvider';
 import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
 import { resolveDubPackage } from './dubPackageResolver';
-import { VersionLens } from 'presentation/lenses/models/versionLens';
 
 export class DubCodeLensProvider extends AbstractVersionLensProvider {
 
@@ -35,7 +31,10 @@ export class DubCodeLensProvider extends AbstractVersionLensProvider {
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
-    const packageDepsLenses = extractPackageLensDataFromText(document.getText(), appContrib.dubDependencyProperties);
+    const packageDepsLenses = extractPackageDependenciesFromJson(
+      document.getText(),
+      DubConfig.getDependencyProperties()
+    );
     if (packageDepsLenses.length === 0) return Promise.resolve([]);
 
     return VersionLensFactory.createVersionLenses(

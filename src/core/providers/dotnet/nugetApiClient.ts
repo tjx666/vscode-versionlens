@@ -10,6 +10,8 @@ import {
 import { parseVersionSpec } from './dotnetUtils.js';
 import { DotNetVersionSpec } from './definitions/versionSpec';
 import { JsonHttpRequest } from 'core/clients/requests/jsonHttpRequest.js';
+import DotnetConfig from './config';
+import { HttpRequestMethods } from 'core/clients/requests/httpRequest.js';
 
 const jsonRequest = new JsonHttpRequest({}, 0);
 
@@ -20,7 +22,7 @@ export async function fetchPackage(request: FetchRequest): Promise<PackageDocume
 }
 
 function createRemotePackageDocument(request: FetchRequest, dotnetSpec: DotNetVersionSpec): Promise<PackageDocument> {
-  const url = 'https://azuresearch-usnc.nuget.org/autocomplete';
+  const url = DotnetConfig.getNuGetFeeds()[0];
 
   const queryParams = {
     id: request.packageName,
@@ -28,7 +30,7 @@ function createRemotePackageDocument(request: FetchRequest, dotnetSpec: DotNetVe
     semVerLevel: '2.0.0'
   }
 
-  return jsonRequest.getJson(url, queryParams)
+  return jsonRequest.requestJson(HttpRequestMethods.get, url, queryParams)
     .then(response => {
 
       const { data } = response;
@@ -55,7 +57,7 @@ function createRemotePackageDocument(request: FetchRequest, dotnetSpec: DotNetVe
       // four segment is not supported
       if (dotnetSpec.spec && dotnetSpec.spec.hasFourSegments) {
         return Promise.resolve(PackageDocumentFactory.createFourSegment(
-          'dotnet',
+          DotnetConfig.provider,
           requested,
           dotnetSpec.type,
         ))
@@ -64,7 +66,7 @@ function createRemotePackageDocument(request: FetchRequest, dotnetSpec: DotNetVe
       // no match if null type
       if (dotnetSpec.type === null) {
         return Promise.resolve(PackageDocumentFactory.createNoMatch(
-          'dotnet',
+          DotnetConfig.provider,
           source,
           PackageVersionTypes.version,
           requested,
@@ -84,7 +86,7 @@ function createRemotePackageDocument(request: FetchRequest, dotnetSpec: DotNetVe
       const suggestions = createSuggestionTags(versionRange, releases, prereleases);
 
       return {
-        provider: 'dotnet',
+        provider: DotnetConfig.provider,
         source,
         type: dotnetSpec.type,
         requested,
@@ -103,7 +105,7 @@ function createRemotePackageDocument(request: FetchRequest, dotnetSpec: DotNetVe
       };
 
       if (error.status === 404 || response?.status === 404) {
-        return PackageDocumentFactory.createNotFound('dotnet', requested, null);
+        return PackageDocumentFactory.createNotFound(DotnetConfig.provider, requested, null);
       }
 
       if (!response) return Promise.reject(ErrorFactory.createFetchError(request, error, dotnetSpec))

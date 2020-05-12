@@ -2,9 +2,9 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import appContrib from '../../../appContrib';
+import ComposerConfig from 'core/providers/composer/config';
 import { formatWithExistingLeading } from '../../../common/utils';
-import { extractPackageLensDataFromText } from 'core/packages/parsers/jsonPackageParser';
+import { extractPackageDependenciesFromJson } from 'core/packages/parsers/jsonPackageParser';
 import { readComposerSelections } from 'core/providers/composer/composerApiClient';
 import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from 'presentation/editor/decorations';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/lenses/abstract/abstractVersionLensProvider';
@@ -33,7 +33,11 @@ export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
-    const packageDepsLenses = extractPackageLensDataFromText(document.getText(), appContrib.composerDependencyProperties);
+
+    const packageDepsLenses = extractPackageDependenciesFromJson(
+      document.getText(),
+      ComposerConfig.getDependencyProperties()
+    );
     if (packageDepsLenses.length === 0) return Promise.resolve([]);
 
     return VersionLensFactory.createVersionLenses(

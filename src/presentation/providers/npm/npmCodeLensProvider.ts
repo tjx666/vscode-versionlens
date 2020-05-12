@@ -2,7 +2,6 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import appContrib from '../../../appContrib';
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
@@ -10,12 +9,12 @@ import {
   renderNeedsUpdateDecoration,
   renderPrereleaseInstalledDecoration
 } from 'presentation/editor/decorations';
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/lenses/abstract/abstractVersionLensProvider';
-import { extractPackageLensDataFromText } from 'core/packages/parsers/jsonPackageParser';
+import NpmConfig from 'core/providers/npm/config';
+import { extractPackageDependenciesFromJson } from 'core/packages/parsers/jsonPackageParser';
 import { npmGetOutdated, npmPackageDirExists } from 'core/providers/npm/npmApiClient.js';
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/lenses/abstract/abstractVersionLensProvider';
 import * as VersionLensFactory from '../../lenses/factories/versionLensFactory';
 import { resolveNpmPackage } from './npmPackageResolver';
-import { VersionLens } from 'presentation/lenses/models/versionLens';
 
 export class NpmCodeLensProvider extends AbstractVersionLensProvider {
 
@@ -41,9 +40,9 @@ export class NpmCodeLensProvider extends AbstractVersionLensProvider {
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
 
-    const packageDepsLenses = extractPackageLensDataFromText(
+    const packageDepsLenses = extractPackageDependenciesFromJson(
       document.getText(),
-      appContrib.npmDependencyProperties
+      NpmConfig.getDependencyProperties()
     );
     if (packageDepsLenses.length === 0) return null;
 

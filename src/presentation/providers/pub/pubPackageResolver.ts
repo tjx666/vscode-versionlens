@@ -4,14 +4,14 @@ import * as ResponseFactory from 'core/packages/factories/packageResponseFactory
 import { ReplaceVersionFunction, PackageResponse } from 'core/packages/models/packageResponse';
 import { FetchError, FetchRequest } from 'core/clients/models/fetch';
 
-export async function resolvePubPackage(
+export function resolvePubPackage(
   request: FetchRequest,
   replaceVersionFn: ReplaceVersionFunction
 ): Promise<Array<PackageResponse> | PackageResponse> {
 
   return fetchPackage(request)
-    .then(function (pack) {
-      return ResponseFactory.createSuccess(pack, null);
+    .then(function (document) {
+      return ResponseFactory.createSuccess(document, null);
     })
     .catch(function (error) {
       const { request, response }: FetchError = error;

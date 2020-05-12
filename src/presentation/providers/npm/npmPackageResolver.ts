@@ -19,18 +19,19 @@ export function resolveNpmPackage(
   // }
 
   return fetchPackage(request)
-    .then(function (pack) {
+    .then(function (document) {
+
       let replaceFn: ReplaceVersionFunction;
       if (replaceVersionFn === null) {
-        replaceFn = (pack.source === PackageSourceTypes.git) ?
+        replaceFn = (document.source === PackageSourceTypes.git) ?
           npmReplaceVersion :
-          pack.type === PackageVersionTypes.alias ?
+          document.type === PackageVersionTypes.alias ?
             customNpmAliasedReplaceVersion :
             null;
       }
 
       // must be a registry version
-      return ResponseFactory.createSuccess(pack, replaceFn);
+      return ResponseFactory.createSuccess(document, replaceFn);
     })
     .then(function (pack) {
       return cache.set(cacheKey, pack);

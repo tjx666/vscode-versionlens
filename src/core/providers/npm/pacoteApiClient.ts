@@ -1,15 +1,16 @@
 import * as ErrorFactory from 'core/clients/errors/factory';
 import { FetchRequest } from 'core/clients/models/fetch';
 import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
-import { filterPrereleasesFromDistTags } from '../../packages/helpers/versionHelpers';
+import { filterPrereleasesFromDistTags } from 'core/packages/helpers/versionHelpers';
 import {
   PackageDocument,
   PackageVersionTypes,
   PackageSourceTypes,
   PackageSuggestion,
   PackageSuggestionFlags
-} from '../../packages/models/packageDocument';
-import * as PackageDocumentFactory from '../../packages/factories/packageDocumentFactory'
+} from 'core/packages/models/packageDocument';
+import * as PackageDocumentFactory from 'core/packages/factories/packageDocumentFactory'
+import NpmConfig from 'core/providers/npm/config';
 
 export async function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
   const npa = require('npm-package-arg');
@@ -50,19 +51,19 @@ export async function fetchPackage(request: FetchRequest): Promise<PackageDocume
     }
 
     if (response.status === 'E404') {
-      return PackageDocumentFactory.createNotFound('npm', requested, null);
+      return PackageDocumentFactory.createNotFound(NpmConfig.provider, requested, null);
     }
 
     if (response.status === 'EINVALIDTAGNAME' || response.responseText.includes('Invalid comparator:')) {
-      return PackageDocumentFactory.createInvalidVersion('npm', requested, null);
+      return PackageDocumentFactory.createInvalidVersion(NpmConfig.provider, requested, null);
     }
 
     if (response.status === 'EUNSUPPORTEDPROTOCOL') {
-      return PackageDocumentFactory.createNotSupported('npm', requested, null);
+      return PackageDocumentFactory.createNotSupported(NpmConfig.provider, requested, null);
     }
 
     if (response.status === 128) {
-      return PackageDocumentFactory.createGitFailed('npm', requested, null);
+      return PackageDocumentFactory.createGitFailed(NpmConfig.provider, requested, null);
     }
     return Promise.reject(error);
   });
@@ -98,7 +99,7 @@ function createRemotePackageDocument(request: FetchRequest, npaResult: any): Pro
         name: request.packageName,
         version: request.packageVersion
       };
-      
+
       const resolved = {
         name: npaResult.name,
         version: versionRange,
@@ -117,7 +118,7 @@ function createRemotePackageDocument(request: FetchRequest, npaResult: any): Pro
       if (npaResult.type === PackageVersionTypes.tag) {
         versionRange = distTags[requested.version];
         if (!versionRange) return PackageDocumentFactory.createNoMatch(
-          'npm',
+          NpmConfig.provider,
           source,
           type,
           requested,
@@ -130,7 +131,7 @@ function createRemotePackageDocument(request: FetchRequest, npaResult: any): Pro
       const suggestions = createSuggestionTags(versionRange, releases, prereleases);
 
       return {
-        provider: 'npm',
+        provider: NpmConfig.provider,
         source,
         type,
         requested,
@@ -194,7 +195,7 @@ function createDirectoryPackageDocument(rawName: string, rawVersion: string, npa
   const fileRegExpResult = fileDependencyRegex.exec(rawVersion);
   if (!fileRegExpResult) {
     return PackageDocumentFactory.createInvalidVersion(
-      'npm',
+      NpmConfig.provider,
       { name: rawName, version: rawVersion },
       npaResult.type
     );
@@ -218,7 +219,7 @@ function createDirectoryPackageDocument(rawName: string, rawVersion: string, npa
   ]
 
   return {
-    provider: 'npm',
+    provider: NpmConfig.provider,
     source,
     type,
     requested,

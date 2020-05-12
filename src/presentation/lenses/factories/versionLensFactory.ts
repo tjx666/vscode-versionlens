@@ -3,28 +3,31 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import { PackageDependencyLens } from "core/packages/models/PackageDependencyLens";
-import { PackageResolverFunction, PackageResponseAggregate, } from "../../../core/packages/models/packageResponse";
+import { PackageResolverFunction, PackageResponseAggregate, } from "core/packages/models/packageResponse";
 import { VersionLens } from "presentation/lenses/models/versionLens";
+import { VersionLensFetchResponse } from '../abstract/abstractVersionLensProvider';
 
 export async function createVersionLenses(
   packagePath: string,
   document: VsCodeTypes.TextDocument,
   dependencies: Array<PackageDependencyLens>,
-  packageFetchRequest: PackageResolverFunction): Promise<VersionLens[]> {
+  packageFetchRequest: PackageResolverFunction): VersionLensFetchResponse {
 
   const results = [];
 
-  const promises = dependencies.map((dependency, index) => {
-    return resolveDependency(
-      packageFetchRequest,
-      packagePath,
-      dependency,
-      document,
-      index
-    ).then(function (lenses) {
-      results.push(...lenses)
-    })
-  });
+  const promises = dependencies.map(
+    function (dependency, index) {
+      return resolveDependency(
+        packageFetchRequest,
+        packagePath,
+        dependency,
+        document,
+        index
+      ).then(function (lenses) {
+        results.push(...lenses)
+      })
+    }
+  );
 
   return Promise.all(promises).then(_ => results)
 }

@@ -4,14 +4,14 @@ import * as ResponseFactory from 'core/packages/factories/packageResponseFactory
 import { ReplaceVersionFunction, PackageResponse } from 'core/packages/models/packageResponse';
 import { FetchRequest } from 'core/clients/models/fetch';
 
-export async function resolveDotnetPackage(
+export function resolveDotnetPackage(
   request: FetchRequest,
   replaceVersionFn: ReplaceVersionFunction
 ): Promise<Array<PackageResponse> | PackageResponse> {
 
   return fetchPackage(request)
-    .then(function (pack) {
-      return ResponseFactory.createSuccess(pack, replaceVersionFn);
+    .then(function (document) {
+      return ResponseFactory.createSuccess(document, replaceVersionFn);
     })
     .catch(error => {
       const { request } = error;

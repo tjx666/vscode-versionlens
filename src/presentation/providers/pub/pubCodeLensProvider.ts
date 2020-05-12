@@ -2,10 +2,10 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import appContrib from 'appContrib';
+import DubConfig from 'core/providers/pub/config';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from "presentation/lenses/abstract/abstractVersionLensProvider";
 import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
-import { extractPackageLensDataFromText } from "core/providers/pub/pubPackageParser";
+import { extractPackageDependenciesFromYaml } from "core/providers/pub/pubPackageParser";
 import { resolvePubPackage } from "./pubPackageResolver";
 
 export class PubCodeLensProvider extends AbstractVersionLensProvider {
@@ -23,7 +23,10 @@ export class PubCodeLensProvider extends AbstractVersionLensProvider {
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
-    const packageDepsLenses = extractPackageLensDataFromText(document.getText(), appContrib.pubDependencyProperties);
+    const packageDepsLenses = extractPackageDependenciesFromYaml(
+      document.getText(),
+      DubConfig.getDependencyProperties()
+    );
     if (packageDepsLenses.length === 0) return Promise.resolve([]);
 
     return VersionLensFactory.createVersionLenses(

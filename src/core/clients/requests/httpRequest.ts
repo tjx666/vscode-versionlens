@@ -36,15 +36,15 @@ export class HttpRequest {
       headers: this.headers
     })
       .then(response => {
-        return this.cacheResponse(cacheKey, response);
+        return this.createCachedResponse(cacheKey, response);
       })
       .catch(response => {
-        const result = this.cacheResponse(cacheKey, response);
-        return Promise.reject(result);
+        const result = this.createCachedResponse(cacheKey, response);
+        return Promise.reject<HttpResponse>(result);
       });
   }
 
-  cacheResponse(cacheKey: string, response): HttpResponse {
+  createCachedResponse(cacheKey: string, response): HttpResponse {
     const parsedText = response.responseText;
     return {
       status: response.status,
@@ -55,7 +55,6 @@ export class HttpRequest {
   }
 
 }
-
 
 export function createUrl(baseUrl: string, queryParams: KeyStringDictionary): string {
   const query = buildQueryParams(queryParams);

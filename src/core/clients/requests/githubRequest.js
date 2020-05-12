@@ -74,7 +74,7 @@ export class GithubRequest extends JsonHttpRequest {
   }
 
   httpGet(userRepo, category, queryParams) {
-    return this.getJson(HttpRequestMethods.get, userRepo, category, queryParams)
+    return this.requestGithub(HttpRequestMethods.get, userRepo, category, queryParams)
       .then(response => response.data)
       .catch(error => {
         // handles any 404 errors during a request for the latest release
@@ -109,12 +109,12 @@ export class GithubRequest extends JsonHttpRequest {
   }
 
   httpHead(userRepo) {
-    return super.request(HttpRequestMethods.head, userRepo, null, null)
+    return super.requestJson(HttpRequestMethods.head, userRepo, null, null)
   }
 
-  request(method, userRepo, category, queryParams) {
+  requestGithub(method, userRepo, category, queryParams) {
     const url = `https://api.github.com/repos/${userRepo}/${category}`;
-    return super.request(method, url, queryParams)
+    return this.requestJson(method, url, queryParams)
   }
 
 }

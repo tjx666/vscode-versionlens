@@ -1,4 +1,3 @@
-
 const { window } = require('vscode')
 const { promisify } = require('util')
 const fs = require('fs');

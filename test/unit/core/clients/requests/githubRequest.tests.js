@@ -23,7 +23,7 @@ export const GithubRequestTests = {
     testContext.rut = new GithubRequest();
     requestLightMock.xhr = _ => { throw new Error("Not implemented") }
   },
-
+  
   "httpGet(userRepo, category)": {
 
     "generates the expected url with no query params": async () => {

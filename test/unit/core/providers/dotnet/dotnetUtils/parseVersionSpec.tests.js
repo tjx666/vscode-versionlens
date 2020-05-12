@@ -55,8 +55,8 @@ export default {
 
   'handles floating ranges': () => {
     const expectedList = [
-      "1.*", ">=1.0.0-0 <2.0.0-0",
-      "1.0.*", ">=1.0.0-0 <1.1.0-0"
+      "1.*", ">=1.0.0 <2.0.0-0",
+      "1.0.*", ">=1.0.0 <1.1.0-0"
     ];
 
     for (let i = 0; i < expectedList.length; i += 2) {
@@ -96,6 +96,16 @@ export default {
 
     results.forEach(x => {
       assert.ok(!x, "Could not parse range")
+    })
+  },
+
+  'returns true for four segment versions': () => {
+    const results = [
+      parseVersionSpec("1.0.0.1").spec,
+    ];
+
+    results.forEach(x => {
+      assert.ok(x.hasFourSegments)
     })
   }
 

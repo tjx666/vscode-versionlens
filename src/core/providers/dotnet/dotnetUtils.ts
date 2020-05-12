@@ -67,7 +67,7 @@ export function buildVersionSpec(value): NugetVersionSpec {
 
   // test if the version is in semver format
   const semver = require('semver');
-  const parsedSemver = semver.parse(formattedValue, loosePrereleases);
+  const parsedSemver = semver.parse(formattedValue, { includePrereleases: true });
   if (parsedSemver) {
     return {
       version: formattedValue,
@@ -79,7 +79,7 @@ export function buildVersionSpec(value): NugetVersionSpec {
 
   try {
     // test if the version is a semver range format
-    const parsedNodeRange = semver.validRange(formattedValue, loosePrereleases);
+    const parsedNodeRange = semver.validRange(formattedValue, { includePrereleases: true });
     if (parsedNodeRange) {
       return {
         version: parsedNodeRange,

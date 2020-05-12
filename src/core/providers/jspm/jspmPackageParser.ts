@@ -1,11 +1,11 @@
 import { PackageDependencyLens } from 'core/packages/models/PackageDependencyLens';
 import { extractFromNodes } from 'core/packages/parsers/jsonPackageParser'
 
-export function extractJspmLensDataFromText(packageJsonText: string, filterPropertyNames: string[]): PackageDependencyLens[] {
+export function extractPackageDependenciesFromJson(json: string, filterPropertyNames: string[]): PackageDependencyLens[] {
   const jsonParser = require("jsonc-parser");
 
   const jsonErrors = [];
-  const jsonTree = jsonParser.parseTree(packageJsonText, jsonErrors);
+  const jsonTree = jsonParser.parseTree(json, jsonErrors);
   if (!jsonTree || jsonTree.children.length === 0 || jsonErrors.length > 0) return [];
 
   const children = jsonTree.children;

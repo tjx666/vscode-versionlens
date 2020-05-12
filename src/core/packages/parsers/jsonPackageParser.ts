@@ -1,10 +1,10 @@
+// vscode references
 import { PackageDependencyLens } from "../models/PackageDependencyLens";
 
-const jsonParser = require("jsonc-parser");
-
-export function extractPackageLensDataFromText(packageJsonText: string, filterPropertyNames: string[]): PackageDependencyLens[] {
+export function extractPackageDependenciesFromJson(json: string, filterPropertyNames: string[]): PackageDependencyLens[] {
   const jsonErrors = [];
-  const jsonTree = jsonParser.parseTree(packageJsonText, jsonErrors);
+  const jsonParser = require("jsonc-parser");
+  const jsonTree = jsonParser.parseTree(json, jsonErrors);
   if (!jsonTree || jsonTree.children.length === 0 || jsonErrors.length > 0) return [];
   return extractFromNodes(jsonTree.children, filterPropertyNames);
 }

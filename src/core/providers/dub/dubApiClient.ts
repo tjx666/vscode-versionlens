@@ -10,45 +10,39 @@ import {
 import { SemverSpec } from 'core/packages/definitions/semverSpec';
 import { FetchRequest } from 'core/clients/models/fetch';
 import { JsonHttpRequest } from 'core/clients/requests/jsonHttpRequest.js';
-
+import { HttpResponse, HttpRequestMethods } from 'core/clients/requests/httpRequest';
+import DubConfig from './config';
 
 const fs = require('fs');
-
-const FEED_URL = 'https://code.dlang.org/api/packages';
 
 const jsonRequest = new JsonHttpRequest({}, 0);
 
 export async function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
   const semverSpec = parseSemver(request.packageVersion);
   return createRemotePackageDocument(request, semverSpec)
-    .catch(error => {
-      const { response } = error;
-
+    .catch(function (error: HttpResponse) {
       const requested = {
         name: request.packageName,
         version: request.packageVersion
       };
 
-      if (error.status === 404 || response?.status === 404) {
-        return PackageDocumentFactory.createNotFound('dub', requested, null);
+      if (error.status === 404) {
+        return PackageDocumentFactory.createNotFound(DubConfig.provider, requested, null);
       }
 
-      if (!response) {
-        return Promise.reject(ErrorFactory.createFetchError(request, error, semverSpec))
-      }
-
-      return Promise.reject(error);
+      return Promise.reject(ErrorFactory.createFetchError(request, error, semverSpec))
     });
+
 }
 
 function createRemotePackageDocument(request: FetchRequest, semverSpec: SemverSpec): Promise<PackageDocument> {
 
-  const url = `${FEED_URL}/${encodeURIComponent(request.packageName)}/info`;
+  const url = `${DubConfig.getApiUrl()}/${encodeURIComponent(request.packageName)}/info`;
   const queryParams = {
     minimize: 'true',
   }
 
-  return jsonRequest.getJson(url, queryParams)
+  return jsonRequest.requestJson(HttpRequestMethods.get, url, queryParams)
     .then(response => {
 
       const packageInfo = response.data;
@@ -76,7 +70,7 @@ function createRemotePackageDocument(request: FetchRequest, semverSpec: SemverSp
       // todo return a ~master entry when no matches found
 
       return {
-        provider: 'dub',
+        provider: DubConfig.provider,
         source: PackageSourceTypes.registry,
         type: semverSpec.type,
         requested,

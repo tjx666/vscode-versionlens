@@ -9,11 +9,11 @@ export type JsonHttpResponse = {
 export class JsonHttpRequest extends HttpRequest {
 
   constructor(headers: KeyStringDictionary, cacheDuration: number) {
-    super({}, cacheDuration);
+    super(headers, cacheDuration);
   }
 
-  getJson(url: string, queryParams: KeyStringDictionary = {}): Promise<JsonHttpResponse> {
-    return super.request(HttpRequestMethods.get, url, queryParams)
+  requestJson(method: HttpRequestMethods, url: string, queryParams: KeyStringDictionary = {}): Promise<JsonHttpResponse> {
+    return super.request(method, url, queryParams)
       .then(function (response) {
         return {
           status: response.status,
@@ -21,5 +21,6 @@ export class JsonHttpRequest extends HttpRequest {
         }
       });
   }
+
 
 }

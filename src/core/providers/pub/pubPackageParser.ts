@@ -1,15 +1,17 @@
+// vscode references
+import { TextDocument } from 'vscode';
+
 import { PackageDependencyLens } from "core/packages/models/PackageDependencyLens";
 
-const yamlParser = require("yaml");
-
-export function extractPackageLensDataFromText(packageYamlText: string, filterPropertyNames: string[]): PackageDependencyLens[] {
-  const yamlDoc = yamlParser.parseDocument(packageYamlText);
+export function extractPackageDependenciesFromYaml(yaml: string, filterPropertyNames: string[]): PackageDependencyLens[] {
+  const yamlParser = require('yaml');
+  const yamlDoc = yamlParser.parseDocument(yaml);
   if (!yamlDoc || !yamlDoc.contents || yamlDoc.errors.length > 0) return [];
 
-  return extractPackageLensDataFromNodes(yamlDoc.contents.items, filterPropertyNames);
+  return extractDependenciesFromNodes(yamlDoc.contents.items, filterPropertyNames);
 }
 
-export function extractPackageLensDataFromNodes(topLevelNodes, filterPropertyNames: string[]): PackageDependencyLens[] {
+export function extractDependenciesFromNodes(topLevelNodes, filterPropertyNames: string[]): PackageDependencyLens[] {
   const collector = [];
 
   topLevelNodes.forEach(
@@ -36,16 +38,16 @@ function collectDependencyNodes(nodes, collector = []) {
       }
 
       if (pair.value.type === 'MAP') {
-        createPackageLensFromMapType(pair.value.items, pair.key, collector);
+        createDependencyLensFromMapType(pair.value.items, pair.key, collector);
       } else if (typeof pair.value.value === 'string') {
-        const dependencyLens = createPackageLensFromPlainType(pair);
+        const dependencyLens = createDependencyLensFromPlainType(pair);
         collector.push(dependencyLens);
       }
     }
   )
 }
 
-export function createPackageLensFromMapType(nodes, parentKey, collector) {
+export function createDependencyLensFromMapType(nodes, parentKey, collector) {
   nodes.forEach(
     function (pair) {
       // ignore empty entries
@@ -69,7 +71,7 @@ export function createPackageLensFromMapType(nodes, parentKey, collector) {
 
 }
 
-export function createPackageLensFromPlainType(pair): PackageDependencyLens {
+export function createDependencyLensFromPlainType(pair): PackageDependencyLens {
   const nameRange = createRange(pair.key.range[0], pair.key.range[0], null);
   const versionRange = createRange(pair.value.range[0], pair.value.range[1], pair.value.type);
   const packageInfo = {
