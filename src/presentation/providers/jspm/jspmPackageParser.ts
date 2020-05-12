@@ -1,5 +1,5 @@
 import { PackageDependencyLens } from 'core/packages/models/PackageDependencyLens';
-import { extractPackageLensDataFromNodes } from 'core/packages/parsers/jsonPackageParser'
+import { extractFromNodes } from 'core/packages/parsers/jsonPackageParser'
 
 export function extractJspmLensDataFromText(packageJsonText: string, filterPropertyNames: string[]): PackageDependencyLens[] {
   const jsonParser = require("jsonc-parser");
@@ -12,7 +12,7 @@ export function extractJspmLensDataFromText(packageJsonText: string, filterPrope
   for (let i = 0; i < children.length; i++) {
     const node = children[i];
     const [keyEntry, valueEntry] = node.children;
-    if (keyEntry.value === 'jspm') return extractPackageLensDataFromNodes(valueEntry.children, filterPropertyNames);
+    if (keyEntry.value === 'jspm') return extractFromNodes(valueEntry.children, filterPropertyNames);
   }
 
   return [];

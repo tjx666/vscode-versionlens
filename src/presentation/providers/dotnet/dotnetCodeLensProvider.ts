@@ -1,14 +1,15 @@
-import appSettings from '../../../appSettings';
+// vscode references
+import * as VsCodeTypes from 'vscode';
+
+// imports
 import appContrib from '../../../appContrib';
-import { extractDotnetLensDataFromText } from 'core/providers/dotnet/dotnetPackageParser'
-import { AbstractCodeLensProvider } from 'presentation/lenses/definitions/abstractCodeLensProvider';
-import * as CodeLensFactory from 'presentation/lenses/factories/codeLensFactory';
-import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
+import { extractDotnetLensDataFromDocument } from 'core/providers/dotnet/dotnetPackageParser'
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/lenses/abstract/abstractVersionLensProvider';
+import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
 import { resolveDotnetPackage } from './dotnetPackageResolver';
+import { VersionLens } from 'presentation/lenses/models/versionLens';
 
-export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
-
-  packagePath: '';
+export class DotNetCodeLensProvider extends AbstractVersionLensProvider {
 
   get selector() {
     return {
@@ -19,28 +20,23 @@ export class DotNetCodeLensProvider extends AbstractCodeLensProvider {
     }
   }
 
-  provideCodeLenses(document, token) {
-    if (appSettings.showVersionLenses === false) return [];
+  fetchVersionLenses(
+    packagePath: string,
+    document: VsCodeTypes.TextDocument,
+    token: VsCodeTypes.CancellationToken
+  ): VersionLensFetchResponse {
 
-    const path = require('path');
-    this.packagePath = path.dirname(document.uri.fsPath);
+    const packageDepsLenses = extractDotnetLensDataFromDocument(document, appContrib.dotnetCSProjDependencyProperties);
+    if (packageDepsLenses.length === 0) return null;
 
-    const packageDepsLenses = extractDotnetLensDataFromText(document, appContrib.dotnetCSProjDependencyProperties);
-    if (packageDepsLenses.length === 0) return [];
-
-    const packageLensResolvers = PackageLensFactory.createPackageLensResolvers(
-      this.packagePath,
+    return VersionLensFactory.createVersionLenses(
+      packagePath,
+      document,
       packageDepsLenses,
       resolveDotnetPackage
-    );
-    if (packageLensResolvers.length === 0) return [];
-
-    appSettings.inProgress = true;
-    return CodeLensFactory.createCodeLenses(packageLensResolvers, document)
-      .then(codelenses => {
-        appSettings.inProgress = false;
-        return codelenses;
-      });
+    )
   }
+
+  updateOutdated(packagePath: string) { }
 
 }

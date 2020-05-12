@@ -1,9 +1,13 @@
+// vscode references
+import { TextDocument } from 'vscode';
+
+// imports
 import { PackageDependencyLens } from "core/packages/models/PackageDependencyLens";
 
 const xmldoc = require('xmldoc');
 const { Range } = require('vscode');
 
-export function extractDotnetLensDataFromText(document, filterPropertyNames: string[]): PackageDependencyLens[] {
+export function extractDotnetLensDataFromDocument(document: TextDocument, filterPropertyNames: string[]): PackageDependencyLens[] {
   const xmlDoc = new xmldoc.XmlDocument(document.getText());
   if (!xmlDoc) return [];
 
@@ -19,8 +23,8 @@ function extractPackageLensDataFromNodes(topLevelNodes, document, filterProperty
       node.eachChild(
         function (itemGroupNode) {
           if (filterPropertyNames.includes(itemGroupNode.name) == false) return;
-          const packageLens = createPackageLensFromAttribute(itemGroupNode, document);
-          collector.push(packageLens);
+          const dependencyLens = createFromAttribute(itemGroupNode, document);
+          collector.push(dependencyLens);
         }
       )
     }
@@ -29,8 +33,8 @@ function extractPackageLensDataFromNodes(topLevelNodes, document, filterProperty
   return collector
 }
 
-function createPackageLensFromAttribute(node, document): PackageDependencyLens {
-  const lensRange = {
+function createFromAttribute(node, document): PackageDependencyLens {
+  const nameRange = {
     start: node.startTagPosition,
     end: node.startTagPosition,
   }
@@ -55,7 +59,7 @@ function createPackageLensFromAttribute(node, document): PackageDependencyLens {
   }
 
   return {
-    lensRange,
+    nameRange,
     versionRange,
     packageInfo
   }

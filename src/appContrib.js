@@ -1,5 +1,5 @@
 import { npmDefaultDependencyProperties } from './core/providers/npm/config';
-import { pubDefaultDependencyProperties, pubDefaultApiUrl } from './providers/pub/config';
+import { pubDefaultDependencyProperties, pubDefaultApiUrl } from './core/providers/pub/config';
 import { dubDefaultDependencyProperties } from './core/providers/dub/config';
 import { dotnetCSProjDefaultDependencyProperties, dotnetDefaultNuGetFeeds } from './core/providers/dotnet/config';
 import { mavenDefaultDependencyProperties } from './providers/maven/config';

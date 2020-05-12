@@ -1,4 +1,7 @@
-import appSettings from '../../../appSettings';
+// vscode references
+import * as VsCodeTypes from 'vscode';
+
+// imports
 import appContrib from '../../../appContrib';
 import {
   renderMissingDecoration,
@@ -7,23 +10,20 @@ import {
   renderNeedsUpdateDecoration,
   renderPrereleaseInstalledDecoration
 } from 'presentation/editor/decorations';
-
-import { AbstractCodeLensProvider } from 'presentation/lenses/definitions/abstractCodeLensProvider';
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/lenses/abstract/abstractVersionLensProvider';
 import { extractPackageLensDataFromText } from 'core/packages/parsers/jsonPackageParser';
 import { npmGetOutdated, npmPackageDirExists } from 'core/providers/npm/npmApiClient.js';
-import * as CodeLensFactory from '../../lenses/factories/codeLensFactory';
-import * as PackageLensFactory from '../../lenses/factories/packageLensFactory';
+import * as VersionLensFactory from '../../lenses/factories/versionLensFactory';
 import { resolveNpmPackage } from './npmPackageResolver';
+import { VersionLens } from 'presentation/lenses/models/versionLens';
 
-export class NpmCodeLensProvider extends AbstractCodeLensProvider {
+export class NpmCodeLensProvider extends AbstractVersionLensProvider {
+
   _outdatedCache: Array<any>;
-
-  packagePath: string = '';
 
   constructor() {
     super();
     this._outdatedCache = [];
-    this.packagePath = '';
   }
 
   get selector() {
@@ -35,117 +35,102 @@ export class NpmCodeLensProvider extends AbstractCodeLensProvider {
     }
   }
 
-  provideCodeLenses(document, token) {
-    if (appSettings.showVersionLenses === false) return [];
+  fetchVersionLenses(
+    packagePath: string,
+    document: VsCodeTypes.TextDocument,
+    token: VsCodeTypes.CancellationToken
+  ): VersionLensFetchResponse {
 
-    const path = require('path');
-    this.packagePath = path.dirname(document.uri.fsPath);
+    const packageDepsLenses = extractPackageLensDataFromText(
+      document.getText(),
+      appContrib.npmDependencyProperties
+    );
+    if (packageDepsLenses.length === 0) return null;
 
-    // extract package lens data
-    const packageDepsLenses = extractPackageLensDataFromText(document.getText(), appContrib.npmDependencyProperties)
-    if (packageDepsLenses.length === 0) return [];
-
-    // resolve package dependencies (as promises)
-    const packageLensResolvers = PackageLensFactory.createPackageLensResolvers(
-      this.packagePath,
+    return VersionLensFactory.createVersionLenses(
+      packagePath,
+      document,
       packageDepsLenses,
       resolveNpmPackage
     );
-    if (packageLensResolvers.length === 0) return [];
-
-    appSettings.inProgress = true;
-
-    // create code lenses from package lenses
-    return CodeLensFactory.createCodeLenses(packageLensResolvers, document)
-      .then(codeLenses => {
-        if (appSettings.showDependencyStatuses) {
-          return this.updateOutdated()
-            .then(_ => codeLenses)
-        }
-
-        return codeLenses;
-      })
-      .catch(err => {
-        console.log(err)
-      })
   }
 
   // get the outdated packages and cache them
-  updateOutdated() {
-    return npmGetOutdated(this.packagePath)
+  updateOutdated(packagePath: string) {
+    return npmGetOutdated(packagePath)
       .then(results => this._outdatedCache = results)
       .catch(err => {
         console.log("npmGetOutdated", err);
       });
   }
-
-  generateDecoration(codeLens) {
-    const documentPath = this.packagePath;
-    const currentPackageName = codeLens.package.name;
-
-    const packageDirExists = npmPackageDirExists(documentPath, currentPackageName);
-    if (!packageDirExists) {
-      renderMissingDecoration(codeLens.replaceRange);
-      return;
-    }
-
-    Promise.resolve(this._outdatedCache)
-      .then(outdated => {
-        const findIndex = outdated.findIndex(
-          (entry: any) => entry.name === currentPackageName
-        );
-
-        if (findIndex === -1) {
-          renderInstalledDecoration(
-            codeLens.replaceRange,
-            codeLens.package.meta.tag.version
+  /*
+    generateDecoration(codeLens) {
+      const documentPath = this.packagePath;
+      const currentPackageName = codeLens.package.name;
+  
+      const packageDirExists = npmPackageDirExists(documentPath, currentPackageName);
+      if (!packageDirExists) {
+        renderMissingDecoration(codeLens.replaceRange);
+        return;
+      }
+  
+      Promise.resolve(this._outdatedCache)
+        .then(outdated => {
+          const findIndex = outdated.findIndex(
+            (entry: any) => entry.name === currentPackageName
           );
-          return;
-        }
-
-        const current = outdated[findIndex].current;
-        const entered = codeLens.package.meta.tag.version;
-
-        // no current means no install at all
-        if (!current) {
-          renderMissingDecoration(codeLens.replaceRange);
-          return;
-        }
-
-        // if npm current and the entered version match it's installed
-        if (current === entered) {
-
-          if (codeLens.matchesLatestVersion())
-            // up to date
+  
+          if (findIndex === -1) {
             renderInstalledDecoration(
               codeLens.replaceRange,
-              current
+              codeLens.package.meta.tag.version
             );
-          else if (codeLens.matchesPrereleaseVersion())
-            // ahead of latest
-            renderPrereleaseInstalledDecoration(
-              codeLens.replaceRange,
-              entered
-            );
-          else
-            // out of date
-            renderOutdatedDecoration(
-              codeLens.replaceRange,
-              current
-            );
-
-          return;
-        }
-
-        // signal needs update
-        renderNeedsUpdateDecoration(
-          codeLens.replaceRange,
-          current
-        );
-
-      })
-      .catch(console.error);
-
-  }
-
+            return;
+          }
+  
+          const current = outdated[findIndex].current;
+          const entered = codeLens.package.meta.tag.version;
+  
+          // no current means no install at all
+          if (!current) {
+            renderMissingDecoration(codeLens.replaceRange);
+            return;
+          }
+  
+          // if npm current and the entered version match it's installed
+          if (current === entered) {
+  
+            if (codeLens.matchesLatestVersion())
+              // up to date
+              renderInstalledDecoration(
+                codeLens.replaceRange,
+                current
+              );
+            else if (codeLens.matchesPrereleaseVersion())
+              // ahead of latest
+              renderPrereleaseInstalledDecoration(
+                codeLens.replaceRange,
+                entered
+              );
+            else
+              // out of date
+              renderOutdatedDecoration(
+                codeLens.replaceRange,
+                current
+              );
+  
+            return;
+          }
+  
+          // signal needs update
+          renderNeedsUpdateDecoration(
+            codeLens.replaceRange,
+            current
+          );
+  
+        })
+        .catch(console.error);
+  
+    }
+  */
 } // End NpmCodeLensProvider

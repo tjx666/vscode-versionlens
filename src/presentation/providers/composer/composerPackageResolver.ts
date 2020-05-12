@@ -1,39 +1,38 @@
 import * as ErrorFactory from 'core/errors/factory';
 import { fetchPackage } from 'core/providers/composer/composerApiClient';
-import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
-import { PackageLens, ReplaceVersionFunction } from 'presentation/lenses/models/packageLens';
+import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
+import { PackageResponse, ReplaceVersionFunction } from 'core/packages/models/packageResponse';
+import { FetchRequest } from 'core/clients/models/fetch';
 
-export function resolveComposerPackage(
-  packagePath: string,
-  packageName: string,
-  packageVersion: string,
-  replaceVersionFn: ReplaceVersionFunction): Promise<Array<PackageLens> | PackageLens> {
+export async function resolveComposerPackage(
+  request: FetchRequest,
+  replaceVersionFn: ReplaceVersionFunction
+): Promise<Array<PackageResponse> | PackageResponse> {
 
-  const request = {
-    packagePath,
-    packageName,
-    packageVersion
-  };
-
-  return fetchPackage(request)
-    .then(pack => PackageLensFactory.createPackageLens(pack, null))
-    .catch(error => {
-      const { request, response } = error;
+  return await fetchPackage(request)
+    .then(ResponseFactory.createSuccess)
+    .catch(function (error) {
+      const { response } = error;
 
       const requested = {
-        name: packageName,
-        version: packageVersion
+        name: request.packageName,
+        version: request.packageVersion
       };
 
       if (response.status === 404) {
-        return PackageLensFactory.createPackageNotFound('composer', requested);
+        return ResponseFactory.createNotFound('composer', requested);
       }
 
-      ErrorFactory.createConsoleError('composer', resolveComposerPackage.name, packageName, error);
-      return PackageLensFactory.createUnexpectedError(
+      ErrorFactory.createConsoleError('composer',
+        resolveComposerPackage.name,
+        request.packageName,
+        error
+      );
+
+      return ResponseFactory.createUnexpected(
         'composer',
         requested,
         error
-      );
-    });
+      )
+    })
 }

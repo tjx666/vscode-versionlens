@@ -38,8 +38,8 @@ function collectDependencyNodes(nodes, collector = []) {
       if (pair.value.type === 'MAP') {
         createPackageLensFromMapType(pair.value.items, pair.key, collector);
       } else if (typeof pair.value.value === 'string') {
-        const packageLens = createPackageLensFromPlainType(pair);
-        collector.push(packageLens);
+        const dependencyLens = createPackageLensFromPlainType(pair);
+        collector.push(dependencyLens);
       }
     }
   )
@@ -52,14 +52,14 @@ export function createPackageLensFromMapType(nodes, parentKey, collector) {
       if (!pair.value) return;
 
       if (pair.key.value === "version") {
-        const lensRange = createRange(parentKey.range[0], parentKey.range[0], null);
+        const nameRange = createRange(parentKey.range[0], parentKey.range[0], null);
         const versionRange = createRange(pair.value.range[0], pair.value.range[1], pair.value.type);
         const packageInfo = {
           name: parentKey.value,
           version: pair.value.value
         };
         collector.push({
-          lensRange,
+          nameRange,
           versionRange,
           packageInfo
         });
@@ -70,14 +70,14 @@ export function createPackageLensFromMapType(nodes, parentKey, collector) {
 }
 
 export function createPackageLensFromPlainType(pair): PackageDependencyLens {
-  const lensRange = createRange(pair.key.range[0], pair.key.range[0], null);
+  const nameRange = createRange(pair.key.range[0], pair.key.range[0], null);
   const versionRange = createRange(pair.value.range[0], pair.value.range[1], pair.value.type);
   const packageInfo = {
     name: pair.key.value,
     version: pair.value.value
   }
   return {
-    lensRange,
+    nameRange,
     versionRange,
     packageInfo
   }

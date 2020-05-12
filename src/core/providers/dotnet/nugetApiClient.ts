@@ -9,36 +9,37 @@ import {
 } from 'core/packages/helpers/versionHelpers';
 import { parseVersionSpec } from './dotnetUtils.js';
 import { DotNetVersionSpec } from './definitions/versionSpec';
+import { JsonHttpRequest } from 'core/clients/requests/jsonHttpRequest.js';
+
+const jsonRequest = new JsonHttpRequest({}, 0);
 
 export async function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
   const dotnetSpec = parseVersionSpec(request.packageVersion);
-  // const nugetFeeds = 
-  // const queryUrl = `${feed}?id=${packageName}&prerelease=${appContrib.dotnetIncludePrerelease}&semVerLevel=2.0.0`;
-  // const nugetResult = resolveNuget()
-
+  //TODO: resolve url via service locator from sources
   return createRemotePackageDocument(request, dotnetSpec);
 }
 
 function createRemotePackageDocument(request: FetchRequest, dotnetSpec: DotNetVersionSpec): Promise<PackageDocument> {
-  const url = `https://azuresearch-usnc.nuget.org/autocomplete?id=${request.packageName}&prerelease=true&semVerLevel=2.0.0`;
+  const url = 'https://azuresearch-usnc.nuget.org/autocomplete';
 
-  const httpRequest = require('request-light')
-  return httpRequest.xhr({ url })
+  const queryParams = {
+    id: request.packageName,
+    prerelease: 'true',
+    semVerLevel: '2.0.0'
+  }
+
+  return jsonRequest.getJson(url, queryParams)
     .then(response => {
-      if (response.status != 200) {
-        return Promise.reject(ErrorFactory.createFetchError(request, response, dotnetSpec));
+
+      const { data } = response;
+
+      if (data.totalHits === 0) {
+        return Promise.reject({ status: 404, data })
       }
+
+      const packageInfo = data;
 
       const source = PackageSourceTypes.registry;
-
-      const packageInfo = JSON.parse(response.responseText);
-      if (packageInfo.totalHits === 0) {
-        return Promise.reject(ErrorFactory.createFetchError(
-          request,
-          { responseText: '', status: 404 },
-          dotnetSpec
-        ));
-      }
 
       const requested = {
         name: request.packageName,
@@ -71,8 +72,6 @@ function createRemotePackageDocument(request: FetchRequest, dotnetSpec: DotNetVe
           releases.length > 0 ? releases[releases.length - 1] : null,
         ))
       }
-
-
 
       const versionRange = dotnetSpec.resolvedVersion;
 

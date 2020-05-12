@@ -1,8 +1,5 @@
 import {
   PackageNameVersion,
-  PackageVersionStatus,
-  PackageSuggestion,
-  PackageSuggestionFlags,
   PackageVersionTypes,
   PackagePrereleaseDictionary
 } from "../models/packageDocument";

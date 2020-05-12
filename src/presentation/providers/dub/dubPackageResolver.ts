@@ -1,26 +1,19 @@
 import * as ErrorFactory from 'core/errors/factory';
 import { fetchPackage } from 'core/providers/dub/dubApiClient';
-import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
-import { ReplaceVersionFunction, PackageLens } from 'presentation/lenses/models/packageLens';
-import { FetchError } from 'core/clients/models/fetch';
+import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
+import { ReplaceVersionFunction, PackageResponse } from 'core/packages/models/packageResponse';
+import { FetchError, FetchRequest } from 'core/clients/models/fetch';
 
-export function resolveDubPackage(
-  packagePath: string,
-  packageName: string,
-  packageVersion: string,
-  replaceVersionFn: ReplaceVersionFunction): Promise<Array<PackageLens> | PackageLens> {
-
-  const request = {
-    packagePath,
-    packageName,
-    packageVersion
-  };
+export async function resolveDubPackage(
+  request: FetchRequest,
+  replaceVersionFn: ReplaceVersionFunction
+): Promise<Array<PackageResponse> | PackageResponse> {
 
   return fetchPackage(request)
-    .then(pack => {
-      return PackageLensFactory.createPackageLens(pack, null);
+    .then(function (pack) {
+      return ResponseFactory.createSuccess(pack, null);
     })
-    .catch(error => {
+    .catch(function (error) {
       const { request, response }: FetchError = error;
 
       const requested = {
@@ -30,14 +23,19 @@ export function resolveDubPackage(
 
       // show the 404 to the user; otherwise throw the error
       if (response.status === 404) {
-        return PackageLensFactory.createPackageNotFound('dub', requested);
+        return ResponseFactory.createNotFound('dub', requested);
       }
 
-      ErrorFactory.createConsoleError('dub', resolveDubPackage.name, requested.name, error);
-      return PackageLensFactory.createUnexpectedError(
+      ErrorFactory.createConsoleError('dub',
+        resolveDubPackage.name,
+        requested.name,
+        error
+      );
+
+      return ResponseFactory.createUnexpected(
         'dub',
         requested,
         error
       );
-    });
+    })
 }

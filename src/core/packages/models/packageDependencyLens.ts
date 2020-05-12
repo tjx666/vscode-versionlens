@@ -2,13 +2,13 @@
 export type PackageFileParserDelegate = (packageFileText: string, filterPropertyNames: string[]) => PackageDependencyLens[];
 
 export interface PackageDependencyLens {
-  lensRange: { // todo rename to 'nameRange'
-    start: Number;
-    end: Number;
+  nameRange: {
+    start: number;
+    end: number;
   };
   versionRange: {
-    start: Number;
-    end: Number;
+    start: number;
+    end: number;
   };
   packageInfo: {
     name: string;

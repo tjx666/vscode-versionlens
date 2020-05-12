@@ -12,7 +12,7 @@ export class ExpiryCacheMap {
   cacheMap: CacheMap;
 
   constructor(cacheDuration: number = 300000) {
-    this.cacheDuration = cacheDuration || 300000; // defaults to 5mins in ms
+    this.cacheDuration = cacheDuration; // defaults to 5mins in ms
     this.cacheMap = {};
   }
 

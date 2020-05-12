@@ -1,25 +1,24 @@
+// vscode references
+import * as VsCodeTypes from 'vscode';
+
+// imports
 import appContrib from '../../../appContrib';
-import appSettings from '../../../appSettings';
 import { formatWithExistingLeading } from '../../../common/utils';
 import { extractPackageLensDataFromText } from 'core/packages/parsers/jsonPackageParser';
 import { readDubSelections } from 'core/providers/dub/dubApiClient';
 import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from 'presentation/editor/decorations';
-import { AbstractCodeLensProvider } from 'presentation/lenses/definitions/abstractCodeLensProvider';
-import * as CodeLensFactory from 'presentation/lenses/factories/codeLensFactory';
-import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/lenses/abstract/abstractVersionLensProvider';
+import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
 import { resolveDubPackage } from './dubPackageResolver';
+import { VersionLens } from 'presentation/lenses/models/versionLens';
 
-const path = require('path');
-
-export class DubCodeLensProvider extends AbstractCodeLensProvider {
+export class DubCodeLensProvider extends AbstractVersionLensProvider {
 
   _outdatedCache: any;
-  packagePath: '';
 
   constructor() {
     super();
     this._outdatedCache = {};
-    this.packagePath = '';
   }
 
   get selector() {
@@ -31,31 +30,24 @@ export class DubCodeLensProvider extends AbstractCodeLensProvider {
     };
   }
 
-  provideCodeLenses(document, token) {
-    if (appSettings.showVersionLenses === false) return [];
+  fetchVersionLenses(
+    packagePath: string,
+    document: VsCodeTypes.TextDocument,
+    token: VsCodeTypes.CancellationToken
+  ): VersionLensFetchResponse {
+    const packageDepsLenses = extractPackageLensDataFromText(document.getText(), appContrib.dubDependencyProperties);
+    if (packageDepsLenses.length === 0) return Promise.resolve([]);
 
-    this.packagePath = path.dirname(document.uri.fsPath);
-
-    const packageLensData = extractPackageLensDataFromText(document.getText(), appContrib.dubDependencyProperties);
-    if (packageLensData.length === 0) return [];
-
-    // TODO fix subPackages
-
-    const packageDepsLenses = PackageLensFactory.createPackageLensResolvers(this.packagePath, packageLensData, resolveDubPackage);
-    if (packageDepsLenses.length === 0) return [];
-
-    appSettings.inProgress = true;
-    return this.updateOutdated()
-      .then(_ => {
-        appSettings.inProgress = false;
-        return CodeLensFactory.createCodeLenses(packageDepsLenses, document)
-      })
-      .catch(err => {
-        appSettings.inProgress = false;
-        console.log(err)
-      });
-
+    return VersionLensFactory.createVersionLenses(
+      packagePath,
+      document,
+      packageDepsLenses,
+      resolveDubPackage
+    );
   }
+
+  updateOutdated(packagePath: string) { }
+
   /*
 evaluateCodeLens(codeLens: IVersionCodeLens) {
 
@@ -102,10 +94,9 @@ evaluateCodeLens(codeLens: IVersionCodeLens) {
 
 }
 
-    */
   // get the outdated packages and cache them
-  updateOutdated() {
-    const selectionsFilePath = path.join(this.packagePath, 'dub.selections.json');
+  updateOutdated(packagePath: string) {
+    const selectionsFilePath = path.join(packagePath, 'dub.selections.json');
     return readDubSelections(selectionsFilePath)
       .then(selectionsJson => {
         this._outdatedCache = selectionsJson;
@@ -148,4 +139,8 @@ evaluateCodeLens(codeLens: IVersionCodeLens) {
     );
 
   }
+
+
+  
+    */
 }

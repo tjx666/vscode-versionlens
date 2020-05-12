@@ -6,10 +6,10 @@ export function extractPackageLensDataFromText(packageJsonText: string, filterPr
   const jsonErrors = [];
   const jsonTree = jsonParser.parseTree(packageJsonText, jsonErrors);
   if (!jsonTree || jsonTree.children.length === 0 || jsonErrors.length > 0) return [];
-  return extractPackageLensDataFromNodes(jsonTree.children, filterPropertyNames);
+  return extractFromNodes(jsonTree.children, filterPropertyNames);
 }
 
-export function extractPackageLensDataFromNodes(topLevelNodes, filterPropertyNames: string[]): PackageDependencyLens[] {
+export function extractFromNodes(topLevelNodes, filterPropertyNames: string[]): PackageDependencyLens[] {
   const collector = [];
 
   topLevelNodes.forEach(
@@ -29,8 +29,8 @@ function collectDependencyNodes(nodes, collector = []) {
       const [keyEntry, valueEntry] = node.children;
 
       if (valueEntry.type == "string") {
-        const packageLens = createPackageLensFromProperty(keyEntry, valueEntry);
-        collector.push(packageLens);
+        const dependencyLens = createFromProperty(keyEntry, valueEntry);
+        collector.push(dependencyLens);
       } else if (valueEntry.type == "object") {
         collectDependencyNodes(valueEntry.children, collector)
       }
@@ -38,8 +38,8 @@ function collectDependencyNodes(nodes, collector = []) {
   )
 }
 
-function createPackageLensFromProperty(keyEntry, valueEntry): PackageDependencyLens {
-  const lensRange = {
+function createFromProperty(keyEntry, valueEntry): PackageDependencyLens {
+  const nameRange = {
     start: keyEntry.offset,
     end: keyEntry.offset,
   }
@@ -56,7 +56,7 @@ function createPackageLensFromProperty(keyEntry, valueEntry): PackageDependencyL
   }
 
   return {
-    lensRange,
+    nameRange,
     versionRange,
     packageInfo
   }

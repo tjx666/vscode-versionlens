@@ -66,6 +66,7 @@ const config = {
     return _inProgress;
   },
   set inProgress(newValue) {
+    if (_inProgress === newValue) return;
     _inProgress = newValue;
     commands.executeCommand(
       'setContext',

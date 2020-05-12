@@ -1,13 +1,13 @@
-import { ExpiryCacheMap } from '../../../core/caching/expiryCacheMap';
+import { HttpRequestMethods } from './httpRequest';
+import { JsonHttpRequest } from './jsonHttpRequest';
 
-class GithubRequest {
+export class GithubRequest extends JsonHttpRequest {
 
   constructor() {
-    this.cache = new ExpiryCacheMap();
-    this.headers = {
+    super({
       accept: 'application\/vnd.github.v3+json',
       'user-agent': 'vscode-contrib/vscode-versionlens'
-    };
+    });
   }
 
   getCommitBySha(userRepo, sha) {
@@ -74,7 +74,8 @@ class GithubRequest {
   }
 
   httpGet(userRepo, category, queryParams) {
-    return this.request('GET', userRepo, category, queryParams)
+    return this.getJson(HttpRequestMethods.get, userRepo, category, queryParams)
+      .then(response => response.data)
       .catch(error => {
         // handles any 404 errors during a request for the latest release
         if (error.status === 404 && category === 'releases/latest') {
@@ -108,38 +109,14 @@ class GithubRequest {
   }
 
   httpHead(userRepo) {
-    return this.request('HEAD', userRepo, null, null)
+    return super.request(HttpRequestMethods.head, userRepo, null, null)
   }
 
   request(method, userRepo, category, queryParams) {
-    const url = generateGithubUrl(userRepo, category, queryParams);
-    const cacheKey = method + '_' + url;
-
-    if (this.cache.hasExpired(url) === false)
-      return Promise.resolve(this.cache.get(cacheKey));
-
-    return require('request-light').xhr({ url, type: method, headers: this.headers })
-      .then(response => {
-        return this.cache.set(cacheKey, response.responseText && JSON.parse(response.responseText))
-      })
-      .catch(response => {
-        return Promise.reject({
-          status: response.status,
-          data: this.cache.set(cacheKey, JSON.parse(response.responseText))
-        });
-      });
+    const url = `https://api.github.com/repos/${userRepo}/${category}`;
+    return super.request(method, url, queryParams)
   }
 
-}
-
-function generateGithubUrl(userRepo, path, queryParams) {
-  let query = '';
-  if (queryParams)
-    query = '?' + Object.keys(queryParams)
-      .map(key => `${key}=${queryParams[key]}`)
-      .join('&');
-
-  return `https://api.github.com/repos/${userRepo}/${path}${query}`;
 }
 
 export const githubRequest = new GithubRequest();

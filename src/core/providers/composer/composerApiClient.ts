@@ -9,25 +9,23 @@ import {
   filterSemverVersions,
 } from 'core/packages/helpers/versionHelpers';
 import { SemverSpec } from "core/packages/definitions/semverSpec";
+import { JsonHttpRequest } from '../../clients/requests/jsonHttpRequest';
 
+const jsonRequest = new JsonHttpRequest({}, 0);
 const fs = require('fs');
 const FEED_URL = 'https://repo.packagist.org/p';
 
 export async function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
-  const semverSpec: SemverSpec = parseSemver(request.packageVersion);
+  const semverSpec = parseSemver(request.packageVersion);
+  return createRemotePackageDocument(request, semverSpec);
+}
 
-  const httpRequest = require('request-light');
+export async function createRemotePackageDocument(request: FetchRequest, semverSpec: SemverSpec): Promise<PackageDocument> {
   const url = `${FEED_URL}/${request.packageName}.json`;
-  return httpRequest.xhr({ url })
+
+  return jsonRequest.getJson(url)
     .then(response => {
-      if (response.status != 200) {
-        return Promise.reject(ErrorFactory.createFetchError(request, response, semverSpec));
-      }
-
-      const data = JSON.parse(response.responseText);
-      if (!data) return Promise.reject(ErrorFactory.createFetchError(request, { responseText: '', status: 404 }, semverSpec));
-
-      const packageInfo = data.packages[request.packageName];
+      const packageInfo = response.data.packages[request.packageName];
 
       const versionRange = semverSpec.rawVersion;
 

@@ -1,20 +1,12 @@
+import { FetchRequest } from "core/clients/models/fetch";
 import * as ErrorFactory from 'core/clients/errors/factory';
 import * as PackageDocumentFactory from 'core/packages/factories/packageDocumentFactory';
-import { PackageSourceTypes, PackageDocument } from 'core/packages/models/packageDocument';
+import { PackageDocument, PackageSourceTypes } from "core/packages/models/packageDocument";
+import { JsonHttpRequest } from 'core/clients/requests/jsonHttpRequest';
+import appContrib from 'appContrib';
 import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
-import {
-  extractVersionsFromMap,
-  splitReleasesFromArray,
-  parseSemver,
-} from 'core/packages/helpers/versionHelpers';
+import { splitReleasesFromArray, extractVersionsFromMap, parseSemver } from 'core/packages/helpers/versionHelpers';
 import { SemverSpec } from 'core/packages/definitions/semverSpec';
-import { FetchRequest } from 'core/clients/models/fetch';
-import { JsonHttpRequest } from 'core/clients/requests/jsonHttpRequest.js';
-
-
-const fs = require('fs');
-
-const FEED_URL = 'https://code.dlang.org/api/packages';
 
 const jsonRequest = new JsonHttpRequest({}, 0);
 
@@ -30,7 +22,7 @@ export async function fetchPackage(request: FetchRequest): Promise<PackageDocume
       };
 
       if (error.status === 404 || response?.status === 404) {
-        return PackageDocumentFactory.createNotFound('dub', requested, null);
+        return PackageDocumentFactory.createNotFound('pub', requested, null);
       }
 
       if (!response) {
@@ -39,16 +31,14 @@ export async function fetchPackage(request: FetchRequest): Promise<PackageDocume
 
       return Promise.reject(error);
     });
+
 }
 
 function createRemotePackageDocument(request: FetchRequest, semverSpec: SemverSpec): Promise<PackageDocument> {
 
-  const url = `${FEED_URL}/${encodeURIComponent(request.packageName)}/info`;
-  const queryParams = {
-    minimize: 'true',
-  }
+  const url = `${appContrib.pubApiUrl}/api/documentation/${request.packageName}`;
 
-  return jsonRequest.getJson(url, queryParams)
+  return jsonRequest.getJson(url)
     .then(response => {
 
       const packageInfo = response.data;
@@ -74,9 +64,8 @@ function createRemotePackageDocument(request: FetchRequest, semverSpec: SemverSp
       const suggestions = createSuggestionTags(versionRange, releases, prereleases);
 
       // todo return a ~master entry when no matches found
-
       return {
-        provider: 'dub',
+        provider: 'pub',
         source: PackageSourceTypes.registry,
         type: semverSpec.type,
         requested,
@@ -85,32 +74,6 @@ function createRemotePackageDocument(request: FetchRequest, semverSpec: SemverSp
         prereleases,
         suggestions,
       };
+
     });
-}
-
-export function readDubSelections(filePath) {
-
-  return new Promise(function (resolve, reject) {
-    if (fs.existsSync(filePath) === false) {
-      reject(null);
-      return;
-    }
-
-    fs.readFile(filePath, "utf-8", (err, data) => {
-      if (err) {
-        reject(err)
-        return;
-      }
-
-      const selectionsJson = JSON.parse(data.toString());
-      if (selectionsJson.fileVersion != 1) {
-        reject(new Error(`Unknown dub.selections.json file version ${selectionsJson.fileVersion}`))
-        return;
-      }
-
-      resolve(selectionsJson);
-    });
-
-  });
-
 }

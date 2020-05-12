@@ -1,5 +1,5 @@
-import { ExpiryCacheMap } from "../../core/caching/expiryCacheMap";
-import appContrib from "../../appContrib";
+import { ExpiryCacheMap } from "../../caching/expiryCacheMap";
+import appContrib from "../../../appContrib";
 
 class PubRequest {
 
@@ -21,7 +21,7 @@ class PubRequest {
     } catch (error) {
       // handles any 404 errors during a request for the latest release
       if (error.status === 404) return this.cache.set(url, null);
-      
+
       // check if the request was not found and report back
       error.resourceNotFound = error.status =
         404 && error.data.message.includes("Not Found");

@@ -3,4 +3,4 @@ export const pubDefaultDependencyProperties = [
   "dev_dependencies"
 ];
 
-export const pubDefaultApiUrl= "https://pub.dev/packages";
+export const pubDefaultApiUrl= "https://pub.dev/";

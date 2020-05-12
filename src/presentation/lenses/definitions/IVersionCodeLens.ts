@@ -1,13 +1,14 @@
 import { PackageSourceTypes, PackageVersionStatus } from "core/packages/models/packageDocument";
-import { PackageLens, PackageErrors } from "../models/packageLens";
+import { PackageResponse, PackageResponseErrors } from "../../../core/packages/models/packageResponse";
+import { Uri } from "vscode";
 
 export interface IVersionCodeLens {
   replaceRange: any;
-  package: PackageLens;
-  documentUrl: string;
+  package: PackageResponse;
+  documentUrl: Uri;
   command: any;
   replaceVersionFn: (string) => string;
   hasPackageSource: (source: PackageSourceTypes) => boolean;
-  hasPackageError: (error: PackageErrors) => boolean;
+  hasPackageError: (error: PackageResponseErrors) => boolean;
   setCommand: (string, { }, []) => any;
 }

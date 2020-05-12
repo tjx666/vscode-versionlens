@@ -3,30 +3,23 @@ import * as ErrorFactory from 'core/errors/factory';
 import { PackageSourceTypes, PackageVersionTypes } from 'core/packages/models/packageDocument';
 import { ExpiryCacheMap } from 'core/caching/expiryCacheMap';
 import { fetchPackage } from 'core/providers/npm/pacoteApiClient'
-import { ReplaceVersionFunction, PackageLens } from 'presentation/lenses/models/packageLens';
-import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
+import { ReplaceVersionFunction, PackageResponse } from 'core/packages/models/packageResponse';
+import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
+import { FetchRequest } from 'core/clients/models/fetch';
 
 const cache = new ExpiryCacheMap();
 
 export function resolveNpmPackage(
-  packagePath: string,
-  packageName: string,
-  packageVersion: string,
-  replaceVersionFn: ReplaceVersionFunction): Promise<Array<PackageLens> | PackageLens> {
-
-  const cacheKey = `resolveNpmPackage_${packageName}@${packageVersion}_${packagePath}`;
+  request: FetchRequest,
+  replaceVersionFn: ReplaceVersionFunction
+): Promise<Array<PackageResponse> | PackageResponse> {
+  const cacheKey = `resolveNpmPackage_${request.packageName}@${request.packageVersion}_${request.packagePath}`;
   // if (cache.hasExpired(cacheKey) === false) {
   //   return Promise.resolve(cache.get(cacheKey));
   // }
 
-  const request = {
-    packagePath,
-    packageName,
-    packageVersion
-  };
-
   return fetchPackage(request)
-    .then(pack => {
+    .then(function (pack) {
       let replaceFn: ReplaceVersionFunction;
       if (replaceVersionFn === null) {
         replaceFn = (pack.source === PackageSourceTypes.git) ?
@@ -37,16 +30,21 @@ export function resolveNpmPackage(
       }
 
       // must be a registry version
-      return PackageLensFactory.createPackageLens(pack, replaceFn);
+      return ResponseFactory.createSuccess(pack, replaceFn);
     })
-    .then(pack => {
+    .then(function (pack) {
       return cache.set(cacheKey, pack);
     })
     .catch(error => {
-      const { request, response } = error;
+      const { request } = error;
 
-      ErrorFactory.createConsoleError('npm,', resolveNpmPackage.name, request.packageName, error);
-      return PackageLensFactory.createUnexpectedError(
+      ErrorFactory.createConsoleError('npm,',
+        resolveNpmPackage.name,
+        request.packageName,
+        error
+      );
+
+      return ResponseFactory.createUnexpected(
         'npm',
         {
           name: request.packageName,
@@ -61,14 +59,14 @@ export function resolveNpmPackage(
 //   const { name, version } = pack.requested;
 
 //   const fileRegExpResult = fileDependencyRegex.exec(version);
-//   if (!fileRegExpResult) return PackageLensFactory.createInvalidVersion(name, version, 'npm');
+//   if (!fileRegExpResult) return ResponseFactory.createInvalidVersion(name, version, 'npm');
 
 //   const meta = {
 //     type: "file",
 //     remoteUrl: `${fileRegExpResult[1]}`
 //   };
 
-//   return PackageLensFactory.createPackage(
+//   return ResponseFactory.createPackage(
 //     name,
 //     version,
 //     meta
@@ -105,7 +103,7 @@ export function resolveNpmPackage(
 //       }
 //     };
 
-//     return PackageLensFactory.createPackage(
+//     return ResponseFactory.createPackage(
 //       name,
 //       version,
 //       meta,

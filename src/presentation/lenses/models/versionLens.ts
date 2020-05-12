@@ -1,7 +1,8 @@
 import { formatWithExistingLeading } from '../../../common/utils';
 import { PackageSourceTypes, PackageVersionStatus } from 'core/packages/models/packageDocument';
 import { IVersionCodeLens } from "../definitions/IVersionCodeLens";
-import { PackageLens, PackageErrors } from './packageLens';
+import { PackageResponse, PackageResponseErrors } from '../../../core/packages/models/packageResponse';
+import * as VsCodeTypes from 'vscode';
 
 const { CodeLens } = require('vscode');
 
@@ -9,16 +10,16 @@ export class VersionLens extends CodeLens implements IVersionCodeLens {
 
   replaceRange: any;
 
-  package: PackageLens;
+  package: PackageResponse;
 
-  documentUrl: string;
+  documentUrl: VsCodeTypes.Uri;
 
   command: any;
 
-  constructor(commandRange, replaceRange, packageLens: PackageLens, documentUrl: string) {
+  constructor(commandRange, replaceRange, response: PackageResponse, documentUrl: VsCodeTypes.Uri) {
     super(commandRange);
     this.replaceRange = replaceRange || commandRange;
-    this.package = packageLens;
+    this.package = response;
     this.documentUrl = documentUrl;
     this.command = null;
   }
@@ -34,7 +35,7 @@ export class VersionLens extends CodeLens implements IVersionCodeLens {
     return this.package.source === source;
   }
 
-  hasPackageError(error: PackageErrors): boolean {
+  hasPackageError(error: PackageResponseErrors): boolean {
     return this.package.error == error;
   }
 

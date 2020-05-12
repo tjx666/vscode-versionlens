@@ -1,6 +1,5 @@
 import isFixedVersion from './versionUtils/isFixedVersion.tests.js';
 import isOlderVersion from './versionUtils/isOlderVersion.tests.js';
-import pluckSemverVersions from './versionUtils/pluckSemverVersions.tests.js';
 import pluckTagsAndReleases from './versionUtils/pluckTagsAndReleases.tests.js';
 import parseVersion from './versionUtils/parseVersion.tests.js';
 import sortTagsByRecentVersion from './versionUtils/sortTagsByRecentVersion.tests.js';
@@ -17,7 +16,6 @@ import resolveVersionAgainstTags from './versionUtils/resolveVersionAgainstTags.
 export const VersionUtils = {
   isFixedVersion,
   isOlderVersion,
-  pluckSemverVersions,
   pluckTagsAndReleases,
   parseVersion,
   sortTagsByRecentVersion,

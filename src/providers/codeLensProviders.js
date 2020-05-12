@@ -3,7 +3,7 @@ import { JspmCodeLensProvider } from '../presentation/providers/jspm/jspmCodeLen
 import { DubCodeLensProvider } from '../presentation/providers/dub/dubCodeLensProvider';
 import { DotNetCodeLensProvider } from '../presentation/providers/dotnet/dotnetCodeLensProvider';
 import { MavenCodeLensProvider } from './maven/mavenCodeLensProvider';
-import { PubCodeLensProvider } from './pub/pubCodeLensProvider';
+import { PubCodeLensProvider } from '../presentation/providers/pub/pubCodeLensProvider';
 import { ComposerCodeLensProvider } from '../presentation/providers/composer/composerCodeLensProvider';
 
 const codeLensProviders = [

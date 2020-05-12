@@ -1,4 +1,3 @@
-
 import * as ErrorFactory from 'core/clients/errors/factory';
 import { FetchRequest } from 'core/clients/models/fetch';
 import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
@@ -99,9 +98,7 @@ function createRemotePackageDocument(request: FetchRequest, npaResult: any): Pro
         name: request.packageName,
         version: request.packageVersion
       };
-
-      const distTags = packu['dist-tags'] || {};
-
+      
       const resolved = {
         name: npaResult.name,
         version: versionRange,
@@ -116,6 +113,7 @@ function createRemotePackageDocument(request: FetchRequest, npaResult: any): Pro
       const prereleases = filterPrereleasesFromDistTags(packu['dist-tags'] || {}).sort(compareLoose)
 
       // check if the version requested is a tag. eg latest|next
+      const distTags = packu['dist-tags'] || {};
       if (npaResult.type === PackageVersionTypes.tag) {
         versionRange = distTags[requested.version];
         if (!versionRange) return PackageDocumentFactory.createNoMatch(

@@ -1,21 +1,19 @@
+// vscode references
+import * as VsCodeTypes from 'vscode';
+
+// imports
 import appContrib from '../../../appContrib';
-import appSettings from '../../../appSettings';
 import { formatWithExistingLeading } from '../../../common/utils';
 import { extractPackageLensDataFromText } from 'core/packages/parsers/jsonPackageParser';
 import { readComposerSelections } from 'core/providers/composer/composerApiClient';
 import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from 'presentation/editor/decorations';
-import { AbstractCodeLensProvider } from 'presentation/lenses/definitions/abstractCodeLensProvider';
-import { createCodeLenses } from 'presentation/lenses/factories/codeLensFactory';
-import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/lenses/abstract/abstractVersionLensProvider';
+import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
 import { resolveComposerPackage } from './composerPackageResolver';
 
-const path = require('path');
-
-export class ComposerCodeLensProvider extends AbstractCodeLensProvider {
+export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
 
   _outdatedCache: {};
-
-  packagePath: '';
 
   constructor() {
     super();
@@ -30,32 +28,24 @@ export class ComposerCodeLensProvider extends AbstractCodeLensProvider {
     };
   }
 
-  provideCodeLenses(document, token) {
-    if (appSettings.showVersionLenses === false) return [];
-
-    this.packagePath = path.dirname(document.uri.fsPath);
-
+  fetchVersionLenses(
+    packagePath: string,
+    document: VsCodeTypes.TextDocument,
+    token: VsCodeTypes.CancellationToken
+  ): VersionLensFetchResponse {
     const packageDepsLenses = extractPackageLensDataFromText(document.getText(), appContrib.composerDependencyProperties);
-    if (packageDepsLenses.length === 0) return [];
+    if (packageDepsLenses.length === 0) return Promise.resolve([]);
 
-    const packageLensResolvers = PackageLensFactory.createPackageLensResolvers(
-      this.packagePath,
+    return VersionLensFactory.createVersionLenses(
+      packagePath,
+      document,
       packageDepsLenses,
       resolveComposerPackage
     );
-    if (packageLensResolvers.length === 0) return [];
 
-    appSettings.inProgress = true;
-    return this.updateOutdated()
-      .then(_ => {
-        appSettings.inProgress = false;
-        return createCodeLenses(packageLensResolvers, document);
-      })
-      .catch(err => {
-        appSettings.inProgress = false;
-        console.log(err);
-      });
   }
+
+
   /*
 evaluateCodeLens(codeLens: IVersionCodeLens) {
 
@@ -96,15 +86,16 @@ evaluateCodeLens(codeLens: IVersionCodeLens) {
         codeLens.package.name,
         respObj.statusMessage
       );
-      return PackageLensFactory.createUnexpectedError(codeLens.package.name, respObj.statusMessage);
+      return ResponseFactory.createUnexpectedError(codeLens.package.name, respObj.statusMessage);
     });
 
 }
 
     */
 
-  updateOutdated() {
-    const selectionsFilePath = path.join(this.packagePath, 'composer.lock');
+  updateOutdated(packagePath: string) {
+    const { join } = require('path')
+    const selectionsFilePath = join(packagePath, 'composer.lock');
     return readComposerSelections(selectionsFilePath)
       .then(selectionsJson => {
 

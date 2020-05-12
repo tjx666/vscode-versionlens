@@ -1,16 +1,29 @@
-import { EventEmitter, CancellationToken } from 'vscode';
+// vscode references
+import * as VsCodeTypes from 'vscode';
+
+// imports
 import appSettings from '../../../appSettings';
 import { PackageSourceTypes } from 'core/packages/models/packageDocument';
 import * as CommandFactory from 'presentation/commands/factory';
-import { IVersionCodeLens } from "./IVersionCodeLens";
+import { IVersionCodeLens } from "../definitions/IVersionCodeLens";
 import { VersionLens } from '../models/versionLens';
-import { PackageErrors } from '../models/packageLens';
+import { PackageResponseErrors } from '../../../core/packages/models/packageResponse';
 
-export abstract class AbstractCodeLensProvider {
+export type VersionLensFetchResponse = Promise<VersionLens[] | null>;
 
-  _onChangeCodeLensesEmitter: EventEmitter<void>;
+export abstract class AbstractVersionLensProvider {
+
+  _onChangeCodeLensesEmitter: VsCodeTypes.EventEmitter<void>;
 
   onDidChangeCodeLenses: any;
+
+  abstract updateOutdated(packagePath: string);
+
+  abstract fetchVersionLenses(
+    packagePath: string,
+    document: VsCodeTypes.TextDocument,
+    token: VsCodeTypes.CancellationToken
+  ): VersionLensFetchResponse;
 
   constructor() {
     const { EventEmitter } = require('vscode');
@@ -22,9 +35,20 @@ export abstract class AbstractCodeLensProvider {
     this._onChangeCodeLensesEmitter.fire();
   }
 
-  resolveCodeLens(codeLens: IVersionCodeLens, token: CancellationToken) {
-    if (codeLens instanceof VersionLens) {
+  provideCodeLenses(document: VsCodeTypes.TextDocument, token: VsCodeTypes.CancellationToken): Promise<VersionLens[] | null> {
+    if (appSettings.showVersionLenses === false) return null;
 
+    const { dirname } = require('path');
+    const packagePath = dirname(document.uri.fsPath);
+
+    // set in progress
+    appSettings.inProgress = true;
+
+    return this.fetchVersionLenses(packagePath, document, token)
+  }
+
+  resolveCodeLens(codeLens: IVersionCodeLens, token: VsCodeTypes.CancellationToken) {
+    if (codeLens instanceof VersionLens) {
       // set in progress
       appSettings.inProgress = true;
 
@@ -45,20 +69,20 @@ export abstract class AbstractCodeLensProvider {
     }
   }
 
-  evaluateCodeLens(codeLens: IVersionCodeLens, token: CancellationToken) {
+  evaluateCodeLens(codeLens: IVersionCodeLens, token: VsCodeTypes.CancellationToken) {
     // if (codeLens.isMetaType('github'))
     //   return CommandFactory.createGithubCommand(codeLens);
 
-    if (codeLens.hasPackageError(PackageErrors.Unexpected))
+    if (codeLens.hasPackageError(PackageResponseErrors.Unexpected))
       return CommandFactory.createPackageUnexpectedError(codeLens);
 
-    if (codeLens.hasPackageError(PackageErrors.NotFound))
+    if (codeLens.hasPackageError(PackageResponseErrors.NotFound))
       return CommandFactory.createPackageNotFoundCommand(codeLens);
 
-    if (codeLens.hasPackageError(PackageErrors.NotSupported))
+    if (codeLens.hasPackageError(PackageResponseErrors.NotSupported))
       return CommandFactory.createPackageMessageCommand(codeLens);
 
-    if (codeLens.hasPackageError(PackageErrors.GitNotFound))
+    if (codeLens.hasPackageError(PackageResponseErrors.GitNotFound))
       return CommandFactory.createPackageMessageCommand(codeLens);
 
     if (codeLens.hasPackageSource(PackageSourceTypes.directory))

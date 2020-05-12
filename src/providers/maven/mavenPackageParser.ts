@@ -1,9 +1,11 @@
+import * as VsCodeTypes from 'vscode';
+
 import { PackageDependencyLens } from "core/packages/models/PackageDependencyLens";
 
 const xmldoc = require('xmldoc');
 const { window } = require('vscode');
 
-export function extractMavenLensDataFromText(document, filterPropertyNames: string[]): PackageDependencyLens[] {
+export function extractMavenLensDataFromDocument(document: VsCodeTypes.TextDocument, filterPropertyNames: string[]): PackageDependencyLens[] {
   const xmlDoc = new xmldoc.XmlDocument(document.getText());
   if (!xmlDoc) return [];
 
@@ -68,7 +70,7 @@ function collectFromChildVersionTag(parentNode, collector) {
     }
     // TODO: Check if is a version variable like '${spring.version}' and evaluate to get the real version
 
-    const lensRange = {
+    const nameRange = {
       start: parentNode.startTagPosition,
       end: parentNode.startTagPosition,
     };
@@ -96,7 +98,7 @@ function collectFromChildVersionTag(parentNode, collector) {
     }
 
     collector.push({
-      lensRange,
+      nameRange,
       versionRange,
       packageInfo
     });
