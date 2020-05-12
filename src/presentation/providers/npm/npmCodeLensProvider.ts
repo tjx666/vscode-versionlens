@@ -10,7 +10,7 @@ import {
 
 import { AbstractCodeLensProvider } from 'presentation/lenses/definitions/abstractCodeLensProvider';
 import { extractPackageLensDataFromText } from 'core/packages/parsers/jsonPackageParser';
-import { npmGetOutdated, npmPackageDirExists } from 'core/providers/npm/npmClient.js';
+import { npmGetOutdated, npmPackageDirExists } from 'core/providers/npm/npmApiClient.js';
 import * as CodeLensFactory from '../../lenses/factories/codeLensFactory';
 import * as PackageLensFactory from '../../lenses/factories/packageLensFactory';
 import { resolveNpmPackage } from './npmPackageResolver';

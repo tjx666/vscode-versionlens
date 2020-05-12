@@ -3,8 +3,8 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import { testPath } from 'test/unit/utils';
-import * as PacoteClientApi from 'core/providers/npm/pacoteClientApi'
-import Fixtures from './pacoteClientApi.fixtures'
+import * as PacoteApiClient from 'core/providers/npm/pacoteApiClient'
+import Fixtures from './pacoteApiClient.fixtures'
 
 const assert = require('assert')
 const path = require('path')
@@ -41,7 +41,7 @@ export default {
         return Fixtures.packumentGit
       }
 
-      await PacoteClientApi.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
+      await PacoteApiClient.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
     },
 
     'returns a file:// directory package': async () => {
@@ -50,7 +50,7 @@ export default {
       const testPackageName = 'filepackage';
       const testPackageVersion = 'file://some/path/out/there';
 
-      await PacoteClientApi.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
+      await PacoteApiClient.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
         .then((actual) => {
           assert.equal(actual.source, 'directory', `expected to see ${expectedSource}`)
         })
@@ -64,7 +64,7 @@ export default {
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentGit);
 
-      await PacoteClientApi.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
+      await PacoteApiClient.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
         .then((actual) => {
           assert.equal(actual.source, 'git')
           assert.equal(actual.resolved.name, testPackageName)
@@ -78,7 +78,7 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentGitSemver);
-      await PacoteClientApi.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
+      await PacoteApiClient.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
         .then((actual) => {
           assert.equal(actual.source, 'git')
           assert.equal(actual.type, 'range')
@@ -93,7 +93,7 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentGitCommittish);
-      await PacoteClientApi.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
+      await PacoteApiClient.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
         .then((actual) => {
           assert.equal(actual.source, 'git')
           assert.equal(actual.type, 'committish')
@@ -108,7 +108,7 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentRegistryRange);
-      await PacoteClientApi.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
+      await PacoteApiClient.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
         .then((actual) => {
           assert.equal(actual.source, 'registry')
           assert.equal(actual.type, 'range')
@@ -123,7 +123,7 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentRegistryVersion);
-      await PacoteClientApi.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
+      await PacoteApiClient.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
         .then((actual) => {
           assert.equal(actual.source, 'registry')
           assert.equal(actual.type, 'version')
@@ -138,7 +138,7 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentRegistryAlias);
-      await PacoteClientApi.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
+      await PacoteApiClient.fetchPackage(testPackagePath, testPackageName, testPackageVersion)
         .then((actual) => {
           assert.equal(actual.source, 'registry')
           assert.equal(actual.type, 'alias')

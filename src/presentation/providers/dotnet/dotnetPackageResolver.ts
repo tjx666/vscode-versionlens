@@ -1,5 +1,5 @@
 import * as ErrorFactory from 'core/errors/factory';
-import { fetchPackage } from 'core/providers/dotnet/nugetClientApi.js';
+import { fetchPackage } from 'core/providers/dotnet/nugetApiClient.js';
 import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
 import { ReplaceVersionFunction, PackageLens } from 'presentation/lenses/models/packageLens';
 

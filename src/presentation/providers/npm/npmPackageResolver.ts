@@ -2,7 +2,7 @@ import { formatWithExistingLeading } from '../../../common/utils';
 import * as ErrorFactory from 'core/errors/factory';
 import { PackageSourceTypes, PackageVersionTypes } from 'core/packages/models/packageDocument';
 import { ExpiryCacheMap } from 'core/caching/expiryCacheMap';
-import { fetchPackage } from 'core/providers/npm/pacoteClientApi'
+import { fetchPackage } from 'core/providers/npm/pacoteApiClient'
 import { ReplaceVersionFunction, PackageLens } from 'presentation/lenses/models/packageLens';
 import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
 

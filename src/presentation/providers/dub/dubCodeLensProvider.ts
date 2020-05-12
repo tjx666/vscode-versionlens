@@ -2,7 +2,7 @@ import appContrib from '../../../appContrib';
 import appSettings from '../../../appSettings';
 import { formatWithExistingLeading } from '../../../common/utils';
 import { extractPackageLensDataFromText } from 'core/packages/parsers/jsonPackageParser';
-import { readDubSelections } from 'core/providers/dub/dubClientApi';
+import { readDubSelections } from 'core/providers/dub/dubApiClient';
 import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from 'presentation/editor/decorations';
 import { AbstractCodeLensProvider } from 'presentation/lenses/definitions/abstractCodeLensProvider';
 import * as CodeLensFactory from 'presentation/lenses/factories/codeLensFactory';

@@ -1,7 +1,7 @@
 // pacoteClientApi tests
-import * as PacoteClientApi from './pacoteClientApi/pacoteClientApi.tests.js';
-export const PacoteClientApiTests = {
-  PacoteClientApi
+import * as PacoteApiClient from './pacoteApiClient/pacoteApiClient.tests.js';
+export const PacoteApiClientTests = {
+  PacoteApiClient
 }
 
 // npmPackageResolver tests

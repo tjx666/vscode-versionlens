@@ -1,5 +1,5 @@
 import * as ErrorFactory from 'core/errors/factory';
-import { fetchPackage } from 'core/providers/composer/composerClientApi';
+import { fetchPackage } from 'core/providers/composer/composerApiClient';
 import * as PackageLensFactory from 'presentation/lenses/factories/packageLensFactory';
 import { PackageLens, ReplaceVersionFunction } from 'presentation/lenses/models/packageLens';
 

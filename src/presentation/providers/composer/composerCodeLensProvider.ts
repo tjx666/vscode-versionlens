@@ -2,7 +2,7 @@ import appContrib from '../../../appContrib';
 import appSettings from '../../../appSettings';
 import { formatWithExistingLeading } from '../../../common/utils';
 import { extractPackageLensDataFromText } from 'core/packages/parsers/jsonPackageParser';
-import { readComposerSelections } from 'core/providers/composer/composerClientApi';
+import { readComposerSelections } from 'core/providers/composer/composerApiClient';
 import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from 'presentation/editor/decorations';
 import { AbstractCodeLensProvider } from 'presentation/lenses/definitions/abstractCodeLensProvider';
 import { createCodeLenses } from 'presentation/lenses/factories/codeLensFactory';
