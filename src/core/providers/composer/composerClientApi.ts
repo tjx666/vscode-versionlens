@@ -1,13 +1,13 @@
 import * as ErrorFactory from 'core/clients/errors/factory';
 import * as PackageDocumentFactory from 'core/packages/factories/packageDocumentFactory';
 import { FetchRequest } from 'core/clients/models/fetch';
-import { PackageDocument, PackageSourceTypes } from "core/packages/models/packageDocument";
+import { PackageDocument, PackageSourceTypes } from 'core/packages/models/packageDocument';
+import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
 import {
   splitReleasesFromArray,
-  createSuggestionTags,
   parseSemver,
-  filterSemverVersions
-} from "core/packages/helpers/versionHelpers";
+  filterSemverVersions,
+} from 'core/packages/helpers/versionHelpers';
 import { SemverSpec } from "core/packages/definitions/semverSpec";
 
 const fs = require('fs');
@@ -49,8 +49,8 @@ export async function fetchPackage(request: FetchRequest): Promise<PackageDocume
       // seperate versions to releases and prereleases
       const { releases, prereleases } = splitReleasesFromArray(filterSemverVersions(semverVersions))
 
-      // anaylse and report
-      const tags = createSuggestionTags(versionRange, releases, prereleases);
+      // analyse suggestions
+      const suggestions = createSuggestionTags(versionRange, releases, prereleases);
 
       return {
         provider: 'composer',
@@ -60,7 +60,7 @@ export async function fetchPackage(request: FetchRequest): Promise<PackageDocume
         resolved,
         releases,
         prereleases,
-        tags,
+        suggestions,
       };
 
     })

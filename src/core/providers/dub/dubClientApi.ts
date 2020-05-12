@@ -1,11 +1,11 @@
 import * as ErrorFactory from 'core/clients/errors/factory';
 import * as PackageDocumentFactory from 'core/packages/factories/packageDocumentFactory';
 import { PackageSourceTypes, PackageDocument } from 'core/packages/models/packageDocument';
+import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
 import {
   extractVersionsFromMap,
   splitReleasesFromArray,
-  createSuggestionTags,
-  parseSemver
+  parseSemver,
 } from 'core/packages/helpers/versionHelpers';
 import { SemverSpec } from 'core/packages/definitions/semverSpec';
 import { FetchRequest } from 'core/clients/models/fetch';
@@ -49,8 +49,8 @@ export function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
       // seperate versions to releases and prereleases
       const { releases, prereleases } = splitReleasesFromArray(rawVersions)
 
-      // anaylse and report
-      const tags = createSuggestionTags(versionRange, releases, prereleases);
+      // analyse suggestions
+      const suggestions = createSuggestionTags(versionRange, releases, prereleases);
 
       // todo return a ~master entry when no matches found
 
@@ -62,7 +62,7 @@ export function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
         resolved,
         releases,
         prereleases,
-        tags,
+        suggestions,
       };
     })
     .catch(error => {

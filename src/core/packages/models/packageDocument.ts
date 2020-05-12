@@ -55,7 +55,7 @@ export type PackageDocument = {
   type: PackageVersionTypes,
   requested: PackageNameVersion,
   resolved: PackageNameVersion,
-  tags: Array<PackageSuggestion>,
+  suggestions: Array<PackageSuggestion>,
   releases?: Array<string>,
   prereleases?: Array<string>,
   gitSpec?: any,

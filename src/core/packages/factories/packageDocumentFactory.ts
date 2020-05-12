@@ -22,7 +22,7 @@ export function createNotFound(provider: string, requested: PackageNameVersion, 
     type,
     requested,
     resolved: null,
-    tags: suggestions
+    suggestions
   };
 }
 
@@ -39,7 +39,7 @@ export function createInvalidVersion(provider: string, requested: PackageNameVer
     type,
     requested,
     resolved: null,
-    tags: suggestions
+    suggestions
   };
 }
 
@@ -56,7 +56,7 @@ export function createNotSupported(provider: string, requested: PackageNameVersi
     type,
     requested,
     resolved: null,
-    tags: suggestions
+    suggestions
   };
 }
 
@@ -73,7 +73,7 @@ export function createGitFailed(provider: string, requested: PackageNameVersion,
     type,
     requested,
     resolved: null,
-    tags: suggestions
+    suggestions
   };
 }
 
@@ -89,6 +89,6 @@ export function createNoMatch(provider: string, source: PackageSourceTypes, type
     type,
     requested,
     resolved: null,
-    tags: suggestions
+    suggestions
   };
 }

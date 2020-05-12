@@ -34,10 +34,6 @@ export class VersionLens extends CodeLens implements IVersionCodeLens {
     return this.package.source === source;
   }
 
-  hasPackageStatus(source: PackageVersionStatus): boolean {
-    return this.package.tag.name === source;
-  }
-
   hasPackageError(error: PackageErrors): boolean {
     return this.package.error == error;
   }

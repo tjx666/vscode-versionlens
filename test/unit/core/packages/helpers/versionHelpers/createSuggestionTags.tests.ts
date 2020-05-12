@@ -1,4 +1,4 @@
-import { createSuggestionTags } from 'core/packages/helpers/versionHelpers';
+import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
 import { PackageVersionStatus, PackageSuggestionFlags } from '/core/packages/models/packageDocument';
 
 const assert = require('assert');

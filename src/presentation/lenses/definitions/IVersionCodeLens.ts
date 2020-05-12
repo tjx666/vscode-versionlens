@@ -8,7 +8,6 @@ export interface IVersionCodeLens {
   command: any;
   replaceVersionFn: (string) => string;
   hasPackageSource: (source: PackageSourceTypes) => boolean;
-  hasPackageStatus: (source: PackageVersionStatus) => boolean;
   hasPackageError: (error: PackageErrors) => boolean;
   setCommand: (string, { }, []) => any;
 }

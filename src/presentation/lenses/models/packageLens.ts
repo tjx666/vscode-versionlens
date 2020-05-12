@@ -1,4 +1,4 @@
-import { PackageSourceTypes, PackageNameVersion, PackageVersionTypes } from "core/packages/models/packageDocument";
+import { PackageSourceTypes, PackageNameVersion, PackageVersionTypes, PackageSuggestion } from "core/packages/models/packageDocument";
 
 export type PackageLensResolverFunction = (
   packagePath: string,
@@ -26,6 +26,6 @@ export class PackageLens {
   source?: PackageSourceTypes;
   type?: PackageVersionTypes;
   resolved?: PackageNameVersion;
-  tag?: PackageNameVersion;
+  suggestion?: PackageSuggestion;
   replaceVersionFn?: ReplaceVersionFunction;
 }

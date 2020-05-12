@@ -67,7 +67,7 @@ export abstract class AbstractCodeLensProvider {
     // generate decoration
     // if (appSettings.showDependencyStatuses) this.generateDecoration(codeLens);
 
-    return CommandFactory.createTaggedVersionCommand(codeLens)
+    return CommandFactory.createSuggestedVersionCommand(codeLens)
   }
 
 

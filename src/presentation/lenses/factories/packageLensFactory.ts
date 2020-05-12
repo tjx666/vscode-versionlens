@@ -47,14 +47,14 @@ export function createPackageLensResolvers(
 
 export function createPackageLens(pack: PackageDocument, replaceVersionFn = null): Array<PackageLens> {
   // map the tags to packages
-  return pack.tags.map((tag, index): PackageLens => {
+  return pack.suggestions.map((suggestion, index): PackageLens => {
     const packageLens: PackageLens = {
       provider: pack.provider,
       source: pack.source,
       type: pack.type,
       requested: pack.requested,
       resolved: pack.resolved,
-      tag,
+      suggestion,
       replaceVersionFn
     };
 

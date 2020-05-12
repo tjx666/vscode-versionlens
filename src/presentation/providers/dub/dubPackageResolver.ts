@@ -33,7 +33,6 @@ export function resolveDubPackage(
         return PackageLensFactory.createPackageNotFound('dub', requested);
       }
 
-      
       ErrorFactory.createConsoleError('dub', resolveDubPackage.name, requested.name, error);
       return PackageLensFactory.createUnexpectedError(
         'dub',

@@ -147,7 +147,7 @@ export function filterPrereleasesWithinRange(versionRange: string, prereleases: 
   const prereleaseGroupMap: PackagePrereleaseDictionary = {};
 
   // for each prerelease version;
-  // group prereleases by x.x.x-{name*}.x
+  // group prereleases by x.x.x-{name}*.x
   prereleases.forEach(function (prereleaseVersion) {
     const spec = new SemVer(prereleaseVersion, loosePrereleases)
     const prereleaseKey = friendlifyPrereleaseName(prereleaseVersion) || spec.prerelease[0];
@@ -167,94 +167,6 @@ export function filterPrereleasesWithinRange(versionRange: string, prereleases: 
     });
 
   return filterPrereleases;
-}
-
-export function createSuggestionTags(versionRange: string, releases: string[], prereleases: string[]): Array<PackageSuggestion> {
-  const { maxSatisfying } = require("semver");
-  const suggestions: Array<PackageSuggestion> = [];
-  const latestVersion = maxSatisfying(releases, "*");
-  const satisfiesVersion = maxSatisfying(releases, versionRange);
-  const containsVersion = versionRange.includes(satisfiesVersion);
-  const isLatest = latestVersion === satisfiesVersion;
-  if (releases.length === 0 && prereleases.length === 0)
-  // no match and nothing else to suggest
-    suggestions.push(SuggestFactory.createNoMatch())
-  else if (!satisfiesVersion)
-    // no match and suggest latest
-    suggestions.push(
-      SuggestFactory.createNoMatch(),
-      SuggestFactory.createLatest(latestVersion),
-    )
-  else if (isLatest && containsVersion)
-    // latest
-    suggestions.push(SuggestFactory.createLatest());
-  else if (isLatest)
-    suggestions.push(
-      // satisfies latest
-      SuggestFactory.createSuggestion(
-        PackageVersionStatus.satisfies,
-        'latest',
-        PackageSuggestionFlags.status
-      ),
-      // updatable to latest@version
-      SuggestFactory.createLatest(latestVersion),
-    );
-  else if (satisfiesVersion) {
-
-    if (isFixedVersion(versionRange)) {
-
-      suggestions.push(
-        // fixed
-        SuggestFactory.createSuggestion(
-          PackageVersionStatus.fixed,
-          versionRange,
-          PackageSuggestionFlags.status
-        ),
-        // updatable to latest@version
-        SuggestFactory.createLatest(latestVersion),
-      );
-
-    } else {
-
-      suggestions.push(
-        // satisfies >x.y.z <x.y.z
-        SuggestFactory.createSuggestion(
-          PackageVersionStatus.satisfies,
-          satisfiesVersion,
-          containsVersion ?
-            PackageSuggestionFlags.status :
-            PackageSuggestionFlags.release
-        ),
-        // updatable to latest@version
-        SuggestFactory.createLatest(latestVersion),
-      );
-
-    }
-
-  }
-
-  // roll up prereleases
-  const maxSatisfyingPrereleases = filterPrereleasesWithinRange(versionRange, prereleases);
-
-  // group prereleases
-  const taggedVersions = extractTaggedVersions(maxSatisfyingPrereleases);
-  taggedVersions.forEach((pvn) => {
-    if (pvn.name === 'latest') return;
-    if (pvn.version === satisfiesVersion) return;
-    if (versionRange.includes(pvn.version)) return;
-
-    // let flags: PackageTagFlags = (pvn.name === 'next') ?
-    //   PackageTagFlags.updatable | PackageTagFlags.readOnly :
-    //   PackageTagFlags.updatable;
-
-    suggestions.push({
-      name: pvn.name,
-      version: pvn.version,
-      flags: PackageSuggestionFlags.prerelease
-    });
-  });
-
-  return suggestions;
 }
 
 export function filterSemverVersions(versions: Array<string>): Array<string> {

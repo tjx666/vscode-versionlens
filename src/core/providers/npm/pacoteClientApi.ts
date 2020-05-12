@@ -1,7 +1,8 @@
 
 import * as ErrorFactory from 'core/clients/errors/factory';
 import { FetchRequest } from 'core/clients/models/fetch';
-import { filterPrereleasesFromDistTags, createSuggestionTags, filterPrereleasesWithinRange } from '../../packages/helpers/versionHelpers';
+import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
+import { filterPrereleasesFromDistTags } from '../../packages/helpers/versionHelpers';
 import {
   PackageDocument,
   PackageVersionTypes,
@@ -76,9 +77,9 @@ function createRemotePackageDocument(request: FetchRequest, npaResult: any): Pro
       if (npaResult.type === PackageVersionTypes.tag) {
         versionRange = distTags[requested.version];
         if (!versionRange) return PackageDocumentFactory.createNoMatch(
-          'npm', 
-          source, 
-          type, 
+          'npm',
+          source,
+          type,
           requested
         );
       }
@@ -89,8 +90,8 @@ function createRemotePackageDocument(request: FetchRequest, npaResult: any): Pro
       // extract prereleases from dist tags
       const prereleases = filterPrereleasesFromDistTags(packu['dist-tags'] || {}).sort(compareLoose)
 
-      // anaylse and report
-      const tags = createSuggestionTags(versionRange, releases, prereleases);
+      // analyse suggestions
+      const suggestions = createSuggestionTags(versionRange, releases, prereleases);
 
       return {
         provider: 'npm',
@@ -99,7 +100,7 @@ function createRemotePackageDocument(request: FetchRequest, npaResult: any): Pro
         requested,
         resolved,
         gitSpec,
-        tags,
+        suggestions,
         releases,
         prereleases,
       };
@@ -200,7 +201,7 @@ function createDirectoryPackageDocument(rawName: string, rawVersion: string, npa
     version: fileRegExpResult[1],
   };
 
-  const tags: Array<PackageSuggestion> = [
+  const suggestions: Array<PackageSuggestion> = [
     { name: 'file://', version: resolved.version, flags: PackageSuggestionFlags.prerelease },
   ]
 
@@ -210,6 +211,6 @@ function createDirectoryPackageDocument(rawName: string, rawVersion: string, npa
     type,
     requested,
     resolved,
-    tags
+    suggestions
   };
 }

@@ -2,6 +2,7 @@ import { stripSymbolFromVersionRegex, semverLeadingChars } from '../../common/ut
 import { githubRequest } from 'core/clients/requests/githubRequest';
 import appSettings from '../../appSettings';
 import { PackageSuggestionFlags } from 'core/packages/models/packageDocument';
+import { VersionLens } from 'presentation/lenses/models/versionLens';
 
 const semver = require('semver');
 
@@ -68,13 +69,13 @@ export function createGithubCommand(codeLens) {
     });
 }
 
-export function createTaggedVersionCommand(codeLens) {
-  const { name, version, flags } = codeLens.package.tag;
+export function createSuggestedVersionCommand(codeLens: VersionLens) {
+  const { name, version, flags } = codeLens.package.suggestion;
   const isStatus = flags & PackageSuggestionFlags.status;
   const isPrerelease = flags & PackageSuggestionFlags.prerelease;
   const isTag = flags & PackageSuggestionFlags.tag;
 
-  if (isStatus === false) {
+  if (!isStatus) {
     const replaceWithVersion = (isPrerelease || isTag) ? version : codeLens.replaceVersionFn(version);
     return codeLens.setCommand(
       `${name}: ${appSettings.updateIndicator} ${version}`,
@@ -87,11 +88,11 @@ export function createTaggedVersionCommand(codeLens) {
   return createTagCommand(`${name} ${version}`, codeLens);
 }
 
-export function createPackageNotFoundCommand(codeLens) {
-  return createErrorCommand(`${codeLens.package.name} could not be found`, codeLens);
+export function createPackageNotFoundCommand(codeLens: VersionLens) {
+  return createErrorCommand(`${codeLens.package.requested.name} could not be found`, codeLens);
 }
 
-export function createPackageUnexpectedError(codeLens) {
+export function createPackageUnexpectedError(codeLens: VersionLens) {
   // An error occurred retrieving this package.
   return createErrorCommand(
     `Unexpected error. See dev tools console`,
