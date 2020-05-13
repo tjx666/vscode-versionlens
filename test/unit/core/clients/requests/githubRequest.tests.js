@@ -1,5 +1,5 @@
 import { TestFixtureMap } from 'test/unit/utils'
-import { GithubRequest } from 'core/clients/requests/githubRequest'
+import { GithubRequest } from 'core/clients'
 
 const assert = require('assert')
 const mock = require('mock-require')

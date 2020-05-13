@@ -9,22 +9,14 @@ import { readComposerSelections, fetchComposerPackage } from 'providers/composer
 import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from 'presentation/editor/decorations';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
+import { VersionLens } from 'presentation/lenses/models/versionLens';
 
 export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
 
   _outdatedCache: {};
 
   constructor() {
-    super(ComposerConfig.provider);
-  }
-
-  get selector() {
-    return {
-      language: 'json',
-      scheme: 'file',
-      pattern: '**/composer.json',
-      group: ['tags'],
-    };
+    super(ComposerConfig);
   }
 
   fetchVersionLenses(
@@ -36,7 +28,7 @@ export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
       document.getText(),
       ComposerConfig.getDependencyProperties()
     );
-    if (packageDepsLenses.length === 0) return Promise.resolve([]);
+    if (packageDepsLenses.length === 0) return null;
 
     return VersionLensFactory.createVersionLenses(
       document,
@@ -47,64 +39,17 @@ export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
     );
   }
 
-  /*
-evaluateCodeLens(codeLens: IVersionCodeLens) {
-
-  if (codeLens.command && codeLens.command.command.includes('updateDependenciesCommand'))
-    return codeLens;
-
-  if (codeLens.package.version === 'latest')
-    return CommandFactory.createMatchesLatestVersionCommand(codeLens);
-
-  if (codeLens.package.version === '~master')
-    return CommandFactory.createMatchesLatestVersionCommand(codeLens);
-
-  // generate decoration
-  if (appSettings.showDependencyStatuses)
-    this.generateDecoration(codeLens);
-
-  return composerGetPackageLatest(codeLens.package.name)
-    .then(versionStr => {
-      if (typeof versionStr !== "string")
-        return CommandFactory.createErrorCommand(
-          "Invalid object returned from server",
-          codeLens
-        );
-
-      return CommandFactory.createVersionCommand(
-        codeLens.package.version,
-        versionStr,
-        codeLens
-      );
-    })
-    .catch(response => {
-      if (response.status == 404) return CommandFactory.createPackageNotFoundCommand(codeLens);
-
-      const respObj = JSON.parse(response.responseText);
-      logPackageError(
-        "Composer",
-        "composerGetPackageLatest",
-        codeLens.package.name,
-        respObj.statusMessage
-      );
-      return ResponseFactory.createUnexpectedError(codeLens.package.name, respObj.statusMessage);
-    });
-
-}
-
-    */
-
-  updateOutdated(packagePath: string) {
+  updateOutdated(packagePath: string): Promise<any> {
     const { join } = require('path')
     const selectionsFilePath = join(packagePath, 'composer.lock');
     return readComposerSelections(selectionsFilePath)
-      .then(selectionsJson => {
+      .then((selectionsJson: any) => {
 
         let packages = {};
 
-        // for (let onepackage in selectionsJson.packages) {
-        //   packages[selectionsJson.packages[onepackage].name] = selectionsJson.packages[onepackage].version;
-        // }
+        for (let onepackage in selectionsJson.packages) {
+          packages[selectionsJson.packages[onepackage].name] = selectionsJson.packages[onepackage].version;
+        }
 
         this._outdatedCache = packages;
       })
@@ -114,37 +59,36 @@ evaluateCodeLens(codeLens: IVersionCodeLens) {
       })
   }
 
-  generateDecoration(codeLens) {
-    const currentPackageName = codeLens.package.name;
-    const currentPackageVersion = codeLens.package.version;
+  generateDecorations(versionLens: VersionLens) {
+    const currentPackageName = versionLens.package.requested.name;
+    const currentPackageVersion = versionLens.package.requested.version;
 
-    if (!codeLens.replaceRange)
+    if (!versionLens.replaceRange)
       return;
 
     if (!this._outdatedCache) {
-      renderMissingDecoration(codeLens.replaceRange);
+      renderMissingDecoration(versionLens.replaceRange);
       return;
     }
 
     const currentVersion = this._outdatedCache[currentPackageName];
     if (!currentVersion) {
-      renderMissingDecoration(codeLens.replaceRange);
+      renderMissingDecoration(versionLens.replaceRange);
       return;
     }
 
     if (formatWithExistingLeading(currentPackageVersion, currentVersion) == currentPackageVersion) {
       renderInstalledDecoration(
-        codeLens.replaceRange,
+        versionLens.replaceRange,
         currentPackageVersion
       );
       return;
     }
 
     renderOutdatedDecoration(
-      codeLens.replaceRange,
+      versionLens.replaceRange,
       currentVersion
     );
-
   }
 
 }

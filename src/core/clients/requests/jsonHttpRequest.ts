@@ -1,11 +1,6 @@
 import { KeyStringDictionary } from "../../definitions/generics";
-import { HttpRequest, HttpRequestMethods, HttpResponseSources } from './httpRequest';
-
-export type JsonHttpResponse = {
-  source: HttpResponseSources,
-  status: number,
-  data: any
-}
+import { JsonHttpResponse } from "../definitions/responseDefinitions";
+import { HttpRequest, HttpRequestMethods } from './httpRequest';
 
 export class JsonHttpRequest extends HttpRequest {
 

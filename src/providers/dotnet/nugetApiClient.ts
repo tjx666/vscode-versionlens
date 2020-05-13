@@ -6,8 +6,11 @@ import { createSuggestionTags } from 'core/packages/factories/packageSuggestionF
 import { splitReleasesFromArray, filterSemverVersions } from 'core/packages/helpers/versionHelpers';
 import { parseVersionSpec } from './dotnetUtils.js';
 import { DotNetVersionSpec } from './definitions/versionSpec';
-import { HttpRequestMethods, HttpResponse } from 'core/clients/requests/httpRequest.js';
-import { JsonHttpRequest } from 'core/clients/requests/jsonHttpRequest.js';
+import {
+  JsonHttpRequest,
+  HttpResponse,
+  HttpRequestMethods
+} from "core/clients";
 import DotnetConfig from './config';
 
 const jsonRequest = new JsonHttpRequest({}, 0);

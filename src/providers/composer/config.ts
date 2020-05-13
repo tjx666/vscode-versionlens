@@ -1,18 +1,27 @@
+import { AbstractProviderConfig } from 'core/configuration/abstractProviderConfig';
+
 enum ComposerContributions {
   DependencyProperties = 'composer.dependencyProperties',
   ApiUrl = 'composer.apiUrl',
 }
 
-export default new class {
+const options = {
+  pattern: '**/composer.json',
+  group: ['tags'],
+  selector: {
+    language: 'json',
+    scheme: 'file'
+  }
+}
 
-  provider: string;
+export default new class extends AbstractProviderConfig {
 
   defaultDependencyProperties: Array<string>;
 
   defaultApiUrl: string;
 
   constructor() {
-    this.provider = 'composer';
+    super('composer', options);
 
     this.defaultDependencyProperties = [
       "require",

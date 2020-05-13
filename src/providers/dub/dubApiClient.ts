@@ -9,8 +9,11 @@ import {
 } from 'core/packages/helpers/versionHelpers';
 import { SemverSpec } from 'core/packages/definitions/semverSpec';
 import { PackageRequest } from "core/packages/models/packageRequest";
-import { JsonHttpRequest } from 'core/clients/requests/jsonHttpRequest.js';
-import { HttpResponse, HttpRequestMethods } from 'core/clients/requests/httpRequest';
+import {
+  JsonHttpRequest,
+  HttpResponse,
+  HttpRequestMethods
+} from "core/clients";
 import DubConfig from './config';
 
 const fs = require('fs');

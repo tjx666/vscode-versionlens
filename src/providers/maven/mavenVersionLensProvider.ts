@@ -12,13 +12,8 @@ import { resolveMavenPackage } from './mavenPackageResolver';
 
 export class MavenCodeLensProvider extends AbstractVersionLensProvider {
 
-  get selector() {
-    return {
-      language: 'xml',
-      scheme: 'file',
-      pattern: '**/pom.xml',
-      group: ['tags'],
-    }
+  constructor() {
+    super(MavenConfig);
   }
 
   async fetchVersionLenses(
@@ -26,7 +21,7 @@ export class MavenCodeLensProvider extends AbstractVersionLensProvider {
     token: VsCodeTypes.CancellationToken,
   ) {
     const packageDepsLenses = extractMavenLensDataFromDocument(document, MavenConfig.getDependencyProperties());
-    if (packageDepsLenses.length === 0) return Promise.resolve([]);
+    if (packageDepsLenses.length === 0) return null;
 
     return VersionLensFactory.createVersionLenses(
       document,
@@ -38,7 +33,9 @@ export class MavenCodeLensProvider extends AbstractVersionLensProvider {
 
   }
 
-  updateOutdated(packagePath: string) { }
+  updateOutdated(packagePath: string): Promise<any> { 
+    return Promise.resolve(); 
+  }
 
   /*
 provideCodeLenses(document, token) {

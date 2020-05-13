@@ -2,11 +2,15 @@ import { PackageRequest, PackageIdentifier } from "core/packages/models/packageR
 import * as DocumentFactory from 'core/packages/factories/packageDocumentFactory';
 import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
 import { PackageDocument, PackageSourceTypes } from "core/packages/models/packageDocument";
-import { JsonHttpRequest } from 'core/clients/requests/jsonHttpRequest';
 import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
 import { splitReleasesFromArray, extractVersionsFromMap, parseSemver } from 'core/packages/helpers/versionHelpers';
 import { SemverSpec } from 'core/packages/definitions/semverSpec';
-import { HttpResponse, HttpRequestMethods, HttpResponseSources } from "core/clients/requests/httpRequest";
+import {
+  JsonHttpRequest,
+  HttpRequestMethods,
+  HttpResponse
+} from "core/clients";
+
 import PubConfig from './config';
 
 const jsonRequest = new JsonHttpRequest({}, 0);

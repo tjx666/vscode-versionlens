@@ -1,8 +1,9 @@
+import { HttpResponseSources } from 'core/clients'
+
 import {
   HttpRequest,
   HttpRequestMethods,
-  createUrl,
-  HttpResponseSources
+  createUrl
 } from 'core/clients/requests/httpRequest'
 
 const assert = require('assert')

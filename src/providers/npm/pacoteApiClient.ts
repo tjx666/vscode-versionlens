@@ -11,7 +11,8 @@ import {
 } from 'core/packages/models/packageDocument';
 import * as PackageDocumentFactory from 'core/packages/factories/packageDocumentFactory'
 import NpmConfig from 'providers/npm/config';
-import { HttpResponseSources } from 'core/clients/requests/httpRequest';
+import { HttpResponseSources } from "core/clients";
+import { PackageResponseStatus } from 'core/packages/models/packageResponse';
 
 export async function fetchNpmPackage(request: PackageRequest): Promise<PackageDocument> {
   const npa = require('npm-package-arg');
@@ -36,7 +37,13 @@ export async function fetchNpmPackage(request: PackageRequest): Promise<PackageD
     }
 
     if (npaResult.type === PackageSourceTypes.directory || npaResult.type === PackageSourceTypes.file)
-      resolve(createDirectoryPackageDocument(request.package, npaResult));
+      resolve(
+        createDirectoryPackageDocument(
+          request.package,
+          ResponseFactory.createResponseStatus(HttpResponseSources.local, 200),
+          npaResult,
+        )
+      );
     else
       resolve(createRemotePackageDocument(request, npaResult));
 
@@ -50,7 +57,7 @@ export async function fetchNpmPackage(request: PackageRequest): Promise<PackageD
         NpmConfig.provider,
         request.package,
         null,
-        ResponseFactory.createResponseStatus(error.source, error.status)
+        ResponseFactory.createResponseStatus(response.source, 404)
       );
     }
 
@@ -58,6 +65,7 @@ export async function fetchNpmPackage(request: PackageRequest): Promise<PackageD
       return PackageDocumentFactory.createInvalidVersion(
         NpmConfig.provider,
         request.package,
+        ResponseFactory.createResponseStatus(response.source, 404),
         null
       );
     }
@@ -66,6 +74,7 @@ export async function fetchNpmPackage(request: PackageRequest): Promise<PackageD
       return PackageDocumentFactory.createNotSupported(
         NpmConfig.provider,
         request.package,
+        ResponseFactory.createResponseStatus(response.source, 404),
         null
       );
     }
@@ -74,6 +83,7 @@ export async function fetchNpmPackage(request: PackageRequest): Promise<PackageD
       return PackageDocumentFactory.createGitFailed(
         NpmConfig.provider,
         request.package,
+        ResponseFactory.createResponseStatus(response.source, 404),
         null
       );
     }
@@ -216,13 +226,14 @@ function getRangeFromNpaResult(npaResult): string {
 
 // factory methods
 export const fileDependencyRegex = /^file:(.*)$/;
-function createDirectoryPackageDocument(requested: PackageIdentifier, npaResult: any): PackageDocument {
+function createDirectoryPackageDocument(requested: PackageIdentifier, response: PackageResponseStatus, npaResult: any): PackageDocument {
 
   const fileRegExpResult = fileDependencyRegex.exec(requested.version);
   if (!fileRegExpResult) {
     return PackageDocumentFactory.createInvalidVersion(
       NpmConfig.provider,
       requested,
+      response,
       npaResult.type
     );
   }
@@ -244,6 +255,7 @@ function createDirectoryPackageDocument(requested: PackageIdentifier, npaResult:
     source,
     type,
     requested,
+    response,
     resolved,
     suggestions
   };

@@ -12,7 +12,7 @@ import { resolveJspmPackage, customJspmReplaceVersion } from './jspmPackageResol
 export class JspmCodeLensProvider extends NpmCodeLensProvider {
 
   constructor() {
-    super(JspmConfig.provider);
+    super(JspmConfig);
   }
 
   async fetchVersionLenses(

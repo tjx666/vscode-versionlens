@@ -9,8 +9,12 @@ import {
   filterSemverVersions,
 } from 'core/packages/helpers/versionHelpers';
 import { SemverSpec } from "core/packages/definitions/semverSpec";
-import { HttpResponse, HttpRequestMethods } from 'core/clients/requests/httpRequest';
-import { JsonHttpRequest } from 'core/clients/requests/jsonHttpRequest';
+import {
+  JsonHttpRequest,
+  HttpResponse,
+  HttpRequestMethods
+} from "core/clients";
+
 import ComposerConfig from './config';
 
 const jsonRequest = new JsonHttpRequest({}, undefined);

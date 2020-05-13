@@ -1,7 +1,12 @@
-import { PackageNameVersion, PackageDocument } from "core/packages/models/packageDocument";
-import { PackageResponse, PackageResponseErrors, ReplaceVersionFunction } from "../models/packageResponse";
-import { PackageIdentifier, PackageRequestFunction, PackageRequest } from "../models/packageRequest";
-import { HttpResponse, HttpResponseSources } from "core/clients/requests/httpRequest";
+import { PackageDocument } from "core/packages/models/packageDocument";
+import {
+  PackageResponse,
+  PackageResponseErrors,
+  ReplaceVersionFunction,
+  PackageResponseStatus
+} from "../models/packageResponse";
+import { PackageIdentifier } from "../models/packageRequest";
+import { HttpResponse, HttpResponseSources } from "core/clients";
 
 export function createSuccess(document: PackageDocument, replaceVersionFn: ReplaceVersionFunction): Array<PackageResponse> {
   // map the documents to responses
@@ -20,14 +25,14 @@ export function createSuccess(document: PackageDocument, replaceVersionFn: Repla
   })
 }
 
-export function createResponseStatus(source: HttpResponseSources, status: number) {
+export function createResponseStatus(source: HttpResponseSources, status: number): PackageResponseStatus {
   return {
     source,
     status
   };
 }
 
-export function createNotSupported(provider: string, requested: PackageNameVersion): PackageResponse {
+export function createNotSupported(provider: string, requested: PackageIdentifier): PackageResponse {
   const error: PackageResponse = {
     provider,
     requested,
@@ -37,7 +42,7 @@ export function createNotSupported(provider: string, requested: PackageNameVersi
   return error;
 }
 
-export function createNotFound(provider: string, requested: PackageNameVersion): PackageResponse {
+export function createNotFound(provider: string, requested: PackageIdentifier): PackageResponse {
   const error: PackageResponse = {
     provider,
     requested,

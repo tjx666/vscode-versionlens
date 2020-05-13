@@ -1,19 +1,28 @@
+import { AbstractProviderConfig } from "core/configuration/abstractProviderConfig";
+
 enum MavenContributions {
   DependencyProperties = 'maven.dependencyProperties',
   TagFilter = 'maven.tagFilter',
   ApiUrl = 'maven.apiUrl',
 }
 
-export default new class {
+const options = {
+  pattern: '**/pom.xml',
+  group: ['tags'],
+  selector: {
+    language: 'xml',
+    scheme: 'file',
+  }
+}
 
-  provider: string;
+export default new class extends AbstractProviderConfig {
 
   defaultDependencyProperties: Array<string>;
 
   defaultApiUrl: string;
 
   constructor() {
-    this.provider = 'maven';
+    super('maven', options)
 
     this.defaultDependencyProperties = [
       'dependency',

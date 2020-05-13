@@ -1,18 +1,27 @@
+import { AbstractProviderConfig } from "core/configuration/abstractProviderConfig";
+
 enum PubContributions {
   DependencyProperties = 'pub.dependencyProperties',
   ApiUrl = 'pub.apiUrl',
 }
 
-export default new class {
+const options = {
+  pattern: "**/pubspec.yaml",
+  group: [],
+  selector: {
+    language: "yaml",
+    scheme: "file",
+  }
+}
 
-  provider: string;
+export default new class extends AbstractProviderConfig {
 
   defaultDependencyProperties: Array<string>;
 
   defaultApiUrl: string;
 
   constructor() {
-    this.provider = 'pub';
+    super('pub', options);
 
     this.defaultDependencyProperties = [
       'dependencies',

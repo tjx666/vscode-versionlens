@@ -1,3 +1,5 @@
+import { AbstractProviderConfig } from "core/configuration/abstractProviderConfig";
+
 enum DotnetContributions {
   DependencyProperties = 'dotnet.dependencyProperties',
   NugetFeeds = 'dotnet.nugetFeeds',
@@ -5,16 +7,23 @@ enum DotnetContributions {
   IncludePrerelease = 'dotnet.includePrerelease',
 }
 
-export default new class {
+const options = {
+  pattern: '**/*.{csproj,fsproj,targets,props}',
+  group: ['tags'],
+  selector: {
+    language: 'xml',
+    scheme: 'file',
+  }
+}
 
-  provider: string;
+export default new class extends AbstractProviderConfig {
 
   defaultDependencyProperties: Array<string>;
 
   defaultNuGetFeeds: Array<string>;
 
   constructor() {
-    this.provider = 'dotnet';
+    super('dotnet', options);
 
     this.defaultNuGetFeeds = [
       'https://azuresearch-usnc.nuget.org/autocomplete'

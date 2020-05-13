@@ -1,5 +1,4 @@
 import { ILogger } from 'core/logging/definitions';
-import { PackageResponse, ReplaceVersionFunction } from './packageResponse';
 import { PackageDocument } from './packageDocument';
 
 export type PackageIdentifier = {

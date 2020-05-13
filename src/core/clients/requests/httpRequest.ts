@@ -1,20 +1,10 @@
 import { KeyStringDictionary } from "../../definitions/generics";
 import { ExpiryCacheMap } from '../../caching/expiryCacheMap';
+import { HttpResponse, HttpResponseSources } from "../definitions/responseDefinitions";
 
 export enum HttpRequestMethods {
   get = 'GET',
-  head = 'HEAD',
-}
-
-export enum HttpResponseSources {
-  remote = 'remote',
-  cache = 'cache',
-}
-
-export type HttpResponse = {
-  source: HttpResponseSources,
-  status: number,
-  responseText: string,
+  head = 'HEAD'
 }
 
 export class HttpRequest {

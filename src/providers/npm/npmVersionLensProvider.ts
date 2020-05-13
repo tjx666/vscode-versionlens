@@ -9,29 +9,23 @@ import {
   renderNeedsUpdateDecoration,
   renderPrereleaseInstalledDecoration
 } from 'presentation/editor/decorations';
-import NpmConfig from 'providers/npm/config';
+
+import { IProviderConfig } from "core/configuration/definitions";
 import { extractPackageDependenciesFromJson } from 'core/packages/parsers/jsonPackageParser';
 import { npmGetOutdated, npmPackageDirExists } from 'providers/npm/npmApiClient.js';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
-import * as VersionLensFactory from '../../presentation/lenses/factories/versionLensFactory';
+import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
 import { fetchNpmPackage } from 'providers/npm/pacoteApiClient';
+import { VersionLens } from 'presentation/lenses/models/versionLens';
+import NpmConfig from 'providers/npm/config';
 
 export class NpmCodeLensProvider extends AbstractVersionLensProvider {
 
   _outdatedCache: Array<any>;
 
-  constructor(provider: string = NpmConfig.provider) {
-    super(provider);
+  constructor(config: IProviderConfig = NpmConfig) {
+    super(config);
     this._outdatedCache = [];
-  }
-
-  get selector() {
-    return {
-      language: 'json',
-      scheme: 'file',
-      pattern: '**/package.json',
-      group: ['tags', 'statuses'],
-    }
   }
 
   fetchVersionLenses(
@@ -62,74 +56,77 @@ export class NpmCodeLensProvider extends AbstractVersionLensProvider {
         console.log("npmGetOutdated", err);
       });
   }
-  /*
-    generateDecoration(codeLens) {
-      const documentPath = this.packagePath;
-      const currentPackageName = codeLens.package.name;
-  
-      const packageDirExists = npmPackageDirExists(documentPath, currentPackageName);
-      if (!packageDirExists) {
-        renderMissingDecoration(codeLens.replaceRange);
-        return;
-      }
-  
-      Promise.resolve(this._outdatedCache)
-        .then(outdated => {
-          const findIndex = outdated.findIndex(
-            (entry: any) => entry.name === currentPackageName
-          );
-  
-          if (findIndex === -1) {
-            renderInstalledDecoration(
-              codeLens.replaceRange,
-              codeLens.package.meta.tag.version
-            );
-            return;
-          }
-  
-          const current = outdated[findIndex].current;
-          const entered = codeLens.package.meta.tag.version;
-  
-          // no current means no install at all
-          if (!current) {
-            renderMissingDecoration(codeLens.replaceRange);
-            return;
-          }
-  
-          // if npm current and the entered version match it's installed
-          if (current === entered) {
-  
-            if (codeLens.matchesLatestVersion())
-              // up to date
-              renderInstalledDecoration(
-                codeLens.replaceRange,
-                current
-              );
-            else if (codeLens.matchesPrereleaseVersion())
-              // ahead of latest
-              renderPrereleaseInstalledDecoration(
-                codeLens.replaceRange,
-                entered
-              );
-            else
-              // out of date
-              renderOutdatedDecoration(
-                codeLens.replaceRange,
-                current
-              );
-  
-            return;
-          }
-  
-          // signal needs update
-          renderNeedsUpdateDecoration(
-            codeLens.replaceRange,
-            current
-          );
-  
-        })
-        .catch(console.error);
-  
+
+
+
+
+  generateDecoration(versionLens: VersionLens) {
+    const documentPath = versionLens.package.requested.path;
+    const currentPackageName = versionLens.package.requested.name;
+
+    const packageDirExists = npmPackageDirExists(documentPath, currentPackageName);
+    if (!packageDirExists) {
+      renderMissingDecoration(versionLens.replaceRange);
+      return;
     }
-  */
+
+    Promise.resolve(this._outdatedCache)
+      .then(outdated => {
+        const findIndex = outdated.findIndex(
+          (entry: any) => entry.name === currentPackageName
+        );
+
+        if (findIndex === -1) {
+          renderInstalledDecoration(
+            versionLens.replaceRange,
+            versionLens.package.requested.version
+          );
+          return;
+        }
+
+        const current = outdated[findIndex].current;
+        const entered = versionLens.package.requested.version;
+
+        // no current means no install at all
+        if (!current) {
+          renderMissingDecoration(versionLens.replaceRange);
+          return;
+        }
+
+        // if npm current and the entered version match it's installed
+        if (current === entered) {
+
+          if (versionLens.matchesLatestVersion())
+            // up to date
+            renderInstalledDecoration(
+              versionLens.replaceRange,
+              current
+            );
+          else if (versionLens.matchesPrereleaseVersion())
+            // ahead of latest
+            renderPrereleaseInstalledDecoration(
+              versionLens.replaceRange,
+              entered
+            );
+          else
+            // out of date
+            renderOutdatedDecoration(
+              versionLens.replaceRange,
+              current
+            );
+
+          return;
+        }
+
+        // signal needs update
+        renderNeedsUpdateDecoration(
+          versionLens.replaceRange,
+          current
+        );
+
+      })
+      .catch(console.error);
+
+  }
+
 } // End NpmCodeLensProvider

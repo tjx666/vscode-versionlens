@@ -9,7 +9,12 @@ import * as SuggestFactory from '../factories/packageSuggestionFactory'
 import { PackageIdentifier } from '../models/packageRequest';
 import { PackageResponseStatus } from '../models/packageResponse';
 
-export function createNotFound(provider: string, requested: PackageIdentifier, type: PackageVersionTypes, response: PackageResponseStatus): PackageDocument {
+export function createNotFound(
+  provider: string,
+  requested: PackageIdentifier,
+  type: PackageVersionTypes,
+  response: PackageResponseStatus
+): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.registry;
 
   const suggestions: Array<PackageSuggestion> = [
@@ -27,7 +32,12 @@ export function createNotFound(provider: string, requested: PackageIdentifier, t
   };
 }
 
-export function createInvalidVersion(provider: string, requested: PackageIdentifier, type: PackageVersionTypes): PackageDocument {
+export function createInvalidVersion(
+  provider: string,
+  requested: PackageIdentifier,
+  response: PackageResponseStatus,
+  type: PackageVersionTypes
+): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.registry;
   const suggestions: Array<PackageSuggestion> = [
     SuggestFactory.createInvalid(requested.version),
@@ -39,12 +49,18 @@ export function createInvalidVersion(provider: string, requested: PackageIdentif
     source,
     type,
     requested,
+    response,
     resolved: null,
     suggestions
   };
 }
 
-export function createNotSupported(provider: string, requested: PackageIdentifier, type: PackageVersionTypes): PackageDocument {
+export function createNotSupported(
+  provider: string,
+  requested: PackageIdentifier,
+  response: PackageResponseStatus,
+  type: PackageVersionTypes
+): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.registry;
   const suggestions: Array<PackageSuggestion> = [
     SuggestFactory.createNotSupported(requested.version),
@@ -61,7 +77,12 @@ export function createNotSupported(provider: string, requested: PackageIdentifie
   };
 }
 
-export function createGitFailed(provider: string, requested: PackageIdentifier, type: PackageVersionTypes): PackageDocument {
+export function createGitFailed(
+  provider: string,
+  requested: PackageIdentifier,
+  response: PackageResponseStatus,
+  type: PackageVersionTypes
+): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.git;
   const suggestions = [
     SuggestFactory.createNotFound(),
@@ -77,7 +98,13 @@ export function createGitFailed(provider: string, requested: PackageIdentifier, 
   };
 }
 
-export function createNoMatch(provider: string, source: PackageSourceTypes, type: PackageVersionTypes, requested: PackageIdentifier, latestVersion?: string): PackageDocument {
+export function createNoMatch(
+  provider: string,
+  source: PackageSourceTypes,
+  type: PackageVersionTypes,
+  requested: PackageIdentifier,
+  latestVersion?: string
+): PackageDocument {
   const suggestions: Array<PackageSuggestion> = [
     SuggestFactory.createNoMatch(),
     SuggestFactory.createLatest(latestVersion),
@@ -93,7 +120,11 @@ export function createNoMatch(provider: string, source: PackageSourceTypes, type
   };
 }
 
-export function createFourSegment(provider: string, requested: PackageIdentifier, type: PackageVersionTypes): PackageDocument {
+export function createFourSegment(
+  provider: string,
+  requested: PackageIdentifier,
+  type: PackageVersionTypes
+): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.registry;
   const suggestions: Array<PackageSuggestion> = [];
 

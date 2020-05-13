@@ -8,8 +8,7 @@ enum NpmContributions {
 class JspmConfig extends NpmConfig {
 
   constructor() {
-    super();
-    this.provider = 'jspm';
+    super('jspm');
   }
 
 }

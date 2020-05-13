@@ -1,16 +1,25 @@
+import { AbstractProviderConfig } from 'core/configuration/abstractProviderConfig';
+
 enum NpmContributions {
   DependencyProperties = 'npm.dependencyProperties',
   DistTagFilter = 'npm.distTagFilter',
 }
 
-export class NpmConfig {
+const options = {
+  pattern: '**/package.json',
+  group: ['tags', 'statuses'],
+  selector: {
+    language: 'json',
+    scheme: 'file',
+  }
+}
 
-  provider: string;
+export class NpmConfig extends AbstractProviderConfig {
 
   defaultDependencyProperties: Array<string>;
 
-  constructor() {
-    this.provider = 'npm';
+  constructor(provider: string = 'npm') {
+    super(provider, options);
 
     this.defaultDependencyProperties = [
       'dependencies',

@@ -1,18 +1,27 @@
+import { AbstractProviderConfig } from "core/configuration/abstractProviderConfig";
+
 enum DubContributions {
   DependencyProperties = 'dub.dependencyProperties',
   ApiUrl = 'dub.apiUrl',
 }
 
-export default new class {
+const options = {
+  pattern: '**/{dub.json,dub.selections.json}',
+  group: ['statuses'],
+  selector: {
+    language: 'json',
+    scheme: 'file',
+  }
+};
 
-  provider: string;
+export default new class extends AbstractProviderConfig {
 
   defaultDependencyProperties: Array<string>;
 
   defaultApiUrl: string;
 
   constructor() {
-    this.provider = 'dub';
+    super('dub', options);
 
     this.defaultDependencyProperties = [
       'dependencies',

@@ -21,9 +21,6 @@
       "presentation/*": [
         "presentation/*"
       ],
-      "common/*": [
-        "common/*"
-      ],
       "providers/*": [
         "providers/*"
       ],
@@ -31,6 +28,6 @@
   },
   "files": [
     "loader.js",
-    "extension.js"
+    "extension.ts",
   ]
 }

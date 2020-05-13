@@ -4,8 +4,9 @@ import {
   PackageSuggestion,
   PackageVersionTypes
 } from "core/packages/models/packageDocument";
-import { PackageDependencyLens } from "core/packages/models//PackageDependencyLens";
-import { HttpResponseSources } from "core/clients/requests/httpRequest";
+import { PackageDependencyLens } from "core/packages/models/PackageDependencyLens";
+import { HttpResponseSources } from "core/clients";
+import { PackageIdentifier } from "./packageRequest";
 
 export type ReplaceVersionFunction = (
   response: PackageResponse,
@@ -34,7 +35,7 @@ export type PackageResponseStatus = {
 
 export class PackageResponse {
   provider: string;
-  requested: PackageNameVersion;
+  requested: PackageIdentifier;
   error?: PackageResponseErrors;
   errorMessage?: string;
 

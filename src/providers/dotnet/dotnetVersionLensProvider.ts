@@ -11,16 +11,7 @@ import { fetchDotnetPackage } from 'providers/dotnet/nugetApiClient';
 export class DotNetCodeLensProvider extends AbstractVersionLensProvider {
 
   constructor() {
-    super(DotnetConfig.provider);
-  }
-
-  get selector() {
-    return {
-      language: 'xml',
-      scheme: 'file',
-      pattern: '**/*.{csproj,fsproj,targets,props}',
-      group: ['tags'],
-    }
+    super(DotnetConfig);
   }
 
   fetchVersionLenses(
@@ -40,6 +31,8 @@ export class DotNetCodeLensProvider extends AbstractVersionLensProvider {
     );
   }
 
-  updateOutdated(packagePath: string) { }
+  updateOutdated(packagePath: string): Promise<any> { 
+    return Promise.resolve(); 
+  }
 
 }

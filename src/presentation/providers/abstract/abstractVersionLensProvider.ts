@@ -3,12 +3,13 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import appSettings from 'appSettings';
+import { ILogger } from 'core/logging/definitions';
+import { IProviderConfig } from "core/configuration/definitions";
 import { PackageSourceTypes } from 'core/packages/models/packageDocument';
 import { PackageResponseErrors } from 'core/packages/models/packageResponse';
 import * as CommandFactory from 'presentation/commands/factory';
-import { IVersionCodeLens } from "../../lenses/definitions/IVersionCodeLens";
-import { VersionLens } from '../../lenses/models/versionLens';
-import { ILogger } from 'core/logging/definitions';
+import { IVersionCodeLens } from "presentation/lenses/definitions/IVersionCodeLens";
+import { VersionLens } from 'presentation/lenses/models/versionLens';
 
 export type VersionLensFetchResponse = Promise<VersionLens[] | null>;
 
@@ -18,21 +19,23 @@ export abstract class AbstractVersionLensProvider {
 
   onDidChangeCodeLenses: any;
 
-  provider: string;
+  config: IProviderConfig;
 
   // packagePath: string;
   logger: ILogger;
 
-  abstract updateOutdated(packagePath: string);
+  abstract updateOutdated(packagePath: string): Promise<any>;
+
+  // abstract generateDecorations(versionLens: VersionLens);
 
   abstract fetchVersionLenses(
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse;
 
-  constructor(provider: string) {
+  constructor(config: IProviderConfig) {
     const { EventEmitter } = require('vscode');
-    this.provider = provider;
+    this.config = config;
     this._onChangeCodeLensesEmitter = new EventEmitter();
     this.onDidChangeCodeLenses = this._onChangeCodeLensesEmitter.event;
   }
@@ -52,7 +55,9 @@ export abstract class AbstractVersionLensProvider {
     appSettings.inProgress = true;
 
     if (!this.logger) {
-      this.logger = window.createOutputChannel(`versionlens - ${this.provider}`);
+      this.logger = window.createOutputChannel(
+        `versionlens - ${this.config.provider}`
+      );
     }
 
     const outputChannel: any = this.logger;

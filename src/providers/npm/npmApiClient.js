@@ -11,7 +11,7 @@ export function npmPackageDirExists(packageJsonPath, packageName) {
 
 export function npmGetOutdated(packagePath) {
   const npm = require('npm');
-  
+
   return new Promise((resolve, reject) => {
     npm.load({ prefix: packagePath }, loadError => {
       if (loadError) {
@@ -34,24 +34,6 @@ export function npmGetOutdated(packagePath) {
         resolve(outdatedResult);
       });
     });
-  });
-}
-
-export function parseNpmArguments(packagePath, packageName, packageVersion) {
-  const npa = require('npm-package-arg');
-
-  return new Promise(function (resolve, reject) {
-    try {
-      const npaParsed = npa.resolve(packageName, packageVersion, packagePath);
-      if (!npaParsed) {
-        reject({ code: 'EUNSUPPORTEDPROTOCOL' });
-        return;
-      }
-
-      resolve(npaParsed);
-    } catch (err) {
-      reject(err);
-    }
   });
 }
 

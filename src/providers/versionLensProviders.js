@@ -18,12 +18,11 @@ const versionlensProviders = [
 
 export function getProvidersByFileName(fileName) {
   const path = require('path');
-  const minimatch = require('minimatch');
   const filename = path.basename(fileName);
 
   const filtered = versionlensProviders
     .slice(0)
-    .filter(provider => minimatch(filename, provider.selector.pattern));
+    .filter(provider => provider.config.matchesFilename(filename));
 
   if (filtered.length > 0) return filtered;
 
