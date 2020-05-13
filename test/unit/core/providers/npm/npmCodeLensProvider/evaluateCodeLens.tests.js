@@ -6,7 +6,7 @@ import appSettings from '/appSettings';
 import { generatePackage } from 'test/unit/utils.js';
 import { PackageErrors } from 'providers/shared/definitions';
 import { PackageCodeLens } from 'providers/shared/packageCodeLens';
-import { NpmCodeLensProvider } from 'core/providers/npm/npmCodeLensProvider.js';
+import { NpmCodeLensProvider } from 'providers/npm/npmCodeLensProvider.js';
 
 const assert = require('assert');
 const vscode = require('vscode');

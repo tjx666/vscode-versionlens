@@ -102,7 +102,7 @@ function resolveDependency(
 function createVersionlensFromEntry(entry: PackageResponseAggregate, document: VsCodeTypes.TextDocument): VersionLens {
   const { Uri, Range } = require('vscode')
 
-  const { nameRange, versionRange } = entry.dependency;
+  const {nameRange, versionRange } = entry.dependency;
   const commandRangePos = nameRange.start + entry.order;
   const commandRange = new Range(
     document.positionAt(commandRangePos),

@@ -1,6 +1,6 @@
 import registerCommands from './presentation/commands/register'
 import subscribeToEditorEvents from './presentation/editor/events'
-import versionlensProviders from './presentation/providers/versionlensProviders'
+import versionlensProviders from './providers/versionLensProviders'
 
 export function activate(context) {
   const { languages, window } = require('vscode');

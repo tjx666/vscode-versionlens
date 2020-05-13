@@ -1,5 +1,5 @@
 import { testPath } from 'test/unit/utils';
-import * as PacoteApiClient from 'core/providers/npm/pacoteApiClient'
+import * as PacoteApiClient from 'providers/npm/pacoteApiClient'
 import Fixtures from './pacoteApiClient.fixtures'
 import { stringify } from 'querystring';
 

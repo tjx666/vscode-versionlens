@@ -1,4 +1,4 @@
-import { parseVersionSpec } from 'core/providers/dotnet/dotnetUtils';
+import { parseVersionSpec } from 'providers/dotnet/dotnetUtils';
 
 const assert = require('assert');
 

@@ -1,5 +1,4 @@
 import {
-  PackageNameVersion,
   PackageVersionTypes,
   PackageSourceTypes,
   PackageDocument,
@@ -8,8 +7,9 @@ import {
 
 import * as SuggestFactory from '../factories/packageSuggestionFactory'
 import { PackageIdentifier } from '../models/packageRequest';
+import { PackageResponseStatus } from '../models/packageResponse';
 
-export function createNotFound(provider: string, requested: PackageIdentifier, type: PackageVersionTypes): PackageDocument {
+export function createNotFound(provider: string, requested: PackageIdentifier, type: PackageVersionTypes, response: PackageResponseStatus): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.registry;
 
   const suggestions: Array<PackageSuggestion> = [
@@ -22,7 +22,8 @@ export function createNotFound(provider: string, requested: PackageIdentifier, t
     type,
     requested,
     resolved: null,
-    suggestions
+    suggestions,
+    response
   };
 }
 

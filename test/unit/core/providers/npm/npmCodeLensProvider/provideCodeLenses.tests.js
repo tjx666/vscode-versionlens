@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 import appSettings from '/appSettings';
 import { TestFixtureMap } from 'test/unit/utils.js';
-import { NpmCodeLensProvider } from 'core/providers/npm/npmCodeLensProvider.js';
+import { NpmCodeLensProvider } from 'providers/npm/npmCodeLensProvider.js';
 
 const assert = require('assert');
 const vscode = require('vscode');

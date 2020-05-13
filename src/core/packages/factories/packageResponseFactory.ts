@@ -1,9 +1,7 @@
 import { PackageNameVersion, PackageDocument } from "core/packages/models/packageDocument";
 import { PackageResponse, PackageResponseErrors, ReplaceVersionFunction } from "../models/packageResponse";
 import { PackageIdentifier, PackageRequestFunction, PackageRequest } from "../models/packageRequest";
-import { HttpResponse } from "core/clients/requests/httpRequest";
-import * as ErrorFactory from 'core/errors/factory';
-import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
+import { HttpResponse, HttpResponseSources } from "core/clients/requests/httpRequest";
 
 export function createSuccess(document: PackageDocument, replaceVersionFn: ReplaceVersionFunction): Array<PackageResponse> {
   // map the documents to responses
@@ -20,6 +18,13 @@ export function createSuccess(document: PackageDocument, replaceVersionFn: Repla
 
     return response;
   })
+}
+
+export function createResponseStatus(source: HttpResponseSources, status: number) {
+  return {
+    source,
+    status
+  };
 }
 
 export function createNotSupported(provider: string, requested: PackageNameVersion): PackageResponse {

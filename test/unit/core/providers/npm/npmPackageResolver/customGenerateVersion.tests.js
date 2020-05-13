@@ -1,5 +1,5 @@
-import { customNpmGenerateVersion } from 'core/providers/npm/npmPackageResolver.js';
-import * as npmClientModule from 'core/providers/npm/npmClient.js';
+import { customNpmGenerateVersion } from 'providers/npm/npmPackageResolver.js';
+import * as npmClientModule from 'providers/npm/npmClient.js';
 
 const assert = require('assert');
 const mock = require('mock-require');

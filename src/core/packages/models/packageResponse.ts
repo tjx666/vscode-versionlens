@@ -4,7 +4,7 @@ import {
   PackageSuggestion,
   PackageVersionTypes
 } from "core/packages/models/packageDocument";
-import { PackageDependencyLens } from "./PackageDependencyLens";
+import { PackageDependencyLens } from "core/packages/models//PackageDependencyLens";
 import { HttpResponseSources } from "core/clients/requests/httpRequest";
 
 export type ReplaceVersionFunction = (

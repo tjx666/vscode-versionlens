@@ -1,5 +1,5 @@
-import { resolveNpmPackage } from 'core/providers/npm/npmPackageResolver.js';
-import * as NpmClientApiMock from 'core/providers/npm/npmClient.js';
+import { resolveNpmPackage } from 'providers/npm/npmPackageResolver.js';
+import * as NpmClientApiMock from 'providers/npm/npmClient.js';
 import appSettings from '/appSettings';
 
 const assert = require('assert');
