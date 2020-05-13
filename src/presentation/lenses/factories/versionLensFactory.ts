@@ -3,12 +3,17 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import { ILogger } from 'core/logging/definitions';
-import { PackageDependencyLens } from 'core/packages/models/PackageDependencyLens';
-import { PackageResponseAggregate, ReplaceVersionFunction } from 'core/packages/models/packageResponse';
-import { VersionLens } from 'presentation/lenses/models/versionLens';
-import { VersionLensFetchResponse } from '../../providers/abstract/abstractVersionLensProvider';
-import { PackageRequest, PackageRequestFunction } from "core/packages/models/packageRequest";
-import * as RequestFactory from 'core/packages/factories/packageRequestFactory';
+import {
+  PackageDependencyLens,
+  PackageResponseAggregate,
+  ReplaceVersionFunction,
+  PackageRequest,
+  PackageRequestFunction,
+  RequestFactory
+} from 'core/packages';
+
+import { VersionLensFetchResponse } from 'providers/abstract/abstractVersionLensProvider';
+import { VersionLens } from '../models/versionLens';
 
 export async function createVersionLenses(
   document: VsCodeTypes.TextDocument,
@@ -102,7 +107,7 @@ function resolveDependency(
 function createVersionlensFromEntry(entry: PackageResponseAggregate, document: VsCodeTypes.TextDocument): VersionLens {
   const { Uri, Range } = require('vscode')
 
-  const {nameRange, versionRange } = entry.dependency;
+  const { nameRange, versionRange } = entry.dependency;
   const commandRangePos = nameRange.start + entry.order;
   const commandRange = new Range(
     document.positionAt(commandRangePos),

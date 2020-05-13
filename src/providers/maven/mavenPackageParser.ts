@@ -1,6 +1,6 @@
 import * as VsCodeTypes from 'vscode';
 
-import { PackageDependencyLens } from "core/packages/models/PackageDependencyLens";
+import { PackageDependencyLens } from "core/packages";
 
 const xmldoc = require('xmldoc');
 const { window } = require('vscode');

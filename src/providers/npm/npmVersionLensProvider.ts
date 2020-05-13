@@ -11,7 +11,7 @@ import {
 } from 'presentation/editor/decorations';
 
 import { IProviderConfig } from "core/configuration/definitions";
-import { extractPackageDependenciesFromJson } from 'core/packages/parsers/jsonPackageParser';
+import { extractPackageDependenciesFromJson } from 'core/packages';
 import { npmGetOutdated, npmPackageDirExists } from 'providers/npm/npmApiClient.js';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';

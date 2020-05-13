@@ -2,7 +2,7 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { extractPackageDependenciesFromJson } from 'core/packages/parsers/jsonPackageParser';
+import { extractPackageDependenciesFromJson, VersionHelpers } from 'core/packages';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
 import {
@@ -12,7 +12,6 @@ import {
 } from 'presentation/editor/decorations';
 import DubConfig from 'providers/dub/config';
 import { fetchDubPackage, readDubSelections } from 'providers/dub/dubApiClient';
-import { formatWithExistingLeading } from 'core/packages/helpers/versionHelpers';
 import { VersionLens } from 'presentation/lenses/models/versionLens';
 
 export class DubCodeLensProvider extends AbstractVersionLensProvider {
@@ -75,7 +74,7 @@ export class DubCodeLensProvider extends AbstractVersionLensProvider {
       return;
     }
 
-    if (formatWithExistingLeading(currentPackageVersion, currentVersion) == currentPackageVersion) {
+    if (VersionHelpers.formatWithExistingLeading(currentPackageVersion, currentVersion) == currentPackageVersion) {
       renderInstalledDecoration(
         versionLens.replaceRange,
         currentPackageVersion

@@ -1,4 +1,4 @@
-import { splitReleasesFromArray } from 'core/packages/helpers/versionHelpers';
+import { VersionHelpers } from 'core/packages';
 
 const assert = require('assert');
 
@@ -14,7 +14,7 @@ const testVersions = [
 export default {
 
   "returns empty when no matches found": () => {
-    const { releases, prereleases } = splitReleasesFromArray([]);
+    const { releases, prereleases } = VersionHelpers.splitReleasesFromArray([]);
     assert.equal(releases.length, 0);
     assert.equal(prereleases.length, 0);
   },
@@ -30,7 +30,7 @@ export default {
       '2.0.0-beta.1',
       '12.0.0-next.1',
     ]
-    const { releases, prereleases } = splitReleasesFromArray(testVersions);
+    const { releases, prereleases } = VersionHelpers.splitReleasesFromArray(testVersions);
     assert.equal(releases.length, expectedReleases.length);
 
     expectedReleases.forEach((expectedVersion, index) => {

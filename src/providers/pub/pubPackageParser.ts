@@ -1,7 +1,4 @@
-// vscode references
-import { TextDocument } from 'vscode';
-
-import { PackageDependencyLens } from "core/packages/models/PackageDependencyLens";
+import { PackageDependencyLens } from "core/packages";
 
 type YamlOptions = {
   crlfOffset: number,
@@ -10,7 +7,7 @@ type YamlOptions = {
 
 export function extractPackageDependenciesFromYaml(yaml: string, filterPropertyNames: Array<string>): PackageDependencyLens[] {
   const yamlParser = require('yaml');
-  const yamlDoc = yamlParser.parseDocument(yaml);
+  const yamlDoc = yamlParser.parseDocument(yaml, { keepCstNodes: true });
   if (!yamlDoc || !yamlDoc.contents || yamlDoc.errors.length > 0) return [];
 
   const opts = {

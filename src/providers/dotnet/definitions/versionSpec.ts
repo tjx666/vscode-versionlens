@@ -1,4 +1,4 @@
-import { PackageVersionTypes } from 'core/packages/models/packageDocument';
+import { PackageVersionTypes } from 'core/packages';
 
 export type NugetVersionSpec = {
   version?: string;

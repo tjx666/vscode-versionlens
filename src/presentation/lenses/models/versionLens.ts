@@ -1,9 +1,17 @@
-import { formatWithExistingLeading } from 'core/packages/helpers/versionHelpers';
-import { PackageSourceTypes } from 'core/packages/models/packageDocument';
-import { IVersionCodeLens } from "../definitions/IVersionCodeLens";
-import { PackageResponse, PackageResponseErrors } from '../../../core/packages/models/packageResponse';
+// vscode references
 import * as VsCodeTypes from 'vscode';
 
+// imports
+import {
+  VersionHelpers,
+  PackageResponse,
+  PackageResponseErrors,
+  PackageSourceTypes,
+} from 'core/packages';
+
+import { IVersionCodeLens } from "../definitions/IVersionCodeLens";
+
+// vscode implementations
 const { CodeLens } = require('vscode');
 
 export class VersionLens extends CodeLens implements IVersionCodeLens {
@@ -26,7 +34,7 @@ export class VersionLens extends CodeLens implements IVersionCodeLens {
 
   replaceVersionFn(newVersion) {
     if (!this.package.replaceVersionFn)
-      return formatWithExistingLeading(this.package.requested.version, newVersion);
+      return VersionHelpers.formatWithExistingLeading(this.package.requested.version, newVersion);
 
     return this.package.replaceVersionFn.call(this, this.package, newVersion);
   }

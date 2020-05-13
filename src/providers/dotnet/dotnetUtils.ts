@@ -1,5 +1,4 @@
-import { isFourSegmentedVersion, loosePrereleases } from 'core/packages/helpers/versionHelpers'
-import { PackageVersionTypes } from 'core/packages/models/packageDocument';
+import { PackageVersionTypes, VersionHelpers } from 'core/packages';
 import { DotNetVersionSpec, NugetVersionSpec } from './definitions/versionSpec';
 
 export function expandShortVersion(value) {
@@ -43,8 +42,8 @@ export function parseVersionSpec(rawVersion: string): DotNetVersionSpec {
     // convert spec to semver
     const { valid, validRange } = require('semver');
     version = convertVersionSpecToString(spec);
-    isValidVersion = valid(version, loosePrereleases);
-    isValidRange = !isValidVersion && validRange(version, loosePrereleases) !== null;
+    isValidVersion = valid(version, VersionHelpers.loosePrereleases);
+    isValidRange = !isValidVersion && validRange(version, VersionHelpers.loosePrereleases) !== null;
   }
 
   const type: PackageVersionTypes = isValidVersion ?
@@ -101,7 +100,7 @@ export function buildVersionSpec(value): NugetVersionSpec {
     versionSpec.isMinInclusive = true;
   else if (first === '(')
     versionSpec.isMinInclusive = false;
-  else if (isFourSegmentedVersion(formattedValue))
+  else if (VersionHelpers.isFourSegmentedVersion(formattedValue))
     return { hasFourSegments: true }
   else
     return null;

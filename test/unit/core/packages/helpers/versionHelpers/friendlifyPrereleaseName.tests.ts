@@ -1,4 +1,4 @@
-import { friendlifyPrereleaseName } from 'core/packages/helpers/versionHelpers';
+import { VersionHelpers } from 'core/packages';
 
 const assert = require('assert');
 
@@ -11,7 +11,7 @@ const testPrereleases = [
 export default {
 
   "returns null name when no matches found": () => {
-    const result = friendlifyPrereleaseName('2.5.0-tag.1');
+    const result = VersionHelpers.friendlifyPrereleaseName('2.5.0-tag.1');
     assert.equal(result, null);
   },
 
@@ -22,7 +22,7 @@ export default {
       'release',
     ]
     expected.forEach((expectedValue, index) => {
-      const actual = friendlifyPrereleaseName(testPrereleases[index])
+      const actual = VersionHelpers.friendlifyPrereleaseName(testPrereleases[index])
       assert.equal(actual, expectedValue);
     })
   },

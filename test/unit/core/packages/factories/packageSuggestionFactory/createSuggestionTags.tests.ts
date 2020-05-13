@@ -1,5 +1,8 @@
-import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
-import { PackageVersionStatus, PackageSuggestionFlags } from '/core/packages/models/packageDocument';
+import {
+  SuggestionFactory,
+  PackageVersionStatus,
+  PackageSuggestionFlags
+} from 'core/packages';
 
 const assert = require('assert');
 
@@ -19,7 +22,7 @@ export default {
       const testRange = '*'
       const testReleases = []
       const testPrereleases = []
-      const results = createSuggestionTags(
+      const results = SuggestionFactory.createSuggestionTags(
         testRange,
         testReleases,
         testPrereleases
@@ -48,7 +51,11 @@ export default {
       const testRange = '2.0.0'
       const testReleases = ['1.0.0']
       const testPrereleases = ['1.1.0-alpha.1']
-      const results = createSuggestionTags(testRange, testReleases, testPrereleases);
+      const results = SuggestionFactory.createSuggestionTags(
+        testRange,
+        testReleases,
+        testPrereleases
+      );
       assert.deepEqual(results, expected);
     },
 
@@ -74,7 +81,11 @@ export default {
       ]
 
       testRanges.forEach(testRange => {
-        const results = createSuggestionTags(testRange, testReleases, testPrereleases);
+        const results = SuggestionFactory.createSuggestionTags(
+          testRange,
+          testReleases,
+          testPrereleases
+        );
         assert.deepEqual(results, expected);
       })
 
@@ -107,7 +118,11 @@ export default {
       const testReleases = ['1.0.0', '2.0.0', '2.1.0', '3.0.0']
       const testPrereleases = ['1.1.0-alpha.1', '4.0.0-next']
 
-      const results = createSuggestionTags('>=2', testReleases, testPrereleases);
+      const results = SuggestionFactory.createSuggestionTags(
+        '>=2',
+        testReleases,
+        testPrereleases
+      );
       assert.deepEqual(results, expected);
     },
 
@@ -133,7 +148,11 @@ export default {
       ]
 
       testRanges.forEach(testRange => {
-        const results = createSuggestionTags(testRange, testReleases, testPrereleases);
+        const results = SuggestionFactory.createSuggestionTags(
+          testRange,
+          testReleases,
+          testPrereleases
+        );
         assert.deepEqual(results, expected);
       })
 

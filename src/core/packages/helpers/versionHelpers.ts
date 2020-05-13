@@ -1,9 +1,9 @@
 import { KeyStringArrayDictionary } from "core/definitions/generics";
+import { SemverSpec } from "../definitions/semverSpec";
 import {
   PackageNameVersion,
   PackageVersionTypes,
 } from "../models/packageDocument";
-import { SemverSpec } from "../definitions/semverSpec";
 
 export const formatTagNameRegex = /^[^0-9\-]*/;
 export const loosePrereleases = { loose: true, includePrerelease: true };

@@ -3,8 +3,10 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import ComposerConfig from 'providers/composer/config';
-import { formatWithExistingLeading } from 'core/packages/helpers/versionHelpers';
-import { extractPackageDependenciesFromJson } from 'core/packages/parsers/jsonPackageParser';
+import {
+  VersionHelpers,
+  extractPackageDependenciesFromJson
+} from 'core/packages';
 import { readComposerSelections, fetchComposerPackage } from 'providers/composer/composerApiClient';
 import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from 'presentation/editor/decorations';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
@@ -77,7 +79,7 @@ export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
       return;
     }
 
-    if (formatWithExistingLeading(currentPackageVersion, currentVersion) == currentPackageVersion) {
+    if (VersionHelpers.formatWithExistingLeading(currentPackageVersion, currentVersion) == currentPackageVersion) {
       renderInstalledDecoration(
         versionLens.replaceRange,
         currentPackageVersion

@@ -2,7 +2,7 @@
 import { TextDocument } from 'vscode';
 
 // imports
-import { PackageDependencyLens } from "core/packages/models/PackageDependencyLens";
+import { PackageDependencyLens } from "core/packages";
 
 const xmldoc = require('xmldoc');
 const { Range } = require('vscode');

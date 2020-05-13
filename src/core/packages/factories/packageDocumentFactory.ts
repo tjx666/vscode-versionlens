@@ -1,11 +1,10 @@
+import * as SuggestFactory from '../factories/packageSuggestionFactory'
 import {
   PackageVersionTypes,
   PackageSourceTypes,
   PackageDocument,
-  PackageSuggestion
+  PackageSuggestion,
 } from '../models/packageDocument'
-
-import * as SuggestFactory from '../factories/packageSuggestionFactory'
 import { PackageIdentifier } from '../models/packageRequest';
 import { PackageResponseStatus } from '../models/packageResponse';
 

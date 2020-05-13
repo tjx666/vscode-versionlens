@@ -1,7 +1,6 @@
 import appSettings from 'appSettings';
-import { semverLeadingChars } from 'core/packages/helpers/versionHelpers';
+import { VersionHelpers, PackageSuggestionFlags } from 'core/packages';
 import { githubRequest } from 'core/clients/requests/githubRequest';
-import { PackageSuggestionFlags } from 'core/packages/models/packageDocument';
 import { VersionLens } from 'presentation/lenses/models/versionLens';
 
 export function createErrorCommand(errorMsg, codeLens) {
@@ -43,7 +42,7 @@ export function createGithubCommand(codeLens) {
         return createTagCommand(`${meta.category}: none`, codeLens);
 
       if (meta.commitish === '' ||
-        (semverLeadingChars.includes(meta.commitish[0]) ? meta.commitish[0] : '') + entry.version === meta.commitish)
+        (VersionHelpers.semverLeadingChars.includes(meta.commitish[0]) ? meta.commitish[0] : '') + entry.version === meta.commitish)
         return createTagCommand(`${meta.category}: latest`, codeLens);
 
       const newVersion = codeLens.replaceVersionFn(entry.version);

@@ -1,5 +1,4 @@
-import { PackageDependencyLens } from 'core/packages/models/PackageDependencyLens';
-import { extractFromNodes } from 'core/packages/parsers/jsonPackageParser'
+import { PackageDependencyLens, extractFromNodes } from 'core/packages'
 
 export function extractPackageDependenciesFromJson(json: string, filterPropertyNames: string[]): PackageDependencyLens[] {
   const jsonParser = require("jsonc-parser");

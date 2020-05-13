@@ -1,4 +1,4 @@
-import { PackageRequest, PackageIdentifier } from "./packageRequest";
+import { PackageIdentifier } from "./packageRequest";
 import { PackageResponseStatus } from "./packageResponse";
 
 export type PackageResolverDelegate = (packagePath: string, name: string, version: string, replaceVersionFn) => Promise<PackageDocument>;

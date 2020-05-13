@@ -1,11 +1,15 @@
-import { PackageSourceTypes, PackageVersionStatus } from "core/packages/models/packageDocument";
-import { PackageResponse, PackageResponseErrors } from "../../../core/packages/models/packageResponse";
-import { Uri } from "vscode";
+import * as VsCodeTypes from "vscode";
+
+import {
+  PackageSourceTypes,
+  PackageResponseErrors,
+  PackageResponse
+} from "core/packages";
 
 export interface IVersionCodeLens {
   replaceRange: any;
   package: PackageResponse;
-  documentUrl: Uri;
+  documentUrl: VsCodeTypes.Uri;
   command: any;
   replaceVersionFn: (string) => string;
   hasPackageSource: (source: PackageSourceTypes) => boolean;

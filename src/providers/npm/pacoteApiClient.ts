@@ -1,18 +1,20 @@
-import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
-import { PackageRequest, PackageIdentifier } from "core/packages/models/packageRequest";
-import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
-import { filterPrereleasesFromDistTags } from 'core/packages/helpers/versionHelpers';
 import {
+  DocumentFactory,
+  ResponseFactory,
+  PackageRequest,
+  PackageIdentifier,
+  SuggestionFactory,
+  VersionHelpers,
+  PackageResponseStatus,
   PackageDocument,
   PackageVersionTypes,
   PackageSourceTypes,
   PackageSuggestion,
   PackageSuggestionFlags
-} from 'core/packages/models/packageDocument';
-import * as PackageDocumentFactory from 'core/packages/factories/packageDocumentFactory'
+} from 'core/packages';
+
 import NpmConfig from 'providers/npm/config';
 import { HttpResponseSources } from "core/clients";
-import { PackageResponseStatus } from 'core/packages/models/packageResponse';
 
 export async function fetchNpmPackage(request: PackageRequest): Promise<PackageDocument> {
   const npa = require('npm-package-arg');
@@ -53,7 +55,7 @@ export async function fetchNpmPackage(request: PackageRequest): Promise<PackageD
     if (!response) return Promise.reject(error);
 
     if (response.status === 'E404') {
-      return PackageDocumentFactory.createNotFound(
+      return DocumentFactory.createNotFound(
         NpmConfig.provider,
         request.package,
         null,
@@ -62,7 +64,7 @@ export async function fetchNpmPackage(request: PackageRequest): Promise<PackageD
     }
 
     if (response.status === 'EINVALIDTAGNAME' || response.responseText.includes('Invalid comparator:')) {
-      return PackageDocumentFactory.createInvalidVersion(
+      return DocumentFactory.createInvalidVersion(
         NpmConfig.provider,
         request.package,
         ResponseFactory.createResponseStatus(response.source, 404),
@@ -71,7 +73,7 @@ export async function fetchNpmPackage(request: PackageRequest): Promise<PackageD
     }
 
     if (response.status === 'EUNSUPPORTEDPROTOCOL') {
-      return PackageDocumentFactory.createNotSupported(
+      return DocumentFactory.createNotSupported(
         NpmConfig.provider,
         request.package,
         ResponseFactory.createResponseStatus(response.source, 404),
@@ -80,7 +82,7 @@ export async function fetchNpmPackage(request: PackageRequest): Promise<PackageD
     }
 
     if (response.status === 128) {
-      return PackageDocumentFactory.createGitFailed(
+      return DocumentFactory.createGitFailed(
         NpmConfig.provider,
         request.package,
         ResponseFactory.createResponseStatus(response.source, 404),
@@ -138,13 +140,15 @@ function createRemotePackageDocument(request: PackageRequest, npaResult: any): P
       const releases = Object.keys(packumentResponse.versions || {}).sort(compareLoose);
 
       // extract prereleases from dist tags
-      const prereleases = filterPrereleasesFromDistTags(packumentResponse['dist-tags'] || {}).sort(compareLoose)
+      const prereleases = VersionHelpers.filterPrereleasesFromDistTags(
+        packumentResponse['dist-tags'] || {}
+      ).sort(compareLoose)
 
       // check if the version requested is a tag. eg latest|next
       const distTags = packumentResponse['dist-tags'] || {};
       if (npaResult.type === PackageVersionTypes.tag) {
         versionRange = distTags[requested.version];
-        if (!versionRange) return PackageDocumentFactory.createNoMatch(
+        if (!versionRange) return DocumentFactory.createNoMatch(
           NpmConfig.provider,
           source,
           type,
@@ -155,7 +159,11 @@ function createRemotePackageDocument(request: PackageRequest, npaResult: any): P
       }
 
       // analyse suggestions
-      const suggestions = createSuggestionTags(versionRange, releases, prereleases);
+      const suggestions = SuggestionFactory.createSuggestionTags(
+        versionRange,
+        releases,
+        prereleases
+      );
 
       return {
         provider: NpmConfig.provider,
@@ -230,7 +238,7 @@ function createDirectoryPackageDocument(requested: PackageIdentifier, response: 
 
   const fileRegExpResult = fileDependencyRegex.exec(requested.version);
   if (!fileRegExpResult) {
-    return PackageDocumentFactory.createInvalidVersion(
+    return DocumentFactory.createInvalidVersion(
       NpmConfig.provider,
       requested,
       response,

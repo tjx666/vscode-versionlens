@@ -1,4 +1,4 @@
-import { removeFourSegmentVersionsFromArray } from 'core/packages/helpers/versionHelpers';
+import { VersionHelpers } from 'core/packages';
 
 const assert = require('assert');
 
@@ -20,7 +20,7 @@ export default {
       '1.0.0',
       '2.0.0',
     ]
-    const results = removeFourSegmentVersionsFromArray(expected);
+    const results = VersionHelpers.removeFourSegmentVersionsFromArray(expected);
     assert.equal(results.length, expected.length);
     expected.forEach((expectedVersion, index) => {
       assert.equal(results[index], expectedVersion);
@@ -36,7 +36,7 @@ export default {
       '11.1.9',
       '12.0.0-next.1',
     ]
-    const results = removeFourSegmentVersionsFromArray(testVersions);
+    const results = VersionHelpers.removeFourSegmentVersionsFromArray(testVersions);
     assert.equal(results.length, expected.length);
     expected.forEach((expectedVersion, index) => {
       assert.equal(results[index], expectedVersion);

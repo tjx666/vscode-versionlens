@@ -1,4 +1,4 @@
-import { PackageSourceTypes } from 'core/packages/models/packageDocument';
+import { PackageSourceTypes } from 'core/packages';
 
 export function updateDependencyCommand(codeLens, packageVersion) {
   if (codeLens.__replaced) return Promise.resolve();

@@ -1,16 +1,20 @@
-import * as DocumentFactory from 'core/packages/factories/packageDocumentFactory';
-import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
-import { PackageDocument, PackageSourceTypes, PackageVersionTypes } from 'core/packages/models/packageDocument';
-import { PackageRequest } from "core/packages/models/packageRequest";
-import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
-import { splitReleasesFromArray, filterSemverVersions } from 'core/packages/helpers/versionHelpers';
-import { parseVersionSpec } from './dotnetUtils.js';
-import { DotNetVersionSpec } from './definitions/versionSpec';
+import {
+  DocumentFactory,
+  SuggestionFactory,
+  PackageDocument,
+  PackageSourceTypes,
+  PackageVersionTypes,
+  PackageRequest,
+  VersionHelpers
+} from 'core/packages';
 import {
   JsonHttpRequest,
   HttpResponse,
   HttpRequestMethods
 } from "core/clients";
+import { parseVersionSpec } from './dotnetUtils.js';
+import { DotNetVersionSpec } from './definitions/versionSpec';
+
 import DotnetConfig from './config';
 
 const jsonRequest = new JsonHttpRequest({}, 0);
@@ -63,10 +67,10 @@ function createRemotePackageDocument(request: PackageRequest, dotnetSpec: DotNet
       };
 
       // sanitize to semver only versions
-      const rawVersions = filterSemverVersions(packageInfo.data);
+      const rawVersions = VersionHelpers.filterSemverVersions(packageInfo.data);
 
       // seperate versions to releases and prereleases
-      const { releases, prereleases } = splitReleasesFromArray(rawVersions)
+      const { releases, prereleases } = VersionHelpers.splitReleasesFromArray(rawVersions)
 
       // four segment is not supported
       if (dotnetSpec.spec && dotnetSpec.spec.hasFourSegments) {
@@ -97,7 +101,11 @@ function createRemotePackageDocument(request: PackageRequest, dotnetSpec: DotNet
       };
 
       // analyse suggestions
-      const suggestions = createSuggestionTags(versionRange, releases, prereleases);
+      const suggestions = SuggestionFactory.createSuggestionTags(
+        versionRange,
+        releases,
+        prereleases
+      );
 
       return {
         provider: DotnetConfig.provider,

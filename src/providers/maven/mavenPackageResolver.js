@@ -1,6 +1,6 @@
 import appSettings from 'appSettings';
 import * as ErrorFactory from 'core/errors/factory';
-import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
+import { ResponseFactory } from 'core/packages';
 import { mavenGetPackageVersions } from 'providers/maven/mavenAPI';
 import { buildMapFromVersionList, buildTagsFromVersionMap } from 'providers/maven/versionUtils'
 

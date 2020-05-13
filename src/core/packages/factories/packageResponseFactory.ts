@@ -1,4 +1,5 @@
-import { PackageDocument } from "core/packages/models/packageDocument";
+import { HttpResponse, HttpResponseSources } from "core/clients";
+import { PackageDocument } from "../models/packageDocument";
 import {
   PackageResponse,
   PackageResponseErrors,
@@ -6,7 +7,6 @@ import {
   PackageResponseStatus
 } from "../models/packageResponse";
 import { PackageIdentifier } from "../models/packageRequest";
-import { HttpResponse, HttpResponseSources } from "core/clients";
 
 export function createSuccess(document: PackageDocument, replaceVersionFn: ReplaceVersionFunction): Array<PackageResponse> {
   // map the documents to responses

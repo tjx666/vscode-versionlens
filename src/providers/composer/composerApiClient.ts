@@ -1,14 +1,14 @@
-import * as DocumentFactory from 'core/packages/factories/packageDocumentFactory';
-import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
-import { PackageRequest } from "core/packages/models/packageRequest";
-import { PackageDocument, PackageSourceTypes } from 'core/packages/models/packageDocument';
-import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
 import {
-  splitReleasesFromArray,
-  parseSemver,
-  filterSemverVersions,
-} from 'core/packages/helpers/versionHelpers';
-import { SemverSpec } from "core/packages/definitions/semverSpec";
+  DocumentFactory,
+  ResponseFactory,
+  SuggestionFactory,
+  VersionHelpers,
+  PackageRequest,
+  PackageDocument,
+  PackageSourceTypes,
+  SemverSpec
+} from "core/packages";
+
 import {
   JsonHttpRequest,
   HttpResponse,
@@ -21,7 +21,7 @@ const jsonRequest = new JsonHttpRequest({}, undefined);
 const fs = require('fs');
 
 export async function fetchComposerPackage(request: PackageRequest): Promise<PackageDocument> {
-  const semverSpec = parseSemver(request.package.version);
+  const semverSpec = VersionHelpers.parseSemver(request.package.version);
 
   return createRemotePackageDocument(request, semverSpec)
     .catch((error: HttpResponse) => {
@@ -61,13 +61,19 @@ export async function createRemotePackageDocument(request: PackageRequest, semve
       const rawVersions = Object.keys(packageInfo);
 
       // extract semver versions only
-      const semverVersions = filterSemverVersions(rawVersions);
+      const semverVersions = VersionHelpers.filterSemverVersions(rawVersions);
 
       // seperate versions to releases and prereleases
-      const { releases, prereleases } = splitReleasesFromArray(filterSemverVersions(semverVersions))
+      const { releases, prereleases } = VersionHelpers.splitReleasesFromArray(
+        VersionHelpers.filterSemverVersions(semverVersions)
+      );
 
       // analyse suggestions
-      const suggestions = createSuggestionTags(versionRange, releases, prereleases);
+      const suggestions = SuggestionFactory.createSuggestionTags(
+        versionRange,
+        releases,
+        prereleases
+      );
 
       return {
         provider: ComposerConfig.provider,

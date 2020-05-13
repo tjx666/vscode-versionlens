@@ -1,14 +1,13 @@
-import * as DocumentFactory from 'core/packages/factories/packageDocumentFactory';
-import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
-import { PackageSourceTypes, PackageDocument } from 'core/packages/models/packageDocument';
-import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
 import {
-  extractVersionsFromMap,
-  splitReleasesFromArray,
-  parseSemver,
-} from 'core/packages/helpers/versionHelpers';
-import { SemverSpec } from 'core/packages/definitions/semverSpec';
-import { PackageRequest } from "core/packages/models/packageRequest";
+  DocumentFactory,
+  ResponseFactory,
+  SuggestionFactory,
+  VersionHelpers,
+  PackageSourceTypes,
+  PackageDocument,
+  SemverSpec,
+  PackageRequest
+} from "core/packages";
 import {
   JsonHttpRequest,
   HttpResponse,
@@ -21,7 +20,7 @@ const fs = require('fs');
 const jsonRequest = new JsonHttpRequest({}, 0);
 
 export async function fetchDubPackage(request: PackageRequest): Promise<PackageDocument> {
-  const semverSpec = parseSemver(request.package.version);
+  const semverSpec = VersionHelpers.parseSemver(request.package.version);
 
   return createRemotePackageDocument(request, semverSpec)
     .catch((error: HttpResponse) => {
@@ -62,13 +61,17 @@ function createRemotePackageDocument(request: PackageRequest, semverSpec: Semver
         status: httpResponse.status,
       };
 
-      const rawVersions = extractVersionsFromMap(packageInfo.versions);
+      const rawVersions = VersionHelpers.extractVersionsFromMap(packageInfo.versions);
 
       // seperate versions to releases and prereleases
-      const { releases, prereleases } = splitReleasesFromArray(rawVersions)
+      const { releases, prereleases } = VersionHelpers.splitReleasesFromArray(rawVersions)
 
       // analyse suggestions
-      const suggestions = createSuggestionTags(versionRange, releases, prereleases);
+      const suggestions = SuggestionFactory.createSuggestionTags(
+        versionRange,
+        releases,
+        prereleases
+      );
 
       // todo return a ~master entry when no matches found
 

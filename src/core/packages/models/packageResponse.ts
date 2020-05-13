@@ -1,11 +1,11 @@
+import { HttpResponseSources } from "core/clients";
 import {
   PackageSourceTypes,
   PackageNameVersion,
   PackageSuggestion,
   PackageVersionTypes
-} from "core/packages/models/packageDocument";
-import { PackageDependencyLens } from "core/packages/models/PackageDependencyLens";
-import { HttpResponseSources } from "core/clients";
+} from "./packageDocument";
+import { PackageDependencyLens } from "./packageDependencyLens";
 import { PackageIdentifier } from "./packageRequest";
 
 export type ReplaceVersionFunction = (

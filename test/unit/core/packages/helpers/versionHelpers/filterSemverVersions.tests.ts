@@ -1,4 +1,4 @@
-import { filterSemverVersions } from 'core/packages/helpers/versionHelpers';
+import { VersionHelpers } from 'core/packages';
 
 const assert = require('assert');
 
@@ -15,12 +15,12 @@ const testVersions = [
 export default {
 
   "returns empty when versions is empty": () => {
-    const results = filterSemverVersions([]);
+    const results = VersionHelpers.filterSemverVersions([]);
     assert.equal(results.length, 0);
   },
 
   "returns empty when no matches found": () => {
-    const results = filterSemverVersions(['1.2.3.4', '2.12.22.test']);
+    const results = VersionHelpers.filterSemverVersions(['1.2.3.4', '2.12.22.test']);
     assert.equal(results.length, 0);
   },
 
@@ -31,7 +31,7 @@ export default {
       '11.1.9',
       '12.0.0-next.1',
     ]
-    const results = filterSemverVersions(testVersions);
+    const results = VersionHelpers.filterSemverVersions(testVersions);
     assert.equal(results.length, expected.length);
     expected.forEach((expectedValue, index) => {
       assert.equal(results[index], expectedValue);

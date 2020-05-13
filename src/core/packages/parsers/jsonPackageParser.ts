@@ -1,5 +1,5 @@
 // vscode references
-import { PackageDependencyLens } from "../models/PackageDependencyLens";
+import { PackageDependencyLens } from "../models/packageDependencyLens";
 
 export function extractPackageDependenciesFromJson(json: string, filterPropertyNames: string[]): PackageDependencyLens[] {
   const jsonErrors = [];

@@ -1,4 +1,4 @@
-import { extractTaggedVersions } from 'core/packages/helpers/versionHelpers';
+import { VersionHelpers } from 'core/packages';
 
 const assert = require('assert');
 
@@ -17,7 +17,7 @@ const testVersions = [
 export default {
 
   "returns empty when no matches found": () => {
-    const results = extractTaggedVersions([]);
+    const results = VersionHelpers.extractTaggedVersions([]);
     assert.equal(results.length, 0);
   },
 
@@ -31,7 +31,7 @@ export default {
       '2.2.0-preview.5',
     ]
 
-    const results = extractTaggedVersions(testVersions);
+    const results = VersionHelpers.extractTaggedVersions(testVersions);
     assert.equal(results.length, expected.length);
     expected.forEach((expectedValue, index) => {
       assert.equal(results[index].name, expectedValue.substr(6, 7));

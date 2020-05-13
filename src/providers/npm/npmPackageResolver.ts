@@ -1,11 +1,15 @@
-import { formatWithExistingLeading } from 'core/packages/helpers/versionHelpers';
 import * as ErrorFactory from 'core/errors/factory';
-import { PackageSourceTypes, PackageVersionTypes } from 'core/packages/models/packageDocument';
 import { ExpiryCacheMap } from 'core/caching/expiryCacheMap';
 import { fetchNpmPackage } from 'providers/npm/pacoteApiClient'
-import { PackageResponse, ReplaceVersionFunction } from 'core/packages/models/packageResponse';
-import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
-import { PackageRequest } from "core/packages/models/packageRequest";
+import {
+  VersionHelpers,
+  PackageSourceTypes,
+  PackageVersionTypes,
+  PackageResponse,
+  ReplaceVersionFunction,
+  ResponseFactory,
+  PackageRequest,
+} from "core/packages";
 
 const cache = new ExpiryCacheMap();
 
@@ -118,12 +122,18 @@ export function npmReplaceVersion(packageInfo, newVersion) {
     existingVersion = packageInfo.requested.version;
 
   // preserve the leading symbol from the existing version
-  const preservedLeadingVersion = formatWithExistingLeading(existingVersion, newVersion)
+  const preservedLeadingVersion = VersionHelpers.formatWithExistingLeading(
+    existingVersion,
+    newVersion
+  );
   return `${packageInfo.meta.userRepo}#${preservedLeadingVersion}`
 }
 
 export function customNpmAliasedReplaceVersion(packageInfo, newVersion) {
   // preserve the leading symbol from the existing version
-  const preservedLeadingVersion = formatWithExistingLeading(packageInfo.version, newVersion)
+  const preservedLeadingVersion = VersionHelpers.formatWithExistingLeading(
+    packageInfo.version,
+    newVersion
+  )
   return `npm:${packageInfo.resolved.name}@${preservedLeadingVersion}`;
 }
