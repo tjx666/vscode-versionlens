@@ -71,6 +71,7 @@ export function createNotSupported(
     source,
     type,
     requested,
+    response,
     resolved: null,
     suggestions
   };
@@ -92,6 +93,7 @@ export function createGitFailed(
     source,
     type,
     requested,
+    response,
     resolved: null,
     suggestions
   };
