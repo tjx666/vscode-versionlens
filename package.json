@@ -37,7 +37,7 @@
     "vscode:prepublish": "npm run -s compile",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
     "clean": "rimraf ./out",
-    "precompile": "npm run -s clean && jshint ./src",
+    "precompile": "npm run -s clean",
     "precompile:test": "npm run -s precompile",
     "compile": "tsc -p ./src/tsconfig.json",
     "compile:test": "tsc -p ./test/tsconfig.json",
@@ -45,17 +45,16 @@
     "test": "node ./out/test/index.js"
   },
   "devDependencies": {
-    "@types/mocha": "^7.0.2",
+    "@types/mocha": "7.0.2",
     "@types/node": "^12",
-    "@types/vscode": "1.23.0",
-    "jshint": "2.11.0",
+    "@types/vscode": "1.45.0",
     "mocha-ui-esm": "1.0.0-alpha.4",
     "mock-require": "3.0.3",
     "rimraf": "3.0.2",
-    "typescript": "3.8.3",
+    "typescript": "3.9.2",
     "mocha": "7.1.2",
     "source-map-support": "0.5.19",
-    "vscode-test": "^1.3.0"
+    "vscode-test": "1.3.0"
   },
   "dependencies": {
     "systemjs": "~0.21.6",
