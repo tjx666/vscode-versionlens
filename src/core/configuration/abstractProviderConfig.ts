@@ -13,7 +13,7 @@ export class AbstractProviderConfig implements IProviderConfig {
 
   matchesFilename(filename: string): boolean {
     const minimatch = require('minimatch');
-    return minimatch(filename, this.options.pattern);
+    return minimatch(filename, this.options.selector.pattern);
   }
 
 }

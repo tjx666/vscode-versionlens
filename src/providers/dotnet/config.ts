@@ -8,11 +8,11 @@ enum DotnetContributions {
 }
 
 const options = {
-  pattern: '**/*.{csproj,fsproj,targets,props}',
   group: ['tags'],
   selector: {
     language: 'xml',
     scheme: 'file',
+    pattern: '**/*.{csproj,fsproj,targets,props}',
   }
 }
 

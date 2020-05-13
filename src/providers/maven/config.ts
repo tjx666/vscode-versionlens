@@ -7,11 +7,11 @@ enum MavenContributions {
 }
 
 const options = {
-  pattern: '**/pom.xml',
   group: ['tags'],
   selector: {
     language: 'xml',
     scheme: 'file',
+    pattern: '**/pom.xml',
   }
 }
 

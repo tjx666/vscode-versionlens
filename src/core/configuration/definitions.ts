@@ -1,9 +1,8 @@
 import * as VsCodeTypes from "vscode";
 
 export type ProviderOptions = {
-  pattern: string;
   group: Array<String>;
-  selector: VsCodeTypes.DocumentSelector;
+  selector: VsCodeTypes.DocumentFilter;
 };
 
 export interface IProviderConfig {

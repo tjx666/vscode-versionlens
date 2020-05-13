@@ -6,11 +6,11 @@ enum NpmContributions {
 }
 
 const options = {
-  pattern: '**/package.json',
   group: ['tags', 'statuses'],
   selector: {
     language: 'json',
     scheme: 'file',
+    pattern: '**/package.json',
   }
 }
 

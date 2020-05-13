@@ -6,11 +6,11 @@ enum PubContributions {
 }
 
 const options = {
-  pattern: "**/pubspec.yaml",
   group: [],
   selector: {
     language: "yaml",
     scheme: "file",
+    pattern: "**/pubspec.yaml",
   }
 }
 

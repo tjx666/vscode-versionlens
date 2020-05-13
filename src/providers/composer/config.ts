@@ -6,11 +6,11 @@ enum ComposerContributions {
 }
 
 const options = {
-  pattern: '**/composer.json',
   group: ['tags'],
   selector: {
     language: 'json',
-    scheme: 'file'
+    scheme: 'file',
+    pattern: '**/composer.json',
   }
 }
 

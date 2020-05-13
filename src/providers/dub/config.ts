@@ -6,11 +6,11 @@ enum DubContributions {
 }
 
 const options = {
-  pattern: '**/{dub.json,dub.selections.json}',
   group: ['statuses'],
   selector: {
     language: 'json',
     scheme: 'file',
+    pattern: '**/{dub.json,dub.selections.json}',
   }
 };
 
