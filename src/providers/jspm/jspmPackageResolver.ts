@@ -1,4 +1,4 @@
-import { formatWithExistingLeading } from 'common/utils';
+import { formatWithExistingLeading } from 'core/packages/helpers/versionHelpers';
 import { PackageSourceTypes } from 'core/packages/models/packageDocument';
 import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
 import { resolveNpmPackage } from 'providers/npm/npmPackageResolver';

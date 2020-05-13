@@ -1,10 +1,8 @@
-import { stripSymbolFromVersionRegex, semverLeadingChars } from '../../common/utils';
+import appSettings from 'appSettings';
+import { semverLeadingChars } from 'core/packages/helpers/versionHelpers';
 import { githubRequest } from 'core/clients/requests/githubRequest';
-import appSettings from '../../appSettings';
 import { PackageSuggestionFlags } from 'core/packages/models/packageDocument';
 import { VersionLens } from 'presentation/lenses/models/versionLens';
-
-const semver = require('semver');
 
 export function createErrorCommand(errorMsg, codeLens) {
   return codeLens.setCommand(`${errorMsg}`);

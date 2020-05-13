@@ -1,4 +1,4 @@
-import { formatWithExistingLeading } from 'common/utils';
+import { formatWithExistingLeading } from 'core/packages/helpers/versionHelpers';
 import * as ErrorFactory from 'core/errors/factory';
 import { PackageSourceTypes, PackageVersionTypes } from 'core/packages/models/packageDocument';
 import { ExpiryCacheMap } from 'core/caching/expiryCacheMap';

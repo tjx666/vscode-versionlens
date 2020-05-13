@@ -1,5 +1,5 @@
-import { formatWithExistingLeading } from '../../../common/utils';
-import { PackageSourceTypes, PackageVersionStatus } from 'core/packages/models/packageDocument';
+import { formatWithExistingLeading } from 'core/packages/helpers/versionHelpers';
+import { PackageSourceTypes } from 'core/packages/models/packageDocument';
 import { IVersionCodeLens } from "../definitions/IVersionCodeLens";
 import { PackageResponse, PackageResponseErrors } from '../../../core/packages/models/packageResponse';
 import * as VsCodeTypes from 'vscode';

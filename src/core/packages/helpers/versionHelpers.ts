@@ -172,3 +172,14 @@ export function filterSemverVersions(versions: Array<string>): Array<string> {
   });
   return semverVersions;
 }
+
+export const extractSymbolFromVersionRegex = /^([^0-9]*)?.*$/;
+export const semverLeadingChars = ['^', '~', '<', '<=', '>', '>=', '~>'];
+export function formatWithExistingLeading(existingVersion, newVersion) {
+  const regExResult = extractSymbolFromVersionRegex.exec(existingVersion);
+  const leading = regExResult && regExResult[1];
+  if (!leading || !semverLeadingChars.includes(leading))
+    return newVersion;
+
+  return `${leading}${newVersion}`;
+}

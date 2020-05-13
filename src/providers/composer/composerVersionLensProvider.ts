@@ -3,7 +3,7 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import ComposerConfig from 'providers/composer/config';
-import { formatWithExistingLeading } from 'common/utils';
+import { formatWithExistingLeading } from 'core/packages/helpers/versionHelpers';
 import { extractPackageDependenciesFromJson } from 'core/packages/parsers/jsonPackageParser';
 import { readComposerSelections, fetchComposerPackage } from 'providers/composer/composerApiClient';
 import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from 'presentation/editor/decorations';
