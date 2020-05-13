@@ -36,7 +36,10 @@ export async function fetchDubPackage(request: PackageRequest): Promise<PackageD
     });
 }
 
-function createRemotePackageDocument(request: PackageRequest, semverSpec: SemverSpec): Promise<PackageDocument> {
+async function createRemotePackageDocument(
+  request: PackageRequest,
+  semverSpec: SemverSpec
+): Promise<PackageDocument> {
   const url = `${DubConfig.getApiUrl()}/${encodeURIComponent(request.package.name)}/info`;
   const queryParams = {
     minimize: 'true',
@@ -88,7 +91,7 @@ function createRemotePackageDocument(request: PackageRequest, semverSpec: Semver
     });
 }
 
-export function readDubSelections(filePath) {
+export async function readDubSelections(filePath) {
 
   return new Promise(function (resolve, reject) {
     if (fs.existsSync(filePath) === false) {

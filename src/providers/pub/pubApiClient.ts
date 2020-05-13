@@ -37,7 +37,10 @@ export async function fetchPubPackage(request: PackageRequest): Promise<PackageD
     });
 }
 
-function createRemotePackageDocument(request: PackageRequest, semverSpec: SemverSpec): Promise<PackageDocument> {
+async function createRemotePackageDocument(
+  request: PackageRequest,
+  semverSpec: SemverSpec
+): Promise<PackageDocument> {
 
   const url = `${PubConfig.getApiUrl()}/api/documentation/${request.package.name}`;
 
@@ -72,7 +75,7 @@ function createRemotePackageDocument(request: PackageRequest, semverSpec: Semver
         prereleases
       );
 
-    // return PackageDocument
+      // return PackageDocument
       return {
         provider: PubConfig.provider,
         source: PackageSourceTypes.registry,

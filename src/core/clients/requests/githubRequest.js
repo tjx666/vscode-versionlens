@@ -10,7 +10,7 @@ export class GithubRequest extends JsonHttpRequest {
     });
   }
 
-  getCommitBySha(userRepo, sha) {
+  async getCommitBySha(userRepo, sha) {
     return this.httpGet(userRepo, `commits/${sha}`)
       .then(firstEntry => {
         return {
@@ -20,7 +20,7 @@ export class GithubRequest extends JsonHttpRequest {
       });
   }
 
-  getLatestCommit(userRepo) {
+  async getLatestCommit(userRepo) {
     return this.httpGet(userRepo, 'commits', { page: 1, per_page: 1 })
       .then(entries => {
         const firstEntry = entries[0];
@@ -31,7 +31,7 @@ export class GithubRequest extends JsonHttpRequest {
       });
   }
 
-  getLatestPreRelease(userRepo) {
+  async getLatestPreRelease(userRepo) {
     return this.httpGet(userRepo, 'releases/latest')
       .then(result => {
         if (Array.isArray(result))
@@ -43,7 +43,7 @@ export class GithubRequest extends JsonHttpRequest {
       });
   }
 
-  getLatestRelease(userRepo) {
+  async getLatestRelease(userRepo) {
     return this.httpGet(userRepo, 'releases', { page: 1, per_page: 1 })
       .then(result => {
         if (Array.isArray(result))
@@ -55,7 +55,7 @@ export class GithubRequest extends JsonHttpRequest {
       });
   }
 
-  getLatestTag(userRepo) {
+  async getLatestTag(userRepo) {
     return this.httpGet(userRepo, 'tags', { page: 1, per_page: 1 })
       .then(entries => {
         if (!entries || entries.length === 0)
@@ -67,13 +67,13 @@ export class GithubRequest extends JsonHttpRequest {
       })
   }
 
-  repoExists(userRepo) {
+  async repoExists(userRepo) {
     return this.httpHead(userRepo)
       .then(resp => true)
       .catch(resp => resp.status !== 403)
   }
 
-  httpGet(userRepo, category, queryParams) {
+  async httpGet(userRepo, category, queryParams) {
     return this.requestGithub(HttpRequestMethods.get, userRepo, category, queryParams)
       .then(response => response.data)
       .catch(error => {
@@ -108,11 +108,11 @@ export class GithubRequest extends JsonHttpRequest {
       });
   }
 
-  httpHead(userRepo) {
+  async httpHead(userRepo) {
     return super.requestJson(HttpRequestMethods.head, userRepo, null, null)
   }
 
-  requestGithub(method, userRepo, category, queryParams) {
+  async requestGithub(method, userRepo, category, queryParams) {
     const url = `https://api.github.com/repos/${userRepo}/${category}`;
     return this.requestJson(method, url, queryParams)
   }

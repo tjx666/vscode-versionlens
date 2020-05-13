@@ -14,7 +14,7 @@ export class DotNetCodeLensProvider extends AbstractVersionLensProvider {
     super(DotnetConfig);
   }
 
-  fetchVersionLenses(
+  async fetchVersionLenses(
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
@@ -31,7 +31,7 @@ export class DotNetCodeLensProvider extends AbstractVersionLensProvider {
     );
   }
 
-  updateOutdated(packagePath: string): Promise<any> { 
+  async updateOutdated(packagePath: string): Promise<any> { 
     return Promise.resolve(); 
   }
 

@@ -8,7 +8,11 @@ export class JsonHttpRequest extends HttpRequest {
     super(headers, cacheDuration);
   }
 
-  requestJson(method: HttpRequestMethods, url: string, queryParams: KeyStringDictionary = {}): Promise<JsonHttpResponse> {
+  async requestJson(
+    method: HttpRequestMethods,
+    url: string,
+    queryParams: KeyStringDictionary = {}
+  ): Promise<JsonHttpResponse> {
     return super.request(method, url, queryParams)
       .then(function (response) {
         return {

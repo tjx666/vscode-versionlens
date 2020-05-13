@@ -3,7 +3,7 @@ import * as ResponseFactory from './packageResponseFactory';
 import { PackageResponse, ReplaceVersionFunction } from '../models/packageResponse';
 import { PackageRequest, PackageRequestFunction } from "../models/packageRequest";
 
-export function createPackageRequest(
+export async function createPackageRequest(
   request: PackageRequest,
   requestFn: PackageRequestFunction,
   replaceVersionFn: ReplaceVersionFunction,

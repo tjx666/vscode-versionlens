@@ -28,7 +28,7 @@ export class NpmCodeLensProvider extends AbstractVersionLensProvider {
     this._outdatedCache = [];
   }
 
-  fetchVersionLenses(
+  async fetchVersionLenses(
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
@@ -49,16 +49,13 @@ export class NpmCodeLensProvider extends AbstractVersionLensProvider {
   }
 
   // get the outdated packages and cache them
-  updateOutdated(packagePath: string) {
+  async updateOutdated(packagePath: string): Promise<any> {
     return npmGetOutdated(packagePath)
       .then(results => this._outdatedCache = results)
       .catch(err => {
         console.log("npmGetOutdated", err);
       });
   }
-
-
-
 
   generateDecoration(versionLens: VersionLens) {
     const documentPath = versionLens.package.requested.path;

@@ -47,7 +47,7 @@ export async function createVersionLenses(
   return Promise.all(promises).then(_ => results)
 }
 
-function resolveDependency(
+async function resolveDependency(
   dependency: PackageDependencyLens,
   document: VsCodeTypes.TextDocument,
   packagePath: string,
@@ -104,7 +104,10 @@ function resolveDependency(
     });
 }
 
-function createVersionlensFromEntry(entry: PackageResponseAggregate, document: VsCodeTypes.TextDocument): VersionLens {
+function createVersionlensFromEntry(
+  entry: PackageResponseAggregate,
+  document: VsCodeTypes.TextDocument
+): VersionLens {
   const { Uri, Range } = require('vscode')
 
   const { nameRange, versionRange } = entry.dependency;

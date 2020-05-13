@@ -37,7 +37,10 @@ export async function fetchDotnetPackage(request: PackageRequest): Promise<Packa
     });
 }
 
-function createRemotePackageDocument(request: PackageRequest, dotnetSpec: DotNetVersionSpec): Promise<PackageDocument> {
+async function createRemotePackageDocument(
+  request: PackageRequest,
+  dotnetSpec: DotNetVersionSpec
+): Promise<PackageDocument> {
   const url = DotnetConfig.getNuGetFeeds()[0];
 
   const queryParams = {

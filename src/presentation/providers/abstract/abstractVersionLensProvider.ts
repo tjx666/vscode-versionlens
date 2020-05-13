@@ -43,7 +43,7 @@ export abstract class AbstractVersionLensProvider {
     this._onChangeCodeLensesEmitter.fire();
   }
 
-  provideCodeLenses(
+  async provideCodeLenses(
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): Promise<VersionLens[] | null> {
@@ -65,7 +65,10 @@ export abstract class AbstractVersionLensProvider {
     return this.fetchVersionLenses(document, token);
   }
 
-  resolveCodeLens(codeLens: IVersionCodeLens, token: VsCodeTypes.CancellationToken) {
+  async resolveCodeLens(
+    codeLens: IVersionCodeLens,
+    token: VsCodeTypes.CancellationToken
+  ): Promise<VersionLens> {
     if (codeLens instanceof VersionLens) {
       // set in progress
       appSettings.inProgress = true;
@@ -74,20 +77,18 @@ export abstract class AbstractVersionLensProvider {
       const evaluated = this.evaluateCodeLens(codeLens, token);
 
       // update the progress
-      if (evaluated instanceof Promise) {
-        evaluated.then(result => {
+      return Promise.resolve(evaluated)
+        .then(result => {
           appSettings.inProgress = false;
           return result;
         })
-      } else
-        appSettings.inProgress = false;
-
-      // return evaluated codelens
-      return evaluated;
     }
   }
 
-  evaluateCodeLens(codeLens: IVersionCodeLens, token: VsCodeTypes.CancellationToken) {
+  evaluateCodeLens(
+    codeLens: IVersionCodeLens,
+    token: VsCodeTypes.CancellationToken
+  ) {
     // if (codeLens.isMetaType('github'))
     //   return CommandFactory.createGithubCommand(codeLens);
 
@@ -111,6 +112,5 @@ export abstract class AbstractVersionLensProvider {
 
     return CommandFactory.createSuggestedVersionCommand(codeLens)
   }
-
 
 }

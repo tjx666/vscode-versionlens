@@ -18,7 +18,11 @@ export class HttpRequest {
     this.headers = headers || {};
   }
 
-  request(method: HttpRequestMethods, baseUrl: string, queryParams: KeyStringDictionary = {}): Promise<HttpResponse> {
+  async request(
+    method: HttpRequestMethods,
+    baseUrl: string,
+    queryParams: KeyStringDictionary = {}
+  ): Promise<HttpResponse> {
     const url = createUrl(baseUrl, queryParams);
     const cacheKey = method + '_' + url;
 

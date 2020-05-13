@@ -23,18 +23,18 @@ export class MavenCodeLensProvider extends AbstractVersionLensProvider {
     const packageDepsLenses = extractMavenLensDataFromDocument(document, MavenConfig.getDependencyProperties());
     if (packageDepsLenses.length === 0) return null;
 
-    return VersionLensFactory.createVersionLenses(
-      document,
-      packageDepsLenses,
-      this.logger,
-      resolveMavenPackage,
-      null
-    );
+    // return VersionLensFactory.createVersionLenses(
+    //   document,
+    //   packageDepsLenses,
+    //   this.logger,
+    //   resolveMavenPackage,
+    //   null
+    // );
 
   }
 
-  updateOutdated(packagePath: string): Promise<any> { 
-    return Promise.resolve(); 
+  async updateOutdated(packagePath: string): Promise<any> {
+    return Promise.resolve();
   }
 
   /*

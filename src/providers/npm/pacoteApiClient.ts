@@ -95,7 +95,7 @@ export async function fetchNpmPackage(request: PackageRequest): Promise<PackageD
 
 }
 
-function createRemotePackageDocument(request: PackageRequest, npaResult: any): Promise<PackageDocument> {
+async function createRemotePackageDocument(request: PackageRequest, npaResult: any): Promise<PackageDocument> {
   const pacote = require('pacote');
   const npmConfig = require('libnpmconfig');
 
@@ -255,7 +255,11 @@ function createDirectoryPackageDocument(requested: PackageIdentifier, response: 
   };
 
   const suggestions: Array<PackageSuggestion> = [
-    { name: 'file://', version: resolved.version, flags: PackageSuggestionFlags.prerelease },
+    {
+      name: 'file://',
+      version: resolved.version,
+      flags: PackageSuggestionFlags.prerelease
+    },
   ]
 
   return {

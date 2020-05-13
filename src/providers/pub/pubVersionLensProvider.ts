@@ -18,6 +18,7 @@ export class PubCodeLensProvider extends AbstractVersionLensProvider {
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
+
     const packageDepsLenses = extractPackageDependenciesFromYaml(
       document.getText(),
       PubConfig.getDependencyProperties()
@@ -33,8 +34,8 @@ export class PubCodeLensProvider extends AbstractVersionLensProvider {
     );
   }
 
-  updateOutdated(packagePath: string): Promise<any> { 
-    return Promise.resolve(); 
+  async updateOutdated(packagePath: string): Promise<any> {
+    return Promise.resolve();
   }
 
 }

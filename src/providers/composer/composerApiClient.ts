@@ -37,7 +37,10 @@ export async function fetchComposerPackage(request: PackageRequest): Promise<Pac
     });
 }
 
-export async function createRemotePackageDocument(request: PackageRequest, semverSpec: SemverSpec): Promise<PackageDocument> {
+export function createRemotePackageDocument(
+  request: PackageRequest,
+  semverSpec: SemverSpec
+): Promise<PackageDocument> {
   const url = `${ComposerConfig.getApiUrl()}/${request.package.name}.json`;
 
   return jsonRequest.requestJson(HttpRequestMethods.get, url)

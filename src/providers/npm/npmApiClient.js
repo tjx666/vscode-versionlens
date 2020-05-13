@@ -9,7 +9,7 @@ export function npmPackageDirExists(packageJsonPath, packageName) {
   return fs.existsSync(npmFormattedPath);
 }
 
-export function npmGetOutdated(packagePath) {
+export async function npmGetOutdated(packagePath) {
   const npm = require('npm');
 
   return new Promise((resolve, reject) => {

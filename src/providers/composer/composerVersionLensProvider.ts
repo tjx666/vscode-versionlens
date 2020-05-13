@@ -21,7 +21,7 @@ export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
     super(ComposerConfig);
   }
 
-  fetchVersionLenses(
+  async fetchVersionLenses(
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
@@ -41,7 +41,7 @@ export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
     );
   }
 
-  updateOutdated(packagePath: string): Promise<any> {
+  async updateOutdated(packagePath: string): Promise<any> {
     const { join } = require('path')
     const selectionsFilePath = join(packagePath, 'composer.lock');
     return readComposerSelections(selectionsFilePath)

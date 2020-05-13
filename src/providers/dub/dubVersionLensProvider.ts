@@ -23,7 +23,7 @@ export class DubCodeLensProvider extends AbstractVersionLensProvider {
     this._outdatedCache = {};
   }
 
-  fetchVersionLenses(
+  async fetchVersionLenses(
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
@@ -43,7 +43,7 @@ export class DubCodeLensProvider extends AbstractVersionLensProvider {
   }
 
   // get the outdated packages and cache them
-  updateOutdated(packagePath: string): Promise<any> {
+  async updateOutdated(packagePath: string): Promise<any> {
     const path = require('path');
     const selectionsFilePath = path.join(packagePath, 'dub.selections.json');
     return readDubSelections(selectionsFilePath)
