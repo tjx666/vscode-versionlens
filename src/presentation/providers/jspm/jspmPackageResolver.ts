@@ -2,21 +2,20 @@ import { formatWithExistingLeading } from '../../../common/utils';
 import { PackageSourceTypes } from 'core/packages/models/packageDocument';
 import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
 import { resolveNpmPackage } from 'presentation/providers/npm/npmPackageResolver';
-import { PackageResponse, ReplaceVersionFunction } from 'core/packages/models/packageResponse';
-import { FetchRequest } from 'core/clients/models/fetch';
+import { PackageResponse } from 'core/packages/models/packageResponse';
+import { PackageRequest } from "core/packages/models/packageRequest";
 
 const jspmDependencyRegex = /^(npm|github):(.*)@(.*)$/;
 
 export async function resolveJspmPackage(
-  request: FetchRequest,
-  replaceVersionFn: ReplaceVersionFunction
+  request: PackageRequest
 ): Promise<Array<PackageResponse> | PackageResponse> {
 
   // check for supported package resgitries
-  const regExpResult = jspmDependencyRegex.exec(request.packageVersion);
+  const regExpResult = jspmDependencyRegex.exec(request.package.version);
   if (!regExpResult) {
     return Promise.resolve(
-      ResponseFactory.createNotSupported('jspm', { name: request.packageName, version: request.packageVersion })
+      ResponseFactory.createNotSupported('jspm', request.package)
     );
   }
 
@@ -25,24 +24,12 @@ export async function resolveJspmPackage(
   const newPkgVersion = regExpResult[3];
 
   if (packageManager === 'github') {
-    return resolveNpmPackage(
-      {
-        packagePath: request.packagePath,
-        packageName: request.packageName,
-        packageVersion: `${extractedPkgName}#${newPkgVersion}`,
-      },
-      customJspmReplaceVersion
-    );
+    request.package.version = `${extractedPkgName}#${newPkgVersion}`;
+    return resolveNpmPackage(request, customJspmReplaceVersion);
   }
 
-  return resolveNpmPackage(
-    {
-      packagePath: request.packagePath,
-      packageName: request.packageName,
-      packageVersion: newPkgVersion,
-    },
-    customJspmReplaceVersion
-  );
+  request.package.version = newPkgVersion;
+  return resolveNpmPackage(request, customJspmReplaceVersion);
 }
 
 export function customJspmReplaceVersion(packageInfo: PackageResponse, newVersion: string): string {

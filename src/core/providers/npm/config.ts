@@ -3,7 +3,7 @@ enum NpmContributions {
   DistTagFilter = 'npm.distTagFilter',
 }
 
-export default new class {
+export class NpmConfig {
 
   provider: string;
 
@@ -33,3 +33,5 @@ export default new class {
   }
 
 }
+
+export default new NpmConfig();

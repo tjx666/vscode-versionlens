@@ -1,12 +1,12 @@
 import registerCommands from './presentation/commands/register'
 import subscribeToEditorEvents from './presentation/editor/events'
-import codeLensProviders from './providers/codeLensProviders'
+import versionlensProviders from './presentation/providers/versionlensProviders'
 
 export function activate(context) {
-  const { languages } = require('vscode');
+  const { languages, window } = require('vscode');
   const disposables = [];
 
-  codeLensProviders.forEach(provider => {
+  versionlensProviders.forEach(provider => {
     disposables.push(
       languages.registerCodeLensProvider(
         provider.selector,

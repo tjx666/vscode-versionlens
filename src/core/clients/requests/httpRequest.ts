@@ -6,7 +6,13 @@ export enum HttpRequestMethods {
   head = 'HEAD',
 }
 
+export enum HttpResponseSources {
+  remote = 'remote',
+  cache = 'cache',
+}
+
 export type HttpResponse = {
+  source: HttpResponseSources,
   status: number,
   responseText: string,
 }
@@ -14,6 +20,7 @@ export type HttpResponse = {
 export class HttpRequest {
 
   cache: ExpiryCacheMap;
+
   headers: KeyStringDictionary;
 
   constructor(headers: KeyStringDictionary, cacheDuration: number) {
@@ -36,21 +43,42 @@ export class HttpRequest {
       headers: this.headers
     })
       .then(response => {
-        return this.createCachedResponse(cacheKey, response);
+        return this.createCachedResponse(
+          cacheKey,
+          response.status,
+          response.responseText
+        );
       })
       .catch(response => {
-        const result = this.createCachedResponse(cacheKey, response);
+        const result = this.createCachedResponse(
+          cacheKey,
+          response.status,
+          response.responseText
+        );
         return Promise.reject<HttpResponse>(result);
       });
   }
 
-  createCachedResponse(cacheKey: string, response): HttpResponse {
-    const parsedText = response.responseText;
+  createCachedResponse(cacheKey: string, status: number, responseText: string): HttpResponse {
+    const cacheEnabled = this.cache.cacheDuration > 0;
+
+    if (cacheEnabled) {
+      //  cache reponse (don't return, keep immutable)
+      this.cache.set(
+        cacheKey,
+        {
+          source: HttpResponseSources.cache,
+          status,
+          responseText
+        }
+      );
+    }
+
+    // return original remote data
     return {
-      status: response.status,
-      responseText: this.cache.cacheDuration > 0 ?
-        this.cache.set(cacheKey, parsedText) :
-        parsedText
+      source: HttpResponseSources.remote,
+      status,
+      responseText
     };
   }
 

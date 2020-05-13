@@ -4,16 +4,16 @@ import * as VsCodeTypes from 'vscode';
 // imports
 import DubConfig from 'core/providers/dub/config';
 import { extractPackageDependenciesFromJson } from 'core/packages/parsers/jsonPackageParser';
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/lenses/abstract/abstractVersionLensProvider';
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
-import { resolveDubPackage } from './dubPackageResolver';
+import { fetchDubPackage } from 'core/providers/dub/dubApiClient';
 
 export class DubCodeLensProvider extends AbstractVersionLensProvider {
 
   _outdatedCache: any;
 
   constructor() {
-    super();
+    super(DubConfig.provider);
     this._outdatedCache = {};
   }
 
@@ -27,7 +27,6 @@ export class DubCodeLensProvider extends AbstractVersionLensProvider {
   }
 
   fetchVersionLenses(
-    packagePath: string,
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
@@ -38,10 +37,11 @@ export class DubCodeLensProvider extends AbstractVersionLensProvider {
     if (packageDepsLenses.length === 0) return Promise.resolve([]);
 
     return VersionLensFactory.createVersionLenses(
-      packagePath,
       document,
       packageDepsLenses,
-      resolveDubPackage
+      this.logger,
+      fetchDubPackage,
+      null
     );
   }
 

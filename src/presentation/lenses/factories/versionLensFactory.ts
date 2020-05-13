@@ -2,30 +2,40 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { PackageDependencyLens } from "core/packages/models/PackageDependencyLens";
-import { PackageResolverFunction, PackageResponseAggregate, } from "core/packages/models/packageResponse";
-import { VersionLens } from "presentation/lenses/models/versionLens";
-import { VersionLensFetchResponse } from '../abstract/abstractVersionLensProvider';
+import { ILogger } from 'core/logging/definitions';
+import { PackageDependencyLens } from 'core/packages/models/PackageDependencyLens';
+import { PackageResponseAggregate, ReplaceVersionFunction } from 'core/packages/models/packageResponse';
+import { VersionLens } from 'presentation/lenses/models/versionLens';
+import { VersionLensFetchResponse } from '../../providers/abstract/abstractVersionLensProvider';
+import { PackageRequest, PackageRequestFunction } from "core/packages/models/packageRequest";
+import * as RequestFactory from 'core/packages/factories/packageRequestFactory';
 
 export async function createVersionLenses(
-  packagePath: string,
   document: VsCodeTypes.TextDocument,
   dependencies: Array<PackageDependencyLens>,
-  packageFetchRequest: PackageResolverFunction): VersionLensFetchResponse {
+  logger: ILogger,
+  packageFetchRequest: PackageRequestFunction,
+  versionReplace: ReplaceVersionFunction,
+): VersionLensFetchResponse {
 
   const results = [];
 
+  const { dirname } = require('path');
+  const packagePath = dirname(document.uri.fsPath);
+
   const promises = dependencies.map(
-    function (dependency, index) {
-      return resolveDependency(
-        packageFetchRequest,
-        packagePath,
+    function (dependency) {
+      const promisedDependency = resolveDependency(
         dependency,
         document,
-        index
-      ).then(function (lenses) {
+        packagePath,
+        logger,
+        packageFetchRequest,
+        versionReplace,
+      );
+      return promisedDependency.then(function (lenses) {
         results.push(...lenses)
-      })
+      });
     }
   );
 
@@ -33,24 +43,36 @@ export async function createVersionLenses(
 }
 
 function resolveDependency(
-  packageFetchRequest: PackageResolverFunction,
-  packagePath: string,
   dependency: PackageDependencyLens,
   document: VsCodeTypes.TextDocument,
-  order: number
+  packagePath: string,
+  logger: ILogger,
+  packageFetchRequest: PackageRequestFunction,
+  versionReplace: ReplaceVersionFunction,
 ): Promise<Array<VersionLens>> {
 
-  const { name: packageName, version: packageVersion } = dependency.packageInfo;
-  const request = { packagePath, packageName, packageVersion };
+  const { name, version } = dependency.packageInfo;
 
-  // returns VersionLens | Array<VersionLens>
-  return packageFetchRequest(request, null)
+  const request: PackageRequest = {
+    package: {
+      name,
+      version,
+      path: packagePath,
+    },
+    logger
+  };
+
+  return RequestFactory.createPackageRequest(
+    request,
+    packageFetchRequest,
+    versionReplace
+  )
     .then(function (responses): Array<VersionLens> {
 
       if (Array.isArray(responses)) {
         // multiple lens for a package (versions, tags etc...)
         return responses.map(
-          function (response) {
+          function (response, order) {
             return createVersionlensFromEntry(
               {
                 order,
@@ -67,7 +89,7 @@ function resolveDependency(
       return [
         createVersionlensFromEntry(
           {
-            order,
+            order: 0,
             dependency,
             response: responses
           },

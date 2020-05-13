@@ -2,23 +2,23 @@ import { formatWithExistingLeading } from '../../../common/utils';
 import * as ErrorFactory from 'core/errors/factory';
 import { PackageSourceTypes, PackageVersionTypes } from 'core/packages/models/packageDocument';
 import { ExpiryCacheMap } from 'core/caching/expiryCacheMap';
-import { fetchPackage } from 'core/providers/npm/pacoteApiClient'
-import { ReplaceVersionFunction, PackageResponse } from 'core/packages/models/packageResponse';
+import { fetchNpmPackage } from 'core/providers/npm/pacoteApiClient'
+import { PackageResponse, ReplaceVersionFunction } from 'core/packages/models/packageResponse';
 import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
-import { FetchRequest } from 'core/clients/models/fetch';
+import { PackageRequest } from "core/packages/models/packageRequest";
 
 const cache = new ExpiryCacheMap();
 
 export function resolveNpmPackage(
-  request: FetchRequest,
+  request: PackageRequest,
   replaceVersionFn: ReplaceVersionFunction
 ): Promise<Array<PackageResponse> | PackageResponse> {
-  const cacheKey = `resolveNpmPackage_${request.packageName}@${request.packageVersion}_${request.packagePath}`;
+  const cacheKey = `resolveNpmPackage_${request.package.name}@${request.package.version}_${request.package.path}`;
   // if (cache.hasExpired(cacheKey) === false) {
   //   return Promise.resolve(cache.get(cacheKey));
   // }
 
-  return fetchPackage(request)
+  return fetchNpmPackage(request)
     .then(function (document) {
 
       let replaceFn: ReplaceVersionFunction;
@@ -45,14 +45,7 @@ export function resolveNpmPackage(
         error
       );
 
-      return ResponseFactory.createUnexpected(
-        'npm',
-        {
-          name: request.packageName,
-          version: request.packageVersion
-        },
-        error
-      );
+      return error;
     });
 }
 

@@ -1,6 +1,6 @@
-import * as ErrorFactory from 'core/clients/errors/factory';
-import * as PackageDocumentFactory from 'core/packages/factories/packageDocumentFactory';
-import { FetchRequest } from 'core/clients/models/fetch';
+import * as DocumentFactory from 'core/packages/factories/packageDocumentFactory';
+import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
+import { PackageRequest } from "core/packages/models/packageRequest";
 import { PackageDocument, PackageSourceTypes } from 'core/packages/models/packageDocument';
 import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
 import {
@@ -11,46 +11,46 @@ import {
 import { SemverSpec } from "core/packages/definitions/semverSpec";
 import { HttpResponse, HttpRequestMethods } from 'core/clients/requests/httpRequest';
 import { JsonHttpRequest } from 'core/clients/requests/jsonHttpRequest';
-import ComposerConfig from './config'
+import ComposerConfig from './config';
 
-const jsonRequest = new JsonHttpRequest({}, 0);
+const jsonRequest = new JsonHttpRequest({}, undefined);
 const fs = require('fs');
 
-export async function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
-  const semverSpec = parseSemver(request.packageVersion);
+export async function fetchComposerPackage(request: PackageRequest): Promise<PackageDocument> {
+  const semverSpec = parseSemver(request.package.version);
 
   return createRemotePackageDocument(request, semverSpec)
     .catch((error: HttpResponse) => {
-      const requested = {
-        name: request.packageName,
-        version: request.packageVersion
-      };
-
       if (error.status === 404) {
-        return PackageDocumentFactory.createNotFound(ComposerConfig.provider, requested, null);
+        return DocumentFactory.createNotFound(
+          ComposerConfig.provider,
+          request.package,
+          null
+        );
       }
-
-      return Promise.reject(ErrorFactory.createFetchError(request, error, semverSpec))
+      return Promise.reject(error);
     });
 }
 
-export async function createRemotePackageDocument(request: FetchRequest, semverSpec: SemverSpec): Promise<PackageDocument> {
-  const url = `${ComposerConfig.getApiUrl()}/${request.packageName}.json`;
+export async function createRemotePackageDocument(request: PackageRequest, semverSpec: SemverSpec): Promise<PackageDocument> {
+  const url = `${ComposerConfig.getApiUrl()}/${request.package.name}.json`;
 
   return jsonRequest.requestJson(HttpRequestMethods.get, url)
-    .then(response => {
-      const packageInfo = response.data.packages[request.packageName];
+    .then(httpResponse => {
+      const packageInfo = httpResponse.data.packages[request.package.name];
 
       const versionRange = semverSpec.rawVersion;
 
-      const requested = {
-        name: request.packageName,
-        version: request.packageVersion
-      };
+      const requested = request.package;
 
       const resolved = {
-        name: request.packageName,
+        name: requested.name,
         version: versionRange,
+      };
+
+      const response = {
+        source: httpResponse.source,
+        status: httpResponse.status,
       };
 
       const rawVersions = Object.keys(packageInfo);
@@ -67,6 +67,7 @@ export async function createRemotePackageDocument(request: FetchRequest, semverS
       return {
         provider: ComposerConfig.provider,
         source: PackageSourceTypes.registry,
+        response,
         type: semverSpec.type,
         requested,
         resolved,
@@ -74,9 +75,7 @@ export async function createRemotePackageDocument(request: FetchRequest, semverS
         prereleases,
         suggestions,
       };
-
     });
-
 }
 
 export function readComposerSelections(filePath) {

@@ -7,8 +7,9 @@ import {
 } from '../models/packageDocument'
 
 import * as SuggestFactory from '../factories/packageSuggestionFactory'
+import { PackageIdentifier } from '../models/packageRequest';
 
-export function createNotFound(provider: string, requested: PackageNameVersion, type: PackageVersionTypes): PackageDocument {
+export function createNotFound(provider: string, requested: PackageIdentifier, type: PackageVersionTypes): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.registry;
 
   const suggestions: Array<PackageSuggestion> = [
@@ -25,7 +26,7 @@ export function createNotFound(provider: string, requested: PackageNameVersion, 
   };
 }
 
-export function createInvalidVersion(provider: string, requested: PackageNameVersion, type: PackageVersionTypes): PackageDocument {
+export function createInvalidVersion(provider: string, requested: PackageIdentifier, type: PackageVersionTypes): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.registry;
   const suggestions: Array<PackageSuggestion> = [
     SuggestFactory.createInvalid(requested.version),
@@ -42,7 +43,7 @@ export function createInvalidVersion(provider: string, requested: PackageNameVer
   };
 }
 
-export function createNotSupported(provider: string, requested: PackageNameVersion, type: PackageVersionTypes): PackageDocument {
+export function createNotSupported(provider: string, requested: PackageIdentifier, type: PackageVersionTypes): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.registry;
   const suggestions: Array<PackageSuggestion> = [
     SuggestFactory.createNotSupported(requested.version),
@@ -59,7 +60,7 @@ export function createNotSupported(provider: string, requested: PackageNameVersi
   };
 }
 
-export function createGitFailed(provider: string, requested: PackageNameVersion, type: PackageVersionTypes): PackageDocument {
+export function createGitFailed(provider: string, requested: PackageIdentifier, type: PackageVersionTypes): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.git;
   const suggestions = [
     SuggestFactory.createNotFound(),
@@ -75,7 +76,7 @@ export function createGitFailed(provider: string, requested: PackageNameVersion,
   };
 }
 
-export function createNoMatch(provider: string, source: PackageSourceTypes, type: PackageVersionTypes, requested: PackageNameVersion, latestVersion?: string): PackageDocument {
+export function createNoMatch(provider: string, source: PackageSourceTypes, type: PackageVersionTypes, requested: PackageIdentifier, latestVersion?: string): PackageDocument {
   const suggestions: Array<PackageSuggestion> = [
     SuggestFactory.createNoMatch(),
     SuggestFactory.createLatest(latestVersion),
@@ -91,7 +92,7 @@ export function createNoMatch(provider: string, source: PackageSourceTypes, type
   };
 }
 
-export function createFourSegment(provider: string, requested: PackageNameVersion, type: PackageVersionTypes): PackageDocument {
+export function createFourSegment(provider: string, requested: PackageIdentifier, type: PackageVersionTypes): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.registry;
   const suggestions: Array<PackageSuggestion> = [];
 

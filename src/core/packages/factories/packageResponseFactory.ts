@@ -1,7 +1,11 @@
 import { PackageNameVersion, PackageDocument } from "core/packages/models/packageDocument";
-import { PackageResponse, PackageResponseErrors } from "../models/packageResponse";
+import { PackageResponse, PackageResponseErrors, ReplaceVersionFunction } from "../models/packageResponse";
+import { PackageIdentifier, PackageRequestFunction, PackageRequest } from "../models/packageRequest";
+import { HttpResponse } from "core/clients/requests/httpRequest";
+import * as ErrorFactory from 'core/errors/factory';
+import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
 
-export function createSuccess(document: PackageDocument, replaceVersionFn = null): Array<PackageResponse> {
+export function createSuccess(document: PackageDocument, replaceVersionFn: ReplaceVersionFunction): Array<PackageResponse> {
   // map the documents to responses
   return document.suggestions.map(function (suggestion, index): PackageResponse {
     const response: PackageResponse = {
@@ -66,15 +70,17 @@ export function createNotFound(provider: string, requested: PackageNameVersion):
 //   return createPackage(name, message, meta, null);
 // }
 
-export function createUnexpected(provider: string, requested: PackageNameVersion, errorMessage: string): PackageResponse {
+export function createUnexpected(provider: string, requested: PackageIdentifier, response: HttpResponse): PackageResponse {
   const error: PackageResponse = {
     provider,
     requested,
     error: PackageResponseErrors.Unexpected,
-    errorMessage,
+    errorMessage: response.responseText,
+    response
   };
   return error;
 }
+
 
 // export function createPackage(source: string, resolved: PackageNameVersion, requested: PackageNameVersion, replaceVersionFn?: ReplaceVersionFunction): PackageResponse {
 //   return {

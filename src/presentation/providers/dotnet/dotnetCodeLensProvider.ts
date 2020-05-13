@@ -4,11 +4,15 @@ import * as VsCodeTypes from 'vscode';
 // imports
 import DotnetConfig from 'core/providers/dotnet/config';
 import { extractDotnetLensDataFromDocument } from 'core/providers/dotnet/dotnetPackageParser'
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/lenses/abstract/abstractVersionLensProvider';
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
-import { resolveDotnetPackage } from './dotnetPackageResolver';
+import { fetchDotnetPackage } from 'core/providers/dotnet/nugetApiClient';
 
 export class DotNetCodeLensProvider extends AbstractVersionLensProvider {
+
+  constructor() {
+    super(DotnetConfig.provider);
+  }
 
   get selector() {
     return {
@@ -20,7 +24,6 @@ export class DotNetCodeLensProvider extends AbstractVersionLensProvider {
   }
 
   fetchVersionLenses(
-    packagePath: string,
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
@@ -29,12 +32,12 @@ export class DotNetCodeLensProvider extends AbstractVersionLensProvider {
     if (packageDepsLenses.length === 0) return null;
 
     return VersionLensFactory.createVersionLenses(
-      packagePath,
       document,
       packageDepsLenses,
-      resolveDotnetPackage
-    )
-
+      this.logger,
+      fetchDotnetPackage,
+      null
+    );
   }
 
   updateOutdated(packagePath: string) { }

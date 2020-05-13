@@ -1,24 +1,22 @@
 import {
   PackageSourceTypes,
   PackageNameVersion,
-  PackageVersionTypes,
-  PackageSuggestion
+  PackageSuggestion,
+  PackageVersionTypes
 } from "core/packages/models/packageDocument";
 import { PackageDependencyLens } from "./PackageDependencyLens";
-import { FetchRequest } from "core/clients/models/fetch";
+import { HttpResponseSources } from "core/clients/requests/httpRequest";
+
+export type ReplaceVersionFunction = (
+  response: PackageResponse,
+  version: string
+) => string;
 
 export type PackageResponseAggregate = {
   order: number,
   dependency: PackageDependencyLens,
   response: PackageResponse,
 }
-
-export type PackageResolverFunction = (
-  request: FetchRequest,
-  replaceVersionFn: ReplaceVersionFunction
-) => Promise<Array<PackageResponse> | PackageResponse>;
-
-export type ReplaceVersionFunction = (response: PackageResponse, version: string) => string;
 
 export enum PackageResponseErrors {
   None,
@@ -29,6 +27,11 @@ export enum PackageResponseErrors {
   Unexpected,
 };
 
+export type PackageResponseStatus = {
+  source: HttpResponseSources,
+  status: number,
+}
+
 export class PackageResponse {
   provider: string;
   requested: PackageNameVersion;
@@ -36,6 +39,7 @@ export class PackageResponse {
   errorMessage?: string;
 
   source?: PackageSourceTypes;
+  response?: PackageResponseStatus;
   type?: PackageVersionTypes;
   resolved?: PackageNameVersion;
   suggestion?: PackageSuggestion;

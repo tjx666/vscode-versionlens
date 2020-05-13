@@ -1,5 +1,5 @@
 import appSettings from '../../appSettings';
-import { getProvidersByFileName } from '../../providers/codeLensProviders';
+import { getProvidersByFileName } from '../providers/versionlensProviders';
 import {
   getDecorationsByLine,
   removeDecorations,

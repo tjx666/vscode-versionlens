@@ -1,7 +1,8 @@
 import {
   HttpRequest,
   HttpRequestMethods,
-  createUrl
+  createUrl,
+  HttpResponseSources
 } from 'core/clients/requests/httpRequest'
 
 const assert = require('assert')
@@ -62,12 +63,16 @@ export const HttpRequestTests = {
     "caches url response on success": async () => {
       const testUrl = 'https://test.url.example/path';
       const testQueryParams = {}
-      const expectedCacheData = JSON.stringify({ "message": "cached test" })
+      const testResponse = { status: 200, responseText: "cached test", source: HttpResponseSources.remote };
+
+      const expectedCacheData = {
+        status: testResponse.status,
+        responseText: testResponse.responseText,
+        source: HttpResponseSources.cache,
+      }
+
       requestLightMock.xhr = options => {
-        return Promise.resolve({
-          status: 200,
-          responseText: expectedCacheData
-        })
+        return Promise.resolve(testResponse)
       };
 
       await testContext.rut.request(
@@ -84,12 +89,20 @@ export const HttpRequestTests = {
     "caches url response when rejected": async () => {
       const testUrl = 'https://test.url.example/path';
       const testQueryParams = {}
-      const expectedCacheData = JSON.stringify({ "message": "Not Found" })
+      const testResponse = {
+        status: 404,
+        responseText: "not found",
+        source: HttpResponseSources.remote
+      };
+
+      const expectedCacheData = {
+        status: testResponse.status,
+        responseText: testResponse.responseText,
+        source: HttpResponseSources.cache,
+      }
+
       requestLightMock.xhr = options => {
-        return Promise.resolve({
-          status: 404,
-          responseText: expectedCacheData
-        })
+        return Promise.reject(testResponse)
       };
 
       await testContext.rut.request(
@@ -97,9 +110,9 @@ export const HttpRequestTests = {
         testUrl,
         testQueryParams
       )
-        .then(response => {
+        .catch(response => {
           const cachedData = testContext.rut.cache.get('GET_' + testUrl);
-          assert.equal(cachedData, expectedCacheData);
+          assert.deepEqual(cachedData, expectedCacheData);
         })
     },
 

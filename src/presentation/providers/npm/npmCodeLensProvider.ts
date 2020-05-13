@@ -12,16 +12,16 @@ import {
 import NpmConfig from 'core/providers/npm/config';
 import { extractPackageDependenciesFromJson } from 'core/packages/parsers/jsonPackageParser';
 import { npmGetOutdated, npmPackageDirExists } from 'core/providers/npm/npmApiClient.js';
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/lenses/abstract/abstractVersionLensProvider';
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import * as VersionLensFactory from '../../lenses/factories/versionLensFactory';
-import { resolveNpmPackage } from './npmPackageResolver';
+import { fetchNpmPackage } from 'core/providers/npm/pacoteApiClient';
 
 export class NpmCodeLensProvider extends AbstractVersionLensProvider {
 
   _outdatedCache: Array<any>;
 
-  constructor() {
-    super();
+  constructor(provider: string = NpmConfig.provider) {
+    super(provider);
     this._outdatedCache = [];
   }
 
@@ -35,7 +35,6 @@ export class NpmCodeLensProvider extends AbstractVersionLensProvider {
   }
 
   fetchVersionLenses(
-    packagePath: string,
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
@@ -47,10 +46,11 @@ export class NpmCodeLensProvider extends AbstractVersionLensProvider {
     if (packageDepsLenses.length === 0) return null;
 
     return VersionLensFactory.createVersionLenses(
-      packagePath,
       document,
       packageDepsLenses,
-      resolveNpmPackage
+      this.logger,
+      fetchNpmPackage,
+      null
     );
   }
 

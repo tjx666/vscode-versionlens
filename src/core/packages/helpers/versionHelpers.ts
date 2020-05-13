@@ -1,7 +1,7 @@
+import { KeyStringArrayDictionary } from "core/definitions/generics";
 import {
   PackageNameVersion,
   PackageVersionTypes,
-  PackagePrereleaseDictionary
 } from "../models/packageDocument";
 import { SemverSpec } from "../definitions/semverSpec";
 
@@ -139,7 +139,7 @@ export function parseSemver(packageVersion: string): SemverSpec {
 
 export function filterPrereleasesWithinRange(versionRange: string, prereleases: Array<string>): Array<string> {
   const { SemVer, maxSatisfying } = require('semver');
-  const prereleaseGroupMap: PackagePrereleaseDictionary = {};
+  const prereleaseGroupMap: KeyStringArrayDictionary = {};
 
   // for each prerelease version;
   // group prereleases by x.x.x-{name}*.x

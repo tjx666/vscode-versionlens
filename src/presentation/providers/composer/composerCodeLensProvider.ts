@@ -5,18 +5,17 @@ import * as VsCodeTypes from 'vscode';
 import ComposerConfig from 'core/providers/composer/config';
 import { formatWithExistingLeading } from '../../../common/utils';
 import { extractPackageDependenciesFromJson } from 'core/packages/parsers/jsonPackageParser';
-import { readComposerSelections } from 'core/providers/composer/composerApiClient';
+import { readComposerSelections, fetchComposerPackage } from 'core/providers/composer/composerApiClient';
 import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from 'presentation/editor/decorations';
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/lenses/abstract/abstractVersionLensProvider';
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
-import { resolveComposerPackage } from './composerPackageResolver';
 
 export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
 
   _outdatedCache: {};
 
   constructor() {
-    super();
+    super(ComposerConfig.provider);
   }
 
   get selector() {
@@ -29,7 +28,6 @@ export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
   }
 
   fetchVersionLenses(
-    packagePath: string,
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
@@ -41,14 +39,13 @@ export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
     if (packageDepsLenses.length === 0) return Promise.resolve([]);
 
     return VersionLensFactory.createVersionLenses(
-      packagePath,
       document,
       packageDepsLenses,
-      resolveComposerPackage
+      this.logger,
+      fetchComposerPackage,
+      null
     );
-
   }
-
 
   /*
 evaluateCodeLens(codeLens: IVersionCodeLens) {

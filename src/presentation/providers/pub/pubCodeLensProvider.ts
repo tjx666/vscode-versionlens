@@ -3,12 +3,16 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import DubConfig from 'core/providers/pub/config';
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from "presentation/lenses/abstract/abstractVersionLensProvider";
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from "presentation/providers/abstract/abstractVersionLensProvider";
 import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
 import { extractPackageDependenciesFromYaml } from "core/providers/pub/pubPackageParser";
-import { resolvePubPackage } from "./pubPackageResolver";
+import { fetchPubPackage } from 'core/providers/pub/pubApiClient';
 
 export class PubCodeLensProvider extends AbstractVersionLensProvider {
+
+  constructor() {
+    super(DubConfig.provider);
+  }
 
   get selector() {
     return {
@@ -19,7 +23,6 @@ export class PubCodeLensProvider extends AbstractVersionLensProvider {
   }
 
   async fetchVersionLenses(
-    packagePath: string,
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
@@ -30,10 +33,11 @@ export class PubCodeLensProvider extends AbstractVersionLensProvider {
     if (packageDepsLenses.length === 0) return Promise.resolve([]);
 
     return VersionLensFactory.createVersionLenses(
-      packagePath,
       document,
       packageDepsLenses,
-      resolvePubPackage
+      this.logger,
+      fetchPubPackage,
+      null
     );
   }
 

@@ -4,7 +4,7 @@ import * as VsCodeTypes from 'vscode';
 // imports
 import MavenConfig from 'core/providers/maven/config';
 
-import { AbstractVersionLensProvider } from 'presentation/lenses/abstract/abstractVersionLensProvider';
+import { AbstractVersionLensProvider } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
 import { extractMavenLensDataFromDocument } from 'core/providers/maven/mavenPackageParser';
 // import { loadMavenRepositories } from 'core/providers/maven/mavenAPI';
@@ -21,15 +21,19 @@ export class MavenCodeLensProvider extends AbstractVersionLensProvider {
     }
   }
 
-  async fetchVersionLenses(packagePath: string, document: VsCodeTypes.TextDocument, token: VsCodeTypes.CancellationToken) {
+  async fetchVersionLenses(
+    document: VsCodeTypes.TextDocument,
+    token: VsCodeTypes.CancellationToken,
+  ) {
     const packageDepsLenses = extractMavenLensDataFromDocument(document, MavenConfig.getDependencyProperties());
     if (packageDepsLenses.length === 0) return Promise.resolve([]);
 
     return VersionLensFactory.createVersionLenses(
-      packagePath,
       document,
       packageDepsLenses,
-      resolveMavenPackage
+      this.logger,
+      resolveMavenPackage,
+      null
     );
 
   }

@@ -1,3 +1,6 @@
+import { PackageRequest, PackageIdentifier } from "./packageRequest";
+import { PackageResponseStatus } from "./packageResponse";
+
 export type PackageResolverDelegate = (packagePath: string, name: string, version: string, replaceVersionFn) => Promise<PackageDocument>;
 
 export enum PackageSourceTypes {
@@ -31,10 +34,6 @@ export type PackageNameVersion = {
 }
 
 
-export type PackagePrereleaseDictionary = {
-  [tagName: string]: Array<string>
-}
-
 export enum PackageSuggestionFlags {
   // bitwise
   status = 1,
@@ -52,8 +51,9 @@ export type PackageSuggestion = {
 export type PackageDocument = {
   provider: string,
   source: PackageSourceTypes,
+  response?: PackageResponseStatus,
   type: PackageVersionTypes,
-  requested: PackageNameVersion,
+  requested: PackageIdentifier,
   resolved: PackageNameVersion,
   suggestions: Array<PackageSuggestion>,
   releases?: Array<string>,

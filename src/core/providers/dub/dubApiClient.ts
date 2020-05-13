@@ -1,5 +1,5 @@
-import * as ErrorFactory from 'core/clients/errors/factory';
-import * as PackageDocumentFactory from 'core/packages/factories/packageDocumentFactory';
+import * as DocumentFactory from 'core/packages/factories/packageDocumentFactory';
+import * as ResponseFactory from 'core/packages/factories/packageResponseFactory';
 import { PackageSourceTypes, PackageDocument } from 'core/packages/models/packageDocument';
 import { createSuggestionTags } from 'core/packages/factories/packageSuggestionFactory';
 import {
@@ -8,7 +8,7 @@ import {
   parseSemver,
 } from 'core/packages/helpers/versionHelpers';
 import { SemverSpec } from 'core/packages/definitions/semverSpec';
-import { FetchRequest } from 'core/clients/models/fetch';
+import { PackageRequest } from "core/packages/models/packageRequest";
 import { JsonHttpRequest } from 'core/clients/requests/jsonHttpRequest.js';
 import { HttpResponse, HttpRequestMethods } from 'core/clients/requests/httpRequest';
 import DubConfig from './config';
@@ -17,46 +17,45 @@ const fs = require('fs');
 
 const jsonRequest = new JsonHttpRequest({}, 0);
 
-export async function fetchPackage(request: FetchRequest): Promise<PackageDocument> {
-  const semverSpec = parseSemver(request.packageVersion);
+export async function fetchDubPackage(request: PackageRequest): Promise<PackageDocument> {
+  const semverSpec = parseSemver(request.package.version);
+
   return createRemotePackageDocument(request, semverSpec)
-    .catch(function (error: HttpResponse) {
-      const requested = {
-        name: request.packageName,
-        version: request.packageVersion
-      };
-
+    .catch((error: HttpResponse) => {
       if (error.status === 404) {
-        return PackageDocumentFactory.createNotFound(DubConfig.provider, requested, null);
+        return DocumentFactory.createNotFound(
+          DubConfig.provider,
+          request.package,
+          null
+        );
       }
-
-      return Promise.reject(ErrorFactory.createFetchError(request, error, semverSpec))
+      return Promise.reject(error);
     });
-
 }
 
-function createRemotePackageDocument(request: FetchRequest, semverSpec: SemverSpec): Promise<PackageDocument> {
-
-  const url = `${DubConfig.getApiUrl()}/${encodeURIComponent(request.packageName)}/info`;
+function createRemotePackageDocument(request: PackageRequest, semverSpec: SemverSpec): Promise<PackageDocument> {
+  const url = `${DubConfig.getApiUrl()}/${encodeURIComponent(request.package.name)}/info`;
   const queryParams = {
     minimize: 'true',
   }
 
   return jsonRequest.requestJson(HttpRequestMethods.get, url, queryParams)
-    .then(response => {
+    .then(httpResponse => {
 
-      const packageInfo = response.data;
+      const packageInfo = httpResponse.data;
 
       const versionRange = semverSpec.rawVersion;
 
-      const requested = {
-        name: request.packageName,
-        version: request.packageVersion
-      };
+      const requested = request.package;
 
       const resolved = {
-        name: request.packageName,
+        name: requested.name,
         version: versionRange,
+      };
+
+      const response = {
+        source: httpResponse.source,
+        status: httpResponse.status,
       };
 
       const rawVersions = extractVersionsFromMap(packageInfo.versions);
@@ -72,6 +71,7 @@ function createRemotePackageDocument(request: FetchRequest, semverSpec: SemverSp
       return {
         provider: DubConfig.provider,
         source: PackageSourceTypes.registry,
+        response,
         type: semverSpec.type,
         requested,
         resolved,

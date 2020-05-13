@@ -6,8 +6,9 @@ import appSettings from 'appSettings';
 import { PackageSourceTypes } from 'core/packages/models/packageDocument';
 import { PackageResponseErrors } from 'core/packages/models/packageResponse';
 import * as CommandFactory from 'presentation/commands/factory';
-import { IVersionCodeLens } from "../definitions/IVersionCodeLens";
-import { VersionLens } from '../models/versionLens';
+import { IVersionCodeLens } from "../../lenses/definitions/IVersionCodeLens";
+import { VersionLens } from '../../lenses/models/versionLens';
+import { ILogger } from 'core/logging/definitions';
 
 export type VersionLensFetchResponse = Promise<VersionLens[] | null>;
 
@@ -17,16 +18,21 @@ export abstract class AbstractVersionLensProvider {
 
   onDidChangeCodeLenses: any;
 
+  provider: string;
+
+  // packagePath: string;
+  logger: ILogger;
+
   abstract updateOutdated(packagePath: string);
 
   abstract fetchVersionLenses(
-    packagePath: string,
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse;
 
-  constructor() {
+  constructor(provider: string) {
     const { EventEmitter } = require('vscode');
+    this.provider = provider;
     this._onChangeCodeLensesEmitter = new EventEmitter();
     this.onDidChangeCodeLenses = this._onChangeCodeLensesEmitter.event;
   }
@@ -40,14 +46,19 @@ export abstract class AbstractVersionLensProvider {
     token: VsCodeTypes.CancellationToken
   ): Promise<VersionLens[] | null> {
     if (appSettings.showVersionLenses === false) return null;
-
-    const { dirname } = require('path');
-    const packagePath = dirname(document.uri.fsPath);
+    const { window } = require('vscode');
 
     // set in progress
     appSettings.inProgress = true;
 
-    return this.fetchVersionLenses(packagePath, document, token);
+    if (!this.logger) {
+      this.logger = window.createOutputChannel(`versionlens - ${this.provider}`);
+    }
+
+    const outputChannel: any = this.logger;
+    outputChannel.clear();
+
+    return this.fetchVersionLenses(document, token);
   }
 
   resolveCodeLens(codeLens: IVersionCodeLens, token: VsCodeTypes.CancellationToken) {

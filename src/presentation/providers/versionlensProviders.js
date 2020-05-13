@@ -1,12 +1,12 @@
-import { NpmCodeLensProvider } from '../presentation/providers/npm/npmCodeLensProvider';
-import { JspmCodeLensProvider } from '../presentation/providers/jspm/jspmCodeLensProvider';
-import { DubCodeLensProvider } from '../presentation/providers/dub/dubCodeLensProvider';
-import { DotNetCodeLensProvider } from '../presentation/providers/dotnet/dotnetCodeLensProvider';
-import { MavenCodeLensProvider } from '../presentation/providers/maven/mavenCodeLensProvider';
-import { PubCodeLensProvider } from '../presentation/providers/pub/pubCodeLensProvider';
-import { ComposerCodeLensProvider } from '../presentation/providers/composer/composerCodeLensProvider';
+import { NpmCodeLensProvider } from './npm/npmCodeLensProvider';
+import { JspmCodeLensProvider } from './jspm/jspmCodeLensProvider';
+import { DubCodeLensProvider } from './dub/dubCodeLensProvider';
+import { DotNetCodeLensProvider } from './dotnet/dotnetCodeLensProvider';
+import { MavenCodeLensProvider } from './maven/mavenCodeLensProvider';
+import { PubCodeLensProvider } from './pub/pubCodeLensProvider';
+import { ComposerCodeLensProvider } from './composer/composerCodeLensProvider';
 
-const codeLensProviders = [
+const versionlensProviders = [
   new NpmCodeLensProvider(),
   new JspmCodeLensProvider(),
   new DubCodeLensProvider(),
@@ -21,7 +21,7 @@ export function getProvidersByFileName(fileName) {
   const minimatch = require('minimatch');
   const filename = path.basename(fileName);
 
-  const filtered = codeLensProviders
+  const filtered = versionlensProviders
     .slice(0)
     .filter(provider => minimatch(filename, provider.selector.pattern));
 
@@ -53,4 +53,4 @@ export function reloadActiveProvidersByGroup(group) {
   return true;
 }
 
-export default codeLensProviders;
+export default versionlensProviders;
