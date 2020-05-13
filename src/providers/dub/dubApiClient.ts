@@ -74,7 +74,6 @@ function createRemotePackageDocument(request: PackageRequest, semverSpec: Semver
       );
 
       // todo return a ~master entry when no matches found
-
       return {
         provider: DubConfig.provider,
         source: PackageSourceTypes.registry,

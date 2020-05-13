@@ -72,7 +72,7 @@ function createRemotePackageDocument(request: PackageRequest, semverSpec: Semver
         prereleases
       );
 
-      // todo return a ~master entry when no matches found
+    // return PackageDocument
       return {
         provider: PubConfig.provider,
         source: PackageSourceTypes.registry,
