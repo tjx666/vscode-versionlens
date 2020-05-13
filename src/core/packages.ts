@@ -13,3 +13,4 @@ export * from './packages/models/packageResponse';
 export * from "./packages/models/packageRequest";
 
 export * from "./packages/Parsers/jsonPackageParser";
+export * from "./packages/Parsers/yamlPackageParser";

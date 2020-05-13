@@ -1,19 +1,22 @@
-import { PackageDependencyLens } from "core/packages";
+import { PackageDependencyLens } from "../models/packageDependencyLens";
 
 type YamlOptions = {
-  crlfOffset: number,
+  hasCrLf: boolean,
   filterPropertyNames: Array<string>,
 }
 
 export function extractPackageDependenciesFromYaml(yaml: string, filterPropertyNames: Array<string>): PackageDependencyLens[] {
-  const yamlParser = require('yaml');
-  const yamlDoc = yamlParser.parseDocument(yaml, { keepCstNodes: true });
+  const { Document, parseCST } = require('yaml');
+
+  // verbose parsing to handle CRLF scenarios
+  const cst = parseCST(yaml)
+
+  // create and parse the document
+  const yamlDoc = new Document({ keepCstNodes: true }).parse(cst[0])
   if (!yamlDoc || !yamlDoc.contents || yamlDoc.errors.length > 0) return [];
 
   const opts = {
-    // yaml parser doesn't include CRLF in range positions
-    // so this ensure CR is included in the line range result
-    crlfOffset: yaml.indexOf('\r\n') > 0 ? 2 : 0,
+    hasCrLf: yaml.indexOf('\r\n') > 0,
     filterPropertyNames,
   };
 
@@ -39,10 +42,11 @@ function collectDependencyNodes(nodes, opts: YamlOptions, collector = []) {
     function (pair) {
       // node may be in the form "no_version_dep:", which we will indicate as the latest
       if (!pair.value || (pair.value.type === 'PLAIN' && !pair.value.value)) {
+        const keyRange = getRangeFromCstNode(pair.key.cstNode, opts);
         pair.value = {
           range: [
-            pair.key.range[1] + 2 + opts.crlfOffset,
-            pair.key.range[1] + 2 + opts.crlfOffset
+            keyRange.end + 2,
+            keyRange.end + 2,
           ],
           value: 'latest',
           type: null
@@ -66,14 +70,16 @@ export function createDependencyLensFromMapType(nodes, parentKey, opts: YamlOpti
       if (!pair.value) return;
 
       if (pair.key.value === "version") {
+        const keyRange = getRangeFromCstNode(parentKey.cstNode, opts);
         const nameRange = createRange(
-          parentKey.range[0] + opts.crlfOffset,
-          parentKey.range[0] + opts.crlfOffset,
+          keyRange.start,
+          keyRange.start,
           null
         );
+        const valueRange = getRangeFromCstNode(parentKey.cstNode, opts);
         const versionRange = createRange(
-          pair.value.range[0] + opts.crlfOffset,
-          pair.value.range[1] + opts.crlfOffset,
+          valueRange.start,
+          valueRange.end,
           pair.value.type
         );
         const packageInfo = {
@@ -92,14 +98,17 @@ export function createDependencyLensFromMapType(nodes, parentKey, opts: YamlOpti
 }
 
 export function createDependencyLensFromPlainType(pair, opts: YamlOptions): PackageDependencyLens {
+  const keyRange = getRangeFromCstNode(pair.key.cstNode, opts);
   const nameRange = createRange(
-    pair.key.range[0] + opts.crlfOffset,
-    pair.key.range[0] + opts.crlfOffset,
+    keyRange.start,
+    keyRange.start,
     null
   );
+
+  const valueRange = getRangeFromCstNode(pair.key.cstNode, opts);
   const versionRange = createRange(
-    pair.value.range[0] + opts.crlfOffset,
-    pair.value.range[1] + opts.crlfOffset,
+    valueRange.start,
+    valueRange.end,
     pair.value.type
   );
   const packageInfo = {
@@ -120,4 +129,14 @@ function createRange(start, end, valueType) {
     start: start + (quoted ? 1 : 0),
     end: end - (quoted ? 1 : 0),
   }
+}
+
+function getRangeFromCstNode(cstNode, opts: YamlOptions) {
+  const crLfLineOffset = opts.hasCrLf ?
+    cstNode.rangeAsLinePos.start.line : 0;
+
+  const start = cstNode.range.start + crLfLineOffset;
+  const end = cstNode.range.end + crLfLineOffset;
+
+  return { start, end }
 }
