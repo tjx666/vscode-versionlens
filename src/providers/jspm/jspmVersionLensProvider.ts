@@ -2,12 +2,14 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import JspmConfig from 'providers/jspm/config';
-import { extractPackageDependenciesFromJson } from 'providers/jspm/jspmPackageParser';
 import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
 import { VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
-import { NpmCodeLensProvider } from '../npm/npmVersionLensProvider';
-import { resolveJspmPackage, customJspmReplaceVersion } from './jspmPackageResolver';
+import { NpmCodeLensProvider } from 'providers/npm/npmVersionLensProvider';
+import { fetchNpmPackage } from 'providers/npm/pacoteApiClient';
+import JspmConfig from './config';
+import { customJspmFormatVersion } from './jspmVersionUtils';
+
+import { extractPackageDependenciesFromJson } from './jspmPackageParser';
 
 export class JspmCodeLensProvider extends NpmCodeLensProvider {
 
@@ -19,19 +21,21 @@ export class JspmCodeLensProvider extends NpmCodeLensProvider {
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
-    const packageDepsLenses = extractPackageDependenciesFromJson(
+    // extract dependencies from json
+    const jspmDependencyLenses = extractPackageDependenciesFromJson(
       document.getText(),
       JspmConfig.getDependencyProperties(),
     );
-    if (packageDepsLenses.length === 0) return null;
+    if (jspmDependencyLenses.length === 0) return null;
 
-    // return VersionLensFactory.createVersionLenses(
-    //   document,
-    //   packageDepsLenses,
-    //   this.logger,
-    //   resolveJspmPackage,
-    //   customJspmReplaceVersion
-    // );
+    // fetch from npm
+    return VersionLensFactory.createVersionLenses(
+      document,
+      jspmDependencyLenses,
+      this.logger,
+      fetchNpmPackage,
+      customJspmFormatVersion
+    );
   }
 
 }

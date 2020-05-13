@@ -5,7 +5,10 @@ type YamlOptions = {
   filterPropertyNames: Array<string>,
 }
 
-export function extractPackageDependenciesFromYaml(yaml: string, filterPropertyNames: Array<string>): PackageDependencyLens[] {
+export function extractPackageDependenciesFromYaml(
+  yaml: string,
+  filterPropertyNames: Array<string>
+): Array<PackageDependencyLens> {
   const { Document, parseCST } = require('yaml');
 
   // verbose parsing to handle CRLF scenarios

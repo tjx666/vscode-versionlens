@@ -1,6 +1,9 @@
 import { PackageDependencyLens, extractFromNodes } from 'core/packages'
 
-export function extractPackageDependenciesFromJson(json: string, filterPropertyNames: string[]): PackageDependencyLens[] {
+export function extractPackageDependenciesFromJson(
+  json: string,
+  filterPropertyNames: Array<string>
+): Array<PackageDependencyLens> {
   const jsonParser = require("jsonc-parser");
 
   const jsonErrors = [];
@@ -11,7 +14,9 @@ export function extractPackageDependenciesFromJson(json: string, filterPropertyN
   for (let i = 0; i < children.length; i++) {
     const node = children[i];
     const [keyEntry, valueEntry] = node.children;
-    if (keyEntry.value === 'jspm') return extractFromNodes(valueEntry.children, filterPropertyNames);
+    if (keyEntry.value === 'jspm') {
+      return extractFromNodes(valueEntry.children, filterPropertyNames);
+    }
   }
 
   return [];
