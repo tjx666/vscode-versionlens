@@ -14,9 +14,9 @@
       "label": "compile",
       "presentation": {
         "echo": true,
-        "reveal": "silent",
-        "focus": true,
-        "panel": "dedicated",
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true,
       },
       "group": {
         "isDefault": true,
@@ -30,9 +30,9 @@
       "label": "compile:test",
       "presentation": {
         "echo": true,
-        "reveal": "silent",
-        "focus": true,
-        "panel": "dedicated",
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true,
       },
       "group": "build",
       "args": [
