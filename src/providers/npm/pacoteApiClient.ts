@@ -14,7 +14,7 @@ import {
 } from 'core/packages';
 
 import NpmConfig from 'providers/npm/config';
-import { HttpResponseSources } from "core/clients";
+import { ClientResponseSource } from "core/clients";
 
 export async function fetchNpmPackage(request: PackageRequest): Promise<PackageDocument> {
   const npa = require('npm-package-arg');
@@ -30,9 +30,9 @@ export async function fetchNpmPackage(request: PackageRequest): Promise<PackageD
           NpmConfig.provider,
           request.package,
           {
-            source: HttpResponseSources.remote,
+            source: ClientResponseSource.remote,
             status: error.code,
-            responseText: error.message
+            data: error.message
           },
         )
       );
@@ -42,7 +42,7 @@ export async function fetchNpmPackage(request: PackageRequest): Promise<PackageD
       resolve(
         createDirectoryPackageDocument(
           request.package,
-          ResponseFactory.createResponseStatus(HttpResponseSources.local, 200),
+          ResponseFactory.createResponseStatus(ClientResponseSource.local, 200),
           npaResult,
         )
       );
@@ -128,7 +128,7 @@ async function createRemotePackageDocument(request: PackageRequest, npaResult: a
       };
 
       const response = {
-        source: HttpResponseSources.remote,
+        source: ClientResponseSource.remote,
         status: 200,
       };
 
@@ -179,8 +179,8 @@ async function createRemotePackageDocument(request: PackageRequest, npaResult: a
       };
     }).catch(error => {
       const response = {
-        source: HttpResponseSources.remote,
-        responseText: error.message,
+        source: ClientResponseSource.remote,
+        data: error.message,
         status: error.code
       };
       return Promise.reject(ResponseFactory.createUnexpected(

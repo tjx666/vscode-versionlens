@@ -5,7 +5,7 @@ import * as VsCodeTypes from 'vscode';
 import DotnetConfig from 'providers/dotnet/config';
 import { extractDotnetLensDataFromDocument } from 'providers/dotnet/dotnetPackageParser'
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
-import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
+import { VersionLensFactory } from 'presentation/lenses';
 import { fetchDotnetPackage } from 'providers/dotnet/nugetApiClient';
 
 export class DotNetCodeLensProvider extends AbstractVersionLensProvider {
@@ -31,8 +31,8 @@ export class DotNetCodeLensProvider extends AbstractVersionLensProvider {
     );
   }
 
-  async updateOutdated(packagePath: string): Promise<any> { 
-    return Promise.resolve(); 
+  async updateOutdated(packagePath: string): Promise<any> {
+    return Promise.resolve();
   }
 
 }

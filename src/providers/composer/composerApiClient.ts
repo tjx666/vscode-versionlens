@@ -10,21 +10,21 @@ import {
 } from "core/packages";
 
 import {
-  JsonHttpRequest,
-  HttpResponse,
+  JsonHttpClientRequest,
+  ClientResponse,
   HttpRequestMethods
 } from "core/clients";
 
 import ComposerConfig from './config';
 
-const jsonRequest = new JsonHttpRequest({}, undefined);
+const jsonRequest = new JsonHttpClientRequest({}, undefined);
 const fs = require('fs');
 
 export async function fetchComposerPackage(request: PackageRequest): Promise<PackageDocument> {
   const semverSpec = VersionHelpers.parseSemver(request.package.version);
 
   return createRemotePackageDocument(request, semverSpec)
-    .catch((error: HttpResponse) => {
+    .catch((error: ClientResponse<string>) => {
       if (error.status === 404) {
         return DocumentFactory.createNotFound(
           ComposerConfig.provider,

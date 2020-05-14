@@ -1,7 +1,7 @@
-import { HttpRequestMethods } from './httpRequest';
-import { JsonHttpRequest } from './jsonHttpRequest';
+import { HttpRequestMethods } from './httpClientRequest';
+import { JsonHttpClientRequest } from './jsonHttpClientRequest';
 
-export class GithubRequest extends JsonHttpRequest {
+export class GithubRequest extends JsonHttpClientRequest {
 
   constructor() {
     super({

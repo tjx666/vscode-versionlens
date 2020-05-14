@@ -3,9 +3,9 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import PubConfig from 'providers/pub/config';
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from "presentation/providers/abstract/abstractVersionLensProvider";
-import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
 import { extractPackageDependenciesFromYaml } from "core/packages";
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from "presentation/providers/abstract/abstractVersionLensProvider";
+import { VersionLensFactory } from 'presentation/lenses';
 import { fetchPubPackage } from 'providers/pub/pubApiClient';
 
 export class PubCodeLensProvider extends AbstractVersionLensProvider {

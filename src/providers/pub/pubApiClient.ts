@@ -11,20 +11,20 @@ import {
 } from 'core/packages';
 
 import {
-  JsonHttpRequest,
+  JsonHttpClientRequest,
   HttpRequestMethods,
-  HttpResponse
+  ClientResponse
 } from "core/clients";
 
 import PubConfig from './config';
 
-const jsonRequest = new JsonHttpRequest({}, 0);
+const jsonRequest = new JsonHttpClientRequest({}, 0);
 
 export async function fetchPubPackage(request: PackageRequest): Promise<PackageDocument> {
   const semverSpec = VersionHelpers.parseSemver(request.package.version);
 
   return createRemotePackageDocument(request, semverSpec)
-    .catch((error: HttpResponse) => {
+    .catch((error: ClientResponse<string>) => {
       if (error.status === 404) {
         return DocumentFactory.createNotFound(
           PubConfig.provider,

@@ -1,4 +1,4 @@
-import { HttpResponseSources } from "core/clients";
+import { ClientResponseSource } from "core/clients";
 import {
   PackageSourceTypes,
   PackageNameVersion,
@@ -29,7 +29,7 @@ export enum PackageResponseErrors {
 };
 
 export type PackageResponseStatus = {
-  source: HttpResponseSources,
+  source: ClientResponseSource,
   status: number,
 }
 

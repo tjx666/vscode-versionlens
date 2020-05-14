@@ -1,4 +1,4 @@
-import { HttpResponse, HttpResponseSources } from "core/clients";
+import { ClientResponse, ClientResponseSource } from "core/clients";
 import { PackageDocument } from "../models/packageDocument";
 import {
   PackageResponse,
@@ -25,7 +25,7 @@ export function createSuccess(document: PackageDocument, replaceVersionFn: Repla
   })
 }
 
-export function createResponseStatus(source: HttpResponseSources, status: number): PackageResponseStatus {
+export function createResponseStatus(source: ClientResponseSource, status: number): PackageResponseStatus {
   return {
     source,
     status
@@ -80,12 +80,16 @@ export function createNotFound(provider: string, requested: PackageIdentifier): 
 //   return createPackage(name, message, meta, null);
 // }
 
-export function createUnexpected(provider: string, requested: PackageIdentifier, response: HttpResponse): PackageResponse {
+export function createUnexpected(
+  provider: string,
+  requested: PackageIdentifier,
+  response: ClientResponse<string>
+): PackageResponse {
   const error: PackageResponse = {
     provider,
     requested,
     error: PackageResponseErrors.Unexpected,
-    errorMessage: response.responseText,
+    errorMessage: response.data,
     response
   };
   return error;

@@ -8,8 +8,8 @@ import {
   VersionHelpers
 } from 'core/packages';
 import {
-  JsonHttpRequest,
-  HttpResponse,
+  JsonHttpClientRequest,
+  ClientResponse,
   HttpRequestMethods
 } from "core/clients";
 import { parseVersionSpec } from './dotnetUtils.js';
@@ -17,13 +17,13 @@ import { DotNetVersionSpec } from './definitions/versionSpec';
 
 import DotnetConfig from './config';
 
-const jsonRequest = new JsonHttpRequest({}, 0);
+const jsonRequest = new JsonHttpClientRequest({}, 0);
 
 export async function fetchDotnetPackage(request: PackageRequest): Promise<PackageDocument> {
   const dotnetSpec = parseVersionSpec(request.package.version);
   //TODO: resolve url via service locator from sources
   return createRemotePackageDocument(request, dotnetSpec)
-    .catch((error: HttpResponse) => {
+    .catch((error: ClientResponse<string>) => {
       if (error.status === 404) {
         return DocumentFactory.createNotFound(
           DotnetConfig.provider,

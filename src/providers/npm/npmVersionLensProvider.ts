@@ -12,12 +12,15 @@ import {
 
 import { IProviderConfig } from "core/configuration/definitions";
 import { extractPackageDependenciesFromJson } from 'core/packages';
-import { npmGetOutdated, npmPackageDirExists } from 'providers/npm/npmApiClient.js';
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
-import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
-import { fetchNpmPackage } from 'providers/npm/pacoteApiClient';
-import { VersionLens } from 'presentation/lenses/models/versionLens';
-import NpmConfig from 'providers/npm/config';
+import {
+  AbstractVersionLensProvider,
+  VersionLensFetchResponse
+} from 'presentation/providers/abstract/abstractVersionLensProvider';
+import { VersionLensFactory, VersionLens } from 'presentation/lenses';
+
+import { fetchNpmPackage } from './pacoteApiClient';
+import { npmGetOutdated, npmPackageDirExists } from './npmApiClient';
+import NpmConfig from './config';
 
 export class NpmCodeLensProvider extends AbstractVersionLensProvider {
 

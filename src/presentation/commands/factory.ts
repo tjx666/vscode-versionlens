@@ -1,7 +1,7 @@
 import appSettings from 'appSettings';
 import { VersionHelpers, PackageSuggestionFlags } from 'core/packages';
-import { githubRequest } from 'core/clients/requests/githubRequest';
-import { VersionLens } from 'presentation/lenses/models/versionLens';
+import { githubRequest } from 'core/clients/requests/githubClientRequest';
+import { VersionLens } from 'presentation/lenses';
 
 export function createErrorCommand(errorMsg, codeLens) {
   return codeLens.setCommand(`${errorMsg}`);

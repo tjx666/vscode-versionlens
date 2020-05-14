@@ -7,8 +7,7 @@ import { ILogger } from 'core/logging/definitions';
 import { IProviderConfig } from "core/configuration/definitions";
 import { PackageSourceTypes, PackageResponseErrors } from 'core/packages';
 import * as CommandFactory from 'presentation/commands/factory';
-import { IVersionCodeLens } from "presentation/lenses/definitions/IVersionCodeLens";
-import { VersionLens } from 'presentation/lenses/models/versionLens';
+import { IVersionCodeLens, VersionLens } from "presentation/lenses";
 
 export type VersionLensFetchResponse = Promise<VersionLens[] | null>;
 

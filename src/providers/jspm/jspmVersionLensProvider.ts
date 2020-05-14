@@ -2,7 +2,7 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
+import { VersionLensFactory } from 'presentation/lenses';
 import { VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import { NpmCodeLensProvider } from 'providers/npm/npmVersionLensProvider';
 import { fetchNpmPackage } from 'providers/npm/pacoteApiClient';

@@ -4,7 +4,7 @@ import * as VsCodeTypes from 'vscode';
 // imports
 import { extractPackageDependenciesFromJson, VersionHelpers } from 'core/packages';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
-import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
+import { VersionLensFactory, VersionLens } from 'presentation/lenses';
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
@@ -12,7 +12,6 @@ import {
 } from 'presentation/editor/decorations';
 import DubConfig from 'providers/dub/config';
 import { fetchDubPackage, readDubSelections } from 'providers/dub/dubApiClient';
-import { VersionLens } from 'presentation/lenses/models/versionLens';
 
 export class DubCodeLensProvider extends AbstractVersionLensProvider {
 

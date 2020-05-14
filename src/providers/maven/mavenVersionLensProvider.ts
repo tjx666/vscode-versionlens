@@ -5,7 +5,6 @@ import * as VsCodeTypes from 'vscode';
 import MavenConfig from 'providers/maven/config';
 
 import { AbstractVersionLensProvider } from 'presentation/providers/abstract/abstractVersionLensProvider';
-import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
 import { extractMavenLensDataFromDocument } from 'providers/maven/mavenPackageParser';
 // import { loadMavenRepositories } from 'providers/maven/mavenAPI';
 import { resolveMavenPackage } from './mavenPackageResolver';

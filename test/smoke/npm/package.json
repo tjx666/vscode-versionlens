@@ -13,9 +13,9 @@
     "webpack": "next",
     "semver": "5.3.0",
     "npm": ">=4.5.1",
-    "invalid": "git+https://git@github.com/testuser/test.git",
-    "invalid2": ">=4.5.",
-    "invalid3": "git+ssh://git@some.com/testuser/test.git",
+    "invalid": ">=4.5.",
+    "gitpkgnotfound1": "git+https://git@github.com/testuser/test.git",
+    "gitpkgnotfound2": "git+ssh://git@some.com/testuser/test.git",
     "@could-not-be-found/a": "^1.0.0"
   },
   "customDependencies": {

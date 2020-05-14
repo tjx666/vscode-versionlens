@@ -1,10 +1,10 @@
-import { HttpResponseSources } from 'core/clients'
-
 import {
+  ClientResponseSource,
   HttpRequest,
   HttpRequestMethods,
-  createUrl
-} from 'core/clients/requests/httpRequest'
+  createUrl,
+} from 'core/clients'
+import { KeyStringDictionary } from '/core/definitions/generics'
 
 const assert = require('assert')
 const mock = require('mock-require')
@@ -40,7 +40,7 @@ export const HttpRequestTests = {
 
       await Promise.all(
 
-        testQueryParams.map(async function (params) {
+        testQueryParams.map(async function (params: KeyStringDictionary) {
           const expectedUrl = createUrl(testUrl, params);
           requestLightMock.xhr = options => {
             assert.equal(options.url, expectedUrl);
@@ -64,12 +64,16 @@ export const HttpRequestTests = {
     "caches url response on success": async () => {
       const testUrl = 'https://test.url.example/path';
       const testQueryParams = {}
-      const testResponse = { status: 200, responseText: "cached test", source: HttpResponseSources.remote };
+      const testResponse = {
+        source: ClientResponseSource.remote,
+        status: 200,
+        responseText: "cached test",
+      };
 
       const expectedCacheData = {
+        source: ClientResponseSource.cache,
         status: testResponse.status,
-        responseText: testResponse.responseText,
-        source: HttpResponseSources.cache,
+        data: testResponse.responseText,
       }
 
       requestLightMock.xhr = options => {
@@ -93,13 +97,13 @@ export const HttpRequestTests = {
       const testResponse = {
         status: 404,
         responseText: "not found",
-        source: HttpResponseSources.remote
+        source: ClientResponseSource.remote
       };
 
       const expectedCacheData = {
         status: testResponse.status,
-        responseText: testResponse.responseText,
-        source: HttpResponseSources.cache,
+        data: testResponse.responseText,
+        source: ClientResponseSource.cache,
       }
 
       requestLightMock.xhr = options => {
@@ -124,7 +128,7 @@ export const HttpRequestTests = {
       requestLightMock.xhr = options => {
         return Promise.resolve({
           status: 200,
-          responseText: JSON.stringify({ "message": "cached test" })
+          data: JSON.stringify({ "message": "cached test" })
         })
       };
 

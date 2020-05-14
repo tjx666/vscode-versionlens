@@ -1,3 +1,5 @@
+import { delay } from 'test/unit/utils';
+
 import { ExpiryCacheMap } from 'core/caching/expiryCacheMap';
 
 const assert = require('assert');
@@ -32,7 +34,35 @@ export const ExpiryCacheMapTests = {
       testCacheMap.set(testKey, {});
       const actual = testCacheMap.hasExpired(testKey);
       assert.ok(actual, 'ExpiryCacheMap.hasExpired(key): A cache entry beyond the cache duration should be expired');
-    }
+    },
+
+    "returns true when duration has elapsed": async () => {
+      const testKey = 'duration';
+      const testDuration = 250;
+
+      testCacheMap = new ExpiryCacheMap(testDuration);
+      testCacheMap.set(testKey, "should of expired")
+
+      return delay(testDuration + 10)
+        .then(finished => {
+          const actual = testCacheMap.hasExpired(testKey);
+          assert.equal(actual, true);
+        });
+    },
+
+    "returns false when duration has not elapsed": async () => {
+      const testKey = 'duration';
+      const testDuration = 250;
+
+      testCacheMap = new ExpiryCacheMap(testDuration);
+      testCacheMap.set(testKey, "should not be expired")
+
+      return delay(testDuration - 10)
+        .then(finished => {
+          const actual = testCacheMap.hasExpired(testKey);
+          assert.equal(actual, false);
+        });
+    },
 
   },
 
@@ -80,13 +110,13 @@ export const ExpiryCacheMapTests = {
     "expires items in the cache": () => {
       const testKey = 'key1';
       const testData = "initial data";
-      
+
       testCacheMap.set(testKey, testData);
       testCacheMap.expire(testKey);
-      assert.ok( testCacheMap.hasExpired(testKey), true, 'ExpiryCacheMap.expire(key): Should expiry the item');
+      assert.ok(testCacheMap.hasExpired(testKey), true, 'ExpiryCacheMap.expire(key): Should expiry the item');
 
-      testCacheMap.set(testKey, "new data"); 
-      assert.ok( testCacheMap.get(testKey), "new data", 'ExpiryCacheMap.get(key): Should contain new data');
+      testCacheMap.set(testKey, "new data");
+      assert.ok(testCacheMap.get(testKey), "new data", 'ExpiryCacheMap.get(key): Should contain new data');
     }
 
   }

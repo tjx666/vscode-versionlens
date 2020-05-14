@@ -9,6 +9,19 @@ const fs = require('fs');
 
 export const testPath = path.join(__dirname, '../../test');
 
+export async function delay(delay) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      try {
+        resolve();
+      } catch (err) {
+        reject(err);
+      }
+    }, delay);
+  });
+}
+
+
 export class TestFixtureMap {
   cache;
   fixtureRootPath;

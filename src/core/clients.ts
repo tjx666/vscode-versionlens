@@ -1,4 +1,9 @@
-export * from './clients/definitions/responseDefinitions';
-export * from './clients/requests/httpRequest';
-export * from './clients/requests/jsonHttpRequest';
-export * from './clients/requests/githubRequest';
+export * from './clients/definitions/clientResponse';
+
+
+export * from './clients/requests/abstractClientRequest';
+export * from './clients/requests/httpClientRequest';
+export * from './clients/requests/jsonHttpClientRequest';
+export * from './clients/requests/githubClientRequest';
+export * from './clients/requests/processClientRequest';
+

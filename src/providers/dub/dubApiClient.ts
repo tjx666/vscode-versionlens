@@ -9,21 +9,21 @@ import {
   PackageRequest
 } from "core/packages";
 import {
-  JsonHttpRequest,
-  HttpResponse,
+  JsonHttpClientRequest,
+  ClientResponse,
   HttpRequestMethods
 } from "core/clients";
 import DubConfig from './config';
 
 const fs = require('fs');
 
-const jsonRequest = new JsonHttpRequest({}, 0);
+const jsonRequest = new JsonHttpClientRequest({}, 0);
 
 export async function fetchDubPackage(request: PackageRequest): Promise<PackageDocument> {
   const semverSpec = VersionHelpers.parseSemver(request.package.version);
 
   return createRemotePackageDocument(request, semverSpec)
-    .catch((error: HttpResponse) => {
+    .catch((error: ClientResponse<string>) => {
       if (error.status === 404) {
         return DocumentFactory.createNotFound(
           DubConfig.provider,

@@ -10,8 +10,7 @@ import {
 import { readComposerSelections, fetchComposerPackage } from 'providers/composer/composerApiClient';
 import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from 'presentation/editor/decorations';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
-import * as VersionLensFactory from 'presentation/lenses/factories/versionLensFactory';
-import { VersionLens } from 'presentation/lenses/models/versionLens';
+import { VersionLensFactory, VersionLens } from 'presentation/lenses';
 
 export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
 

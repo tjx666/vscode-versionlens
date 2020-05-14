@@ -1,20 +1,23 @@
-import { KeyStringDictionary } from "../../definitions/generics";
-import { ExpiryCacheMap } from '../../caching/expiryCacheMap';
-import { HttpResponse, HttpResponseSources } from "../definitions/responseDefinitions";
+import { KeyStringDictionary } from "core/definitions/generics";
+import { AbstractClientRequest } from './abstractClientRequest';
+import { ClientResponse } from "../definitions/clientResponse";
 
 export enum HttpRequestMethods {
   get = 'GET',
   head = 'HEAD'
 }
 
-export class HttpRequest {
+export type HttpResponse = {
+  status: number;
+  responseText: string;
+}
 
-  cache: ExpiryCacheMap;
+export class HttpRequest extends AbstractClientRequest<string> {
 
   headers: KeyStringDictionary;
 
-  constructor(headers: KeyStringDictionary, cacheDuration: number) {
-    this.cache = new ExpiryCacheMap(cacheDuration);
+  constructor(headers?: KeyStringDictionary, cacheDuration?: number) {
+    super(cacheDuration);
     this.headers = headers || {};
   }
 
@@ -22,7 +25,8 @@ export class HttpRequest {
     method: HttpRequestMethods,
     baseUrl: string,
     queryParams: KeyStringDictionary = {}
-  ): Promise<HttpResponse> {
+  ): Promise<ClientResponse<string>> {
+
     const url = createUrl(baseUrl, queryParams);
     const cacheKey = method + '_' + url;
 
@@ -36,7 +40,7 @@ export class HttpRequest {
       type: method,
       headers: this.headers
     })
-      .then(response => {
+      .then((response: HttpResponse) => {
         return this.createCachedResponse(
           cacheKey,
           response.status,
@@ -49,31 +53,8 @@ export class HttpRequest {
           response.status,
           response.responseText
         );
-        return Promise.reject<HttpResponse>(result);
+        return Promise.reject<ClientResponse<string>>(result);
       });
-  }
-
-  createCachedResponse(cacheKey: string, status: number, responseText: string): HttpResponse {
-    const cacheEnabled = this.cache.cacheDuration > 0;
-
-    if (cacheEnabled) {
-      //  cache reponse (don't return, keep immutable)
-      this.cache.set(
-        cacheKey,
-        {
-          source: HttpResponseSources.cache,
-          status,
-          responseText
-        }
-      );
-    }
-
-    // return original remote data
-    return {
-      source: HttpResponseSources.remote,
-      status,
-      responseText
-    };
   }
 
 }
