@@ -3,12 +3,16 @@ import {
 } from 'core/clients';
 
 import { DotNetSource } from '../definitions';
+import { DotNetConfig } from '../config';
 
 
 export class DotNetClient extends ProcessClientRequest {
 
-  constructor(cacheDuration) {
+  config: DotNetConfig;
+
+  constructor(config: DotNetConfig, cacheDuration: number) {
     super(cacheDuration)
+    this.config = config;
   }
 
   async fetchSources(cwd: string): Promise<Array<DotNetSource>> {

@@ -3,27 +3,35 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import { extractPackageDependenciesFromJson, VersionHelpers } from 'core/packages';
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
+
+import {
+  AbstractVersionLensProvider,
+  VersionLensFetchResponse
+} from 'presentation/providers/abstract/abstractVersionLensProvider';
+
 import { VersionLensFactory, VersionLens } from 'presentation/lenses';
+
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
   renderOutdatedDecoration
 } from 'presentation/editor/decorations';
+
 import { DubConfig } from 'providers/dub/config';
+
 import { readDubSelections, DubClient } from 'providers/dub/clients/dubClient';
 
-export class DubCodeLensProvider extends AbstractVersionLensProvider<DubConfig> {
+export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfig> {
 
   _outdatedCache: any;
 
   dubClient: DubClient;
 
-  constructor(dubConfig) {
-    super(dubConfig);
+  constructor(config) {
+    super(config);
     this._outdatedCache = {};
 
-    this.dubClient = new DubClient(0);
+    this.dubClient = new DubClient(config, 0);
   }
 
   async fetchVersionLenses(

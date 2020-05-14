@@ -1,6 +1,7 @@
 import { DotNetClient } from 'providers/dotnet/clients/dotnetClient';
 import Fixutres from './fixtures/sources'
 import { ClientResponseSource } from '/core/clients';
+import { DotNetConfig } from '/providers/dotnet/config';
 
 const assert = require('assert');
 
@@ -38,7 +39,7 @@ export const DotnetClientRequestTests = {
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
-      const cut = new DotNetClient(0);
+      const cut = new DotNetClient(new DotNetConfig(), 0);
       return cut.fetchSources('.')
         .then(actualSources => {
           assert.deepEqual(actualSources, expected);
@@ -57,7 +58,7 @@ export const DotnetClientRequestTests = {
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
-      const cut = new DotNetClient(0);
+      const cut = new DotNetClient(new DotNetConfig(), 0);
       return cut.fetchSources('.')
         .then(actualSources => {
           assert.equal(actualSources.length, 0);
@@ -80,7 +81,7 @@ export const DotnetClientRequestTests = {
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
-      const cut = new DotNetClient(0);
+      const cut = new DotNetClient(new DotNetConfig(), 0);
       return cut.fetchSources('.')
         .catch(actualError => {
           assert.deepEqual(actualError, expectedErrorResp);

@@ -12,18 +12,18 @@ import { NuGetClient } from './clients/nugetClient';
 import { PackageRequest } from 'core/packages';
 
 
-export class DotNetCodeLensProvider
+export class DotNetVersionLensProvider
   extends AbstractVersionLensProvider<DotNetConfig> {
 
   dotnetClient: DotNetClient;
   nugetClient: NuGetClient;
 
-  constructor(dotnetConfig) {
-    super(dotnetConfig);
+  constructor(config: DotNetConfig) {
+    super(config);
 
     // todo get cache durations from config
-    this.dotnetClient = new DotNetClient(0)
-    this.nugetClient = new NuGetClient(0)
+    this.dotnetClient = new DotNetClient(config, 0);
+    this.nugetClient = new NuGetClient(config, 0);
   }
 
   async fetchVersionLenses(

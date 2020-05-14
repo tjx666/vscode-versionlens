@@ -1,11 +1,11 @@
 // todo roll them up!
-import { NpmCodeLensProvider } from './npm/npmVersionLensProvider';
-import { JspmCodeLensProvider } from './jspm/jspmVersionLensProvider';
-import { DubCodeLensProvider } from './dub/dubVersionLensProvider';
-import { DotNetCodeLensProvider } from './dotnet/dotnetVersionLensProvider';
-import { MavenCodeLensProvider } from './maven/mavenVersionLensProvider';
-import { PubCodeLensProvider } from './pub/pubVersionLensProvider';
-import { ComposerCodeLensProvider } from './composer/composerVersionLensProvider';
+import { NpmVersionLensProvider } from './npm/npmVersionLensProvider';
+import { JspmVersionLensProvider } from './jspm/jspmVersionLensProvider';
+import { DubVersionLensProvider } from './dub/dubVersionLensProvider';
+import { DotNetVersionLensProvider } from './dotnet/dotnetVersionLensProvider';
+import { MavenVersionLensProvider } from './maven/mavenVersionLensProvider';
+import { PubVersionLensProvider } from './pub/pubVersionLensProvider';
+import { ComposerVersionLensProvider } from './composer/composerVersionLensProvider';
 import { ComposerConfig } from './composer/config';
 import { DotNetConfig } from './dotnet/config';
 import { DubConfig } from './dub/config';
@@ -15,13 +15,13 @@ import { MavenConfig } from './maven/config';
 import { PubConfig } from './pub/config';
 
 const versionlensProviders = [
-  new NpmCodeLensProvider(new NpmConfig()),
-  new JspmCodeLensProvider(new JspmConfig()),
-  new DubCodeLensProvider(new DubConfig()),
-  new DotNetCodeLensProvider(new DotNetConfig()),
-  new MavenCodeLensProvider(new MavenConfig()),
-  new PubCodeLensProvider(new PubConfig()),
-  new ComposerCodeLensProvider(new ComposerConfig()),
+  new NpmVersionLensProvider(new NpmConfig()),
+  new JspmVersionLensProvider(new JspmConfig()),
+  new DubVersionLensProvider(new DubConfig()),
+  new DotNetVersionLensProvider(new DotNetConfig()),
+  new MavenVersionLensProvider(new MavenConfig()),
+  new PubVersionLensProvider(new PubConfig()),
+  new ComposerVersionLensProvider(new ComposerConfig()),
 ];
 
 export function getProvidersByFileName(fileName) {

@@ -3,13 +3,15 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import { extractPackageDependenciesFromYaml } from "core/packages";
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from "presentation/providers/abstract/abstractVersionLensProvider";
+import {
+  AbstractVersionLensProvider,
+  VersionLensFetchResponse
+} from "presentation/providers/abstract/abstractVersionLensProvider";
 import { VersionLensFactory } from 'presentation/lenses';
 import { PubConfig } from './config';
 import { PubClient } from './pubClient';
 
-export class PubCodeLensProvider
-
+export class PubVersionLensProvider
   extends AbstractVersionLensProvider<PubConfig> {
 
   pubClient: PubClient;

@@ -9,12 +9,11 @@ import { extractMavenLensDataFromDocument } from 'providers/maven/mavenPackagePa
 // import { loadMavenRepositories } from 'providers/maven/mavenAPI';
 import { resolveMavenPackage } from './mavenPackageResolver';
 
-export class MavenCodeLensProvider
+export class MavenVersionLensProvider
   extends AbstractVersionLensProvider<MavenConfig> {
 
-  constructor(mavenConfig) {
-    super(mavenConfig);
-
+  constructor(config: MavenConfig) {
+    super(config);
   }
 
   async fetchVersionLenses(

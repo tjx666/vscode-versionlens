@@ -25,22 +25,25 @@ export class PacoteClient
   extends JsonHttpClientRequest
   implements IPackageClient<NpmConfig> {
 
-  constructor(cacheDuration: number) {
-    super({}, cacheDuration)
+  config: NpmConfig;
+
+  constructor(config: NpmConfig, cacheDuration: number) {
+    super({}, cacheDuration);
+    this.config = config;
   }
 
   async fetchPackage(request: PackageRequest<NpmConfig>): Promise<PackageDocument> {
     const npa = require('npm-package-arg');
     let npaResult;
 
-    return new Promise<PackageDocument>(function (resolve, reject) {
+    return new Promise<PackageDocument>((resolve, reject) => {
 
       try {
         npaResult = npa.resolve(request.package.name, request.package.version, request.package.path);
       } catch (error) {
         return reject(
           ResponseFactory.createUnexpected(
-            request.clientData.provider,
+            this.config.provider,
             request.package,
             {
               source: ClientResponseSource.remote,
@@ -54,7 +57,7 @@ export class PacoteClient
       if (npaResult.type === PackageSourceTypes.directory || npaResult.type === PackageSourceTypes.file)
         resolve(
           createDirectoryPackageDocument(
-            request.clientData.provider,
+            this.config.provider,
             request.package,
             ResponseFactory.createResponseStatus(ClientResponseSource.local, 200),
             npaResult,
@@ -70,7 +73,7 @@ export class PacoteClient
 
       if (response.status === 'E404') {
         return DocumentFactory.createNotFound(
-          request.clientData.provider,
+          this.config.provider,
           request.package,
           null,
           ResponseFactory.createResponseStatus(response.source, 404)
@@ -79,7 +82,7 @@ export class PacoteClient
 
       if (response.status === 'EINVALIDTAGNAME' || response.data.includes('Invalid comparator:')) {
         return DocumentFactory.createInvalidVersion(
-          request.clientData.provider,
+          this.config.provider,
           request.package,
           ResponseFactory.createResponseStatus(response.source, 404),
           null
@@ -88,7 +91,7 @@ export class PacoteClient
 
       if (response.status === 'EUNSUPPORTEDPROTOCOL') {
         return DocumentFactory.createNotSupported(
-          request.clientData.provider,
+          this.config.provider,
           request.package,
           ResponseFactory.createResponseStatus(response.source, 404),
           null
@@ -97,7 +100,7 @@ export class PacoteClient
 
       if (response.status === 128) {
         return DocumentFactory.createGitFailed(
-          request.clientData.provider,
+          this.config.provider,
           request.package,
           ResponseFactory.createResponseStatus(response.source, 404),
           null

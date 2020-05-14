@@ -13,7 +13,6 @@ import {
   JsonHttpClientRequest,
   HttpClientResponse,
   HttpRequestMethods,
-  JsonRequestFunction,
 } from "core/clients";
 
 import { parseVersionSpec } from '../dotnetUtils.js';
@@ -24,13 +23,16 @@ export class NuGetClient
   extends JsonHttpClientRequest
   implements IPackageClient<DotNetConfig> {
 
-  constructor(cacheDuration: number) {
+  config: DotNetConfig;
+
+  constructor(config: DotNetConfig, cacheDuration: number) {
     super({}, cacheDuration)
+    this.config = config;
   }
 
   async fetchPackage(request: PackageRequest<DotNetConfig>): Promise<PackageDocument> {
     const dotnetSpec = parseVersionSpec(request.package.version);
-    const url = request.clientData.getNuGetFeeds()[0]
+    const url = this.config.getNuGetFeeds()[0]
 
     // feeds[0];
 

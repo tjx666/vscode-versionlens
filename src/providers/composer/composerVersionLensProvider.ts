@@ -3,31 +3,42 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import { ComposerConfig } from 'providers/composer/config';
+
 import {
   VersionHelpers,
   extractPackageDependenciesFromJson
 } from 'core/packages';
-import { readComposerSelections, ComposerClient } from 'providers/composer/composerClient';
+
+import {
+  readComposerSelections,
+  ComposerClient
+} from 'providers/composer/composerClient';
+
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
   renderOutdatedDecoration
 } from 'presentation/editor/decorations';
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
+
+import {
+  AbstractVersionLensProvider,
+  VersionLensFetchResponse
+} from 'presentation/providers/abstract/abstractVersionLensProvider';
+
 import { VersionLensFactory, VersionLens } from 'presentation/lenses';
 
-export class ComposerCodeLensProvider
+export class ComposerVersionLensProvider
   extends AbstractVersionLensProvider<ComposerConfig> {
 
   _outdatedCache: {};
 
   composerClient: ComposerClient;
 
-  constructor(composerConfig: ComposerConfig) {
-    super(composerConfig);
+  constructor(config: ComposerConfig) {
+    super(config);
 
     // todo get cache durations from config
-    this.composerClient = new ComposerClient(0)
+    this.composerClient = new ComposerClient(config, 0)
   }
 
   async fetchVersionLenses(

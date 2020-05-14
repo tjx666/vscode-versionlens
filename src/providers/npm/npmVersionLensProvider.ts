@@ -18,10 +18,10 @@ import {
 import { VersionLensFactory, VersionLens } from 'presentation/lenses';
 
 import { PacoteClient } from './clients/pacoteClient';
-import { npmGetOutdated, npmPackageDirExists } from './clients/npmApiClient';
+import { npmGetOutdated, npmPackageDirExists } from './clients/npmClient';
 import { NpmConfig } from './config';
 
-export class NpmCodeLensProvider
+export class NpmVersionLensProvider
   extends AbstractVersionLensProvider<NpmConfig> {
 
   _outdatedCache: Array<any>;
@@ -32,7 +32,7 @@ export class NpmCodeLensProvider
     super(config);
     this._outdatedCache = [];
 
-    this.pacoteClient = new PacoteClient(0);
+    this.pacoteClient = new PacoteClient(config, 0);
   }
 
   async fetchVersionLenses(

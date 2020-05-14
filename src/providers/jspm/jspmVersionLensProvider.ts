@@ -4,11 +4,11 @@ import * as VsCodeTypes from 'vscode';
 // imports
 import { VersionLensFactory } from 'presentation/lenses';
 import { VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
-import { NpmCodeLensProvider } from 'providers/npm/npmVersionLensProvider';
+import { NpmVersionLensProvider } from 'providers/npm/npmVersionLensProvider';
 import { customJspmFormatVersion } from './jspmVersionUtils';
 import { extractPackageDependenciesFromJson } from './jspmPackageParser';
 
-export class JspmCodeLensProvider extends NpmCodeLensProvider {
+export class JspmVersionLensProvider extends NpmVersionLensProvider {
 
   constructor(jspmConfig) {
     super(jspmConfig);
