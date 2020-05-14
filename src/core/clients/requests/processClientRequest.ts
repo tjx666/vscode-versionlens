@@ -29,7 +29,7 @@ export class ProcessClientRequest extends AbstractClientRequest<string> {
           result.stdout,
           ClientResponseSource.local
         );
-      }).catch(function (error) {
+      }).catch(error => {
         const result = this.createCachedResponse(
           cacheKey,
           error.code,

@@ -1,5 +1,5 @@
 import { PackageVersionTypes, VersionHelpers } from 'core/packages';
-import { DotNetVersionSpec, NugetVersionSpec } from './definitions/versionSpec';
+import { DotNetVersionSpec, NugetVersionSpec } from './definitions';
 
 export function expandShortVersion(value) {
   if (!value ||

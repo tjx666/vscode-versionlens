@@ -6,7 +6,7 @@ import DotnetConfig from 'providers/dotnet/config';
 import { extractDotnetLensDataFromDocument } from 'providers/dotnet/dotnetPackageParser'
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import { VersionLensFactory } from 'presentation/lenses';
-import { fetchDotnetPackage } from 'providers/dotnet/nugetApiClient';
+import { fetchDotnetPackage } from 'providers/dotnet/clients/nugetApiClient';
 
 export class DotNetCodeLensProvider extends AbstractVersionLensProvider {
 

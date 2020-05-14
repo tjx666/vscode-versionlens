@@ -1,7 +1,6 @@
 import { testPath } from 'test/unit/utils';
 import * as PacoteApiClient from 'providers/npm/pacoteApiClient'
 import Fixtures from './pacoteApiClient.fixtures'
-import { stringify } from 'querystring';
 
 const assert = require('assert')
 const path = require('path')
@@ -31,11 +30,13 @@ export default {
       const testRequest: any = {
         source: 'npmtest',
         package: {
-          path: path.join(testPath, './unit/core/providers/npm/fixtures/config'),
+          path: path.join(testPath, './unit/providers/npm/fixtures/config'),
           name: 'aliased',
           version: 'npm:pacote@11.1.9',
         },
       }
+
+      assert.ok(require('fs').existsSync(testRequest.package.path), 'test .npmrc doesnt exist?')
 
       // setup initial call
       pacoteMock.packument = async (npaResult, opts) => {
@@ -44,7 +45,7 @@ export default {
         return Fixtures.packumentGit
       }
 
-      await PacoteApiClient.fetchNpmPackage(testRequest)
+      return PacoteApiClient.fetchNpmPackage(testRequest)
     },
 
     'returns a file:// directory package': async () => {
@@ -59,7 +60,7 @@ export default {
         }
       }
 
-      await PacoteApiClient.fetchNpmPackage(testRequest)
+      return PacoteApiClient.fetchNpmPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'directory', `expected to see ${expectedSource}`)
           assert.deepEqual(actual.requested, testRequest.package)
@@ -80,7 +81,7 @@ export default {
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentGit);
 
-      await PacoteApiClient.fetchNpmPackage(testRequest)
+      return PacoteApiClient.fetchNpmPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'git')
           assert.equal(actual.resolved.name, testRequest.package.name)
@@ -101,7 +102,7 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentGitSemver);
-      await PacoteApiClient.fetchNpmPackage(testRequest)
+      return PacoteApiClient.fetchNpmPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'git')
           assert.equal(actual.type, 'range')
@@ -123,7 +124,7 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentGitCommittish);
-      await PacoteApiClient.fetchNpmPackage(testRequest)
+      return PacoteApiClient.fetchNpmPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'git')
           assert.equal(actual.type, 'committish')
@@ -145,7 +146,7 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentRegistryRange);
-      await PacoteApiClient.fetchNpmPackage(testRequest)
+      return PacoteApiClient.fetchNpmPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'registry')
           assert.equal(actual.type, 'range')
@@ -167,7 +168,7 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentRegistryVersion);
-      await PacoteApiClient.fetchNpmPackage(testRequest)
+      return PacoteApiClient.fetchNpmPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'registry')
           assert.equal(actual.type, 'version')
@@ -187,7 +188,7 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentRegistryAlias);
-      await PacoteApiClient.fetchNpmPackage(testRequest)
+      return PacoteApiClient.fetchNpmPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'registry')
           assert.equal(actual.type, 'alias')

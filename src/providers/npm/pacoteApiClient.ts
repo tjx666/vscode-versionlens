@@ -63,7 +63,7 @@ export async function fetchNpmPackage(request: PackageRequest): Promise<PackageD
       );
     }
 
-    if (response.status === 'EINVALIDTAGNAME' || response.responseText.includes('Invalid comparator:')) {
+    if (response.status === 'EINVALIDTAGNAME' || response.data.includes('Invalid comparator:')) {
       return DocumentFactory.createInvalidVersion(
         NpmConfig.provider,
         request.package,

@@ -12,17 +12,18 @@ import {
   ClientResponse,
   HttpRequestMethods
 } from "core/clients";
-import { parseVersionSpec } from './dotnetUtils.js';
-import { DotNetVersionSpec } from './definitions/versionSpec';
-
-import DotnetConfig from './config';
+import { parseVersionSpec } from '../dotnetUtils.js';
+import { DotNetVersionSpec } from '../definitions';
+import DotnetConfig from '../config';
 
 const jsonRequest = new JsonHttpClientRequest({}, 0);
 
 export async function fetchDotnetPackage(request: PackageRequest): Promise<PackageDocument> {
   const dotnetSpec = parseVersionSpec(request.package.version);
+  const url = DotnetConfig.getNuGetFeeds()[0];
+
   //TODO: resolve url via service locator from sources
-  return createRemotePackageDocument(request, dotnetSpec)
+  return createRemotePackageDocument(url, request, dotnetSpec)
     .catch((error: ClientResponse<string>) => {
       if (error.status === 404) {
         return DocumentFactory.createNotFound(
@@ -32,16 +33,17 @@ export async function fetchDotnetPackage(request: PackageRequest): Promise<Packa
           { status: error.status, source: error.source }
         );
       }
-
       return Promise.reject(error);
     });
+
 }
 
 async function createRemotePackageDocument(
+  url: string,
   request: PackageRequest,
   dotnetSpec: DotNetVersionSpec
 ): Promise<PackageDocument> {
-  const url = DotnetConfig.getNuGetFeeds()[0];
+
 
   const queryParams = {
     id: request.package.name,

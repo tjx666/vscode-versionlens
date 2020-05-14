@@ -15,3 +15,10 @@ export type DotNetVersionSpec = {
   resolvedVersion: string,
   spec: NugetVersionSpec,
 };
+
+export type DotNetSource = {
+  enabled: boolean,
+  machineWide: boolean,
+  source: string,
+  protocol: string,
+}

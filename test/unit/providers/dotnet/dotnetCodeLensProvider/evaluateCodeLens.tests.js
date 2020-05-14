@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import { generatePackage } from 'test/unit/utils.js';
-import { DotNetCodeLensProvider } from 'core/dotnet/dotnetCodeLensProvider';
+import { DotNetCodeLensProvider } from 'providers/dotnet/dotnetCodeLensProvider';
 import { PackageCodeLens } from 'providers/shared/packageCodeLens';
 import { PackageErrors } from 'providers/shared/definitions';
 

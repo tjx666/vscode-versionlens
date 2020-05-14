@@ -12,9 +12,15 @@
   "tasks": [
     {
       "label": "compile",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": true,
+        "panel": "dedicated",
+      },
       "group": {
         "isDefault": true,
-        "kind": "build"
+        "kind": "build",
       },
       "args": [
         "compile"
@@ -22,6 +28,12 @@
     },
     {
       "label": "compile:test",
+      "presentation": {
+        "echo": true,
+        "reveal": "silent",
+        "focus": true,
+        "panel": "dedicated",
+      },
       "group": "build",
       "args": [
         "compile:test"
