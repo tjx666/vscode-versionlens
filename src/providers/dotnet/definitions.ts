@@ -16,9 +16,19 @@ export type DotNetVersionSpec = {
   spec: NugetVersionSpec,
 };
 
+export enum DotNetSourceProtocols {
+  file = 'file:',
+  https = 'https:',
+}
+
 export type DotNetSource = {
   enabled: boolean,
   machineWide: boolean,
   source: string,
-  protocol: string,
+  protocol: DotNetSourceProtocols,
+}
+
+export type NuGetClientData = {
+  provider: string,
+  sources: Array<DotNetSource>
 }

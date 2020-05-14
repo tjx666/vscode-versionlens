@@ -2,6 +2,7 @@ import { DotNetClient } from 'providers/dotnet/clients/dotnetClient';
 import Fixutres from './fixtures/sources'
 import { ClientResponseSource } from '/core/clients';
 import { DotNetConfig } from '/providers/dotnet/config';
+import { DotNetSourceProtocols } from '/providers/dotnet/definitions';
 
 const assert = require('assert');
 
@@ -21,13 +22,13 @@ export const DotnetClientRequestTests = {
           enabled: true,
           machineWide: false,
           source: 'https://api.nuget.org/v3/index.json',
-          protocol: 'https:'
+          protocol: DotNetSourceProtocols.https
         },
         {
           enabled: true,
           machineWide: true,
           source: 'C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\',
-          protocol: 'file:'
+          protocol: DotNetSourceProtocols.file
         },
       ]
 
@@ -46,7 +47,6 @@ export const DotnetClientRequestTests = {
         });
 
     },
-
 
     "return 0 items when no sources are enabled": async () => {
 

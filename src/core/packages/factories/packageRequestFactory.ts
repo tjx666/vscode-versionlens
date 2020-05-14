@@ -21,7 +21,7 @@ export async function createPackageRequest<TClientData>(
       request.logger.appendLine(`Fetch error from ${error.source}: ${request.package.name}`)
 
       ErrorFactory.createConsoleError(error.provider,
-        client.fetchPackage.name,
+        client.config.provider,
         request.package.name,
         error
       );

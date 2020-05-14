@@ -2,9 +2,8 @@ import {
   ProcessClientRequest,
 } from 'core/clients';
 
-import { DotNetSource } from '../definitions';
+import { DotNetSource, DotNetSourceProtocols } from '../definitions';
 import { DotNetConfig } from '../config';
-
 
 export class DotNetClient extends ProcessClientRequest {
 
@@ -54,8 +53,9 @@ function parseSourcesArray(lines: Array<string>): Array<DotNetSource> {
     const offset = machineWide ? 3 : 2;
     const source = line.substring(offset);
     const sourceUrl = url.parse(source);
-    const protocol = (sourceUrl.protocol !== 'https:') ?
-      'file:' : 'https:';
+    const protocol = (sourceUrl.protocol !== DotNetSourceProtocols.https) ?
+      DotNetSourceProtocols.file :
+      DotNetSourceProtocols.https;
 
     return {
       enabled,

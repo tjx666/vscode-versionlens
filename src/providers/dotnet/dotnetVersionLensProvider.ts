@@ -9,7 +9,7 @@ import { DotNetConfig } from './config';
 import { extractDotnetLensDataFromDocument } from './dotnetPackageParser'
 import { DotNetClient } from './clients/dotnetClient';
 import { NuGetClient } from './clients/nugetClient';
-import { PackageRequest } from 'core/packages';
+import { NuGetClientData } from './definitions';
 
 
 export class DotNetVersionLensProvider
@@ -44,9 +44,14 @@ export class DotNetVersionLensProvider
     // get sources
     const sources = await this.dotnetClient.fetchSources(packagePath);
 
+    const clientData: NuGetClientData = {
+      provider: this.config.provider,
+      sources,
+    }
+
     const context = {
       client: this.nugetClient,
-      clientData: this.config,
+      clientData,
       logger: this.logger,
       // todo client specific data {sources, config etc.....}
     }

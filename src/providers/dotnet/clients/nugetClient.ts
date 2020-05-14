@@ -15,13 +15,18 @@ import {
   HttpRequestMethods,
 } from "core/clients";
 
+import {
+  DotNetVersionSpec,
+  NuGetClientData,
+  DotNetSourceProtocols
+} from '../definitions';
+
 import { parseVersionSpec } from '../dotnetUtils.js';
-import { DotNetVersionSpec } from '../definitions';
 import { DotNetConfig } from '../config';
 
 export class NuGetClient
   extends JsonHttpClientRequest
-  implements IPackageClient<DotNetConfig> {
+  implements IPackageClient<NuGetClientData> {
 
   config: DotNetConfig;
 
@@ -30,13 +35,25 @@ export class NuGetClient
     this.config = config;
   }
 
-  async fetchPackage(request: PackageRequest<DotNetConfig>): Promise<PackageDocument> {
+  async fetchPackage(request: PackageRequest<NuGetClientData>): Promise<PackageDocument> {
     const dotnetSpec = parseVersionSpec(request.package.version);
-    const url = this.config.getNuGetFeeds()[0]
 
-    // feeds[0];
+    const { sources } = request.clientData;
 
-    //TODO: resolve url via service locator from sources
+    // potentially drop feeds?
+    const feeds = this.config.getNuGetFeeds();
+
+    // append any https sources (todo local look ups)
+    sources.forEach(source => {
+      if (source.protocol === DotNetSourceProtocols.https) {
+        feeds.push(source.source)
+      }
+    });
+
+
+    //TODO: loop feeds, fetch autocomplete or search url via the service locator
+    const url = feeds[0]
+
     return createRemotePackageDocument(this, url, request, dotnetSpec)
       .catch((error: HttpClientResponse) => {
         if (error.status === 404) {
@@ -57,7 +74,7 @@ export class NuGetClient
 async function createRemotePackageDocument(
   client: JsonHttpClientRequest,
   url: string,
-  request: PackageRequest<DotNetConfig>,
+  request: PackageRequest<NuGetClientData>,
   dotnetSpec: DotNetVersionSpec
 ): Promise<PackageDocument> {
 
