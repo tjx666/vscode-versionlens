@@ -42,12 +42,15 @@ export class NpmCodeLensProvider extends AbstractVersionLensProvider {
     );
     if (packageDepsLenses.length === 0) return null;
 
+    const context = {
+      packageFetchRequest: fetchNpmPackage,
+      logger: this.logger,
+    }
+
     return VersionLensFactory.createVersionLenses(
       document,
       packageDepsLenses,
-      this.logger,
-      fetchNpmPackage,
-      null
+      context,
     );
   }
 

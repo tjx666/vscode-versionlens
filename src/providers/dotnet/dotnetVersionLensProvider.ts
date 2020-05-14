@@ -22,12 +22,15 @@ export class DotNetCodeLensProvider extends AbstractVersionLensProvider {
     const packageDepsLenses = extractDotnetLensDataFromDocument(document, DotnetConfig.getCSProjDependencyProperties());
     if (packageDepsLenses.length === 0) return null;
 
+    const context = {
+      packageFetchRequest: fetchDotnetPackage,
+      logger: this.logger,
+    }
+
     return VersionLensFactory.createVersionLenses(
       document,
       packageDepsLenses,
-      this.logger,
-      fetchDotnetPackage,
-      null
+      context,
     );
   }
 

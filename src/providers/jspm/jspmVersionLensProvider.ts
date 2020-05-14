@@ -28,13 +28,17 @@ export class JspmCodeLensProvider extends NpmCodeLensProvider {
     );
     if (jspmDependencyLenses.length === 0) return null;
 
+    const context = {
+      packageFetchRequest: fetchNpmPackage,
+      logger: this.logger,
+      versionReplace: customJspmFormatVersion,
+    }
+
     // fetch from npm
     return VersionLensFactory.createVersionLenses(
       document,
       jspmDependencyLenses,
-      this.logger,
-      fetchNpmPackage,
-      customJspmFormatVersion
+      context,
     );
   }
 

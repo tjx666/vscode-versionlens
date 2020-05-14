@@ -2,10 +2,11 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import PubConfig from 'providers/pub/config';
 import { extractPackageDependenciesFromYaml } from "core/packages";
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from "presentation/providers/abstract/abstractVersionLensProvider";
 import { VersionLensFactory } from 'presentation/lenses';
+
+import PubConfig from 'providers/pub/config';
 import { fetchPubPackage } from 'providers/pub/pubApiClient';
 
 export class PubCodeLensProvider extends AbstractVersionLensProvider {
@@ -25,12 +26,15 @@ export class PubCodeLensProvider extends AbstractVersionLensProvider {
     );
     if (packageDepsLenses.length === 0) return null;
 
+    const context = {
+      packageFetchRequest: fetchPubPackage,
+      logger: this.logger,
+    }
+
     return VersionLensFactory.createVersionLenses(
       document,
       packageDepsLenses,
-      this.logger,
-      fetchPubPackage,
-      null
+      context,
     );
   }
 

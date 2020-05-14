@@ -15,28 +15,29 @@ import {
 import { VersionLensFetchResponse } from 'providers/abstract/abstractVersionLensProvider';
 import { VersionLens } from '../models/versionLens';
 
+export type CreateVersionLensesContext = {
+  versionReplace?: ReplaceVersionFunction,
+  packageFetchRequest: PackageRequestFunction,
+  logger: ILogger,
+}
+
 export async function createVersionLenses(
   document: VsCodeTypes.TextDocument,
   dependencies: Array<PackageDependencyLens>,
-  logger: ILogger,
-  packageFetchRequest: PackageRequestFunction,
-  versionReplace: ReplaceVersionFunction,
+  options: CreateVersionLensesContext,
 ): VersionLensFetchResponse {
 
   const results = [];
-
   const { dirname } = require('path');
   const packagePath = dirname(document.uri.fsPath);
 
   const promises = dependencies.map(
     function (dependency) {
       const promisedDependency = resolveDependency(
+        packagePath,
         dependency,
         document,
-        packagePath,
-        logger,
-        packageFetchRequest,
-        versionReplace,
+        options,
       );
       return promisedDependency.then(function (lenses) {
         results.push(...lenses)
@@ -48,15 +49,19 @@ export async function createVersionLenses(
 }
 
 async function resolveDependency(
+  packagePath: string,
   dependency: PackageDependencyLens,
   document: VsCodeTypes.TextDocument,
-  packagePath: string,
-  logger: ILogger,
-  packageFetchRequest: PackageRequestFunction,
-  versionReplace: ReplaceVersionFunction,
+  options: CreateVersionLensesContext,
 ): Promise<Array<VersionLens>> {
 
   const { name, version } = dependency.packageInfo;
+
+  const {
+    logger,
+    packageFetchRequest,
+    versionReplace,
+  } = options;
 
   const request: PackageRequest = {
     package: {

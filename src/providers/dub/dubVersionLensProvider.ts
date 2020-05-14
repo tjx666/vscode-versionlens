@@ -32,12 +32,15 @@ export class DubCodeLensProvider extends AbstractVersionLensProvider {
     );
     if (packageDepsLenses.length === 0) return null;
 
+    const context = {
+      packageFetchRequest: fetchDubPackage,
+      logger: this.logger,
+    }
+
     return VersionLensFactory.createVersionLenses(
       document,
       packageDepsLenses,
-      this.logger,
-      fetchDubPackage,
-      null
+      context,
     );
   }
 

@@ -11,6 +11,7 @@ import { readComposerSelections, fetchComposerPackage } from 'providers/composer
 import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from 'presentation/editor/decorations';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import { VersionLensFactory, VersionLens } from 'presentation/lenses';
+import { CreateVersionLensesContext } from 'presentation/lenses/factories/versionLensFactory';
 
 export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
 
@@ -31,12 +32,15 @@ export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
     );
     if (packageDepsLenses.length === 0) return null;
 
+    const context = {
+      packageFetchRequest: fetchComposerPackage,
+      logger: this.logger,
+    }
+
     return VersionLensFactory.createVersionLenses(
       document,
       packageDepsLenses,
-      this.logger,
-      fetchComposerPackage,
-      null
+      context,
     );
   }
 
