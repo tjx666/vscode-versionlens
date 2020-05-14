@@ -52,6 +52,14 @@ export const ProcessClientRequestTests = {
         data: testResponse.data,
       }
 
+      const promiseSpawnMock = (cmd, args, opts) => {
+        return Promise.resolve({
+          code: 0,
+          stdout: testResponse.data
+        });
+      };
+      mock('@npmcli/promise-spawn', promiseSpawnMock);
+
       const rut = new ProcessClientRequest()
 
       await rut.request(
@@ -79,6 +87,14 @@ export const ProcessClientRequestTests = {
         status: 0,
         data: '123\n',
       }
+
+      const promiseSpawnMock = (cmd, args, opts) => {
+        return Promise.resolve({
+          code: 0,
+          stdout: testResponse.data
+        });
+      };
+      mock('@npmcli/promise-spawn', promiseSpawnMock);
 
       const rut = new ProcessClientRequest(0)
       await rut.request(
