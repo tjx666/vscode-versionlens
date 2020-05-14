@@ -15,13 +15,14 @@ export class DotNetClient extends ProcessClientRequest {
   }
 
   async fetchSources(cwd: string): Promise<Array<DotNetSource>> {
-    const promised = super.request(
+
+    const promisedCli = super.request(
       'dotnet',
       ['nuget', 'list', 'source', '--format', 'short'],
       cwd
     );
 
-    return promised.then(result => {
+    return promisedCli.then(result => {
       const { data } = result;
 
       // reject when data contains "error"
@@ -36,32 +37,56 @@ export class DotNetClient extends ProcessClientRequest {
       const hasCrLf = data.indexOf(crLf) > 0;
       const splitChar = hasCrLf ? crLf : '\n';
       let lines = data.split(splitChar);
+
+      // pop any blank entries
       if (lines[lines.length - 1] === '') lines.pop();
+
       return parseSourcesArray(lines);
+    }).then(sources => {
+      // combine the sources where feed take precedent
+      const feedSources = convertFeedsToSources(this.config.getNuGetFeeds());
+      return [
+        ...feedSources,
+        ...sources
+      ]
     })
   }
-
 }
-
 
 const crLf = '\r\n';
 function parseSourcesArray(lines: Array<string>): Array<DotNetSource> {
-  const url = require('url');
   return lines.map(function (line) {
     const enabled = line.substring(0, 1) === 'E';
     const machineWide = line.substring(1, 2) === 'M';
     const offset = machineWide ? 3 : 2;
-    const source = line.substring(offset);
-    const sourceUrl = url.parse(source);
-    const protocol = (sourceUrl.protocol !== DotNetSourceProtocols.https) ?
-      DotNetSourceProtocols.file :
-      DotNetSourceProtocols.https;
-
+    const url = line.substring(offset);
+    const protocol = getProtocolFromUrl(url);
     return {
       enabled,
       machineWide,
-      source,
+      url,
       protocol
     };
   });
+}
+
+function convertFeedsToSources(feeds: Array<string>): Array<DotNetSource> {
+  return feeds.map(function (url: string) {
+    const protocol = getProtocolFromUrl(url);
+    const machineWide = (protocol === DotNetSourceProtocols.file);
+    return {
+      enabled: true,
+      machineWide,
+      url,
+      protocol
+    };
+  });
+}
+
+function getProtocolFromUrl(url: string): DotNetSourceProtocols {
+  const { parse } = require('url');
+  const sourceUrl = parse(url);
+  return (sourceUrl.protocol !== DotNetSourceProtocols.https) ?
+    DotNetSourceProtocols.file :
+    DotNetSourceProtocols.https;
 }

@@ -1,4 +1,4 @@
-import { IProviderConfig } from "core/configuration/definitions";
+import { IProviderConfig } from "presentation/providers/definitions";
 import { PackageRequest } from "../models/packageRequest";
 import { PackageDocument } from "../models/packageDocument";
 

@@ -3,7 +3,7 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import { VersionLensFactory } from 'presentation/lenses';
-import { VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
+import { VersionLensFetchResponse } from 'presentation/providers';
 import { NpmVersionLensProvider } from 'providers/npm/npmVersionLensProvider';
 import { customJspmFormatVersion } from './jspmVersionUtils';
 import { extractPackageDependenciesFromJson } from './jspmPackageParser';

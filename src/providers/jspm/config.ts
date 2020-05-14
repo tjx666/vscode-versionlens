@@ -1,3 +1,5 @@
+import * as VsCodeTypes from "vscode";
+
 import { NpmConfig } from '../npm/config';
 
 // enum JspmContributions {
@@ -7,8 +9,8 @@ import { NpmConfig } from '../npm/config';
 
 export class JspmConfig extends NpmConfig {
 
-  constructor() {
-    super('jspm');
+  constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
+    super(configuration, 'jspm');
   }
 
 }

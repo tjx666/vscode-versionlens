@@ -14,7 +14,7 @@ import { extractPackageDependenciesFromJson } from 'core/packages';
 import {
   AbstractVersionLensProvider,
   VersionLensFetchResponse
-} from 'presentation/providers/abstract/abstractVersionLensProvider';
+} from 'presentation/providers';
 import { VersionLensFactory, VersionLens } from 'presentation/lenses';
 
 import { PacoteClient } from './clients/pacoteClient';

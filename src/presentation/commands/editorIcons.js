@@ -1,20 +1,20 @@
 import appSettings from '../../appSettings';
 import { clearDecorations } from '../editor/decorations';
-import * as CodeLensProviders from '../../providers/providers';
+import { providerRegistry } from 'presentation/providers';
 
 export function showTaggedVersions(file) {
   appSettings.showTaggedVersions = true;
-  CodeLensProviders.reloadActiveProviders();
+  reloadActiveProviders();
 }
 
 export function hideTaggedVersions(file) {
   appSettings.showTaggedVersions = false;
-  CodeLensProviders.reloadActiveProviders();
+  reloadActiveProviders();
 }
 
 export function showDependencyStatuses(file) {
   appSettings.showDependencyStatuses = true;
-  CodeLensProviders.reloadActiveProviders();
+  reloadActiveProviders();
 }
 
 export function hideDependencyStatuses(file) {
@@ -24,10 +24,21 @@ export function hideDependencyStatuses(file) {
 
 export function showVersionLenses(file) {
   appSettings.showVersionLenses = true;
-  CodeLensProviders.reloadActiveProviders();
+  reloadActiveProviders();
 }
 
 export function hideVersionLenses(file) {
   appSettings.showVersionLenses = false;
-  CodeLensProviders.reloadActiveProviders();
+  reloadActiveProviders();
+}
+
+
+export function reloadActiveProviders() {
+  const { window } = require('vscode');
+  const fileName = window.activeTextEditor.document.fileName;
+  const providers = providerRegistry.getByFileName(fileName);
+  if (!providers) return false;
+
+  providers.forEach(provider => provider.reload());
+  return true;
 }

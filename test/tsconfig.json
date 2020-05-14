@@ -26,11 +26,14 @@
       ],
       "test/unit/*": [
         "unit/*"
+      ],
+      "unit/mocks/*": [
+        "unit/mocks/*"
       ]
     }
   },
   "files": [
     "loader.js",
-    "runner.js"
+    "runner.js",
   ]
 }

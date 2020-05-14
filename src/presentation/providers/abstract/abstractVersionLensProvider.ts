@@ -4,20 +4,18 @@ import * as VsCodeTypes from 'vscode';
 // imports
 import appSettings from 'appSettings';
 import { ILogger } from 'core/logging/definitions';
-import { IProviderConfig } from "core/configuration/definitions";
 import { PackageSourceTypes, PackageResponseErrors } from 'core/packages';
 import * as CommandFactory from 'presentation/commands/factory';
 import { IVersionCodeLens, VersionLens } from "presentation/lenses";
+import { IProviderConfig, VersionLensFetchResponse } from "../definitions";
 
-export type VersionLensFetchResponse = Promise<VersionLens[] | null>;
-
-export abstract class AbstractVersionLensProvider<TProviderConfig extends IProviderConfig> {
+export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfig> {
 
   _onChangeCodeLensesEmitter: VsCodeTypes.EventEmitter<void>;
 
   onDidChangeCodeLenses: any;
 
-  config: TProviderConfig;
+  config: TConfig;
 
   // packagePath: string;
   logger: ILogger;
@@ -31,7 +29,7 @@ export abstract class AbstractVersionLensProvider<TProviderConfig extends IProvi
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse;
 
-  constructor(config: TProviderConfig) {
+  constructor(config: TConfig) {
     const { EventEmitter } = require('vscode');
     this.config = config;
     this._onChangeCodeLensesEmitter = new EventEmitter();

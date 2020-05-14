@@ -1,4 +1,6 @@
-import { AbstractProviderConfig } from 'core/configuration/abstractProviderConfig';
+import * as VsCodeTypes from "vscode";
+
+import { AbstractProviderConfig } from 'presentation/providers';
 
 enum NpmContributions {
   DependencyProperties = 'npm.dependencyProperties',
@@ -18,8 +20,8 @@ export class NpmConfig extends AbstractProviderConfig {
 
   defaultDependencyProperties: Array<string>;
 
-  constructor(provider: string = 'npm') {
-    super(provider, options);
+  constructor(configuration: VsCodeTypes.WorkspaceConfiguration, provider: string = 'npm') {
+    super(provider, configuration, options);
 
     this.defaultDependencyProperties = [
       'dependencies',
@@ -30,14 +32,14 @@ export class NpmConfig extends AbstractProviderConfig {
   }
 
   getDependencyProperties() {
-    return this.getContribution(
+    return this.getSetting(
       NpmContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getDistTagFilter() {
-    return this.getContribution(
+    return this.getSetting(
       NpmContributions.DistTagFilter,
       []
     );

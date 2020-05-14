@@ -1,4 +1,6 @@
-import { AbstractProviderConfig } from "core/configuration/abstractProviderConfig";
+import * as VsCodeTypes from "vscode";
+
+import { AbstractProviderConfig } from "presentation/providers";
 
 enum MavenContributions {
   DependencyProperties = 'maven.dependencyProperties',
@@ -21,8 +23,8 @@ export class MavenConfig extends AbstractProviderConfig {
 
   defaultApiUrl: string;
 
-  constructor() {
-    super('maven', options)
+  constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
+    super('maven', configuration, options)
 
     this.defaultDependencyProperties = [
       'dependency',
@@ -33,21 +35,21 @@ export class MavenConfig extends AbstractProviderConfig {
   }
 
   getDependencyProperties() {
-    return this.getContribution(
+    return this.getSetting(
       MavenContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getTagFilter() {
-    return this.getContribution(
+    return this.getSetting(
       MavenContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getApiUrl() {
-    return this.getContribution(
+    return this.getSetting(
       MavenContributions.ApiUrl,
       this.defaultApiUrl
     );

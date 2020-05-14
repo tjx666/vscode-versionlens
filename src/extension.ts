@@ -1,15 +1,18 @@
+import { registerProviders } from 'presentation/providers';
 import registerCommands from 'presentation/commands/register';
 import subscribeToEditorEvents from 'presentation/editor/events';
-import { AbstractVersionLensProvider } from 'presentation/providers/abstract/abstractVersionLensProvider';
-import versionlensProviders from 'providers/providers';
-import { IProviderConfig } from 'core/configuration/definitions';
 
-export function activate(context) {
-  const { languages } = require('vscode');
+export async function activate(context) {
+  const { workspace, languages } = require('vscode');
+
+  const configuration = workspace.getConfiguration('versionlens');
+
+  const providers = await registerProviders(configuration);
+
   const disposables = [];
 
-  versionlensProviders.forEach(
-    function (provider: AbstractVersionLensProvider<IProviderConfig>) {
+  providers.forEach(
+    function (provider) {
       disposables.push(
         languages.registerCodeLensProvider(
           provider.config.options.selector,
@@ -19,10 +22,9 @@ export function activate(context) {
     }
   );
 
-  registerCommands()
-    .forEach(command => {
-      disposables.push(command);
-    });
+  registerCommands().forEach(command => {
+    disposables.push(command);
+  });
 
   context.subscriptions.push(...disposables);
 

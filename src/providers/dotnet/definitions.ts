@@ -24,7 +24,7 @@ export enum DotNetSourceProtocols {
 export type DotNetSource = {
   enabled: boolean,
   machineWide: boolean,
-  source: string,
+  url: string,
   protocol: DotNetSourceProtocols,
 }
 

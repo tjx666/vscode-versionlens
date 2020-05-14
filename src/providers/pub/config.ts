@@ -1,4 +1,6 @@
-import { AbstractProviderConfig } from "core/configuration/abstractProviderConfig";
+import * as VsCodeTypes from "vscode";
+
+import { AbstractProviderConfig } from "presentation/providers";
 
 enum PubContributions {
   DependencyProperties = 'pub.dependencyProperties',
@@ -20,8 +22,8 @@ export class PubConfig extends AbstractProviderConfig {
 
   defaultApiUrl: string;
 
-  constructor() {
-    super('pub', options);
+  constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
+    super('pub', configuration, options);
 
     this.defaultDependencyProperties = [
       'dependencies',
@@ -32,7 +34,7 @@ export class PubConfig extends AbstractProviderConfig {
   }
 
   getDependencyProperties() {
-    return this.getContribution(
+    return this.getSetting(
       PubContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
@@ -40,7 +42,7 @@ export class PubConfig extends AbstractProviderConfig {
 
   getApiUrl() {
 
-    return this.getContribution(
+    return this.getSetting(
       PubContributions.ApiUrl,
       this.defaultApiUrl
     );

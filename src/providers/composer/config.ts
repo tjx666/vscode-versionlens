@@ -1,4 +1,6 @@
-import { AbstractProviderConfig } from 'core/configuration/abstractProviderConfig';
+import * as VsCodeTypes from "vscode";
+
+import { AbstractProviderConfig } from 'presentation/providers';
 
 enum ComposerContributions {
   DependencyProperties = 'composer.dependencyProperties',
@@ -20,8 +22,8 @@ export class ComposerConfig extends AbstractProviderConfig {
 
   defaultApiUrl: string;
 
-  constructor() {
-    super('composer', options);
+  constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
+    super('composer', configuration, options);
 
     this.defaultDependencyProperties = [
       "require",
@@ -32,14 +34,14 @@ export class ComposerConfig extends AbstractProviderConfig {
   }
 
   getDependencyProperties() {
-    return this.getContribution(
+    return this.getSetting(
       ComposerContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getApiUrl() {
-    return this.getContribution(
+    return this.getSetting(
       ComposerContributions.ApiUrl,
       this.defaultApiUrl
     );

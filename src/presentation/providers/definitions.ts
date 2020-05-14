@@ -1,4 +1,5 @@
 import * as VsCodeTypes from "vscode";
+import { VersionLens } from "presentation/lenses";
 
 export type ProviderOptions = {
   group: Array<String>;
@@ -6,8 +7,11 @@ export type ProviderOptions = {
 };
 
 export interface IProviderConfig {
+  provider: string,
+  configuration: VsCodeTypes.WorkspaceConfiguration,
   options: ProviderOptions;
-  provider: string;
   matchesFilename: (filename: string) => boolean;
-  getContribution: (key: string, defaultValue: any) => any;
+  getSetting: (key: string, defaultValue: any) => any;
 }
+
+export type VersionLensFetchResponse = Promise<VersionLens[] | null>;

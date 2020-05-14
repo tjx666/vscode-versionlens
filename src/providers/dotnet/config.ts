@@ -1,6 +1,8 @@
-import { AbstractProviderConfig } from "core/configuration/abstractProviderConfig";
+import * as VsCodeTypes from "vscode";
 
-enum DotnetContributions {
+import { AbstractProviderConfig } from "presentation/providers";
+
+export enum DotnetContributions {
   DependencyProperties = 'dotnet.dependencyProperties',
   NugetFeeds = 'dotnet.nugetFeeds',
   TagFilter = 'dotnet.tagFilter',
@@ -24,8 +26,8 @@ export class DotNetConfig extends AbstractProviderConfig {
 
   defaultNuGetFeeds: Array<string>;
 
-  constructor() {
-    super('dotnet', options);
+  constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
+    super('dotnet', configuration, options);
 
     this.defaultNuGetFeeds = [
       'https://azuresearch-usnc.nuget.org/autocomplete'
@@ -38,21 +40,21 @@ export class DotNetConfig extends AbstractProviderConfig {
   }
 
   getDependencyProperties() {
-    return this.getContribution(
+    return this.getSetting(
       DotnetContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getTagFilter() {
-    return this.getContribution(
+    return this.getSetting(
       DotnetContributions.TagFilter,
       []
     );
   }
 
   getNuGetFeeds() {
-    return this.getContribution(
+    return this.getSetting(
       DotnetContributions.NugetFeeds,
       this.defaultNuGetFeeds
     );

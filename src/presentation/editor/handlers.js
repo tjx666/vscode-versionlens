@@ -1,5 +1,5 @@
 import appSettings from '../../appSettings';
-import { getProvidersByFileName } from '../../providers/providers';
+import { providerRegistry } from 'presentation/providers';
 import {
   getDecorationsByLine,
   removeDecorations,
@@ -20,7 +20,7 @@ export function onActiveEditorChanged(editor) {
     return;
   }
 
-  if (getProvidersByFileName(editor.document.fileName)) {
+  if (providerRegistry.getByFileName(editor.document.fileName)) {
     appSettings.isActive = true;
     return;
   }

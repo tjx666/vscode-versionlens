@@ -24,10 +24,13 @@
       "providers/*": [
         "providers/*"
       ],
-    }
+    },
   },
+  "include": [
+    "providers/**/activate.ts"
+  ],
   "files": [
     "loader.js",
-    "extension.ts",
+    "extension.ts"
   ]
 }

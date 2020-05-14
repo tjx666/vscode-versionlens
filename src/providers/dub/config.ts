@@ -1,4 +1,6 @@
-import { AbstractProviderConfig } from "core/configuration/abstractProviderConfig";
+import * as VsCodeTypes from "vscode";
+
+import { AbstractProviderConfig } from "presentation/providers";
 
 enum DubContributions {
   DependencyProperties = 'dub.dependencyProperties',
@@ -20,8 +22,8 @@ export class DubConfig extends AbstractProviderConfig {
 
   defaultApiUrl: string;
 
-  constructor() {
-    super('dub', options);
+  constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
+    super('dub', configuration, options);
 
     this.defaultDependencyProperties = [
       'dependencies',
@@ -32,14 +34,14 @@ export class DubConfig extends AbstractProviderConfig {
   }
 
   getDependencyProperties() {
-    return this.getContribution(
+    return this.getSetting(
       DubContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getApiUrl() {
-    return this.getContribution(
+    return this.getSetting(
       DubContributions.ApiUrl,
       this.defaultApiUrl
     );

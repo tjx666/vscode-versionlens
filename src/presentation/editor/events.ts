@@ -1,14 +1,13 @@
-import versionlensProviders from '../../providers/providers'
 import { onActiveEditorChanged, onChangeTextDocument } from './handlers';
 
-const { window, workspace } = require('vscode');
-
 export default function () {
+  const { window, workspace } = require('vscode');
+
   // update versionLens.isActive upon start
-  onActiveEditorChanged(window.activeTextEditor, versionlensProviders);
+  onActiveEditorChanged(window.activeTextEditor);
   window.onDidChangeActiveTextEditor(editor => {
     // update versionLens.isActive each time the active editor changes
-    onActiveEditorChanged(editor, versionlensProviders);
+    onActiveEditorChanged(editor);
   });
 
   workspace.onDidChangeTextDocument(onChangeTextDocument);

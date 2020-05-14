@@ -40,19 +40,8 @@ export class NuGetClient
 
     const { sources } = request.clientData;
 
-    // potentially drop feeds?
-    const feeds = this.config.getNuGetFeeds();
-
-    // append any https sources (todo local look ups)
-    sources.forEach(source => {
-      if (source.protocol === DotNetSourceProtocols.https) {
-        feeds.push(source.source)
-      }
-    });
-
-
     //TODO: loop feeds, fetch autocomplete or search url via the service locator
-    const url = feeds[0]
+    const url = sources[0].url
 
     return createRemotePackageDocument(this, url, request, dotnetSpec)
       .catch((error: HttpClientResponse) => {

@@ -2,7 +2,11 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
+import {
+  AbstractVersionLensProvider,
+  VersionLensFetchResponse
+} from 'presentation/providers';
+
 import { VersionLensFactory } from 'presentation/lenses';
 
 import { DotNetConfig } from './config';
@@ -41,26 +45,30 @@ export class DotNetVersionLensProvider
     const { dirname } = require('path');
     const packagePath = dirname(document.uri.fsPath);
 
-    // get sources
-    const sources = await this.dotnetClient.fetchSources(packagePath);
+    // gets source feeds from the project path
+    const promisedSources = this.dotnetClient.fetchSources(packagePath);
 
-    const clientData: NuGetClientData = {
-      provider: this.config.provider,
-      sources,
-    }
+    return promisedSources.then(sources => {
 
-    const context = {
-      client: this.nugetClient,
-      clientData,
-      logger: this.logger,
-      // todo client specific data {sources, config etc.....}
-    }
+      const clientData: NuGetClientData = {
+        provider: this.config.provider,
+        sources,
+      }
 
-    return VersionLensFactory.createVersionLenses(
-      document,
-      packageDepsLenses,
-      context,
-    );
+      const context = {
+        client: this.nugetClient,
+        clientData,
+        logger: this.logger,
+      }
+
+      return VersionLensFactory.createVersionLenses(
+        document,
+        packageDepsLenses,
+        context,
+      );
+
+    });
+
   }
 
   async updateOutdated(packagePath: string): Promise<any> {

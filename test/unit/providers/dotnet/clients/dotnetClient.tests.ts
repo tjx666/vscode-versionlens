@@ -3,12 +3,22 @@ import Fixutres from './fixtures/sources'
 import { ClientResponseSource } from '/core/clients';
 import { DotNetConfig } from '/providers/dotnet/config';
 import { DotNetSourceProtocols } from '/providers/dotnet/definitions';
+import { ConfigurationMock } from 'test/unit/mocks/configurationMock'
 
 const assert = require('assert');
-
 const mock = require('mock-require');
 
+
+let defaultConfigurationMock: ConfigurationMock;
+
 export const DotnetClientRequestTests = {
+
+  beforeEach: () => {
+
+    defaultConfigurationMock = new ConfigurationMock({
+      get: (k, d) => d
+    });
+  },
 
   // reset all require mocks
   afterEach: () => mock.stop('@npmcli/promise-spawn'),
@@ -16,18 +26,27 @@ export const DotnetClientRequestTests = {
   "fetchDotnetSources": {
 
     "returns an Array<DotNetSource> of enabled sources": async () => {
+      const testFeeds = [
+        'https://test.feed/v3/index.json'
+      ];
 
       const expected = [
         {
           enabled: true,
           machineWide: false,
-          source: 'https://api.nuget.org/v3/index.json',
+          url: testFeeds[0],
+          protocol: DotNetSourceProtocols.https
+        },
+        {
+          enabled: true,
+          machineWide: false,
+          url: 'https://api.nuget.org/v3/index.json',
           protocol: DotNetSourceProtocols.https
         },
         {
           enabled: true,
           machineWide: true,
-          source: 'C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\',
+          url: 'C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\',
           protocol: DotNetSourceProtocols.file
         },
       ]
@@ -40,7 +59,14 @@ export const DotnetClientRequestTests = {
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
-      const cut = new DotNetClient(new DotNetConfig(), 0);
+      // setup test feeds
+      const config = new DotNetConfig(
+        new ConfigurationMock({
+          get: (k, d) => testFeeds
+        })
+      )
+
+      const cut = new DotNetClient(config, 0);
       return cut.fetchSources('.')
         .then(actualSources => {
           assert.deepEqual(actualSources, expected);
@@ -48,7 +74,9 @@ export const DotnetClientRequestTests = {
 
     },
 
+
     "return 0 items when no sources are enabled": async () => {
+      const testFeeds = [];
 
       let promiseSpawnMock = (cmd, args, opts) => {
         return Promise.resolve({
@@ -58,7 +86,14 @@ export const DotnetClientRequestTests = {
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
-      const cut = new DotNetClient(new DotNetConfig(), 0);
+      // setup test feeds
+      const config = new DotNetConfig(
+        new ConfigurationMock({
+          get: (k, d) => testFeeds
+        })
+      )
+
+      const cut = new DotNetClient(config, 0);
       return cut.fetchSources('.')
         .then(actualSources => {
           assert.equal(actualSources.length, 0);
@@ -81,12 +116,14 @@ export const DotnetClientRequestTests = {
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
-      const cut = new DotNetClient(new DotNetConfig(), 0);
+      const cut = new DotNetClient(new DotNetConfig(defaultConfigurationMock), 0);
       return cut.fetchSources('.')
         .catch(actualError => {
           assert.deepEqual(actualError, expectedErrorResp);
         });
-    }
+    },
+
+
 
   }
 

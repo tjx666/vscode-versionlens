@@ -23,7 +23,7 @@ import {
 import {
   AbstractVersionLensProvider,
   VersionLensFetchResponse
-} from 'presentation/providers/abstract/abstractVersionLensProvider';
+} from 'presentation/providers';
 
 import { VersionLensFactory, VersionLens } from 'presentation/lenses';
 
