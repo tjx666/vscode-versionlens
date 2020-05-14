@@ -10,92 +10,108 @@ import {
   PackageVersionTypes,
   PackageSourceTypes,
   PackageSuggestion,
-  PackageSuggestionFlags
+  PackageSuggestionFlags,
+  IPackageClient
 } from 'core/packages';
 
-import NpmConfig from 'providers/npm/config';
-import { ClientResponseSource } from "core/clients";
+import {
+  ClientResponseSource,
+  JsonHttpClientRequest
+} from "core/clients";
 
-export async function fetchNpmPackage(request: PackageRequest): Promise<PackageDocument> {
-  const npa = require('npm-package-arg');
-  let npaResult;
+import { NpmConfig } from '../config';
 
-  return new Promise<PackageDocument>(function (resolve, reject) {
+export class PacoteClient
+  extends JsonHttpClientRequest
+  implements IPackageClient<NpmConfig> {
 
-    try {
-      npaResult = npa.resolve(request.package.name, request.package.version, request.package.path);
-    } catch (error) {
-      return reject(
-        ResponseFactory.createUnexpected(
-          NpmConfig.provider,
+  constructor(cacheDuration: number) {
+    super({}, cacheDuration)
+  }
+
+  async fetchPackage(request: PackageRequest<NpmConfig>): Promise<PackageDocument> {
+    const npa = require('npm-package-arg');
+    let npaResult;
+
+    return new Promise<PackageDocument>(function (resolve, reject) {
+
+      try {
+        npaResult = npa.resolve(request.package.name, request.package.version, request.package.path);
+      } catch (error) {
+        return reject(
+          ResponseFactory.createUnexpected(
+            request.clientData.provider,
+            request.package,
+            {
+              source: ClientResponseSource.remote,
+              status: error.code,
+              data: error.message
+            },
+          )
+        );
+      }
+
+      if (npaResult.type === PackageSourceTypes.directory || npaResult.type === PackageSourceTypes.file)
+        resolve(
+          createDirectoryPackageDocument(
+            request.clientData.provider,
+            request.package,
+            ResponseFactory.createResponseStatus(ClientResponseSource.local, 200),
+            npaResult,
+          )
+        );
+      else
+        resolve(createRemotePackageDocument(request, npaResult));
+
+    }).catch(error => {
+      const { response, data: npaResult } = error
+
+      if (!response) return Promise.reject(error);
+
+      if (response.status === 'E404') {
+        return DocumentFactory.createNotFound(
+          request.clientData.provider,
           request.package,
-          {
-            source: ClientResponseSource.remote,
-            status: error.code,
-            data: error.message
-          },
-        )
-      );
-    }
+          null,
+          ResponseFactory.createResponseStatus(response.source, 404)
+        );
+      }
 
-    if (npaResult.type === PackageSourceTypes.directory || npaResult.type === PackageSourceTypes.file)
-      resolve(
-        createDirectoryPackageDocument(
+      if (response.status === 'EINVALIDTAGNAME' || response.data.includes('Invalid comparator:')) {
+        return DocumentFactory.createInvalidVersion(
+          request.clientData.provider,
           request.package,
-          ResponseFactory.createResponseStatus(ClientResponseSource.local, 200),
-          npaResult,
-        )
-      );
-    else
-      resolve(createRemotePackageDocument(request, npaResult));
+          ResponseFactory.createResponseStatus(response.source, 404),
+          null
+        );
+      }
 
-  }).catch(error => {
-    const { response, data: npaResult } = error
+      if (response.status === 'EUNSUPPORTEDPROTOCOL') {
+        return DocumentFactory.createNotSupported(
+          request.clientData.provider,
+          request.package,
+          ResponseFactory.createResponseStatus(response.source, 404),
+          null
+        );
+      }
 
-    if (!response) return Promise.reject(error);
+      if (response.status === 128) {
+        return DocumentFactory.createGitFailed(
+          request.clientData.provider,
+          request.package,
+          ResponseFactory.createResponseStatus(response.source, 404),
+          null
+        );
+      }
 
-    if (response.status === 'E404') {
-      return DocumentFactory.createNotFound(
-        NpmConfig.provider,
-        request.package,
-        null,
-        ResponseFactory.createResponseStatus(response.source, 404)
-      );
-    }
+      return Promise.reject(error);
+    });
 
-    if (response.status === 'EINVALIDTAGNAME' || response.data.includes('Invalid comparator:')) {
-      return DocumentFactory.createInvalidVersion(
-        NpmConfig.provider,
-        request.package,
-        ResponseFactory.createResponseStatus(response.source, 404),
-        null
-      );
-    }
-
-    if (response.status === 'EUNSUPPORTEDPROTOCOL') {
-      return DocumentFactory.createNotSupported(
-        NpmConfig.provider,
-        request.package,
-        ResponseFactory.createResponseStatus(response.source, 404),
-        null
-      );
-    }
-
-    if (response.status === 128) {
-      return DocumentFactory.createGitFailed(
-        NpmConfig.provider,
-        request.package,
-        ResponseFactory.createResponseStatus(response.source, 404),
-        null
-      );
-    }
-
-    return Promise.reject(error);
-  });
+  }
 
 }
 
-async function createRemotePackageDocument(request: PackageRequest, npaResult: any): Promise<PackageDocument> {
+async function createRemotePackageDocument(request: PackageRequest<NpmConfig>, npaResult: any): Promise<PackageDocument> {
   const pacote = require('pacote');
   const npmConfig = require('libnpmconfig');
 
@@ -115,9 +131,14 @@ async function createRemotePackageDocument(request: PackageRequest, npaResult: a
     .then(function (packumentResponse): PackageDocument {
       const { compareLoose } = require("semver");
 
+      const { provider } = request.clientData;
+
       const source: PackageSourceTypes = getSourceFromNpaResult(npaResult);
+
       const type: PackageVersionTypes = getVersionTypeFromNpaResult(npaResult);
+
       let versionRange: string = getRangeFromNpaResult(npaResult);
+
       const gitSpec: any = source === PackageSourceTypes.git ? npaResult.hosted : null
 
       const requested = request.package;
@@ -149,7 +170,7 @@ async function createRemotePackageDocument(request: PackageRequest, npaResult: a
       if (npaResult.type === PackageVersionTypes.tag) {
         versionRange = distTags[requested.version];
         if (!versionRange) return DocumentFactory.createNoMatch(
-          NpmConfig.provider,
+          provider,
           source,
           type,
           requested,
@@ -166,7 +187,7 @@ async function createRemotePackageDocument(request: PackageRequest, npaResult: a
       );
 
       return {
-        provider: NpmConfig.provider,
+        provider,
         source,
         response,
         type,
@@ -184,7 +205,7 @@ async function createRemotePackageDocument(request: PackageRequest, npaResult: a
         status: error.code
       };
       return Promise.reject(ResponseFactory.createUnexpected(
-        NpmConfig.provider,
+        request.clientData.provider,
         request.package,
         response,
       ));
@@ -234,12 +255,12 @@ function getRangeFromNpaResult(npaResult): string {
 
 // factory methods
 export const fileDependencyRegex = /^file:(.*)$/;
-function createDirectoryPackageDocument(requested: PackageIdentifier, response: PackageResponseStatus, npaResult: any): PackageDocument {
+function createDirectoryPackageDocument(provider: string, requested: PackageIdentifier, response: PackageResponseStatus, npaResult: any): PackageDocument {
 
   const fileRegExpResult = fileDependencyRegex.exec(requested.version);
   if (!fileRegExpResult) {
     return DocumentFactory.createInvalidVersion(
-      NpmConfig.provider,
+      provider,
       requested,
       response,
       npaResult.type
@@ -263,7 +284,7 @@ function createDirectoryPackageDocument(requested: PackageIdentifier, response: 
   ]
 
   return {
-    provider: NpmConfig.provider,
+    provider,
     source,
     type,
     requested,

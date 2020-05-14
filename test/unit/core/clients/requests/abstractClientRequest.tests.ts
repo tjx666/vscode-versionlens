@@ -27,7 +27,7 @@ export const AbstractClientRequestTests = {
         data: testCache
       };
 
-      const rut = new class extends AbstractClientRequest<string> { }
+      const rut = new class extends AbstractClientRequest<number, string> { }
 
       const actualFirstResp = rut.createCachedResponse(
         testKey,
@@ -54,7 +54,7 @@ export const AbstractClientRequestTests = {
         data: testCache
       };
 
-      const rut = new (class extends AbstractClientRequest<string> { })(0)
+      const rut = new (class extends AbstractClientRequest<number, string> { })(0)
 
       const actualFirstResp = rut.createCachedResponse(
         testKey,

@@ -6,46 +6,59 @@ import {
   PackageRequest,
   PackageDocument,
   PackageSourceTypes,
-  SemverSpec
+  SemverSpec,
+  IPackageClient
 } from "core/packages";
 
 import {
   JsonHttpClientRequest,
-  ClientResponse,
-  HttpRequestMethods
+  HttpRequestMethods,
+  HttpClientResponse,
+  JsonClientResponse,
 } from "core/clients";
 
-import ComposerConfig from './config';
+import { ComposerConfig } from './config';
 
-const jsonRequest = new JsonHttpClientRequest({}, undefined);
-const fs = require('fs');
+export class ComposerClient
+  extends JsonHttpClientRequest
+  implements IPackageClient<ComposerConfig> {
 
-export async function fetchComposerPackage(request: PackageRequest): Promise<PackageDocument> {
-  const semverSpec = VersionHelpers.parseSemver(request.package.version);
+  constructor(cacheDuration: number) {
+    super({}, cacheDuration)
+  }
 
-  return createRemotePackageDocument(request, semverSpec)
-    .catch((error: ClientResponse<string>) => {
-      if (error.status === 404) {
-        return DocumentFactory.createNotFound(
-          ComposerConfig.provider,
-          request.package,
-          null,
-          ResponseFactory.createResponseStatus(error.source, error.status)
-        );
-      }
-      return Promise.reject(error);
-    });
+  async fetchPackage(request: PackageRequest<ComposerConfig>): Promise<PackageDocument> {
+    const semverSpec = VersionHelpers.parseSemver(request.package.version);
+    const url = `${request.clientData.getApiUrl()}/${request.package.name}.json`;
+
+    return createRemotePackageDocument(this, url, request, semverSpec)
+      .catch((error: HttpClientResponse) => {
+        if (error.status === 404) {
+          return DocumentFactory.createNotFound(
+            request.clientData.provider,
+            request.package,
+            null,
+            ResponseFactory.createResponseStatus(error.source, error.status)
+          );
+        }
+        return Promise.reject(error);
+      });
+  }
+
 }
 
-export function createRemotePackageDocument(
-  request: PackageRequest,
+async function createRemotePackageDocument(
+  client: JsonHttpClientRequest,
+  url: string,
+  request: PackageRequest<ComposerConfig>,
   semverSpec: SemverSpec
 ): Promise<PackageDocument> {
-  const url = `${ComposerConfig.getApiUrl()}/${request.package.name}.json`;
 
-  return jsonRequest.requestJson(HttpRequestMethods.get, url)
-    .then(httpResponse => {
+  return client.requestJson(HttpRequestMethods.get, url, {})
+    .then((httpResponse: JsonClientResponse) => {
       const packageInfo = httpResponse.data.packages[request.package.name];
+
+      const provider = request.provider;
 
       const versionRange = semverSpec.rawVersion;
 
@@ -79,7 +92,7 @@ export function createRemotePackageDocument(
       );
 
       return {
-        provider: ComposerConfig.provider,
+        provider,
         source: PackageSourceTypes.registry,
         response,
         type: semverSpec.type,
@@ -95,6 +108,8 @@ export function createRemotePackageDocument(
 export function readComposerSelections(filePath) {
 
   return new Promise(function (resolve, reject) {
+    const fs = require('fs');
+
     if (fs.existsSync(filePath) === false) {
       reject(null);
       return;

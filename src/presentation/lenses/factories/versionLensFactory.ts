@@ -8,23 +8,24 @@ import {
   PackageResponseAggregate,
   ReplaceVersionFunction,
   PackageRequest,
-  PackageRequestFunction,
-  RequestFactory
+  RequestFactory,
+  IPackageClient
 } from 'core/packages';
 
 import { VersionLensFetchResponse } from 'providers/abstract/abstractVersionLensProvider';
 import { VersionLens } from '../models/versionLens';
 
-export type CreateVersionLensesContext = {
+export type CreateVersionLensesContext<TClientData> = {
+  client: IPackageClient<TClientData>,
+  clientData: TClientData,
   versionReplace?: ReplaceVersionFunction,
-  packageFetchRequest: PackageRequestFunction,
   logger: ILogger,
 }
 
-export async function createVersionLenses(
+export async function createVersionLenses<TClientData>(
   document: VsCodeTypes.TextDocument,
   dependencies: Array<PackageDependencyLens>,
-  options: CreateVersionLensesContext,
+  context: CreateVersionLensesContext<TClientData>,
 ): VersionLensFetchResponse {
 
   const results = [];
@@ -37,7 +38,7 @@ export async function createVersionLenses(
         packagePath,
         dependency,
         document,
-        options,
+        context,
       );
       return promisedDependency.then(function (lenses) {
         results.push(...lenses)
@@ -48,22 +49,24 @@ export async function createVersionLenses(
   return Promise.all(promises).then(_ => results)
 }
 
-async function resolveDependency(
+async function resolveDependency<TClientData>(
   packagePath: string,
   dependency: PackageDependencyLens,
   document: VsCodeTypes.TextDocument,
-  options: CreateVersionLensesContext,
+  context: CreateVersionLensesContext<TClientData>,
 ): Promise<Array<VersionLens>> {
 
   const { name, version } = dependency.packageInfo;
 
   const {
+    client,
+    clientData,
     logger,
-    packageFetchRequest,
     versionReplace,
-  } = options;
+  } = context;
 
-  const request: PackageRequest = {
+  const request: PackageRequest<TClientData> = {
+    clientData,
     package: {
       name,
       version,
@@ -73,8 +76,8 @@ async function resolveDependency(
   };
 
   return RequestFactory.createPackageRequest(
+    client,
     request,
-    packageFetchRequest,
     versionReplace
   )
     .then(function (responses): Array<VersionLens> {

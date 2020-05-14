@@ -2,23 +2,32 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import ComposerConfig from 'providers/composer/config';
+import { ComposerConfig } from 'providers/composer/config';
 import {
   VersionHelpers,
   extractPackageDependenciesFromJson
 } from 'core/packages';
-import { readComposerSelections, fetchComposerPackage } from 'providers/composer/composerApiClient';
-import { renderMissingDecoration, renderInstalledDecoration, renderOutdatedDecoration } from 'presentation/editor/decorations';
+import { readComposerSelections, ComposerClient } from 'providers/composer/composerClient';
+import {
+  renderMissingDecoration,
+  renderInstalledDecoration,
+  renderOutdatedDecoration
+} from 'presentation/editor/decorations';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import { VersionLensFactory, VersionLens } from 'presentation/lenses';
-import { CreateVersionLensesContext } from 'presentation/lenses/factories/versionLensFactory';
 
-export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
+export class ComposerCodeLensProvider
+  extends AbstractVersionLensProvider<ComposerConfig> {
 
   _outdatedCache: {};
 
-  constructor() {
-    super(ComposerConfig);
+  composerClient: ComposerClient;
+
+  constructor(composerConfig: ComposerConfig) {
+    super(composerConfig);
+
+    // todo get cache durations from config
+    this.composerClient = new ComposerClient(0)
   }
 
   async fetchVersionLenses(
@@ -28,12 +37,13 @@ export class ComposerCodeLensProvider extends AbstractVersionLensProvider {
 
     const packageDepsLenses = extractPackageDependenciesFromJson(
       document.getText(),
-      ComposerConfig.getDependencyProperties()
+      this.config.getDependencyProperties()
     );
     if (packageDepsLenses.length === 0) return null;
 
     const context = {
-      packageFetchRequest: fetchComposerPackage,
+      client: this.composerClient,
+      clientData: this.config,
       logger: this.logger,
     }
 

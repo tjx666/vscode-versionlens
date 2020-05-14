@@ -1,7 +1,9 @@
-import { ClientResponse, ClientResponseSource } from "../definitions/clientResponse";
+import { ClientResponse, ClientResponseSource } from "../definitions/clientResponses";
 import { AbstractClientRequest } from "./abstractClientRequest";
 
-export class ProcessClientRequest extends AbstractClientRequest<string> {
+export type ProcessClientResponse = ClientResponse<string, string>;
+
+export class ProcessClientRequest extends AbstractClientRequest<string, string> {
 
   constructor(cacheDuration?: number) {
     super(cacheDuration);
@@ -11,7 +13,7 @@ export class ProcessClientRequest extends AbstractClientRequest<string> {
     cmd: string,
     args: Array<string>,
     cwd: string,
-  ): Promise<ClientResponse<string>> {
+  ): Promise<ProcessClientResponse> {
 
     const cacheKey = `${cmd} ${args.join(' ')}`;
 
@@ -33,10 +35,10 @@ export class ProcessClientRequest extends AbstractClientRequest<string> {
         const result = this.createCachedResponse(
           cacheKey,
           error.code,
-          error.stderr,
+          error.message,
           ClientResponseSource.local
         );
-        return Promise.reject<ClientResponse<string>>(result);
+        return Promise.reject<ProcessClientResponse>(result);
       });
 
   }

@@ -6,25 +6,40 @@ import {
 const assert = require('assert')
 const mock = require('mock-require')
 
-let requestLightMock = null
-
 export const ProcessClientRequestTests = {
-
-  beforeAll: () => {
-    // mock require modules
-    requestLightMock = {}
-    mock('request-light', requestLightMock)
-  },
 
   afterAll: () => mock.stopAll(),
 
   beforeEach: () => {
-    requestLightMock.xhr = _ => { throw new Error("Not implemented") }
+    // reset mocks
+    mock.stop('@npmcli/promise-spawn');
   },
 
   "requestJson": {
 
-    "caches command response": async () => {
+    "returns <ProcessClientResponse> when error occurs": async () => {
+
+      const promiseSpawnMock = (cmd, args, opts) => {
+        return Promise.reject({
+          code: "ENOENT",
+          message: "spawn missing ENOENT"
+        });
+      };
+      mock('@npmcli/promise-spawn', promiseSpawnMock);
+
+      const rut = new ProcessClientRequest()
+      return await rut.request(
+        'missing',
+        ['--ooppss'],
+        '/'
+      ).catch(response => {
+        assert.equal(response.status, "ENOENT")
+        assert.equal(response.data, "spawn missing ENOENT")
+      })
+
+    },
+
+    "returns <ProcessClientResponse> and caches response": async () => {
       const testResponse = {
         source: ClientResponseSource.local,
         status: 0,

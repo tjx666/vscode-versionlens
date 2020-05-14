@@ -1,14 +1,22 @@
-import { KeyStringDictionary } from "../../definitions/generics";
-import { ClientResponseSource } from "../definitions/clientResponse";
-import { HttpRequest, HttpRequestMethods } from './httpClientRequest';
+import { KeyStringDictionary, KeyDictionary } from "../../definitions/generics";
+import { ClientResponse } from "../definitions/clientResponses";
+import { HttpRequest, HttpRequestMethods, HttpClientResponse } from './httpClientRequest';
 
-export type JsonClientResponse = {
-  source: ClientResponseSource,
-  status: number,
-  data: any
+export type JsonClientResponse = ClientResponse<number, KeyDictionary<any>>;
+
+export interface JsonRequestFunction {
+  (
+    method: HttpRequestMethods,
+    url: string,
+    queryParams: KeyStringDictionary
+  ): Promise<JsonClientResponse>;
 }
 
-export class JsonHttpClientRequest extends HttpRequest {
+export interface IJsonHttpClientRequest {
+  requestJson: JsonRequestFunction
+}
+
+export class JsonHttpClientRequest extends HttpRequest implements IJsonHttpClientRequest {
 
   constructor(headers?: KeyStringDictionary, cacheDuration?: number) {
     super(headers, cacheDuration);
@@ -20,7 +28,7 @@ export class JsonHttpClientRequest extends HttpRequest {
     queryParams: KeyStringDictionary = {}
   ): Promise<JsonClientResponse> {
     return super.request(method, url, queryParams)
-      .then(function (response) {
+      .then(function (response: HttpClientResponse) {
         return {
           source: response.source,
           status: response.status,
@@ -28,6 +36,5 @@ export class JsonHttpClientRequest extends HttpRequest {
         }
       });
   }
-
 
 }

@@ -1,36 +1,47 @@
 import {
   ProcessClientRequest,
-  ClientResponse
 } from 'core/clients';
 
 import { DotNetSource } from '../definitions';
 
-import DotnetConfig from '../config';
 
-const crLf = '\r\n';
+export class DotNetClient extends ProcessClientRequest {
 
-const processRequest = new ProcessClientRequest();
+  constructor(cacheDuration) {
+    super(cacheDuration)
+  }
 
-export async function fetchDotNetSources(cwd: string): Promise<Array<DotNetSource>> {
-  const promised = processRequest.request(
-    'dotnet',
-    ['nuget', 'list', 'source', '--format', 'short'],
-    cwd
-  );
+  async fetchSources(cwd: string): Promise<Array<DotNetSource>> {
+    const promised = super.request(
+      'dotnet',
+      ['nuget', 'list', 'source', '--format', 'short'],
+      cwd
+    );
 
-  return promised.then(result => {
-    const { data } = result;
-    const hasCrLf = data.indexOf(crLf) > 0;
-    const splitChar = hasCrLf ? crLf : '\n';
-    let lines = data.split(splitChar);
-    if (lines[lines.length - 1] === '') lines.pop();
-    return parseSourcesArray(lines);
-  })
-  //.catch((error: ClientResponse<string>) => {
-  //   return Promise.reject(error);
-  // });
+    return promised.then(result => {
+      const { data } = result;
+
+      // reject when data contains "error"
+      if (data.indexOf("error") > -1) return Promise.reject(result);
+
+      // check we have some data
+      if (data.length === 0 || data.indexOf('E') === -1) {
+        return [];
+      }
+
+      // extract sources
+      const hasCrLf = data.indexOf(crLf) > 0;
+      const splitChar = hasCrLf ? crLf : '\n';
+      let lines = data.split(splitChar);
+      if (lines[lines.length - 1] === '') lines.pop();
+      return parseSourcesArray(lines);
+    })
+  }
+
 }
 
+
+const crLf = '\r\n';
 function parseSourcesArray(lines: Array<string>): Array<DotNetSource> {
   const url = require('url');
   return lines.map(function (line) {

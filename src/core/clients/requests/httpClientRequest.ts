@@ -1,18 +1,20 @@
 import { KeyStringDictionary } from "core/definitions/generics";
 import { AbstractClientRequest } from './abstractClientRequest';
-import { ClientResponse } from "../definitions/clientResponse";
+import { ClientResponse } from "../definitions/clientResponses";
+
+type RequestLightHttpResponse = {
+  status: number;
+  responseText: string;
+}
 
 export enum HttpRequestMethods {
   get = 'GET',
   head = 'HEAD'
 }
 
-export type HttpResponse = {
-  status: number;
-  responseText: string;
-}
+export type HttpClientResponse = ClientResponse<number, string>;
 
-export class HttpRequest extends AbstractClientRequest<string> {
+export class HttpRequest extends AbstractClientRequest<number, string> {
 
   headers: KeyStringDictionary;
 
@@ -20,12 +22,12 @@ export class HttpRequest extends AbstractClientRequest<string> {
     super(cacheDuration);
     this.headers = headers || {};
   }
-
+  
   async request(
     method: HttpRequestMethods,
     baseUrl: string,
     queryParams: KeyStringDictionary = {}
-  ): Promise<ClientResponse<string>> {
+  ): Promise<HttpClientResponse> {
 
     const url = createUrl(baseUrl, queryParams);
     const cacheKey = method + '_' + url;
@@ -40,20 +42,20 @@ export class HttpRequest extends AbstractClientRequest<string> {
       type: method,
       headers: this.headers
     })
-      .then((response: HttpResponse) => {
+      .then((response: RequestLightHttpResponse) => {
         return this.createCachedResponse(
           cacheKey,
           response.status,
           response.responseText
         );
       })
-      .catch(response => {
+      .catch((response: RequestLightHttpResponse) => {
         const result = this.createCachedResponse(
           cacheKey,
           response.status,
           response.responseText
         );
-        return Promise.reject<ClientResponse<string>>(result);
+        return Promise.reject<HttpClientResponse>(result);
       });
   }
 

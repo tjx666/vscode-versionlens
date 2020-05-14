@@ -11,13 +11,13 @@ import { IVersionCodeLens, VersionLens } from "presentation/lenses";
 
 export type VersionLensFetchResponse = Promise<VersionLens[] | null>;
 
-export abstract class AbstractVersionLensProvider {
+export abstract class AbstractVersionLensProvider<TProviderConfig extends IProviderConfig> {
 
   _onChangeCodeLensesEmitter: VsCodeTypes.EventEmitter<void>;
 
   onDidChangeCodeLenses: any;
 
-  config: IProviderConfig;
+  config: TProviderConfig;
 
   // packagePath: string;
   logger: ILogger;
@@ -31,7 +31,7 @@ export abstract class AbstractVersionLensProvider {
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse;
 
-  constructor(config: IProviderConfig) {
+  constructor(config: TProviderConfig) {
     const { EventEmitter } = require('vscode');
     this.config = config;
     this._onChangeCodeLensesEmitter = new EventEmitter();

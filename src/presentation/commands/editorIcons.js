@@ -1,6 +1,6 @@
 import appSettings from '../../appSettings';
 import { clearDecorations } from '../editor/decorations';
-import * as CodeLensProviders from '../../providers/versionLensProviders';
+import * as CodeLensProviders from '../../providers/providers';
 
 export function showTaggedVersions(file) {
   appSettings.showTaggedVersions = true;

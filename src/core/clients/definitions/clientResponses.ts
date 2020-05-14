@@ -4,8 +4,9 @@ export enum ClientResponseSource {
   local = 'local'
 }
 
-export type ClientResponse<T> = {
+
+export type ClientResponse<TStatus, TData> = {
   source: ClientResponseSource;
-  status: number;
-  data: T;
+  status: TStatus;
+  data: TData;
 }

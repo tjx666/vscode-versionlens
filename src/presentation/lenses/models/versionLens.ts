@@ -9,7 +9,7 @@ import {
   PackageSourceTypes,
 } from 'core/packages';
 
-import { IVersionCodeLens } from "../definitions/IVersionCodeLens";
+import { IVersionCodeLens } from "../definitions/iVersionCodeLens";
 
 // vscode implementations
 const { CodeLens } = require('vscode');

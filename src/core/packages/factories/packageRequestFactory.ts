@@ -1,17 +1,18 @@
 import * as ErrorFactory from '../../errors/factory';
 import * as ResponseFactory from './packageResponseFactory';
 import { PackageResponse, ReplaceVersionFunction } from '../models/packageResponse';
-import { PackageRequest, PackageRequestFunction } from "../models/packageRequest";
+import { PackageRequest } from "../models/packageRequest";
+import { IPackageClient } from '../definitions/iPackageClient';
 
-export async function createPackageRequest(
-  request: PackageRequest,
-  requestFn: PackageRequestFunction,
+export async function createPackageRequest<TClientData>(
+  client: IPackageClient<TClientData>,
+  request: PackageRequest<TClientData>,
   replaceVersionFn: ReplaceVersionFunction,
 ): Promise<Array<PackageResponse> | PackageResponse> {
 
   request.logger.appendLine(`Fetch Pending: ${request.package.name}`)
 
-  return requestFn(request)
+  return client.fetchPackage(request)
     .then(function (document) {
       request.logger.appendLine(`Fetched from ${document.response.source}: ${request.package.name}`)
       return ResponseFactory.createSuccess(document, replaceVersionFn);
@@ -20,7 +21,7 @@ export async function createPackageRequest(
       request.logger.appendLine(`Fetch error from ${error.source}: ${request.package.name}`)
 
       ErrorFactory.createConsoleError(error.provider,
-        requestFn.name,
+        client.fetchPackage.name,
         request.package.name,
         error
       );

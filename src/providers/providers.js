@@ -1,3 +1,4 @@
+// todo roll them up!
 import { NpmCodeLensProvider } from './npm/npmVersionLensProvider';
 import { JspmCodeLensProvider } from './jspm/jspmVersionLensProvider';
 import { DubCodeLensProvider } from './dub/dubVersionLensProvider';
@@ -5,15 +6,22 @@ import { DotNetCodeLensProvider } from './dotnet/dotnetVersionLensProvider';
 import { MavenCodeLensProvider } from './maven/mavenVersionLensProvider';
 import { PubCodeLensProvider } from './pub/pubVersionLensProvider';
 import { ComposerCodeLensProvider } from './composer/composerVersionLensProvider';
+import { ComposerConfig } from './composer/config';
+import { DotNetConfig } from './dotnet/config';
+import { DubConfig } from './dub/config';
+import { NpmConfig } from './npm/config';
+import { JspmConfig } from './jspm/config';
+import { MavenConfig } from './maven/config';
+import { PubConfig } from './pub/config';
 
 const versionlensProviders = [
-  new NpmCodeLensProvider(),
-  new JspmCodeLensProvider(),
-  new DubCodeLensProvider(),
-  new DotNetCodeLensProvider(),
-  new MavenCodeLensProvider(),
-  new PubCodeLensProvider(),
-  new ComposerCodeLensProvider()
+  new NpmCodeLensProvider(new NpmConfig()),
+  new JspmCodeLensProvider(new JspmConfig()),
+  new DubCodeLensProvider(new DubConfig()),
+  new DotNetCodeLensProvider(new DotNetConfig()),
+  new MavenCodeLensProvider(new MavenConfig()),
+  new PubCodeLensProvider(new PubConfig()),
+  new ComposerCodeLensProvider(new ComposerConfig()),
 ];
 
 export function getProvidersByFileName(fileName) {

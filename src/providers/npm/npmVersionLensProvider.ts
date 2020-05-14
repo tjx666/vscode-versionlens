@@ -10,7 +10,6 @@ import {
   renderPrereleaseInstalledDecoration
 } from 'presentation/editor/decorations';
 
-import { IProviderConfig } from "core/configuration/definitions";
 import { extractPackageDependenciesFromJson } from 'core/packages';
 import {
   AbstractVersionLensProvider,
@@ -18,17 +17,22 @@ import {
 } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import { VersionLensFactory, VersionLens } from 'presentation/lenses';
 
-import { fetchNpmPackage } from './pacoteApiClient';
-import { npmGetOutdated, npmPackageDirExists } from './npmApiClient';
-import NpmConfig from './config';
+import { PacoteClient } from './clients/pacoteClient';
+import { npmGetOutdated, npmPackageDirExists } from './clients/npmApiClient';
+import { NpmConfig } from './config';
 
-export class NpmCodeLensProvider extends AbstractVersionLensProvider {
+export class NpmCodeLensProvider
+  extends AbstractVersionLensProvider<NpmConfig> {
 
   _outdatedCache: Array<any>;
 
-  constructor(config: IProviderConfig = NpmConfig) {
+  pacoteClient: PacoteClient;
+
+  constructor(config: NpmConfig) {
     super(config);
     this._outdatedCache = [];
+
+    this.pacoteClient = new PacoteClient(0);
   }
 
   async fetchVersionLenses(
@@ -38,13 +42,15 @@ export class NpmCodeLensProvider extends AbstractVersionLensProvider {
 
     const packageDepsLenses = extractPackageDependenciesFromJson(
       document.getText(),
-      NpmConfig.getDependencyProperties()
+      this.config.getDependencyProperties()
     );
     if (packageDepsLenses.length === 0) return null;
 
     const context = {
-      packageFetchRequest: fetchNpmPackage,
+      client: this.pacoteClient,
+      clientData: this.config,
       logger: this.logger,
+      // todo client specific data {sources, config etc.....}
     }
 
     return VersionLensFactory.createVersionLenses(

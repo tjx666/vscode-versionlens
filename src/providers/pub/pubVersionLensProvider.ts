@@ -5,14 +5,19 @@ import * as VsCodeTypes from 'vscode';
 import { extractPackageDependenciesFromYaml } from "core/packages";
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from "presentation/providers/abstract/abstractVersionLensProvider";
 import { VersionLensFactory } from 'presentation/lenses';
+import { PubConfig } from './config';
+import { PubClient } from './pubClient';
 
-import PubConfig from 'providers/pub/config';
-import { fetchPubPackage } from 'providers/pub/pubApiClient';
+export class PubCodeLensProvider
 
-export class PubCodeLensProvider extends AbstractVersionLensProvider {
+  extends AbstractVersionLensProvider<PubConfig> {
 
-  constructor() {
-    super(PubConfig);
+  pubClient: PubClient;
+
+  constructor(pubConfig) {
+    super(pubConfig);
+
+    this.pubClient = new PubClient(0);
   }
 
   async fetchVersionLenses(
@@ -22,12 +27,13 @@ export class PubCodeLensProvider extends AbstractVersionLensProvider {
 
     const packageDepsLenses = extractPackageDependenciesFromYaml(
       document.getText(),
-      PubConfig.getDependencyProperties()
+      this.config.getDependencyProperties()
     );
     if (packageDepsLenses.length === 0) return null;
 
     const context = {
-      packageFetchRequest: fetchPubPackage,
+      client: this.pubClient,
+      clientData: this.config,
       logger: this.logger,
     }
 

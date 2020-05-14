@@ -5,16 +5,13 @@ import * as VsCodeTypes from 'vscode';
 import { VersionLensFactory } from 'presentation/lenses';
 import { VersionLensFetchResponse } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import { NpmCodeLensProvider } from 'providers/npm/npmVersionLensProvider';
-import { fetchNpmPackage } from 'providers/npm/pacoteApiClient';
-import JspmConfig from './config';
 import { customJspmFormatVersion } from './jspmVersionUtils';
-
 import { extractPackageDependenciesFromJson } from './jspmPackageParser';
 
 export class JspmCodeLensProvider extends NpmCodeLensProvider {
 
-  constructor() {
-    super(JspmConfig);
+  constructor(jspmConfig) {
+    super(jspmConfig);
   }
 
   async fetchVersionLenses(
@@ -24,14 +21,15 @@ export class JspmCodeLensProvider extends NpmCodeLensProvider {
     // extract dependencies from json
     const jspmDependencyLenses = extractPackageDependenciesFromJson(
       document.getText(),
-      JspmConfig.getDependencyProperties(),
+      this.config.getDependencyProperties(),
     );
     if (jspmDependencyLenses.length === 0) return null;
 
     const context = {
-      packageFetchRequest: fetchNpmPackage,
+      client: this.pacoteClient,
+      clientData: this.config,
       logger: this.logger,
-      versionReplace: customJspmFormatVersion,
+      replaceFn: customJspmFormatVersion,
     }
 
     // fetch from npm

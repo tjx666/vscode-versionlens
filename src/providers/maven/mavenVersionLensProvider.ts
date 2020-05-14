@@ -2,24 +2,29 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import MavenConfig from 'providers/maven/config';
+import { MavenConfig } from 'providers/maven/config';
 
 import { AbstractVersionLensProvider } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import { extractMavenLensDataFromDocument } from 'providers/maven/mavenPackageParser';
 // import { loadMavenRepositories } from 'providers/maven/mavenAPI';
 import { resolveMavenPackage } from './mavenPackageResolver';
 
-export class MavenCodeLensProvider extends AbstractVersionLensProvider {
+export class MavenCodeLensProvider
+  extends AbstractVersionLensProvider<MavenConfig> {
 
-  constructor() {
-    super(MavenConfig);
+  constructor(mavenConfig) {
+    super(mavenConfig);
+
   }
 
   async fetchVersionLenses(
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken,
   ) {
-    const packageDepsLenses = extractMavenLensDataFromDocument(document, MavenConfig.getDependencyProperties());
+    const packageDepsLenses = extractMavenLensDataFromDocument(
+      document,
+      this.config.getDependencyProperties()
+    );
     if (packageDepsLenses.length === 0) return null;
 
     // return VersionLensFactory.createVersionLenses(

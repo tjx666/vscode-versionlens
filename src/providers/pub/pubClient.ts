@@ -7,51 +7,64 @@ import {
   PackageSourceTypes,
   SuggestionFactory,
   VersionHelpers,
-  SemverSpec
+  SemverSpec,
+  IPackageClient,
 } from 'core/packages';
 
 import {
   JsonHttpClientRequest,
   HttpRequestMethods,
-  ClientResponse
+  HttpClientResponse,
+  JsonRequestFunction,
 } from "core/clients";
 
-import PubConfig from './config';
+import { PubConfig } from './config';
 
-const jsonRequest = new JsonHttpClientRequest({}, 0);
+export class PubClient
+  extends JsonHttpClientRequest
+  implements IPackageClient<PubConfig> {
 
-export async function fetchPubPackage(request: PackageRequest): Promise<PackageDocument> {
-  const semverSpec = VersionHelpers.parseSemver(request.package.version);
+  constructor(cacheDuration: number) {
+    super({}, cacheDuration)
+  }
 
-  return createRemotePackageDocument(request, semverSpec)
-    .catch((error: ClientResponse<string>) => {
-      if (error.status === 404) {
-        return DocumentFactory.createNotFound(
-          PubConfig.provider,
-          request.package,
-          null,
-          ResponseFactory.createResponseStatus(error.source, error.status)
-        );
-      }
-      return Promise.reject(error);
-    });
+  async fetchPackage(request: PackageRequest<PubConfig>): Promise<PackageDocument> {
+    const semverSpec = VersionHelpers.parseSemver(request.package.version);
+    const url = `${request.clientData.getApiUrl()}/api/documentation/${request.package.name}`;
+
+    return createRemotePackageDocument(this, url, request, semverSpec)
+      .catch((error: HttpClientResponse) => {
+        if (error.status === 404) {
+          return DocumentFactory.createNotFound(
+            request.clientData.provider,
+            request.package,
+            null,
+            ResponseFactory.createResponseStatus(error.source, error.status)
+          );
+        }
+        return Promise.reject(error);
+      });
+  }
+
 }
 
 async function createRemotePackageDocument(
-  request: PackageRequest,
+  client: JsonHttpClientRequest,
+  url: string,
+  request: PackageRequest<PubConfig>,
   semverSpec: SemverSpec
 ): Promise<PackageDocument> {
 
-  const url = `${PubConfig.getApiUrl()}/api/documentation/${request.package.name}`;
-
-  return jsonRequest.requestJson(HttpRequestMethods.get, url)
+  return client.requestJson(HttpRequestMethods.get, url, {})
     .then(httpResponse => {
 
       const packageInfo = httpResponse.data;
 
+      const provider = request.provider;
+
       const versionRange = semverSpec.rawVersion;
 
-      const requested: PackageIdentifier = request.package;
+      const requested = request.package;
 
       const resolved = {
         name: requested.name,
@@ -77,7 +90,7 @@ async function createRemotePackageDocument(
 
       // return PackageDocument
       return {
-        provider: PubConfig.provider,
+        provider,
         source: PackageSourceTypes.registry,
         response,
         type: semverSpec.type,

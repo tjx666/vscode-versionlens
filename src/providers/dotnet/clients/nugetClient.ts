@@ -5,45 +5,59 @@ import {
   PackageSourceTypes,
   PackageVersionTypes,
   PackageRequest,
-  VersionHelpers
+  VersionHelpers,
+  IPackageClient,
 } from 'core/packages';
+
 import {
   JsonHttpClientRequest,
-  ClientResponse,
-  HttpRequestMethods
+  HttpClientResponse,
+  HttpRequestMethods,
+  JsonRequestFunction,
 } from "core/clients";
+
 import { parseVersionSpec } from '../dotnetUtils.js';
 import { DotNetVersionSpec } from '../definitions';
-import DotnetConfig from '../config';
+import { DotNetConfig } from '../config';
 
-const jsonRequest = new JsonHttpClientRequest({}, 0);
+export class NuGetClient
+  extends JsonHttpClientRequest
+  implements IPackageClient<DotNetConfig> {
 
-export async function fetchDotnetPackage(request: PackageRequest): Promise<PackageDocument> {
-  const dotnetSpec = parseVersionSpec(request.package.version);
-  const url = DotnetConfig.getNuGetFeeds()[0];
+  constructor(cacheDuration: number) {
+    super({}, cacheDuration)
+  }
 
-  //TODO: resolve url via service locator from sources
-  return createRemotePackageDocument(url, request, dotnetSpec)
-    .catch((error: ClientResponse<string>) => {
-      if (error.status === 404) {
-        return DocumentFactory.createNotFound(
-          DotnetConfig.provider,
-          request.package,
-          null,
-          { status: error.status, source: error.source }
-        );
-      }
-      return Promise.reject(error);
-    });
+  async fetchPackage(request: PackageRequest<DotNetConfig>): Promise<PackageDocument> {
+    const dotnetSpec = parseVersionSpec(request.package.version);
+    const url = request.clientData.getNuGetFeeds()[0]
+
+    // feeds[0];
+
+    //TODO: resolve url via service locator from sources
+    return createRemotePackageDocument(this, url, request, dotnetSpec)
+      .catch((error: HttpClientResponse) => {
+        if (error.status === 404) {
+          return DocumentFactory.createNotFound(
+            request.clientData.provider,
+            request.package,
+            null,
+            { status: error.status, source: error.source }
+          );
+        }
+        return Promise.reject(error);
+      });
+
+  }
 
 }
 
 async function createRemotePackageDocument(
+  client: JsonHttpClientRequest,
   url: string,
-  request: PackageRequest,
+  request: PackageRequest<DotNetConfig>,
   dotnetSpec: DotNetVersionSpec
 ): Promise<PackageDocument> {
-
 
   const queryParams = {
     id: request.package.name,
@@ -51,7 +65,7 @@ async function createRemotePackageDocument(
     semVerLevel: '2.0.0',
   };
 
-  return jsonRequest.requestJson(HttpRequestMethods.get, url, queryParams)
+  return client.requestJson(HttpRequestMethods.get, url, queryParams)
     .then(httpResponse => {
 
       const { data } = httpResponse;
@@ -63,6 +77,8 @@ async function createRemotePackageDocument(
       const packageInfo = data;
 
       const source = PackageSourceTypes.registry;
+
+      const provider = request.provider;
 
       const requested = request.package;
 
@@ -80,7 +96,7 @@ async function createRemotePackageDocument(
       // four segment is not supported
       if (dotnetSpec.spec && dotnetSpec.spec.hasFourSegments) {
         return Promise.resolve(DocumentFactory.createFourSegment(
-          DotnetConfig.provider,
+          provider,
           requested,
           dotnetSpec.type,
         ))
@@ -89,7 +105,7 @@ async function createRemotePackageDocument(
       // no match if null type
       if (dotnetSpec.type === null) {
         return Promise.resolve(DocumentFactory.createNoMatch(
-          DotnetConfig.provider,
+          provider,
           source,
           PackageVersionTypes.version,
           requested,
@@ -113,7 +129,7 @@ async function createRemotePackageDocument(
       );
 
       return {
-        provider: DotnetConfig.provider,
+        provider,
         source,
         response,
         type: dotnetSpec.type,

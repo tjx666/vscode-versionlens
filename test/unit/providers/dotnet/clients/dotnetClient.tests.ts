@@ -1,4 +1,6 @@
-import { fetchDotNetSources } from 'providers/dotnet/clients/dotnetClient';
+import { DotNetClient } from 'providers/dotnet/clients/dotnetClient';
+import Fixutres from './fixtures/sources'
+import { ClientResponseSource } from '/core/clients';
 
 const assert = require('assert');
 
@@ -7,49 +9,84 @@ const mock = require('mock-require');
 export const DotnetClientRequestTests = {
 
   // reset all require mocks
-  afterAll: () => mock.stopAll,
+  afterEach: () => mock.stop('@npmcli/promise-spawn'),
 
   "fetchDotnetSources": {
 
-    "returns an Array<DotnetSource> from output": async () => {
+    "returns an Array<DotNetSource> of enabled sources": async () => {
 
       const expected = [
         {
           enabled: true,
           machineWide: false,
-          source: 'https://someapi.example',
+          source: 'https://api.nuget.org/v3/index.json',
           protocol: 'https:'
         },
         {
           enabled: true,
           machineWide: true,
-          source: 'c:\\some\\file\\location',
+          source: 'C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\',
           protocol: 'file:'
         },
-      ]
-
-      const testSources = [
-        `E ${expected[0].source}\n`,
-        `EM ${expected[1].source}\n`,
       ]
 
       let promiseSpawnMock = (cmd, args, opts) => {
         return Promise.resolve({
           code: 0,
-          stdout: testSources.join('')
+          stdout: Fixutres.enabledSources
         });
       };
-
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
-      return fetchDotNetSources('.')
-        .then(result => {
-          assert.deepEqual(result, expected);
+      const cut = new DotNetClient(0);
+      return cut.fetchSources('.')
+        .then(actualSources => {
+          assert.deepEqual(actualSources, expected);
         });
 
+    },
+
+
+    "return 0 items when no sources are enabled": async () => {
+
+      let promiseSpawnMock = (cmd, args, opts) => {
+        return Promise.resolve({
+          code: 0,
+          stdout: Fixutres.disabledSources
+        });
+      };
+      mock('@npmcli/promise-spawn', promiseSpawnMock);
+
+      const cut = new DotNetClient(0);
+      return cut.fetchSources('.')
+        .then(actualSources => {
+          assert.equal(actualSources.length, 0);
+        });
+    },
+
+    "rejects on error output": async () => {
+
+      const expectedErrorResp = {
+        source: ClientResponseSource.local,
+        status: 'ENOENT',
+        data: Fixutres.invalidSources,
+      }
+
+      let promiseSpawnMock = (cmd, args, opts) => {
+        return Promise.resolve({
+          code: expectedErrorResp.status,
+          stdout: Fixutres.invalidSources
+        });
+      };
+      mock('@npmcli/promise-spawn', promiseSpawnMock);
+
+      const cut = new DotNetClient(0);
+      return cut.fetchSources('.')
+        .catch(actualError => {
+          assert.deepEqual(actualError, expectedErrorResp);
+        });
     }
 
   }
-
 
 }

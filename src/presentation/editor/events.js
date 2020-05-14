@@ -1,4 +1,4 @@
-import versionlensProviders from '../../providers/versionLensProviders'
+import versionlensProviders from '../../providers/providers'
 import { onActiveEditorChanged, onChangeTextDocument } from './handlers';
 
 const { window, workspace } = require('vscode');

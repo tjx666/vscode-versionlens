@@ -14,7 +14,7 @@ const options = {
   }
 };
 
-export default new class extends AbstractProviderConfig {
+export class DubConfig extends AbstractProviderConfig {
 
   defaultDependencyProperties: Array<string>;
 
@@ -32,18 +32,17 @@ export default new class extends AbstractProviderConfig {
   }
 
   getDependencyProperties() {
-    const { workspace } = require('vscode');
-    const config = workspace.getConfiguration('versionlens');
-    return config.get(
+    return this.getContribution(
       DubContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getApiUrl() {
-    const { workspace } = require('vscode');
-    const config = workspace.getConfiguration('versionlens');
-    return config.get(DubContributions.ApiUrl, this.defaultApiUrl);
+    return this.getContribution(
+      DubContributions.ApiUrl,
+      this.defaultApiUrl
+    );
   }
 
 }

@@ -1,7 +1,7 @@
 import { ExpiryCacheMap } from '../../caching/expiryCacheMap';
-import { ClientResponse, ClientResponseSource } from "../definitions/clientResponse";
+import { ClientResponse, ClientResponseSource } from "../definitions/clientResponses";
 
-export class AbstractClientRequest<T> {
+export class AbstractClientRequest<TStatus, TData> {
 
   cache: ExpiryCacheMap;
 
@@ -11,10 +11,10 @@ export class AbstractClientRequest<T> {
 
   createCachedResponse(
     cacheKey: string,
-    status: number,
-    data: T,
+    status: TStatus,
+    data: TData,
     source: ClientResponseSource = ClientResponseSource.remote
-  ): ClientResponse<T> {
+  ): ClientResponse<TStatus, TData> {
     const cacheEnabled = this.cache.cacheDuration > 0;
 
     if (cacheEnabled) {

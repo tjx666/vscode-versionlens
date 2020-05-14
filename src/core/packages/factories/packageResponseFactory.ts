@@ -1,10 +1,13 @@
-import { ClientResponse, ClientResponseSource } from "core/clients";
+import {
+  ClientResponseSource,
+  HttpClientResponse,
+} from "core/clients";
 import { PackageDocument } from "../models/packageDocument";
 import {
   PackageResponse,
   PackageResponseErrors,
   ReplaceVersionFunction,
-  PackageResponseStatus
+  PackageResponseStatus,
 } from "../models/packageResponse";
 import { PackageIdentifier } from "../models/packageRequest";
 
@@ -83,7 +86,7 @@ export function createNotFound(provider: string, requested: PackageIdentifier): 
 export function createUnexpected(
   provider: string,
   requested: PackageIdentifier,
-  response: ClientResponse<string>
+  response: HttpClientResponse
 ): PackageResponse {
   const error: PackageResponse = {
     provider,

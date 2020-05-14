@@ -6,49 +6,64 @@ import {
   PackageSourceTypes,
   PackageDocument,
   SemverSpec,
-  PackageRequest
+  PackageRequest,
+  IPackageClient,
 } from "core/packages";
+
 import {
   JsonHttpClientRequest,
-  ClientResponse,
-  HttpRequestMethods
+  HttpClientResponse,
+  HttpRequestMethods,
+  JsonRequestFunction,
 } from "core/clients";
-import DubConfig from './config';
 
-const fs = require('fs');
+import { DubConfig } from '../config';
 
-const jsonRequest = new JsonHttpClientRequest({}, 0);
+export class DubClient
+  extends JsonHttpClientRequest
+  implements IPackageClient<DubConfig> {
 
-export async function fetchDubPackage(request: PackageRequest): Promise<PackageDocument> {
-  const semverSpec = VersionHelpers.parseSemver(request.package.version);
+  constructor(cacheDuration) {
+    super(cacheDuration)
+  }
 
-  return createRemotePackageDocument(request, semverSpec)
-    .catch((error: ClientResponse<string>) => {
-      if (error.status === 404) {
-        return DocumentFactory.createNotFound(
-          DubConfig.provider,
-          request.package,
-          null,
-          ResponseFactory.createResponseStatus(error.source, error.status)
-        );
-      }
-      return Promise.reject(error);
-    });
+  async fetchPackage(request: PackageRequest<DubConfig>): Promise<PackageDocument> {
+    const semverSpec = VersionHelpers.parseSemver(request.package.version);
+    const url = `${request.clientData.getApiUrl()}/${encodeURIComponent(request.package.name)}/info`;
+
+    return createRemotePackageDocument(this, url, request, semverSpec)
+      .catch((error: HttpClientResponse) => {
+        if (error.status === 404) {
+          return DocumentFactory.createNotFound(
+            request.clientData.provider,
+            request.package,
+            null,
+            ResponseFactory.createResponseStatus(error.source, error.status)
+          );
+        }
+        return Promise.reject(error);
+      });
+  }
+
 }
 
 async function createRemotePackageDocument(
-  request: PackageRequest,
+  client: JsonHttpClientRequest,
+  url: string,
+  request: PackageRequest<DubConfig>,
   semverSpec: SemverSpec
 ): Promise<PackageDocument> {
-  const url = `${DubConfig.getApiUrl()}/${encodeURIComponent(request.package.name)}/info`;
+
   const queryParams = {
     minimize: 'true',
   }
 
-  return jsonRequest.requestJson(HttpRequestMethods.get, url, queryParams)
+  return client.requestJson(HttpRequestMethods.get, url, queryParams)
     .then(httpResponse => {
 
       const packageInfo = httpResponse.data;
+
+      const provider = request.provider;
 
       const versionRange = semverSpec.rawVersion;
 
@@ -78,7 +93,7 @@ async function createRemotePackageDocument(
 
       // todo return a ~master entry when no matches found
       return {
-        provider: DubConfig.provider,
+        provider,
         source: PackageSourceTypes.registry,
         response,
         type: semverSpec.type,
@@ -94,6 +109,8 @@ async function createRemotePackageDocument(
 export async function readDubSelections(filePath) {
 
   return new Promise(function (resolve, reject) {
+    const fs = require('fs');
+
     if (fs.existsSync(filePath) === false) {
       reject(null);
       return;

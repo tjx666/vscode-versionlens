@@ -9,4 +9,5 @@ export interface IProviderConfig {
   options: ProviderOptions;
   provider: string;
   matchesFilename: (filename: string) => boolean;
+  getContribution: (key: string, defaultValue: any) => any;
 }

@@ -10,16 +10,20 @@ import {
   renderInstalledDecoration,
   renderOutdatedDecoration
 } from 'presentation/editor/decorations';
-import DubConfig from 'providers/dub/config';
-import { fetchDubPackage, readDubSelections } from 'providers/dub/dubApiClient';
+import { DubConfig } from 'providers/dub/config';
+import { readDubSelections, DubClient } from 'providers/dub/clients/dubClient';
 
-export class DubCodeLensProvider extends AbstractVersionLensProvider {
+export class DubCodeLensProvider extends AbstractVersionLensProvider<DubConfig> {
 
   _outdatedCache: any;
 
-  constructor() {
-    super(DubConfig);
+  dubClient: DubClient;
+
+  constructor(dubConfig) {
+    super(dubConfig);
     this._outdatedCache = {};
+
+    this.dubClient = new DubClient(0);
   }
 
   async fetchVersionLenses(
@@ -28,12 +32,13 @@ export class DubCodeLensProvider extends AbstractVersionLensProvider {
   ): VersionLensFetchResponse {
     const packageDepsLenses = extractPackageDependenciesFromJson(
       document.getText(),
-      DubConfig.getDependencyProperties()
+      this.config.getDependencyProperties()
     );
     if (packageDepsLenses.length === 0) return null;
 
     const context = {
-      packageFetchRequest: fetchDubPackage,
+      client: this.dubClient,
+      clientData: this.config,
       logger: this.logger,
     }
 

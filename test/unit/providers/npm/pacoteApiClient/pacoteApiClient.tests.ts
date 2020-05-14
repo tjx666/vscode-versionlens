@@ -1,5 +1,5 @@
 import { testPath } from 'test/unit/utils';
-import * as PacoteApiClient from 'providers/npm/pacoteApiClient'
+import { PacoteClient } from 'providers/npm/clients/pacoteClient'
 import Fixtures from './pacoteApiClient.fixtures'
 
 const assert = require('assert')
@@ -28,6 +28,9 @@ export default {
 
     'uses npmrc registry': async () => {
       const testRequest: any = {
+        clientData: {
+          provider: 'testnpmprovider',
+        },
         source: 'npmtest',
         package: {
           path: path.join(testPath, './unit/providers/npm/fixtures/config'),
@@ -45,13 +48,17 @@ export default {
         return Fixtures.packumentGit
       }
 
-      return PacoteApiClient.fetchNpmPackage(testRequest)
+      const cut = new PacoteClient(0);
+      return cut.fetchPackage(testRequest)
     },
 
     'returns a file:// directory package': async () => {
       const expectedSource = 'directory';
 
       const testRequest: any = {
+        clientData: {
+          provider: 'testnpmprovider',
+        },
         source: 'npmtest',
         package: {
           path: 'filepackagepath',
@@ -60,7 +67,9 @@ export default {
         }
       }
 
-      return PacoteApiClient.fetchNpmPackage(testRequest)
+
+      const cut = new PacoteClient(0);
+      return cut.fetchPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'directory', `expected to see ${expectedSource}`)
           assert.deepEqual(actual.requested, testRequest.package)
@@ -70,7 +79,9 @@ export default {
     'returns a git:// package': async () => {
 
       const testRequest: any = {
-        provider: 'npmtest',
+        clientData: {
+          provider: 'testnpmprovider',
+        },
         package: {
           path: 'packagepath',
           name: 'npm',
@@ -81,7 +92,8 @@ export default {
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentGit);
 
-      return PacoteApiClient.fetchNpmPackage(testRequest)
+      const cut = new PacoteClient(0);
+      return cut.fetchPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'git')
           assert.equal(actual.resolved.name, testRequest.package.name)
@@ -92,7 +104,9 @@ export default {
     'returns a github#semver package': async () => {
 
       const testRequest: any = {
-        provider: 'npmtest',
+        clientData: {
+          provider: 'testnpmprovider',
+        },
         package: {
           path: 'packagepath',
           name: 'npm',
@@ -102,7 +116,8 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentGitSemver);
-      return PacoteApiClient.fetchNpmPackage(testRequest)
+      const cut = new PacoteClient(0);
+      return cut.fetchPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'git')
           assert.equal(actual.type, 'range')
@@ -114,7 +129,9 @@ export default {
     'returns a github#committish package': async () => {
 
       const testRequest: any = {
-        provider: 'npmtest',
+        clientData: {
+          provider: 'testnpmprovider',
+        },
         package: {
           path: 'packagepath',
           name: 'npm',
@@ -124,7 +141,8 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentGitCommittish);
-      return PacoteApiClient.fetchNpmPackage(testRequest)
+      const cut = new PacoteClient(0);
+      return cut.fetchPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'git')
           assert.equal(actual.type, 'committish')
@@ -136,7 +154,9 @@ export default {
     'returns a registry range package': async () => {
 
       const testRequest: any = {
-        provider: 'npmtest',
+        clientData: {
+          provider: 'testnpmprovider',
+        },
         package: {
           path: 'packagepath',
           name: 'pacote',
@@ -146,7 +166,8 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentRegistryRange);
-      return PacoteApiClient.fetchNpmPackage(testRequest)
+      const cut = new PacoteClient(0);
+      return cut.fetchPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'registry')
           assert.equal(actual.type, 'range')
@@ -158,7 +179,9 @@ export default {
     'returns a registry version package': async () => {
 
       const testRequest: any = {
-        provider: 'npmtest',
+        clientData: {
+          provider: 'testnpmprovider',
+        },
         package: {
           path: 'packagepath',
           name: 'npm-package-arg',
@@ -168,7 +191,8 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentRegistryVersion);
-      return PacoteApiClient.fetchNpmPackage(testRequest)
+      const cut = new PacoteClient(0);
+      return cut.fetchPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'registry')
           assert.equal(actual.type, 'version')
@@ -178,7 +202,9 @@ export default {
 
     'returns a registry alias package': async () => {
       const testRequest: any = {
-        provider: 'npmtest',
+        clientData: {
+          provider: 'testnpmprovider',
+        },
         package: {
           path: 'packagepath',
           name: 'aliased',
@@ -188,7 +214,8 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentRegistryAlias);
-      return PacoteApiClient.fetchNpmPackage(testRequest)
+      const cut = new PacoteClient(0);
+      return cut.fetchPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'registry')
           assert.equal(actual.type, 'alias')

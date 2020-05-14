@@ -16,4 +16,10 @@ export class AbstractProviderConfig implements IProviderConfig {
     return minimatch(filename, this.options.selector.pattern);
   }
 
+  getContribution(key: string, defaultValue: any): any {
+    const { workspace } = require('vscode');
+    const config = workspace.getConfiguration('versionlens');
+    return config.get(key, defaultValue);
+  }
+
 }

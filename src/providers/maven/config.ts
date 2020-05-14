@@ -15,7 +15,7 @@ const options = {
   }
 }
 
-export default new class extends AbstractProviderConfig {
+export class MavenConfig extends AbstractProviderConfig {
 
   defaultDependencyProperties: Array<string>;
 
@@ -33,24 +33,24 @@ export default new class extends AbstractProviderConfig {
   }
 
   getDependencyProperties() {
-    const { workspace } = require('vscode');
-    const config = workspace.getConfiguration('versionlens');
-    return config.get(
+    return this.getContribution(
       MavenContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getTagFilter() {
-    const { workspace } = require('vscode');
-    const config = workspace.getConfiguration('versionlens');
-    return config.get(MavenContributions.TagFilter, []);
+    return this.getContribution(
+      MavenContributions.DependencyProperties,
+      this.defaultDependencyProperties
+    );
   }
 
   getApiUrl() {
-    const { workspace } = require('vscode');
-    const config = workspace.getConfiguration('versionlens');
-    return config.get(MavenContributions.ApiUrl, this.defaultApiUrl);
+    return this.getContribution(
+      MavenContributions.ApiUrl,
+      this.defaultApiUrl
+    );
   }
 
 }

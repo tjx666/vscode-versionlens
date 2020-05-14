@@ -30,17 +30,18 @@ export class NpmConfig extends AbstractProviderConfig {
   }
 
   getDependencyProperties() {
-    const { workspace } = require('vscode');
-    const config = workspace.getConfiguration('versionlens');
-    return config.get(NpmContributions.DependencyProperties, this.defaultDependencyProperties);
+    return this.getContribution(
+      NpmContributions.DependencyProperties,
+      this.defaultDependencyProperties
+    );
   }
 
   getDistTagFilter() {
-    const { workspace } = require('vscode');
-    const config = workspace.getConfiguration('versionlens');
-    return config.get(NpmContributions.DistTagFilter, []);
+    return this.getContribution(
+      NpmContributions.DistTagFilter,
+      []
+    );
+
   }
 
 }
-
-export default new NpmConfig();
