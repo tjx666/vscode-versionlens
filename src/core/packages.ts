@@ -12,5 +12,5 @@ export * from './packages/models/packageDocument';
 export * from './packages/models/packageResponse';
 export * from "./packages/models/packageRequest";
 
-export * from "./packages/Parsers/jsonPackageParser";
-export * from "./packages/Parsers/yamlPackageParser";
+export * from "./packages/parsers/jsonPackageParser";
+export * from "./packages/parsers/yamlPackageParser";
