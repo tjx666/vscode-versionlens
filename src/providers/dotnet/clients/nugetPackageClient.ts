@@ -15,15 +15,13 @@ import {
   HttpClientRequestMethods,
 } from "core/clients";
 
-import {
-  DotNetVersionSpec,
-  NuGetClientData
-} from '../definitions';
+import { NuGetClientData } from '../definitions/nuget';
+import { DotNetVersionSpec } from '../definitions/dotnet';
 
 import { parseVersionSpec } from '../dotnetUtils.js';
 import { DotNetConfig } from '../config';
 
-export class NuGetClient
+export class NuGetPackageClient
   extends JsonHttpClientRequest
   implements IPackageClient<NuGetClientData> {
 
@@ -37,12 +35,9 @@ export class NuGetClient
   async fetchPackage(request: PackageRequest<NuGetClientData>): Promise<PackageDocument> {
     const dotnetSpec = parseVersionSpec(request.package.version);
 
-    const { sources } = request.clientData;
+    const { autoCompleteUrl } = request.clientData;
 
-    //TODO: loop feeds, fetch autocomplete or search url via the service locator
-    const url = sources[0].url
-
-    return createRemotePackageDocument(this, url, request, dotnetSpec)
+    return createRemotePackageDocument(this, autoCompleteUrl, request, dotnetSpec)
       .catch((error: HttpClientResponse) => {
         if (error.status === 404) {
           return DocumentFactory.createNotFound(
@@ -70,6 +65,7 @@ async function createRemotePackageDocument(
     id: request.package.name,
     prerelease: 'true',
     semVerLevel: '2.0.0',
+    take: '1'
   };
 
   return client.requestJson(HttpClientRequestMethods.get, url, queryParams)

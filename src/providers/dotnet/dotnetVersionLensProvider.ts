@@ -12,22 +12,25 @@ import { VersionLensFactory } from 'presentation/lenses';
 import { DotNetConfig } from './config';
 import { extractDotnetLensDataFromDocument } from './dotnetPackageParser'
 import { DotNetClient } from './clients/dotnetClient';
-import { NuGetClient } from './clients/nugetClient';
-import { NuGetClientData } from './definitions';
-
+import { NuGetPackageClient } from './clients/nugetPackageClient';
+import { NuGetResourceClient } from './clients/nugetResourceClient';
+import { NuGetClientData } from './definitions/nuget';
+import { RegistryProtocols } from 'core/clients/helpers/urlHelpers';
 
 export class DotNetVersionLensProvider
   extends AbstractVersionLensProvider<DotNetConfig> {
 
   dotnetClient: DotNetClient;
-  nugetClient: NuGetClient;
+  nugetPackageClient: NuGetPackageClient;
+  nugetResourceClient: NuGetResourceClient;
 
   constructor(config: DotNetConfig) {
     super(config);
 
     // todo get cache durations from config
     this.dotnetClient = new DotNetClient(config, 0);
-    this.nugetClient = new NuGetClient(config, 0);
+    this.nugetPackageClient = new NuGetPackageClient(config, 0);
+    this.nugetResourceClient = new NuGetResourceClient(config, 0);
   }
 
   async fetchVersionLenses(
@@ -50,22 +53,34 @@ export class DotNetVersionLensProvider
 
     return promisedSources.then(sources => {
 
-      const clientData: NuGetClientData = {
-        provider: this.config.provider,
-        sources,
-      }
-
-      const context = {
-        client: this.nugetClient,
-        clientData,
-        logger: this.logger,
-      }
-
-      return VersionLensFactory.createVersionLenses(
-        document,
-        packageDepsLenses,
-        context,
+      const remoteSources = sources.filter(
+        s => s.protocol === RegistryProtocols.https
       );
+
+      const promisedResource = this.nugetResourceClient.fetchResource(
+        remoteSources[0]
+      );
+
+      return promisedResource.then((autoCompleteUrl: string) => {
+
+        const clientData: NuGetClientData = {
+          provider: this.config.provider,
+          autoCompleteUrl,
+        }
+
+        const context = {
+          client: this.nugetPackageClient,
+          clientData,
+          logger: this.logger,
+        }
+
+        return VersionLensFactory.createVersionLenses(
+          document,
+          packageDepsLenses,
+          context,
+        );
+
+      })
 
     });
 

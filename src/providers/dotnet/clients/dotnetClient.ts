@@ -3,7 +3,7 @@ import {
   UrlHelpers,
 } from 'core/clients';
 
-import { DotNetSource } from '../definitions';
+import { DotNetSource } from '../definitions/dotnet';
 
 import { DotNetConfig } from '../config';
 

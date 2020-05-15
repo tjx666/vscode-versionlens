@@ -1,5 +1,7 @@
+import Fixtures from './fixtures/dotnetSources'
+
 import { DotNetClient } from 'providers/dotnet/clients/dotnetClient';
-import Fixutres from './fixtures/sources'
+
 import {
   ClientResponseSource,
   UrlHelpers
@@ -26,7 +28,7 @@ export const DotnetClientRequestTests = {
   // reset all require mocks
   afterEach: () => mock.stop('@npmcli/promise-spawn'),
 
-  "fetchDotnetSources": {
+  "fetchSources": {
 
     "returns an Array<DotNetSource> of enabled sources": async () => {
       const testFeeds = [
@@ -57,7 +59,7 @@ export const DotnetClientRequestTests = {
       let promiseSpawnMock = (cmd, args, opts) => {
         return Promise.resolve({
           code: 0,
-          stdout: Fixutres.enabledSources
+          stdout: Fixtures.enabledSources
         });
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
@@ -84,7 +86,7 @@ export const DotnetClientRequestTests = {
       let promiseSpawnMock = (cmd, args, opts) => {
         return Promise.resolve({
           code: 0,
-          stdout: Fixutres.disabledSources
+          stdout: Fixtures.disabledSources
         });
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
@@ -108,13 +110,13 @@ export const DotnetClientRequestTests = {
       const expectedErrorResp = {
         source: ClientResponseSource.local,
         status: 'ENOENT',
-        data: Fixutres.invalidSources,
+        data: Fixtures.invalidSources,
       }
 
       let promiseSpawnMock = (cmd, args, opts) => {
         return Promise.resolve({
           code: expectedErrorResp.status,
-          stdout: Fixutres.invalidSources
+          stdout: Fixtures.invalidSources
         });
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
