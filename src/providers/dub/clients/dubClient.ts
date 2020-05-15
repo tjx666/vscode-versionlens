@@ -13,8 +13,7 @@ import {
 import {
   JsonHttpClientRequest,
   HttpClientResponse,
-  HttpRequestMethods,
-  JsonRequestFunction,
+  HttpClientRequestMethods,
 } from "core/clients";
 
 import { DubConfig } from '../config';
@@ -61,7 +60,7 @@ async function createRemotePackageDocument(
     minimize: 'true',
   }
 
-  return client.requestJson(HttpRequestMethods.get, url, queryParams)
+  return client.requestJson(HttpClientRequestMethods.get, url, queryParams)
     .then(httpResponse => {
 
       const packageInfo = httpResponse.data;

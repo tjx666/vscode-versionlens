@@ -104,6 +104,7 @@ export function createNoMatch(
   source: PackageSourceTypes,
   type: PackageVersionTypes,
   requested: PackageIdentifier,
+  response: PackageResponseStatus,
   latestVersion?: string
 ): PackageDocument {
   const suggestions: Array<PackageSuggestion> = [
@@ -116,6 +117,7 @@ export function createNoMatch(
     source,
     type,
     requested,
+    response,
     resolved: null,
     suggestions
   };
@@ -124,6 +126,7 @@ export function createNoMatch(
 export function createFourSegment(
   provider: string,
   requested: PackageIdentifier,
+  response: PackageResponseStatus,
   type: PackageVersionTypes
 ): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.registry;
@@ -134,6 +137,7 @@ export function createFourSegment(
     source,
     type,
     requested,
+    response,
     resolved: null,
     suggestions
   };

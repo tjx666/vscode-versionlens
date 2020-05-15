@@ -2,19 +2,28 @@ import {
   ClientResponseSource,
   HttpClientResponse,
 } from "core/clients";
-import { PackageDocument } from "../models/packageDocument";
+import { PackageDocument, PackageSuggestion } from "../models/packageDocument";
+
 import {
   PackageResponse,
   PackageResponseErrors,
   ReplaceVersionFunction,
   PackageResponseStatus,
 } from "../models/packageResponse";
+
 import { PackageIdentifier } from "../models/packageRequest";
+
+export function createResponseStatus(source: ClientResponseSource, status: number): PackageResponseStatus {
+  return {
+    source,
+    status
+  };
+}
 
 export function createSuccess(document: PackageDocument, replaceVersionFn: ReplaceVersionFunction): Array<PackageResponse> {
   // map the documents to responses
-  return document.suggestions.map(function (suggestion, index): PackageResponse {
-    const response: PackageResponse = {
+  return document.suggestions.map(function (suggestion: PackageSuggestion): PackageResponse {
+    return {
       provider: document.provider,
       source: document.source,
       type: document.type,
@@ -23,16 +32,7 @@ export function createSuccess(document: PackageDocument, replaceVersionFn: Repla
       suggestion,
       replaceVersionFn
     };
-
-    return response;
-  })
-}
-
-export function createResponseStatus(source: ClientResponseSource, status: number): PackageResponseStatus {
-  return {
-    source,
-    status
-  };
+  });
 }
 
 export function createNotSupported(provider: string, requested: PackageIdentifier): PackageResponse {
@@ -77,9 +77,6 @@ export function createNotFound(provider: string, requested: PackageIdentifier): 
 //       isPrimaryTag: true
 //     }
 //   };
-
-
-
 //   return createPackage(name, message, meta, null);
 // }
 
@@ -97,13 +94,3 @@ export function createUnexpected(
   };
   return error;
 }
-
-
-// export function createPackage(source: string, resolved: PackageNameVersion, requested: PackageNameVersion, replaceVersionFn?: ReplaceVersionFunction): PackageResponse {
-//   return {
-//     name,
-//     version,
-//     meta,
-//     replaceVersionFn
-//   };
-// }

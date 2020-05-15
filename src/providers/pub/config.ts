@@ -41,12 +41,10 @@ export class PubConfig extends AbstractProviderConfig {
   }
 
   getApiUrl() {
-
     return this.getSetting(
       PubContributions.ApiUrl,
       this.defaultApiUrl
     );
-
   }
 
 }

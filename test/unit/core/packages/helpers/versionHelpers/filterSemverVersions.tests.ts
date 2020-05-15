@@ -20,7 +20,7 @@ export default {
   },
 
   "returns empty when no matches found": () => {
-    const results = VersionHelpers.filterSemverVersions(['1.2.3.4', '2.12.22.test']);
+    const results = VersionHelpers.filterSemverVersions(['1.2.3.4', '5.6.7.8']);
     assert.equal(results.length, 0);
   },
 

@@ -1,8 +1,10 @@
 import {
   ProcessClientRequest,
+  UrlHelpers,
 } from 'core/clients';
 
-import { DotNetSource, DotNetSourceProtocols } from '../definitions';
+import { DotNetSource } from '../definitions';
+
 import { DotNetConfig } from '../config';
 
 export class DotNetClient extends ProcessClientRequest {
@@ -60,7 +62,7 @@ function parseSourcesArray(lines: Array<string>): Array<DotNetSource> {
     const machineWide = line.substring(1, 2) === 'M';
     const offset = machineWide ? 3 : 2;
     const url = line.substring(offset);
-    const protocol = getProtocolFromUrl(url);
+    const protocol = UrlHelpers.getProtocolFromUrl(url);
     return {
       enabled,
       machineWide,
@@ -72,8 +74,8 @@ function parseSourcesArray(lines: Array<string>): Array<DotNetSource> {
 
 function convertFeedsToSources(feeds: Array<string>): Array<DotNetSource> {
   return feeds.map(function (url: string) {
-    const protocol = getProtocolFromUrl(url);
-    const machineWide = (protocol === DotNetSourceProtocols.file);
+    const protocol = UrlHelpers.getProtocolFromUrl(url);
+    const machineWide = (protocol === UrlHelpers.RegistryProtocols.file);
     return {
       enabled: true,
       machineWide,
@@ -81,12 +83,4 @@ function convertFeedsToSources(feeds: Array<string>): Array<DotNetSource> {
       protocol
     };
   });
-}
-
-function getProtocolFromUrl(url: string): DotNetSourceProtocols {
-  const { parse } = require('url');
-  const sourceUrl = parse(url);
-  return (sourceUrl.protocol !== DotNetSourceProtocols.https) ?
-    DotNetSourceProtocols.file :
-    DotNetSourceProtocols.https;
 }

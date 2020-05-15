@@ -1,4 +1,4 @@
-import { HttpRequestMethods } from './httpClientRequest';
+import { HttpClientRequestMethods } from './httpClientRequest';
 import { JsonHttpClientRequest } from './jsonHttpClientRequest';
 
 export class GithubRequest extends JsonHttpClientRequest {
@@ -74,7 +74,7 @@ export class GithubRequest extends JsonHttpClientRequest {
   }
 
   async httpGet(userRepo, category, queryParams) {
-    return this.requestGithub(HttpRequestMethods.get, userRepo, category, queryParams)
+    return this.requestGithub(HttpClientRequestMethods.get, userRepo, category, queryParams)
       .then(response => response.data)
       .catch(error => {
         // handles any 404 errors during a request for the latest release
@@ -109,7 +109,7 @@ export class GithubRequest extends JsonHttpClientRequest {
   }
 
   async httpHead(userRepo) {
-    return super.requestJson(HttpRequestMethods.head, userRepo, null, null)
+    return super.requestJson(HttpClientRequestMethods.head, userRepo, null, null)
   }
 
   async requestGithub(method, userRepo, category, queryParams) {

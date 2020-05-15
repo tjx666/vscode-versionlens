@@ -1,7 +1,7 @@
 import {
   JsonHttpClientRequest,
   ClientResponseSource,
-  HttpRequestMethods,
+  HttpClientRequestMethods,
 } from 'core/clients'
 
 const assert = require('assert')
@@ -47,7 +47,7 @@ export const JsonClientRequestTests = {
       const rut = new JsonHttpClientRequest();
 
       await rut.requestJson(
-        HttpRequestMethods.get,
+        HttpClientRequestMethods.get,
         testUrl,
         testQueryParams
       )

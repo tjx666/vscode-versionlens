@@ -12,7 +12,7 @@ import {
 
 import {
   JsonHttpClientRequest,
-  HttpRequestMethods,
+  HttpClientRequestMethods,
   HttpClientResponse,
   JsonClientResponse,
 } from "core/clients";
@@ -57,7 +57,7 @@ async function createRemotePackageDocument(
   semverSpec: SemverSpec
 ): Promise<PackageDocument> {
 
-  return client.requestJson(HttpRequestMethods.get, url, {})
+  return client.requestJson(HttpClientRequestMethods.get, url, {})
     .then((httpResponse: JsonClientResponse) => {
       const packageInfo = httpResponse.data.packages[request.package.name];
 

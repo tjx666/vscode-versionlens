@@ -8,31 +8,6 @@ import {
 export const formatTagNameRegex = /^[^0-9\-]*/;
 export const loosePrereleases = { loose: true, includePrerelease: true };
 
-export function filterVersionsWithinRange(range: string, versions: Array<string>): Array<string> {
-  const { valid, validRange, Range } = require("semver");
-  // make sure we have a valid version or range
-  if (valid(range) === null && validRange(range) === null) return versions;
-
-  const filterRange = new Range(range, loosePrereleases);
-  return versions.filter(function (version: string) {
-    return filterRange.test(version)
-  });
-}
-
-export function filterTagsWithinRange(range: string, tags: Array<PackageNameVersion>): Array<PackageNameVersion> {
-  const { valid, validRange, Range } = require("semver");
-
-  // make sure we have a valid version or range
-  if (valid(range) === null && validRange(range) === null) return tags;
-
-  const filterRange = new Range(range, loosePrereleases);
-  return tags.filter(
-    function (pvm: PackageNameVersion) {
-      return filterRange.test(pvm.version)
-    }
-  );
-}
-
 export function filterPrereleasesFromDistTags(distTags: { [key: string]: string }): Array<string> {
   const { prerelease } = require("semver");
   const prereleases: Array<string> = [];
@@ -94,29 +69,39 @@ export function removeFourSegmentVersionsFromArray(versions: Array<string>): Arr
 
 export function isFixedVersion(versionToCheck: string): boolean {
   const { Range } = require('semver');
-  const testRange = new Range(versionToCheck);
+  const testRange = new Range(versionToCheck, loosePrereleases);
   return testRange.set[0][0].operator === "";
 }
 
-const ifourSegmentVersionRegex = /^(\d+\.)(\d+\.)(\d+\.)(\*|\d+)$/g;
+const isfourSegmentVersionRegex = /^(\d+\.)(\d+\.)(\d+\.)(\*|\d+)$/g;
 export function isFourSegmentedVersion(versionToCheck: string): boolean {
-  return ifourSegmentVersionRegex.test(versionToCheck);
+  return isfourSegmentVersionRegex.test(versionToCheck);
 }
 
-const commonPrereleaseNames = [
-  'alpha', 'a',
-  'beta', 'b',
-  'final', 'ga',
-  'legacy',
-  'milestone', 'm',
-  'next',
-  'snapshot', 'sp',
-  'release',
-  'rc', 'cr',
+const commonReleaseIdentities = [
+  ['legacy'],
+  ['alpha', 'a'],
+  ['beta', 'b'],
+  ['next'],
+  ['milestone', 'm'],
+  ['rc', 'cr'],
+  ['snapshot'],
+  ['release', 'final', 'ga'],
+  ['sp']
 ];
 export function friendlifyPrereleaseName(prereleaseName: string): string {
-  const filteredNames = commonPrereleaseNames.filter(
-    commonName => new RegExp(`(.+-)${commonName}`, 'i').test(prereleaseName)
+  const filteredNames = [];
+  commonReleaseIdentities.forEach(
+    function (group) {
+      return group.forEach(
+        commonName => {
+          const exp = new RegExp(`(.+-)${commonName}`, 'i');
+          if (exp.test(prereleaseName.toLowerCase())) {
+            filteredNames.push(commonName);
+          }
+        }
+      );
+    }
   );
 
   return (filteredNames.length === 0) ?
@@ -126,8 +111,8 @@ export function friendlifyPrereleaseName(prereleaseName: string): string {
 
 export function parseSemver(packageVersion: string): SemverSpec {
   const { valid, validRange } = require('semver');
-  const isVersion = valid(packageVersion);
-  const isRange = validRange(packageVersion);
+  const isVersion = valid(packageVersion, loosePrereleases);
+  const isRange = validRange(packageVersion, loosePrereleases);
   return {
     rawVersion: packageVersion,
     type: !!isVersion ?
@@ -168,7 +153,7 @@ export function filterSemverVersions(versions: Array<string>): Array<string> {
   const { validRange } = require('semver');
   const semverVersions = [];
   versions.forEach(version => {
-    if (validRange(version)) semverVersions.push(version);
+    if (validRange(version, loosePrereleases)) semverVersions.push(version);
   });
   return semverVersions;
 }

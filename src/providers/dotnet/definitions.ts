@@ -1,4 +1,5 @@
 import { PackageVersionTypes } from 'core/packages';
+import { RegistryProtocols } from 'core/clients/helpers/urlHelpers';
 
 export type NugetVersionSpec = {
   version?: string;
@@ -16,16 +17,12 @@ export type DotNetVersionSpec = {
   spec: NugetVersionSpec,
 };
 
-export enum DotNetSourceProtocols {
-  file = 'file:',
-  https = 'https:',
-}
 
 export type DotNetSource = {
   enabled: boolean,
   machineWide: boolean,
   url: string,
-  protocol: DotNetSourceProtocols,
+  protocol: RegistryProtocols,
 }
 
 export type NuGetClientData = {

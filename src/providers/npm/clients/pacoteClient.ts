@@ -177,6 +177,7 @@ async function createRemotePackageDocument(request: PackageRequest<NpmConfig>, n
           source,
           type,
           requested,
+          response,
           // suggest the latest release if available
           releases.length > 0 ? releases[releases.length - 1] : null
         );

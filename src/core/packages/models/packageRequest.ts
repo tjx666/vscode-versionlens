@@ -1,6 +1,5 @@
 import { ILogger } from 'core/logging/definitions';
 import { PackageDocument } from './packageDocument';
-import { KeyDictionary } from 'core/definitions/generics';
 
 export type PackageIdentifier = {
   path: string;

@@ -1,8 +1,11 @@
 import { DotNetClient } from 'providers/dotnet/clients/dotnetClient';
 import Fixutres from './fixtures/sources'
-import { ClientResponseSource } from '/core/clients';
+import {
+  ClientResponseSource,
+  UrlHelpers
+} from '/core/clients';
+
 import { DotNetConfig } from '/providers/dotnet/config';
-import { DotNetSourceProtocols } from '/providers/dotnet/definitions';
 import { ConfigurationMock } from 'test/unit/mocks/configurationMock'
 
 const assert = require('assert');
@@ -35,19 +38,19 @@ export const DotnetClientRequestTests = {
           enabled: true,
           machineWide: false,
           url: testFeeds[0],
-          protocol: DotNetSourceProtocols.https
+          protocol: UrlHelpers.RegistryProtocols.https
         },
         {
           enabled: true,
           machineWide: false,
           url: 'https://api.nuget.org/v3/index.json',
-          protocol: DotNetSourceProtocols.https
+          protocol: UrlHelpers.RegistryProtocols.https
         },
         {
           enabled: true,
           machineWide: true,
           url: 'C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\',
-          protocol: DotNetSourceProtocols.file
+          protocol: UrlHelpers.RegistryProtocols.file
         },
       ]
 

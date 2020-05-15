@@ -12,13 +12,12 @@ import {
 import {
   JsonHttpClientRequest,
   HttpClientResponse,
-  HttpRequestMethods,
+  HttpClientRequestMethods,
 } from "core/clients";
 
 import {
   DotNetVersionSpec,
-  NuGetClientData,
-  DotNetSourceProtocols
+  NuGetClientData
 } from '../definitions';
 
 import { parseVersionSpec } from '../dotnetUtils.js';
@@ -73,7 +72,7 @@ async function createRemotePackageDocument(
     semVerLevel: '2.0.0',
   };
 
-  return client.requestJson(HttpRequestMethods.get, url, queryParams)
+  return client.requestJson(HttpClientRequestMethods.get, url, queryParams)
     .then(httpResponse => {
 
       const { data } = httpResponse;
@@ -106,6 +105,7 @@ async function createRemotePackageDocument(
         return Promise.resolve(DocumentFactory.createFourSegment(
           provider,
           requested,
+          response,
           dotnetSpec.type,
         ))
       }
@@ -117,6 +117,7 @@ async function createRemotePackageDocument(
           source,
           PackageVersionTypes.version,
           requested,
+          response,
           // suggest the latest release if available
           releases.length > 0 ? releases[releases.length - 1] : null,
         ))

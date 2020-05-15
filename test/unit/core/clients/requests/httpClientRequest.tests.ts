@@ -1,7 +1,7 @@
 import {
   ClientResponseSource,
-  HttpRequest,
-  HttpRequestMethods,
+  HttpClientRequest,
+  HttpClientRequestMethods,
   createUrl,
 } from 'core/clients'
 import { KeyStringDictionary } from '/core/definitions/generics'
@@ -24,7 +24,7 @@ export const HttpRequestTests = {
   afterAll: () => mock.stopAll(),
 
   beforeEach: () => {
-    testContext.rut = new HttpRequest();
+    testContext.rut = new HttpClientRequest();
     requestLightMock.xhr = _ => { throw new Error("Not implemented") }
   },
 
@@ -44,7 +44,7 @@ export const HttpRequestTests = {
           const expectedUrl = createUrl(testUrl, params);
           requestLightMock.xhr = options => {
             assert.equal(options.url, expectedUrl);
-            assert.equal(options.type, HttpRequestMethods.get);
+            assert.equal(options.type, HttpClientRequestMethods.get);
             return Promise.resolve({
               status: 200,
               responseText: null
@@ -52,7 +52,7 @@ export const HttpRequestTests = {
           };
 
           return await testContext.rut.request(
-            HttpRequestMethods.get,
+            HttpClientRequestMethods.get,
             testUrl,
             params
           )
@@ -81,7 +81,7 @@ export const HttpRequestTests = {
       };
 
       await testContext.rut.request(
-        HttpRequestMethods.get,
+        HttpClientRequestMethods.get,
         testUrl,
         testQueryParams
       )
@@ -111,7 +111,7 @@ export const HttpRequestTests = {
       };
 
       await testContext.rut.request(
-        HttpRequestMethods.get,
+        HttpClientRequestMethods.get,
         testUrl,
         testQueryParams
       )
@@ -132,10 +132,10 @@ export const HttpRequestTests = {
         })
       };
 
-      testContext.rut = new HttpRequest({}, 0);
+      testContext.rut = new HttpClientRequest({}, 0);
 
       await testContext.rut.request(
-        HttpRequestMethods.get,
+        HttpClientRequestMethods.get,
         testUrl,
         testQueryParams
       )

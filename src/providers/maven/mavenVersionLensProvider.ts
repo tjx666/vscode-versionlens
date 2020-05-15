@@ -2,37 +2,67 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { MavenConfig } from 'providers/maven/config';
-
 import { AbstractVersionLensProvider } from 'presentation/providers/abstract/abstractVersionLensProvider';
 import { extractMavenLensDataFromDocument } from 'providers/maven/mavenPackageParser';
-// import { loadMavenRepositories } from 'providers/maven/mavenAPI';
-import { resolveMavenPackage } from './mavenPackageResolver';
+import { VersionLensFactory } from 'presentation/lenses';
+import { MavenConfig } from './config';
+import { MavenClientData } from './definitions';
+import { MvnClient } from './clients/mvnClient';
+import { MavenClient } from './clients/mavenClient';
+import { RegistryProtocols } from 'core/clients/helpers/urlHelpers';
 
 export class MavenVersionLensProvider
   extends AbstractVersionLensProvider<MavenConfig> {
 
+  mvnClient: MvnClient;
+  mavenClient: MavenClient;
+
   constructor(config: MavenConfig) {
     super(config);
+
+    this.mvnClient = new MvnClient(config, 0)
+    this.mavenClient = new MavenClient(config, 0)
   }
 
   async fetchVersionLenses(
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken,
   ) {
-    const packageDepsLenses = extractMavenLensDataFromDocument(
+    const packageDependencies = extractMavenLensDataFromDocument(
       document,
       this.config.getDependencyProperties()
     );
-    if (packageDepsLenses.length === 0) return null;
+    if (packageDependencies.length === 0) return null;
 
-    // return VersionLensFactory.createVersionLenses(
-    //   document,
-    //   packageDepsLenses,
-    //   this.logger,
-    //   resolveMavenPackage,
-    //   null
-    // );
+    // package path
+    const { dirname } = require('path');
+    const packagePath = dirname(document.uri.fsPath);
+
+    // gets source feeds from the project path
+    const promisedRepos = this.mvnClient.fetchRepositories(packagePath);
+
+    return promisedRepos.then(repos => {
+
+      const repositories = repos.filter(repo => repo.protocol === RegistryProtocols.https)
+
+      const clientData: MavenClientData = {
+        provider: this.config.provider,
+        repositories,
+      }
+
+      const context = {
+        client: this.mavenClient,
+        clientData,
+        logger: this.logger,
+      }
+
+      return VersionLensFactory.createVersionLenses(
+        document,
+        packageDependencies,
+        context,
+      );
+
+    })
 
   }
 
@@ -40,73 +70,4 @@ export class MavenVersionLensProvider
     return Promise.resolve();
   }
 
-  /*
-provideCodeLenses(document, token) {
-
-  if (appSettings.showVersionLenses === false) return [];
-
-  return loadMavenRepositories().then(_ => {
-    const packageDepsLenses = extractMavenLensDataFromText(document, appContrib.mavenDependencyProperties);
-    if (packageDepsLenses.length === 0) return [];
-
-    const packageLensResolvers = ResponseFactory.createPackageRequests(
-      '',
-      packageDepsLenses,
-      resolveMavenPackage
-    );
-    if (packageLensResolvers.length === 0) return [];
-
-    appSettings.inProgress = true;
-    return createCodeLenses(packageLensResolvers, document)
-      .then(codelenses => {
-        appSettings.inProgress = false;
-        return codelenses;
-      });
-  });
-
-  return [];
-}    */
-  /*
-evaluateCodeLens(codeLens: IVersionCodeLens) {
-
-  // check if this package was found
-  if (codeLens.hasPackageError(PackageErrors.NotFound))
-    return CommandFactory.createPackageNotFoundCommand(codeLens);
-
-  // check if this is a tagged version
-  if (codeLens.isTaggedVersion())
-    return CommandFactory.createTaggedVersionCommand(codeLens);
-
-  // check if this install a tagged version
-  if (codeLens.isInvalidVersion())
-    return CommandFactory.createInvalidVersionCommand(codeLens);
-
-  // check if this entered versions matches a registry versions
-  if (codeLens.versionMatchNotFound())
-    return CommandFactory.createVersionMatchNotFoundCommand(codeLens);
-
-  // check if this matches prerelease version
-  if (codeLens.matchesPrereleaseVersion())
-    return CommandFactory.createMatchesPrereleaseVersionCommand(codeLens);
-
-  // check if this is the latest version
-  if (codeLens.matchesLatestVersion())
-    return CommandFactory.createMatchesLatestVersionCommand(codeLens);
-
-  // check if this satisfies the latest version
-  if (codeLens.satisfiesLatestVersion())
-    return CommandFactory.createSatisfiesLatestVersionCommand(codeLens);
-
-  // check if this is a fixed version
-  if (codeLens.isFixedVersion())
-    return CommandFactory.createFixedVersionCommand(codeLens);
-
-  const tagVersion = codeLens.getTaggedVersion();
-  return CommandFactory.createNewVersionCommand(
-    tagVersion,
-    codeLens
-  );
-
-}
-  */
 }

@@ -1,20 +1,18 @@
 import { KeyStringDictionary } from "core/definitions/generics";
 import { AbstractClientRequest } from './abstractClientRequest';
-import { ClientResponse } from "../definitions/clientResponses";
+import { HttpClientResponse } from "../definitions/clientResponses";
 
 type RequestLightHttpResponse = {
   status: number;
   responseText: string;
 }
 
-export enum HttpRequestMethods {
+export enum HttpClientRequestMethods {
   get = 'GET',
   head = 'HEAD'
 }
 
-export type HttpClientResponse = ClientResponse<number, string>;
-
-export class HttpRequest extends AbstractClientRequest<number, string> {
+export class HttpClientRequest extends AbstractClientRequest<number, string> {
 
   headers: KeyStringDictionary;
 
@@ -24,7 +22,7 @@ export class HttpRequest extends AbstractClientRequest<number, string> {
   }
   
   async request(
-    method: HttpRequestMethods,
+    method: HttpClientRequestMethods,
     baseUrl: string,
     queryParams: KeyStringDictionary = {}
   ): Promise<HttpClientResponse> {
