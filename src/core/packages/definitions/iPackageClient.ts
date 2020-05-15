@@ -1,10 +1,10 @@
-import { IProviderOptions } from "core/packages";
+import { IPackageProviderOptions } from "core/packages";
 import { PackageRequest } from "../models/packageRequest";
 import { PackageDocument } from "../models/packageDocument";
 
 export interface IPackageClient<TClientConfig> {
 
-  options: IProviderOptions,
+  options: IPackageProviderOptions,
 
   fetchPackage: (request: PackageRequest<TClientConfig>)
     => Promise<PackageDocument>;

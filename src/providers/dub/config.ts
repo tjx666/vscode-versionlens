@@ -1,7 +1,7 @@
 import * as VsCodeTypes from "vscode";
 
 import { AbstractProviderConfig } from "presentation/providers";
-import { IProviderOptions, PackageFileFilter } from "core/packages";
+import { IPackageProviderOptions, PackageFileFilter } from "core/packages";
 
 enum DubContributions {
   DependencyProperties = 'dub.dependencyProperties',
@@ -20,7 +20,7 @@ const options = {
 
 export class DubConfig
   extends AbstractProviderConfig
-  implements IProviderOptions {
+  implements IPackageProviderOptions {
 
   defaultDependencyProperties: Array<string>;
 

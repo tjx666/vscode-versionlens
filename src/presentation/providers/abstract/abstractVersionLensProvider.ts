@@ -8,9 +8,9 @@ import { PackageSourceTypes, PackageResponseErrors } from 'core/packages';
 import * as CommandFactory from 'presentation/commands/factory';
 import { IVersionCodeLens, VersionLens } from "presentation/lenses";
 import { VersionLensFetchResponse } from "../definitions";
-import { IProviderOptions } from "core/packages";
+import { IPackageProviderOptions } from "core/packages";
 
-export abstract class AbstractVersionLensProvider<TConfig extends IProviderOptions> {
+export abstract class AbstractVersionLensProvider<TConfig extends IPackageProviderOptions> {
 
   _onChangeCodeLensesEmitter: VsCodeTypes.EventEmitter<void>;
 

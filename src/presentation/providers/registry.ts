@@ -7,7 +7,7 @@ import {
 
 import { KeyDictionary } from 'core/definitions/generics'
 
-import { IProviderOptions } from "core/packages";
+import { IPackageProviderOptions } from "core/packages";
 
 export const providerNames = [
   'composer',
@@ -21,13 +21,15 @@ export const providerNames = [
 
 class ProviderRegistry {
 
-  providers: KeyDictionary<AbstractVersionLensProvider<IProviderOptions>>;
+  providers: KeyDictionary<AbstractVersionLensProvider<IPackageProviderOptions>>;
 
   constructor() {
     this.providers = {};
   }
 
-  register(provider: AbstractVersionLensProvider<IProviderOptions>): AbstractVersionLensProvider<IProviderOptions> {
+  register(
+    provider: AbstractVersionLensProvider<IPackageProviderOptions>
+  ): AbstractVersionLensProvider<IPackageProviderOptions> {
     const key = provider.config.providerName;
     if (this.has(key)) throw new Error('Provider already registered');
     this.providers[key] = provider;
@@ -63,7 +65,7 @@ export const providerRegistry = new ProviderRegistry();
 
 export async function registerProviders(
   configuration: VsCodeTypes.WorkspaceConfiguration
-): Promise<Array<AbstractVersionLensProvider<IProviderOptions>>> {
+): Promise<Array<AbstractVersionLensProvider<IPackageProviderOptions>>> {
 
   const promisedActivation = providerNames.map(packageManager => {
     return import(`providers/${packageManager}/activate`)

@@ -3,12 +3,12 @@ import * as VsCodeTypes from "vscode";
 import { NpmConfig } from '../npm/config';
 import {
   PackageFileFilter,
-  IProviderOptions
+  IPackageProviderOptions
 } from "core/packages";
 
 export class JspmConfig
   extends NpmConfig
-  implements IProviderOptions {
+  implements IPackageProviderOptions {
 
   constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
     super(configuration);

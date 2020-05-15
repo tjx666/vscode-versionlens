@@ -1,6 +1,6 @@
 export * from './packages/definitions/semverSpec';
 export * from './packages/definitions/iPackageClient';
-export * from './packages/options/iPackageOptions';
+export * from './packages/options/iPackageProviderOptions';
 
 export * as DocumentFactory from './packages/factories/packageDocumentFactory';
 export * as RequestFactory from './packages/factories/packageRequestFactory';

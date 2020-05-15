@@ -1,6 +1,6 @@
 import * as VsCodeTypes from "vscode";
 
-import { IProviderOptions, PackageFileFilter } from "core/packages";
+import { IPackageProviderOptions, PackageFileFilter } from "core/packages";
 import { AbstractProviderConfig } from 'presentation/providers';
 
 enum ComposerContributions {
@@ -20,7 +20,7 @@ const options = {
 
 export class ComposerConfig
   extends AbstractProviderConfig
-  implements IProviderOptions {
+  implements IPackageProviderOptions {
 
   defaultDependencyProperties: Array<string>;
 

@@ -1,7 +1,7 @@
 import * as VsCodeTypes from "vscode";
 
 import { AbstractProviderConfig } from "presentation/providers";
-import { PackageFileFilter, IProviderOptions } from "core/packages";
+import { PackageFileFilter, IPackageProviderOptions } from "core/packages";
 
 enum PubContributions {
   DependencyProperties = 'pub.dependencyProperties',
@@ -20,7 +20,7 @@ const options = {
 
 export class PubConfig
   extends AbstractProviderConfig
-  implements IProviderOptions {
+  implements IPackageProviderOptions {
 
   defaultDependencyProperties: Array<string>;
 
