@@ -3,6 +3,7 @@ import { PacoteClient } from 'providers/npm/clients/pacoteClient'
 import Fixtures from './pacoteApiClient.fixtures'
 import { NpmConfig } from '/providers/npm/config';
 import { ConfigurationMock } from 'test/unit/mocks/configurationMock'
+import { LoggerMock } from 'test/unit/mocks/loggerMock';
 
 const assert = require('assert')
 const path = require('path')
@@ -58,7 +59,7 @@ export default {
         return Fixtures.packumentGit
       }
 
-      const cut = new PacoteClient(new NpmConfig(mockConfig), 0);
+      const cut = new PacoteClient(new NpmConfig(mockConfig), 0, new LoggerMock());
       return cut.fetchPackage(testRequest)
     },
 
@@ -78,7 +79,7 @@ export default {
       }
 
 
-      const cut = new PacoteClient(new NpmConfig(mockConfig), 0);
+      const cut = new PacoteClient(new NpmConfig(mockConfig), 0, new LoggerMock());
       return cut.fetchPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'directory', `expected to see ${expectedSource}`)
@@ -102,7 +103,7 @@ export default {
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentGit);
 
-      const cut = new PacoteClient(new NpmConfig(mockConfig), 0);
+      const cut = new PacoteClient(new NpmConfig(mockConfig), 0, new LoggerMock());
       return cut.fetchPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'git')
@@ -126,7 +127,7 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentGitSemver);
-      const cut = new PacoteClient(new NpmConfig(mockConfig), 0);
+      const cut = new PacoteClient(new NpmConfig(mockConfig), 0, new LoggerMock());
       return cut.fetchPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'git')
@@ -151,7 +152,7 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentGitCommittish);
-      const cut = new PacoteClient(new NpmConfig(mockConfig), 0);
+      const cut = new PacoteClient(new NpmConfig(mockConfig), 0, new LoggerMock());
       return cut.fetchPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'git')
@@ -176,7 +177,7 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentRegistryRange);
-      const cut = new PacoteClient(new NpmConfig(mockConfig), 0);
+      const cut = new PacoteClient(new NpmConfig(mockConfig), 0, new LoggerMock());
       return cut.fetchPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'registry')
@@ -201,7 +202,7 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentRegistryVersion);
-      const cut = new PacoteClient(new NpmConfig(mockConfig), 0);
+      const cut = new PacoteClient(new NpmConfig(mockConfig), 0, new LoggerMock());
       return cut.fetchPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'registry')
@@ -224,7 +225,7 @@ export default {
 
       // setup initial call
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentRegistryAlias);
-      const cut = new PacoteClient(new NpmConfig(mockConfig), 0);
+      const cut = new PacoteClient(new NpmConfig(mockConfig), 0, new LoggerMock());
       return cut.fetchPackage(testRequest)
         .then((actual) => {
           assert.equal(actual.source, 'registry')

@@ -20,6 +20,7 @@ import {
 } from 'infrastructure/clients';
 
 import { PubConfig } from './config';
+import { ILogger } from 'core/generic/logging';
 
 export class PubClient
   extends JsonHttpClientRequest
@@ -27,7 +28,11 @@ export class PubClient
 
   options: PubConfig;
 
-  constructor(config: PubConfig, cacheDuration: number) {
+  constructor(
+    config: PubConfig,
+    cacheDuration: number,
+    logger: ILogger
+  ) {
     super({}, cacheDuration)
     this.options = config;
   }
@@ -64,7 +69,7 @@ async function createRemotePackageDocument(
 
       const packageInfo = httpResponse.data;
 
-      const provider = request.provider;
+      const provider = request.providerName;
 
       const versionRange = semverSpec.rawVersion;
 

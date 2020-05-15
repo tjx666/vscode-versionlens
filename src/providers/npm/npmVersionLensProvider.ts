@@ -23,6 +23,7 @@ import { PacoteClient } from './clients/pacoteClient';
 import { npmGetOutdated, npmPackageDirExists } from './clients/npmClient';
 import { NpmConfig } from './config';
 import { npmReplaceVersion } from './npmVersionUtils';
+import { ILogger } from 'core/generic/logging';
 
 export class NpmVersionLensProvider
   extends AbstractVersionLensProvider<NpmConfig> {
@@ -31,8 +32,12 @@ export class NpmVersionLensProvider
 
   pacoteClient: PacoteClient;
 
-  constructor(pacoteClient: PacoteClient, config: NpmConfig) {
-    super(config);
+  constructor(
+    pacoteClient: PacoteClient,
+    config: NpmConfig,
+    logger: ILogger
+  ) {
+    super(config, logger);
     this._outdatedCache = [];
 
     this.pacoteClient = pacoteClient;
@@ -50,6 +55,7 @@ export class NpmVersionLensProvider
     if (packageDepsLenses.length === 0) return null;
 
     const context = {
+      providerName: this.config.providerName,
       client: this.pacoteClient,
       clientData: this.config,
       logger: this.logger,

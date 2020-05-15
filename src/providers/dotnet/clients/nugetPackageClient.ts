@@ -23,6 +23,7 @@ import { DotNetVersionSpec } from '../definitions/dotnet';
 
 import { parseVersionSpec } from '../dotnetUtils.js';
 import { DotNetConfig } from '../config';
+import { ILogger } from 'core/generic/logging';
 
 export class NuGetPackageClient
   extends JsonHttpClientRequest
@@ -30,7 +31,11 @@ export class NuGetPackageClient
 
   options: DotNetConfig;
 
-  constructor(config: DotNetConfig, cacheDuration: number) {
+  constructor(
+    config: DotNetConfig,
+    cacheDuration: number,
+    logger: ILogger
+  ) {
     super({}, cacheDuration)
     this.options = config;
   }
@@ -84,7 +89,7 @@ async function createRemotePackageDocument(
 
       const source = PackageSourceTypes.registry;
 
-      const provider = request.provider;
+      const provider = request.providerName;
 
       const requested = request.package;
 

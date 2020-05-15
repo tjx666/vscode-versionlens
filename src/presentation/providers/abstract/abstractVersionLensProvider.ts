@@ -10,6 +10,8 @@ import { IVersionCodeLens, VersionLens } from "presentation/lenses";
 import { VersionLensFetchResponse } from "../definitions";
 import { IPackageProviderOptions } from "core/packages";
 
+// import { OutputChannelLogger } from '../logging/outputChannelLogger';
+
 export abstract class AbstractVersionLensProvider<TConfig extends IPackageProviderOptions> {
 
   _onChangeCodeLensesEmitter: VsCodeTypes.EventEmitter<void>;
@@ -30,11 +32,15 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse;
 
-  constructor(config: TConfig) {
+  constructor(
+    config: TConfig,
+    logger: ILogger
+  ) {
     const { EventEmitter } = require('vscode');
     this.config = config;
     this._onChangeCodeLensesEmitter = new EventEmitter();
     this.onDidChangeCodeLenses = this._onChangeCodeLensesEmitter.event;
+    this.logger = logger;
   }
 
   reload() {
@@ -46,19 +52,14 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
     token: VsCodeTypes.CancellationToken
   ): Promise<VersionLens[] | null> {
     if (appSettings.showVersionLenses === false) return null;
-    const { window } = require('vscode');
 
     // set in progress
     appSettings.inProgress = true;
 
-    if (!this.logger) {
-      this.logger = window.createOutputChannel(
-        `versionlens - ${this.config.providerName}`
-      );
-    }
-
-    const outputChannel: any = this.logger;
-    outputChannel.clear();
+    // todo clear output channel
+    // if (this.logger){
+    //    this.logger.clear()
+    // }
 
     return this.fetchVersionLenses(document, token);
   }

@@ -10,14 +10,21 @@ import {
 import { NugetServiceIndexResponse } from '../definitions/nuget';
 import { DotNetSource } from '../definitions/dotnet';
 import { DotNetConfig } from '../config';
+import { ILogger } from 'core/generic/logging';
 
 export class NuGetResourceClient extends JsonHttpClientRequest {
 
   config: DotNetConfig;
+  logger: ILogger;
 
-  constructor(config: DotNetConfig, cacheDuration: number) {
+  constructor(
+    config: DotNetConfig,
+    cacheDuration: number,
+    logger: ILogger
+  ) {
     super({}, cacheDuration)
     this.config = config;
+    this.logger = logger;
   }
 
   async fetchResource(source: DotNetSource): Promise<string> {

@@ -15,9 +15,10 @@ import {
 import { VersionLensFetchResponse } from '../../providers';
 import { VersionLens } from '../models/versionLens';
 
-export type CreateVersionLensesContext<TClientData> = {
-  client: IPackageClient<TClientData>,
-  clientData: TClientData,
+export type CreateVersionLensesContext<TPackageClientData> = {
+  providerName: string,
+  client: IPackageClient<TPackageClientData>,
+  clientData: TPackageClientData,
   replaceVersion?: ReplaceVersionFunction,
   logger: ILogger,
 }
@@ -59,6 +60,7 @@ async function resolveDependency<TClientData>(
   const { name, version } = dependency.packageInfo;
 
   const {
+    providerName,
     client,
     clientData,
     logger,
@@ -66,6 +68,7 @@ async function resolveDependency<TClientData>(
   } = context;
 
   const request: PackageRequest<TClientData> = {
+    providerName,
     clientData,
     package: {
       name,

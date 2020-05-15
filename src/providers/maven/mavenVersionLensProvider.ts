@@ -10,6 +10,7 @@ import { MavenClientData } from './definitions';
 import { MvnClient } from './clients/mvnClient';
 import { MavenClient } from './clients/mavenClient';
 import { RegistryProtocols } from 'core/clients/helpers/urlHelpers';
+import { ILogger } from 'core/generic/logging';
 
 export class MavenVersionLensProvider
   extends AbstractVersionLensProvider<MavenConfig> {
@@ -20,9 +21,10 @@ export class MavenVersionLensProvider
   constructor(
     mvnClient: MvnClient,
     mavenClient: MavenClient,
-    config: MavenConfig
+    config: MavenConfig,
+    logger: ILogger
   ) {
-    super(config);
+    super(config, logger);
 
     this.mvnClient = mvnClient
     this.mavenClient = mavenClient
@@ -55,6 +57,7 @@ export class MavenVersionLensProvider
       }
 
       const context = {
+        providerName: this.config.providerName,
         client: this.mavenClient,
         clientData,
         logger: this.logger,

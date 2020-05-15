@@ -21,6 +21,7 @@ import {
 } from 'infrastructure/clients';
 
 import { ComposerConfig } from './config';
+import { ILogger } from "core/generic/logging";
 
 export class ComposerClient
   extends JsonHttpClientRequest
@@ -28,7 +29,11 @@ export class ComposerClient
 
   options: ComposerConfig;
 
-  constructor(config: ComposerConfig, cacheDuration: number) {
+  constructor(
+    config: ComposerConfig,
+    cacheDuration: number,
+    logger: ILogger
+  ) {
     super({}, cacheDuration)
     this.options = config;
   }
@@ -64,7 +69,7 @@ async function createRemotePackageDocument(
     .then((httpResponse: JsonClientResponse) => {
       const packageInfo = httpResponse.data.packages[request.package.name];
 
-      const provider = request.provider;
+      const provider = request.providerName;
 
       const versionRange = semverSpec.rawVersion;
 

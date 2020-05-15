@@ -1,13 +1,16 @@
 import { registerProviders } from 'presentation/providers';
 import registerCommands from 'presentation/commands/register';
 import subscribeToEditorEvents from 'presentation/editor/events';
+import { createVersionLensLogger } from 'infrastructure/logging';
 
 export async function activate(context) {
   const { workspace, languages } = require('vscode');
 
   const configuration = workspace.getConfiguration('versionlens');
 
-  const providers = await registerProviders(configuration);
+  const logger = createVersionLensLogger(configuration);
+
+  const providers = await registerProviders(configuration, logger);
 
   const disposables = [];
 

@@ -2,12 +2,17 @@ import { UrlHelpers } from 'core/clients';
 import { ProcessClientRequest } from 'infrastructure/clients';
 import { MavenConfig } from '../config';
 import { MavenRepository } from '../definitions';
+import { ILogger } from 'core/generic/logging';
 
 export class MvnClient extends ProcessClientRequest {
 
   config: MavenConfig;
 
-  constructor(config: MavenConfig, cacheDuration: number) {
+  constructor(
+    config: MavenConfig,
+    cacheDuration: number,
+    logger: ILogger
+  ) {
     super(cacheDuration)
     this.config = config;
   }
@@ -26,9 +31,7 @@ export class MvnClient extends ProcessClientRequest {
 
       return parseLocalRepos(data);
     }).catch(error => {
-      const t = error;
       return [];
-
     }).then((repos: Array<string>) => {
 
       if (repos.length === 0) {

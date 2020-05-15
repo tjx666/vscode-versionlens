@@ -16,6 +16,7 @@ import { NuGetPackageClient } from './clients/nugetPackageClient';
 import { NuGetResourceClient } from './clients/nugetResourceClient';
 import { NuGetClientData } from './definitions/nuget';
 import { RegistryProtocols } from 'core/clients/helpers/urlHelpers';
+import { ILogger } from 'core/generic/logging';
 
 export class DotNetVersionLensProvider
   extends AbstractVersionLensProvider<DotNetConfig> {
@@ -27,12 +28,13 @@ export class DotNetVersionLensProvider
   constructor(
     packageClient: NuGetPackageClient,
     resourceClient: NuGetResourceClient,
-    config: DotNetConfig
+    config: DotNetConfig,
+    logger: ILogger
   ) {
-    super(config);
+    super(config, logger);
 
     // todo get cache durations from config
-    this.dotnetClient = new DotNetClient(config, 0);
+    this.dotnetClient = new DotNetClient(config, 0, logger);
     this.nugetPackageClient = packageClient;
     this.nugetResourceClient = resourceClient;
   }
@@ -48,7 +50,7 @@ export class DotNetVersionLensProvider
     );
     if (packageDepsLenses.length === 0) return null;
 
-    // package path
+    // package path (todo abstract this)
     const { dirname } = require('path');
     const packagePath = dirname(document.uri.fsPath);
 
@@ -73,6 +75,7 @@ export class DotNetVersionLensProvider
         }
 
         const context = {
+          providerName: this.config.providerName,
           client: this.nugetPackageClient,
           clientData,
           logger: this.logger,

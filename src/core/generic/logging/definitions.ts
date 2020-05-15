@@ -1,14 +1,22 @@
-export interface ILogger {
-  append(value: string): void;
-  appendLine(value: string): void;
+export enum LogLevelTypes {
+  // Trace = "trce",
+  // Debug = "dbug",
+  Info = "info",
+  // Warn = "warn",
+  Error = "fail",
+  // Crit = "crit",
 }
 
+export interface ILogger {
 
-// export interface ILogger {
+  log(
+    level: LogLevelTypes,
+    message: string,
+    ...splats: any
+  ): void;
 
-  // LogLevel logLevel, 
-  // EventId eventId, 
-  // TState state, 
-  // Error error, 
-  // Func<TState, Error, string> formatter
-// }
+  info(message: string, ...splats: any): void;
+
+  error(message: string, ...splats: any): void;
+
+}

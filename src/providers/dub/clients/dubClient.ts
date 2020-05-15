@@ -20,6 +20,7 @@ import {
 } from 'infrastructure/clients';
 
 import { DubConfig } from '../config';
+import { ILogger } from "core/generic/logging";
 
 export class DubClient
   extends JsonHttpClientRequest
@@ -27,7 +28,11 @@ export class DubClient
 
   options: DubConfig;
 
-  constructor(config: DubConfig, cacheDuration: number) {
+  constructor(
+    config: DubConfig,
+    cacheDuration: number,
+    logger: ILogger
+  ) {
     super({}, cacheDuration);
     this.options = config;
   }
@@ -68,7 +73,7 @@ async function createRemotePackageDocument(
 
       const packageInfo = httpResponse.data;
 
-      const provider = request.provider;
+      const provider = request.providerName;
 
       const versionRange = semverSpec.rawVersion;
 

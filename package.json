@@ -48,6 +48,7 @@
     "@types/mocha": "7.0.2",
     "@types/node": "^12",
     "@types/vscode": "1.45.0",
+    "@types/winston": "2.4.4",
     "mocha-ui-esm": "1.0.0-alpha.4",
     "mock-require": "3.0.3",
     "rimraf": "3.0.2",

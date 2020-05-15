@@ -22,6 +22,7 @@ import {
 import { MavenClientData } from '../definitions';
 
 import { MavenConfig } from '../config';
+import { ILogger } from 'core/generic/logging';
 
 export class MavenClient
   extends HttpClientRequest
@@ -29,7 +30,11 @@ export class MavenClient
 
   options: MavenConfig;
 
-  constructor(config: MavenConfig, cacheDuration: number) {
+  constructor(
+    config: MavenConfig,
+    cacheDuration: number,
+    logger: ILogger 
+  ) {
     super({}, cacheDuration)
     this.options = config;
   }
@@ -73,7 +78,7 @@ async function createRemotePackageDocument(
 
       const source = PackageSourceTypes.registry;
 
-      const provider = request.provider;
+      const provider = request.providerName;
 
       const requested = request.package;
 

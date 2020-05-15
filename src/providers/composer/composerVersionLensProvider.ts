@@ -26,6 +26,7 @@ import {
 } from 'presentation/providers';
 
 import { VersionLensFactory, VersionLens } from 'presentation/lenses';
+import { ILogger } from 'core/generic/logging';
 
 export class ComposerVersionLensProvider
   extends AbstractVersionLensProvider<ComposerConfig> {
@@ -34,8 +35,12 @@ export class ComposerVersionLensProvider
 
   composerClient: ComposerClient;
 
-  constructor(composerClient: ComposerClient, config: ComposerConfig) {
-    super(config);
+  constructor(
+    composerClient: ComposerClient,
+    config: ComposerConfig,
+    logger: ILogger
+  ) {
+    super(config, logger);
 
     // todo get cache durations from config
     this.composerClient = composerClient;
@@ -53,6 +58,7 @@ export class ComposerVersionLensProvider
     if (packageDepsLenses.length === 0) return null;
 
     const context = {
+      providerName: this.config.providerName,
       client: this.composerClient,
       clientData: this.config,
       logger: this.logger,

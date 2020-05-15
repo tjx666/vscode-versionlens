@@ -20,6 +20,7 @@ import {
 import { DubConfig } from 'providers/dub/config';
 
 import { readDubSelections, DubClient } from 'providers/dub/clients/dubClient';
+import { ILogger } from 'core/generic/logging';
 
 export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfig> {
 
@@ -27,8 +28,12 @@ export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfi
 
   dubClient: DubClient;
 
-  constructor(dubClient: DubClient, config: DubConfig) {
-    super(config);
+  constructor(
+    dubClient: DubClient,
+    config: DubConfig,
+    logger: ILogger
+  ) {
+    super(config, logger);
     this._outdatedCache = {};
 
     this.dubClient = dubClient;
@@ -45,6 +50,7 @@ export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfi
     if (packageDepsLenses.length === 0) return null;
 
     const context = {
+      providerName: this.config.providerName,
       client: this.dubClient,
       clientData: this.config,
       logger: this.logger,

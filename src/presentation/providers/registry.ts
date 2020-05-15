@@ -8,6 +8,7 @@ import {
 import { KeyDictionary } from 'core/generic/collections'
 
 import { IPackageProviderOptions } from "core/packages";
+import { ILogger } from 'core/generic/logging';
 
 export const providerNames = [
   'composer',
@@ -64,13 +65,14 @@ class ProviderRegistry {
 export const providerRegistry = new ProviderRegistry();
 
 export async function registerProviders(
-  configuration: VsCodeTypes.WorkspaceConfiguration
+  configuration: VsCodeTypes.WorkspaceConfiguration,
+  logger: ILogger
 ): Promise<Array<AbstractVersionLensProvider<IPackageProviderOptions>>> {
 
   const promisedActivation = providerNames.map(packageManager => {
     return import(`providers/${packageManager}/activate`)
       .then(module => {
-        const provider = module.activate(configuration);
+        const provider = module.activate(configuration, logger);
         return providerRegistry.register(provider);
       })
   })

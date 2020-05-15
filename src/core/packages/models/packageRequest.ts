@@ -12,8 +12,8 @@ export type PackageRequestFunction<TClientData> = (
 ) => Promise<PackageDocument>;
 
 export type PackageRequest<TClientData> = {
-  // todo flesh out provider descriptor
-  provider?: string;
+  // provider descriptor
+  providerName: string;
 
   // provider specific data
   clientData: TClientData,
@@ -21,6 +21,6 @@ export type PackageRequest<TClientData> = {
   // package to fetch
   package: PackageIdentifier;
 
-  // todo make this a logger provider
+  // 
   logger: ILogger;
 };

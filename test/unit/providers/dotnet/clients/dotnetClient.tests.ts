@@ -9,10 +9,10 @@ import {
 
 import { DotNetConfig } from '/providers/dotnet/config';
 import { ConfigurationMock } from 'test/unit/mocks/configurationMock'
+import { LoggerMock } from 'test/unit/mocks/loggerMock';
 
 const assert = require('assert');
 const mock = require('mock-require');
-
 
 let defaultConfigurationMock: ConfigurationMock;
 
@@ -71,7 +71,7 @@ export const DotnetClientRequestTests = {
         })
       )
 
-      const cut = new DotNetClient(config, 0);
+      const cut = new DotNetClient(config, 0, new LoggerMock());
       return cut.fetchSources('.')
         .then(actualSources => {
           assert.deepEqual(actualSources, expected);
@@ -98,7 +98,7 @@ export const DotnetClientRequestTests = {
         })
       )
 
-      const cut = new DotNetClient(config, 0);
+      const cut = new DotNetClient(config, 0, new LoggerMock());
       return cut.fetchSources('.')
         .then(actualSources => {
           assert.equal(actualSources.length, 0);
@@ -121,7 +121,12 @@ export const DotnetClientRequestTests = {
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
-      const cut = new DotNetClient(new DotNetConfig(defaultConfigurationMock), 0);
+      const cut = new DotNetClient(
+        new DotNetConfig(defaultConfigurationMock),
+        0,
+        new LoggerMock()
+      );
+
       return cut.fetchSources('.')
         .catch(actualError => {
           assert.deepEqual(actualError, expectedErrorResp);

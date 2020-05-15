@@ -4,6 +4,7 @@ import { NuGetResourceClient } from 'providers/dotnet/clients/nugetResourceClien
 import { UrlHelpers } from '/core/clients';
 import { DotNetConfig } from '/providers/dotnet/config';
 import { ConfigurationMock } from 'test/unit/mocks/configurationMock'
+import { LoggerMock } from 'test/unit/mocks/loggerMock'
 
 const assert = require('assert');
 const mock = require('mock-require');
@@ -40,7 +41,7 @@ export const NuGetResourceClientTests = {
       // setup test feeds
       const config = new DotNetConfig(new ConfigurationMock())
 
-      const cut = new NuGetResourceClient(config, 0)
+      const cut = new NuGetResourceClient(config, 0, new LoggerMock())
 
       return cut.fetchResource(testSource)
         .then(actualSources => {
@@ -71,7 +72,7 @@ export const NuGetResourceClientTests = {
         get: (k, d) => [expected]
       }))
 
-      const cut = new NuGetResourceClient(config, 0)
+      const cut = new NuGetResourceClient(config, 0, new LoggerMock())
       return cut.fetchResource(testSource)
         .then(actualSources => {
           assert.equal(actualSources, expected)
@@ -101,7 +102,7 @@ export const NuGetResourceClientTests = {
         get: (k, d) => []
       }))
 
-      const cut = new NuGetResourceClient(config, 0)
+      const cut = new NuGetResourceClient(config, 0, new LoggerMock())
       return cut.fetchResource(testSource)
         .catch(err => {
           assert.equal(err, expected)

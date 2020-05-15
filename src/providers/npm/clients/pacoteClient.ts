@@ -23,6 +23,7 @@ import {
 } from 'infrastructure/clients';
 
 import { NpmConfig } from '../config';
+import { ILogger } from 'core/generic/logging';
 
 export class PacoteClient
   extends JsonHttpClientRequest
@@ -30,7 +31,11 @@ export class PacoteClient
 
   options: NpmConfig;
 
-  constructor(config: NpmConfig, cacheDuration: number) {
+  constructor(
+    config: NpmConfig,
+    cacheDuration: number,
+    logger: ILogger
+  ) {
     super({}, cacheDuration);
     this.options = config;
   }
