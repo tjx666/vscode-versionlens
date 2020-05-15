@@ -1,4 +1,4 @@
-import { KeyDictionary } from "core/definitions/generics";
+import { KeyDictionary } from 'core/generic/collections';
 
 export enum ClientResponseSource {
   remote = 'remote',

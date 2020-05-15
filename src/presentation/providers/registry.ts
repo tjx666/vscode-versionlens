@@ -5,7 +5,7 @@ import {
   AbstractVersionLensProvider,
 } from './abstract/abstractVersionLensProvider'
 
-import { KeyDictionary } from 'core/definitions/generics'
+import { KeyDictionary } from 'core/generic/collections'
 
 import { IPackageProviderOptions } from "core/packages";
 

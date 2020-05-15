@@ -1,4 +1,4 @@
-import { ILogger } from 'core/logging/definitions';
+import { ILogger } from 'core/generic/logging';
 import { PackageDocument } from './packageDocument';
 
 export type PackageIdentifier = {

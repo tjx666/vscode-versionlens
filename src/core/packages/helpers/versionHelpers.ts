@@ -1,4 +1,4 @@
-import { KeyStringArrayDictionary } from "core/definitions/generics";
+import { KeyStringArrayDictionary } from 'core/generic/collections';
 import { SemverSpec } from "../definitions/semverSpec";
 import {
   PackageNameVersion,

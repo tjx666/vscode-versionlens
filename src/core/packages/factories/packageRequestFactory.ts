@@ -1,4 +1,4 @@
-import * as ErrorFactory from '../../errors/factory';
+import * as ErrorFactory from 'core/generic/errors';
 import * as ResponseFactory from './packageResponseFactory';
 import { PackageResponse, ReplaceVersionFunction } from '../models/packageResponse';
 import { PackageRequest } from "../models/packageRequest";

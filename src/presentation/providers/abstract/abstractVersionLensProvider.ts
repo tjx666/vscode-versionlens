@@ -3,7 +3,7 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import appSettings from 'appSettings';
-import { ILogger } from 'core/logging/definitions';
+import { ILogger } from 'core/generic/logging';
 import { PackageSourceTypes, PackageResponseErrors } from 'core/packages';
 import * as CommandFactory from 'presentation/commands/factory';
 import { IVersionCodeLens, VersionLens } from "presentation/lenses";

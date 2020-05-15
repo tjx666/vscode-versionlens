@@ -1,4 +1,4 @@
-import { KeyStringDictionary } from '/core/definitions/generics'
+import { KeyStringDictionary } from '/core/generic/collections'
 
 import {
   ClientResponseSource,
