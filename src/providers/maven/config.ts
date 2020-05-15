@@ -1,6 +1,7 @@
 import * as VsCodeTypes from "vscode";
 
 import { AbstractProviderConfig } from "presentation/providers";
+import { PackageFileFilter, IProviderOptions } from "core/packages";
 
 enum MavenContributions {
   DependencyProperties = 'maven.dependencyProperties',
@@ -9,6 +10,7 @@ enum MavenContributions {
 }
 
 const options = {
+  name: 'maven',
   group: ['tags'],
   selector: {
     language: 'xml',
@@ -17,14 +19,16 @@ const options = {
   }
 }
 
-export class MavenConfig extends AbstractProviderConfig {
+export class MavenConfig
+  extends AbstractProviderConfig
+  implements IProviderOptions {
 
   defaultDependencyProperties: Array<string>;
 
   defaultApiUrl: string;
 
   constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
-    super('maven', configuration, options)
+    super(configuration)
 
     this.defaultDependencyProperties = [
       'dependency',
@@ -34,22 +38,34 @@ export class MavenConfig extends AbstractProviderConfig {
     this.defaultApiUrl = 'https://code.dlang.org/api/packages';
   }
 
+  get providerName(): string {
+    return options.name;
+  }
+
+  get group(): Array<string> {
+    return options.group;
+  }
+
+  get selector(): PackageFileFilter {
+    return options.selector;
+  }
+
   getDependencyProperties() {
-    return this.getSetting(
+    return this.get(
       MavenContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getTagFilter() {
-    return this.getSetting(
+    return this.get(
       MavenContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getApiUrl() {
-    return this.getSetting(
+    return this.get(
       MavenContributions.ApiUrl,
       this.defaultApiUrl
     );

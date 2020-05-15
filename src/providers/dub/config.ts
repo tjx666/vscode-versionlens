@@ -1,6 +1,7 @@
 import * as VsCodeTypes from "vscode";
 
 import { AbstractProviderConfig } from "presentation/providers";
+import { IProviderOptions, PackageFileFilter } from "core/packages";
 
 enum DubContributions {
   DependencyProperties = 'dub.dependencyProperties',
@@ -8,6 +9,7 @@ enum DubContributions {
 }
 
 const options = {
+  name: 'dub',
   group: ['statuses'],
   selector: {
     language: 'json',
@@ -16,14 +18,16 @@ const options = {
   }
 };
 
-export class DubConfig extends AbstractProviderConfig {
+export class DubConfig
+  extends AbstractProviderConfig
+  implements IProviderOptions {
 
   defaultDependencyProperties: Array<string>;
 
   defaultApiUrl: string;
 
   constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
-    super('dub', configuration, options);
+    super(configuration);
 
     this.defaultDependencyProperties = [
       'dependencies',
@@ -33,15 +37,27 @@ export class DubConfig extends AbstractProviderConfig {
     this.defaultApiUrl = 'https://code.dlang.org/api/packages';
   }
 
+  get providerName(): string {
+    return options.name;
+  }
+
+  get group(): Array<string> {
+    return options.group;
+  }
+
+  get selector(): PackageFileFilter {
+    return options.selector;
+  }
+
   getDependencyProperties() {
-    return this.getSetting(
+    return this.get(
       DubContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getApiUrl() {
-    return this.getSetting(
+    return this.get(
       DubContributions.ApiUrl,
       this.defaultApiUrl
     );

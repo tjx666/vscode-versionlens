@@ -14,14 +14,19 @@ export async function createPackageRequest<TClientData>(
 
   return client.fetchPackage(request)
     .then(function (document) {
-      request.logger.appendLine(`Fetched from ${document.response.source}: ${request.package.name}`)
+      request.logger.appendLine(
+        `Fetched from ${document.response.source}: ${request.package.name}`
+      );
+
       return ResponseFactory.createSuccess(document, replaceVersionFn);
     })
     .catch(function (error: PackageResponse) {
-      request.logger.appendLine(`Fetch error from ${error.source}: ${request.package.name}`)
+      request.logger.appendLine(
+        `Fetch error from ${error.source}: ${request.package.name}`
+      );
 
       ErrorFactory.createConsoleError(error.provider,
-        client.config.provider,
+        client.options.providerName,
         request.package.name,
         error
       );

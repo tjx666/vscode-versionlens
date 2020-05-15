@@ -7,9 +7,10 @@ import { ILogger } from 'core/logging/definitions';
 import { PackageSourceTypes, PackageResponseErrors } from 'core/packages';
 import * as CommandFactory from 'presentation/commands/factory';
 import { IVersionCodeLens, VersionLens } from "presentation/lenses";
-import { IProviderConfig, VersionLensFetchResponse } from "../definitions";
+import { VersionLensFetchResponse } from "../definitions";
+import { IProviderOptions } from "core/packages";
 
-export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfig> {
+export abstract class AbstractVersionLensProvider<TConfig extends IProviderOptions> {
 
   _onChangeCodeLensesEmitter: VsCodeTypes.EventEmitter<void>;
 
@@ -52,7 +53,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
 
     if (!this.logger) {
       this.logger = window.createOutputChannel(
-        `versionlens - ${this.config.provider}`
+        `versionlens - ${this.config.providerName}`
       );
     }
 

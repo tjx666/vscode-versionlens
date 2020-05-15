@@ -1,6 +1,7 @@
 import * as VsCodeTypes from "vscode";
 
 import { AbstractProviderConfig } from 'presentation/providers';
+import { PackageFileFilter, IProviderOptions } from "core/packages";
 
 enum NpmContributions {
   DependencyProperties = 'npm.dependencyProperties',
@@ -8,6 +9,7 @@ enum NpmContributions {
 }
 
 const options = {
+  name: 'npm',
   group: ['tags', 'statuses'],
   selector: {
     language: 'json',
@@ -16,12 +18,14 @@ const options = {
   }
 }
 
-export class NpmConfig extends AbstractProviderConfig {
+export class NpmConfig
+  extends AbstractProviderConfig
+  implements IProviderOptions {
 
   defaultDependencyProperties: Array<string>;
 
-  constructor(configuration: VsCodeTypes.WorkspaceConfiguration, provider: string = 'npm') {
-    super(provider, configuration, options);
+  constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
+    super(configuration);
 
     this.defaultDependencyProperties = [
       'dependencies',
@@ -31,15 +35,28 @@ export class NpmConfig extends AbstractProviderConfig {
     ];
   }
 
+  get providerName(): string {
+    return options.name;
+  }
+
+  get group(): Array<string> {
+    return options.group;
+  }
+
+  get selector(): PackageFileFilter {
+    return options.selector;
+  }
+
+
   getDependencyProperties() {
-    return this.getSetting(
+    return this.get(
       NpmContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getDistTagFilter() {
-    return this.getSetting(
+    return this.get(
       NpmContributions.DistTagFilter,
       []
     );

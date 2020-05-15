@@ -1,5 +1,6 @@
 import * as VsCodeTypes from "vscode";
 
+import { IProviderOptions, PackageFileFilter } from "core/packages";
 import { AbstractProviderConfig } from 'presentation/providers';
 
 enum ComposerContributions {
@@ -8,6 +9,7 @@ enum ComposerContributions {
 }
 
 const options = {
+  name: 'composer',
   group: ['tags'],
   selector: {
     language: 'json',
@@ -16,14 +18,16 @@ const options = {
   }
 }
 
-export class ComposerConfig extends AbstractProviderConfig {
+export class ComposerConfig
+  extends AbstractProviderConfig
+  implements IProviderOptions {
 
   defaultDependencyProperties: Array<string>;
 
   defaultApiUrl: string;
 
   constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
-    super('composer', configuration, options);
+    super(configuration);
 
     this.defaultDependencyProperties = [
       "require",
@@ -33,15 +37,27 @@ export class ComposerConfig extends AbstractProviderConfig {
     this.defaultApiUrl = 'https://repo.packagist.org/p';
   }
 
+  get providerName(): string {
+    return options.name;
+  }
+
+  get group(): Array<string> {
+    return options.group;
+  }
+
+  get selector(): PackageFileFilter {
+    return options.selector;
+  }
+
   getDependencyProperties() {
-    return this.getSetting(
+    return this.get(
       ComposerContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getApiUrl() {
-    return this.getSetting(
+    return this.get(
       ComposerContributions.ApiUrl,
       this.defaultApiUrl
     );

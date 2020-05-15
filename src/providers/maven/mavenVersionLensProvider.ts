@@ -50,7 +50,7 @@ export class MavenVersionLensProvider
       const repositories = repos.filter(repo => repo.protocol === RegistryProtocols.https)
 
       const clientData: MavenClientData = {
-        provider: this.config.provider,
+        provider: this.config.providerName,
         repositories,
       }
 

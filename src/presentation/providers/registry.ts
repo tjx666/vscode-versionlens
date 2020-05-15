@@ -7,7 +7,7 @@ import {
 
 import { KeyDictionary } from 'core/definitions/generics'
 
-import { IProviderConfig } from './definitions';
+import { IProviderOptions } from "core/packages";
 
 export const providerNames = [
   'composer',
@@ -21,15 +21,15 @@ export const providerNames = [
 
 class ProviderRegistry {
 
-  providers: KeyDictionary<AbstractVersionLensProvider<IProviderConfig>>;
+  providers: KeyDictionary<AbstractVersionLensProvider<IProviderOptions>>;
 
   constructor() {
     this.providers = {};
   }
 
-  register(provider: AbstractVersionLensProvider<IProviderConfig>): AbstractVersionLensProvider<IProviderConfig> {
-    const key = provider.config.provider;
-    if (this.providers[key]) throw new Error('Provider already registered');
+  register(provider: AbstractVersionLensProvider<IProviderOptions>): AbstractVersionLensProvider<IProviderOptions> {
+    const key = provider.config.providerName;
+    if (this.has(key)) throw new Error('Provider already registered');
     this.providers[key] = provider;
     return provider;
   }
@@ -38,12 +38,19 @@ class ProviderRegistry {
     return this.providers[key];
   }
 
+  has(key: string) {
+    return !!this.providers[key];
+  }
+
   getByFileName(fileName: string) {
     const path = require('path');
     const filename = path.basename(fileName);
     const filtered = providerNames
       .map(name => this.providers[name])
-      .filter(provider => provider.config.matchesFilename(filename))
+      .filter(provider => matchesFilename(
+        filename,
+        provider.config.selector.pattern
+      ))
 
     if (filtered.length === 0) return null;
 
@@ -56,7 +63,7 @@ export const providerRegistry = new ProviderRegistry();
 
 export async function registerProviders(
   configuration: VsCodeTypes.WorkspaceConfiguration
-): Promise<Array<AbstractVersionLensProvider<IProviderConfig>>> {
+): Promise<Array<AbstractVersionLensProvider<IProviderOptions>>> {
 
   const promisedActivation = providerNames.map(packageManager => {
     return import(`providers/${packageManager}/activate`)
@@ -67,4 +74,9 @@ export async function registerProviders(
   })
 
   return Promise.all(promisedActivation);
+}
+
+function matchesFilename(filename: string, pattern: string): boolean {
+  const minimatch = require('minimatch');
+  return minimatch(filename, pattern);
 }

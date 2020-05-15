@@ -28,11 +28,11 @@ export class PacoteClient
   extends JsonHttpClientRequest
   implements IPackageClient<NpmConfig> {
 
-  config: NpmConfig;
+  options: NpmConfig;
 
   constructor(config: NpmConfig, cacheDuration: number) {
     super({}, cacheDuration);
-    this.config = config;
+    this.options = config;
   }
 
   async fetchPackage(request: PackageRequest<NpmConfig>): Promise<PackageDocument> {
@@ -46,7 +46,7 @@ export class PacoteClient
       } catch (error) {
         return reject(
           ResponseFactory.createUnexpected(
-            this.config.provider,
+            this.options.providerName,
             request.package,
             {
               source: ClientResponseSource.remote,
@@ -60,7 +60,7 @@ export class PacoteClient
       if (npaResult.type === PackageSourceTypes.directory || npaResult.type === PackageSourceTypes.file)
         resolve(
           createDirectoryPackageDocument(
-            this.config.provider,
+            this.options.providerName,
             request.package,
             ResponseFactory.createResponseStatus(ClientResponseSource.local, 200),
             npaResult,
@@ -76,7 +76,7 @@ export class PacoteClient
 
       if (response.status === 'E404') {
         return DocumentFactory.createNotFound(
-          this.config.provider,
+          this.options.providerName,
           request.package,
           null,
           ResponseFactory.createResponseStatus(response.source, 404)
@@ -85,7 +85,7 @@ export class PacoteClient
 
       if (response.status === 'EINVALIDTAGNAME' || response.data.includes('Invalid comparator:')) {
         return DocumentFactory.createInvalidVersion(
-          this.config.provider,
+          this.options.providerName,
           request.package,
           ResponseFactory.createResponseStatus(response.source, 404),
           null
@@ -94,7 +94,7 @@ export class PacoteClient
 
       if (response.status === 'EUNSUPPORTEDPROTOCOL') {
         return DocumentFactory.createNotSupported(
-          this.config.provider,
+          this.options.providerName,
           request.package,
           ResponseFactory.createResponseStatus(response.source, 404),
           null
@@ -103,7 +103,7 @@ export class PacoteClient
 
       if (response.status === 128) {
         return DocumentFactory.createGitFailed(
-          this.config.provider,
+          this.options.providerName,
           request.package,
           ResponseFactory.createResponseStatus(response.source, 404),
           null
@@ -137,7 +137,7 @@ async function createRemotePackageDocument(request: PackageRequest<NpmConfig>, n
     .then(function (packumentResponse): PackageDocument {
       const { compareLoose } = require("semver");
 
-      const { provider } = request.clientData;
+      const { providerName: provider } = request.clientData;
 
       const source: PackageSourceTypes = getSourceFromNpaResult(npaResult);
 
@@ -212,7 +212,7 @@ async function createRemotePackageDocument(request: PackageRequest<NpmConfig>, n
         status: error.code
       };
       return Promise.reject(ResponseFactory.createUnexpected(
-        request.clientData.provider,
+        request.clientData.providerName,
         request.package,
         response,
       ));

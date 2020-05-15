@@ -1,6 +1,7 @@
 import * as VsCodeTypes from "vscode";
 
 import { AbstractProviderConfig } from "presentation/providers";
+import { IProviderOptions, PackageFileFilter } from "core/packages";
 
 export enum DotnetContributions {
   DependencyProperties = 'dotnet.dependencyProperties',
@@ -12,6 +13,7 @@ export enum DotnetContributions {
 }
 
 const options = {
+  name: 'dotnet',
   group: ['tags'],
   selector: {
     language: 'xml',
@@ -20,14 +22,16 @@ const options = {
   }
 }
 
-export class DotNetConfig extends AbstractProviderConfig {
+export class DotNetConfig
+  extends AbstractProviderConfig
+  implements IProviderOptions {
 
   defaultDependencyProperties: Array<string>;
 
   defaultNuGetFeeds: Array<string>;
 
   constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
-    super('dotnet', configuration, options);
+    super(configuration);
 
     this.defaultNuGetFeeds = [
       'https://azuresearch-usnc.nuget.org/autocomplete'
@@ -39,22 +43,34 @@ export class DotNetConfig extends AbstractProviderConfig {
     ];
   }
 
+  get providerName(): string {
+    return options.name;
+  }
+
+  get group(): Array<string> {
+    return options.group;
+  }
+
+  get selector(): PackageFileFilter {
+    return options.selector;
+  }
+
   getDependencyProperties() {
-    return this.getSetting(
+    return this.get(
       DotnetContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getTagFilter() {
-    return this.getSetting(
+    return this.get(
       DotnetContributions.TagFilter,
       []
     );
   }
 
   getNuGetFeeds() {
-    return this.getSetting(
+    return this.get(
       DotnetContributions.NugetFeeds,
       this.defaultNuGetFeeds
     );

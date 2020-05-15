@@ -27,11 +27,11 @@ export class MavenClient
   extends HttpClientRequest
   implements IPackageClient<MavenClientData> {
 
-  config: MavenConfig;
+  options: MavenConfig;
 
   constructor(config: MavenConfig, cacheDuration: number) {
     super({}, cacheDuration)
-    this.config = config;
+    this.options = config;
   }
 
   async fetchPackage(request: PackageRequest<MavenClientData>): Promise<PackageDocument> {

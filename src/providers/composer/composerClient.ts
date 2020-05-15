@@ -26,22 +26,22 @@ export class ComposerClient
   extends JsonHttpClientRequest
   implements IPackageClient<ComposerConfig> {
 
-  config: ComposerConfig;
+  options: ComposerConfig;
 
   constructor(config: ComposerConfig, cacheDuration: number) {
     super({}, cacheDuration)
-    this.config = config;
+    this.options = config;
   }
 
   async fetchPackage(request: PackageRequest<ComposerConfig>): Promise<PackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
-    const url = `${this.config.getApiUrl()}/${request.package.name}.json`;
+    const url = `${this.options.getApiUrl()}/${request.package.name}.json`;
 
     return createRemotePackageDocument(this, url, request, semverSpec)
       .catch((error: HttpClientResponse) => {
         if (error.status === 404) {
           return DocumentFactory.createNotFound(
-            this.config.provider,
+            this.options.providerName,
             request.package,
             null,
             ResponseFactory.createResponseStatus(error.source, error.status)

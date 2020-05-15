@@ -28,11 +28,11 @@ export class NuGetPackageClient
   extends JsonHttpClientRequest
   implements IPackageClient<NuGetClientData> {
 
-  config: DotNetConfig;
+  options: DotNetConfig;
 
   constructor(config: DotNetConfig, cacheDuration: number) {
     super({}, cacheDuration)
-    this.config = config;
+    this.options = config;
   }
 
   async fetchPackage(request: PackageRequest<NuGetClientData>): Promise<PackageDocument> {

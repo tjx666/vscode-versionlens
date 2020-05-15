@@ -25,22 +25,22 @@ export class PubClient
   extends JsonHttpClientRequest
   implements IPackageClient<PubConfig> {
 
-  config: PubConfig;
+  options: PubConfig;
 
   constructor(config: PubConfig, cacheDuration: number) {
     super({}, cacheDuration)
-    this.config = config;
+    this.options = config;
   }
 
   async fetchPackage(request: PackageRequest<PubConfig>): Promise<PackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
-    const url = `${this.config.getApiUrl()}/api/documentation/${request.package.name}`;
+    const url = `${this.options.getApiUrl()}/api/documentation/${request.package.name}`;
 
     return createRemotePackageDocument(this, url, request, semverSpec)
       .catch((error: HttpClientResponse) => {
         if (error.status === 404) {
           return DocumentFactory.createNotFound(
-            this.config.provider,
+            this.options.providerName,
             request.package,
             null,
             ResponseFactory.createResponseStatus(error.source, error.status)

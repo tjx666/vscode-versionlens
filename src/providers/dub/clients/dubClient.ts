@@ -25,22 +25,22 @@ export class DubClient
   extends JsonHttpClientRequest
   implements IPackageClient<DubConfig> {
 
-  config: DubConfig;
+  options: DubConfig;
 
   constructor(config: DubConfig, cacheDuration: number) {
     super({}, cacheDuration);
-    this.config = config;
+    this.options = config;
   }
 
   async fetchPackage(request: PackageRequest<DubConfig>): Promise<PackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
-    const url = `${this.config.getApiUrl()}/${encodeURIComponent(request.package.name)}/info`;
+    const url = `${this.options.getApiUrl()}/${encodeURIComponent(request.package.name)}/info`;
 
     return createRemotePackageDocument(this, url, request, semverSpec)
       .catch((error: HttpClientResponse) => {
         if (error.status === 404) {
           return DocumentFactory.createNotFound(
-            this.config.provider,
+            this.options.providerName,
             request.package,
             null,
             ResponseFactory.createResponseStatus(error.source, error.status)

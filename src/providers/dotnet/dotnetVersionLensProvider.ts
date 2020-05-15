@@ -68,7 +68,7 @@ export class DotNetVersionLensProvider
       return promisedResource.then((autoCompleteUrl: string) => {
 
         const clientData: NuGetClientData = {
-          provider: this.config.provider,
+          provider: this.config.providerName,
           autoCompleteUrl,
         }
 

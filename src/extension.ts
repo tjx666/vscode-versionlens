@@ -15,7 +15,7 @@ export async function activate(context) {
     function (provider) {
       disposables.push(
         languages.registerCodeLensProvider(
-          provider.config.options.selector,
+          provider.config.selector,
           provider
         )
       );
