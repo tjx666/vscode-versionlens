@@ -1,6 +1,8 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
 
+import { extractPackageDependenciesFromJson } from 'core/packages';
+
 // imports
 import {
   renderMissingDecoration,
@@ -10,16 +12,17 @@ import {
   renderPrereleaseInstalledDecoration
 } from 'presentation/editor/decorations';
 
-import { extractPackageDependenciesFromJson } from 'core/packages';
 import {
   AbstractVersionLensProvider,
   VersionLensFetchResponse
 } from 'presentation/providers';
+
 import { VersionLensFactory, VersionLens } from 'presentation/lenses';
 
 import { PacoteClient } from './clients/pacoteClient';
 import { npmGetOutdated, npmPackageDirExists } from './clients/npmClient';
 import { NpmConfig } from './config';
+import { npmReplaceVersion } from './npmVersionUtils';
 
 export class NpmVersionLensProvider
   extends AbstractVersionLensProvider<NpmConfig> {
@@ -50,13 +53,13 @@ export class NpmVersionLensProvider
       client: this.pacoteClient,
       clientData: this.config,
       logger: this.logger,
-      // todo client specific data {sources, config etc.....}
+      replaceVersion: npmReplaceVersion
     }
 
     return VersionLensFactory.createVersionLenses(
       document,
       packageDepsLenses,
-      context,
+      context
     );
   }
 

@@ -5,8 +5,8 @@ import * as VsCodeTypes from 'vscode';
 import { VersionLensFactory } from 'presentation/lenses';
 import { VersionLensFetchResponse } from 'presentation/providers';
 import { NpmVersionLensProvider } from 'providers/npm/npmVersionLensProvider';
-import { customJspmFormatVersion } from './jspmVersionUtils';
 import { extractPackageDependenciesFromJson } from './jspmPackageParser';
+import { npmReplaceVersion } from 'providers/npm/npmVersionUtils';
 
 export class JspmVersionLensProvider extends NpmVersionLensProvider {
 
@@ -18,7 +18,7 @@ export class JspmVersionLensProvider extends NpmVersionLensProvider {
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
-    // extract dependencies from json
+
     const jspmDependencyLenses = extractPackageDependenciesFromJson(
       document.getText(),
       this.config.getDependencyProperties(),
@@ -29,7 +29,7 @@ export class JspmVersionLensProvider extends NpmVersionLensProvider {
       client: this.pacoteClient,
       clientData: this.config,
       logger: this.logger,
-      replaceFn: customJspmFormatVersion,
+      replaceVersion: npmReplaceVersion,
     }
 
     // fetch from npm

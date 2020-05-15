@@ -18,7 +18,7 @@ import { VersionLens } from '../models/versionLens';
 export type CreateVersionLensesContext<TClientData> = {
   client: IPackageClient<TClientData>,
   clientData: TClientData,
-  versionReplace?: ReplaceVersionFunction,
+  replaceVersion?: ReplaceVersionFunction,
   logger: ILogger,
 }
 
@@ -62,7 +62,7 @@ async function resolveDependency<TClientData>(
     client,
     clientData,
     logger,
-    versionReplace,
+    replaceVersion,
   } = context;
 
   const request: PackageRequest<TClientData> = {
@@ -78,7 +78,7 @@ async function resolveDependency<TClientData>(
   return RequestFactory.createPackageRequest(
     client,
     request,
-    versionReplace
+    replaceVersion
   )
     .then(function (responses): Array<VersionLens> {
 
