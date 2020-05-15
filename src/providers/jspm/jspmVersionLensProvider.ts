@@ -7,11 +7,13 @@ import { VersionLensFetchResponse } from 'presentation/providers';
 import { NpmVersionLensProvider } from 'providers/npm/npmVersionLensProvider';
 import { extractPackageDependenciesFromJson } from './jspmPackageParser';
 import { npmReplaceVersion } from 'providers/npm/npmVersionUtils';
+import { JspmConfig } from './config';
+import { PacoteClient } from 'providers/npm/clients/pacoteClient';
 
 export class JspmVersionLensProvider extends NpmVersionLensProvider {
 
-  constructor(jspmConfig) {
-    super(jspmConfig);
+  constructor(pacoteClient: PacoteClient, config: JspmConfig) {
+    super(pacoteClient, config);
   }
 
   async fetchVersionLenses(

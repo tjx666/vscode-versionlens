@@ -31,11 +31,11 @@ export class NpmVersionLensProvider
 
   pacoteClient: PacoteClient;
 
-  constructor(config: NpmConfig) {
+  constructor(pacoteClient: PacoteClient, config: NpmConfig) {
     super(config);
     this._outdatedCache = [];
 
-    this.pacoteClient = new PacoteClient(config, 0);
+    this.pacoteClient = pacoteClient;
   }
 
   async fetchVersionLenses(

@@ -62,7 +62,7 @@ export function createNotSupported(
 ): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.registry;
   const suggestions: Array<PackageSuggestion> = [
-    SuggestFactory.createNotSupported(requested.version),
+    SuggestFactory.createNotSupported(),
     SuggestFactory.createLatest(),
   ];
 

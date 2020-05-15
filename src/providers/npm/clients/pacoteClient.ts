@@ -70,7 +70,7 @@ export class PacoteClient
         resolve(createRemotePackageDocument(request, npaResult));
 
     }).catch(error => {
-      const { response, data: npaResult } = error
+      const { response } = error
 
       if (!response) return Promise.reject(error);
 

@@ -18,10 +18,10 @@ export class PubVersionLensProvider
 
   pubClient: PubClient;
 
-  constructor(config: PubConfig) {
+  constructor(pubClient: PubClient, config: PubConfig) {
     super(config);
 
-    this.pubClient = new PubClient(config, 0);
+    this.pubClient = pubClient;
   }
 
   async fetchVersionLenses(

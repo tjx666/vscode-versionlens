@@ -34,11 +34,11 @@ export class ComposerVersionLensProvider
 
   composerClient: ComposerClient;
 
-  constructor(config: ComposerConfig) {
+  constructor(composerClient: ComposerClient, config: ComposerConfig) {
     super(config);
 
     // todo get cache durations from config
-    this.composerClient = new ComposerClient(config, 0)
+    this.composerClient = composerClient;
   }
 
   async fetchVersionLenses(

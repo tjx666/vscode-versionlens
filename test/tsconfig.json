@@ -9,7 +9,6 @@
     "sourceMap": true,
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
-    "experimentalDecorators": true,
     "baseUrl": ".",
     "paths": {
       "/*": [

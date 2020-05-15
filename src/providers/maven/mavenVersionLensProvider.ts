@@ -17,11 +17,15 @@ export class MavenVersionLensProvider
   mvnClient: MvnClient;
   mavenClient: MavenClient;
 
-  constructor(config: MavenConfig) {
+  constructor(
+    mvnClient: MvnClient,
+    mavenClient: MavenClient,
+    config: MavenConfig
+  ) {
     super(config);
 
-    this.mvnClient = new MvnClient(config, 0)
-    this.mavenClient = new MavenClient(config, 0)
+    this.mvnClient = mvnClient
+    this.mavenClient = mavenClient
   }
 
   async fetchVersionLenses(

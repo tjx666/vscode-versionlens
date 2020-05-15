@@ -121,7 +121,7 @@ export function createInvalid(requestedVersion: string): PackageSuggestion {
   };
 }
 
-export function createNotSupported(requestedVersion: string): PackageSuggestion {
+export function createNotSupported(): PackageSuggestion {
   return {
     name: PackageVersionStatus.notsupported,
     version: '',

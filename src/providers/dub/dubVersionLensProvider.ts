@@ -27,11 +27,11 @@ export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfi
 
   dubClient: DubClient;
 
-  constructor(config) {
+  constructor(dubClient: DubClient, config: DubConfig) {
     super(config);
     this._outdatedCache = {};
 
-    this.dubClient = new DubClient(config, 0);
+    this.dubClient = dubClient;
   }
 
   async fetchVersionLenses(

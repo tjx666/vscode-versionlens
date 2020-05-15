@@ -9,10 +9,10 @@ export function extractMavenLensDataFromDocument(document: VsCodeTypes.TextDocum
   const xmlDoc = new xmldoc.XmlDocument(document.getText());
   if (!xmlDoc) return [];
 
-  return extractPackageLensDataFromNodes(xmlDoc, document, filterPropertyNames);
+  return extractPackageLensDataFromNodes(xmlDoc, filterPropertyNames);
 }
 
-function extractPackageLensDataFromNodes(rootNode, document, filterProperties) {
+function extractPackageLensDataFromNodes(rootNode, filterProperties) {
   const collector = [];
   rootNode.eachChild(group => {
 
