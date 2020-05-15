@@ -1,4 +1,4 @@
-import { ExpiryCacheMap } from '../../caching/expiryCacheMap';
+import { ExpiryCacheMap } from '../caching/expiryCacheMap';
 
 import {
   ClientResponse,

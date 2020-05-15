@@ -1,6 +1,6 @@
 import { delay } from 'test/unit/utils';
 
-import { ExpiryCacheMap } from 'core/caching/expiryCacheMap';
+import { ExpiryCacheMap } from 'core/clients';
 
 const assert = require('assert');
 
