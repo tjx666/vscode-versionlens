@@ -1,9 +1,14 @@
-import { ClientResponse, ClientResponseSource } from "../definitions/clientResponses";
-import { AbstractClientRequest } from "./abstractClientRequest";
+import {
+  ClientResponseSource,
+  ProcessClientResponse,
+  IProcessClientRequest
+} from "core/clients";
 
-export type ProcessClientResponse = ClientResponse<string, string>;
+import { AbstractClientRequest } from "../../core/clients/requests/abstractClientRequest";
 
-export class ProcessClientRequest extends AbstractClientRequest<string, string> {
+export class ProcessClientRequest
+  extends AbstractClientRequest<string, string>
+  implements IProcessClientRequest {
 
   constructor(cacheDuration?: number) {
     super(cacheDuration);

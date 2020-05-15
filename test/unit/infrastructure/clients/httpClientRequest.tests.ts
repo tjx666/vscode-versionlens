@@ -1,10 +1,15 @@
+import { KeyStringDictionary } from '/core/definitions/generics'
+
 import {
   ClientResponseSource,
-  HttpClientRequest,
+  UrlHelpers,
   HttpClientRequestMethods,
-  createUrl,
 } from 'core/clients'
-import { KeyStringDictionary } from '/core/definitions/generics'
+
+import {
+  HttpClientRequest,
+} from 'infrastructure/clients'
+
 
 const assert = require('assert')
 const mock = require('mock-require')
@@ -41,7 +46,7 @@ export const HttpRequestTests = {
       await Promise.all(
 
         testQueryParams.map(async function (params: KeyStringDictionary) {
-          const expectedUrl = createUrl(testUrl, params);
+          const expectedUrl = UrlHelpers.createUrl(testUrl, params);
           requestLightMock.xhr = options => {
             assert.equal(options.url, expectedUrl);
             assert.equal(options.type, HttpClientRequestMethods.get);

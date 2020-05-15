@@ -1,10 +1,6 @@
-import {
-  ProcessClientRequest,
-  UrlHelpers,
-} from 'core/clients';
-
+import { UrlHelpers } from 'core/clients';
+import { ProcessClientRequest } from 'infrastructure/clients';
 import { DotNetSource } from '../definitions/dotnet';
-
 import { DotNetConfig } from '../config';
 
 export class DotNetClient extends ProcessClientRequest {

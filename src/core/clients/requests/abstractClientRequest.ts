@@ -1,5 +1,9 @@
 import { ExpiryCacheMap } from '../../caching/expiryCacheMap';
-import { ClientResponse, ClientResponseSource } from "../definitions/clientResponses";
+
+import {
+  ClientResponse,
+  ClientResponseSource
+} from "../definitions/clientResponses";
 
 export class AbstractClientRequest<TStatus, TData> {
 

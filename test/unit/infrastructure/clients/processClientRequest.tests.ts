@@ -1,7 +1,5 @@
-import {
-  ProcessClientRequest,
-  ClientResponseSource,
-} from 'core/clients'
+import { ClientResponseSource } from 'core/clients'
+import { ProcessClientRequest } from 'infrastructure/clients'
 
 const assert = require('assert')
 const mock = require('mock-require')

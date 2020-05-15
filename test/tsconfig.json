@@ -18,6 +18,9 @@
       "core/*": [
         "../src/core/*"
       ],
+      "infrastructure/*": [
+        "../src/infrastructure/*"
+      ],
       "presentation/*": [
         "../src/presentation/*"
       ],

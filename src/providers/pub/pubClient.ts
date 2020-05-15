@@ -11,10 +11,13 @@ import {
 } from 'core/packages';
 
 import {
-  JsonHttpClientRequest,
   HttpClientRequestMethods,
   HttpClientResponse,
 } from "core/clients";
+
+import {
+  JsonHttpClientRequest
+} from 'infrastructure/clients';
 
 import { PubConfig } from './config';
 

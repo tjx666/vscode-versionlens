@@ -11,11 +11,14 @@ import {
 } from "core/packages";
 
 import {
-  JsonHttpClientRequest,
   HttpClientRequestMethods,
   HttpClientResponse,
   JsonClientResponse,
 } from "core/clients";
+
+import {
+  JsonHttpClientRequest
+} from 'infrastructure/clients';
 
 import { ComposerConfig } from './config';
 

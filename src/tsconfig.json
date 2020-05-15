@@ -18,6 +18,9 @@
       "core/*": [
         "core/*"
       ],
+      "infrastructure/*": [
+        "infrastructure/*"
+      ],
       "presentation/*": [
         "presentation/*"
       ],

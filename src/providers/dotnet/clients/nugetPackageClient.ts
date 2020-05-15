@@ -10,10 +10,13 @@ import {
 } from 'core/packages';
 
 import {
-  JsonHttpClientRequest,
   HttpClientResponse,
   HttpClientRequestMethods,
-} from "core/clients";
+} from 'core/clients';
+
+import {
+  JsonHttpClientRequest
+} from 'infrastructure/clients';
 
 import { NuGetClientData } from '../definitions/nuget';
 import { DotNetVersionSpec } from '../definitions/dotnet';

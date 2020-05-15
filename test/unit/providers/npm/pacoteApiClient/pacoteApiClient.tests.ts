@@ -34,8 +34,6 @@ export default {
     mockConfig = new ConfigurationMock(defaultIntercepts);
   },
 
-
-
   'fetchPackage': {
 
     'uses npmrc registry': async () => {

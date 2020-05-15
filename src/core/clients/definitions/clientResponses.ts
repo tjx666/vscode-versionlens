@@ -1,3 +1,5 @@
+import { KeyDictionary } from "core/definitions/generics";
+
 export enum ClientResponseSource {
   remote = 'remote',
   cache = 'cache',
@@ -11,3 +13,7 @@ export type ClientResponse<TStatus, TData> = {
 }
 
 export type HttpClientResponse = ClientResponse<number, string>;
+
+export type JsonClientResponse = ClientResponse<number, KeyDictionary<any>>;
+
+export type ProcessClientResponse = ClientResponse<string, string>;

@@ -11,10 +11,13 @@ import {
 } from 'core/packages';
 
 import {
-  HttpClientRequest,
   HttpClientResponse,
   HttpClientRequestMethods,
 } from "core/clients";
+
+import {
+  HttpClientRequest
+} from 'infrastructure/clients';
 
 import { MavenClientData } from '../definitions';
 
@@ -33,7 +36,7 @@ export class MavenClient
 
   async fetchPackage(request: PackageRequest<MavenClientData>): Promise<PackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
-    
+
     const { repositories } = request.clientData;
     const url = repositories[0].url
     let [group, artifact] = request.package.name.split(':');

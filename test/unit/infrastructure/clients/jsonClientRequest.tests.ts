@@ -1,8 +1,11 @@
 import {
-  JsonHttpClientRequest,
   ClientResponseSource,
   HttpClientRequestMethods,
 } from 'core/clients'
+
+import {
+  JsonHttpClientRequest,
+} from 'infrastructure/clients'
 
 const assert = require('assert')
 const mock = require('mock-require')

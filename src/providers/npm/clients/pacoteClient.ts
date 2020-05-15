@@ -15,9 +15,12 @@ import {
 } from 'core/packages';
 
 import {
-  ClientResponseSource,
-  JsonHttpClientRequest
+  ClientResponseSource
 } from "core/clients";
+
+import {
+  JsonHttpClientRequest
+} from 'infrastructure/clients';
 
 import { NpmConfig } from '../config';
 

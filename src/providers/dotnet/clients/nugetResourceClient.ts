@@ -1,8 +1,11 @@
 import {
-  JsonHttpClientRequest,
   HttpClientResponse,
   HttpClientRequestMethods,
-} from "core/clients";
+} from 'core/clients';
+
+import {
+  JsonHttpClientRequest
+} from 'infrastructure/clients';
 
 import { NugetServiceIndexResponse } from '../definitions/nuget';
 import { DotNetSource } from '../definitions/dotnet';

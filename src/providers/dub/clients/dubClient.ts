@@ -11,10 +11,13 @@ import {
 } from "core/packages";
 
 import {
-  JsonHttpClientRequest,
   HttpClientResponse,
   HttpClientRequestMethods,
 } from "core/clients";
+
+import {
+  JsonHttpClientRequest
+} from 'infrastructure/clients';
 
 import { DubConfig } from '../config';
 

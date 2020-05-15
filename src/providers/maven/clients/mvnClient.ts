@@ -1,7 +1,5 @@
-import {
-  ProcessClientRequest, UrlHelpers,
-} from 'core/clients';
-
+import { UrlHelpers } from 'core/clients';
+import { ProcessClientRequest } from 'infrastructure/clients';
 import { MavenConfig } from '../config';
 import { MavenRepository } from '../definitions';
 

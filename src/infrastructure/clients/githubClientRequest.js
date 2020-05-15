@@ -1,4 +1,4 @@
-import { HttpClientRequestMethods } from './httpClientRequest';
+import { HttpClientRequestMethods } from 'core/clients';
 import { JsonHttpClientRequest } from './jsonHttpClientRequest';
 
 export class GithubRequest extends JsonHttpClientRequest {
