@@ -11,7 +11,11 @@ import {
   loosePrereleases
 } from "../helpers/versionHelpers";
 
-export function createSuggestionTags(versionRange: string, releases: string[], prereleases: string[]): Array<PackageSuggestion> {
+export function createSuggestionTags(
+  versionRange: string,
+  releases: string[],
+  prereleases: string[]
+): Array<PackageSuggestion> {
   const { maxSatisfying } = require("semver");
   const suggestions: Array<PackageSuggestion> = [];
 

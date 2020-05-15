@@ -8,6 +8,8 @@ import {
   SemverSpec,
   PackageRequest,
   IPackageClient,
+  PackageVersionStatus,
+  PackageSuggestion,
 } from "core/packages";
 
 import {
@@ -95,13 +97,12 @@ async function createRemotePackageDocument(
       const { releases, prereleases } = VersionHelpers.splitReleasesFromArray(rawVersions)
 
       // analyse suggestions
-      const suggestions = SuggestionFactory.createSuggestionTags(
+      const suggestions = createSuggestionTags(
         versionRange,
         releases,
         prereleases
       );
 
-      // todo return a ~master entry when no matches found
       return {
         provider,
         source: PackageSourceTypes.registry,
@@ -114,6 +115,39 @@ async function createRemotePackageDocument(
         suggestions,
       };
     });
+}
+
+export function createSuggestionTags(
+  versionRange: string,
+  releases: string[],
+  prereleases: string[]
+): Array<PackageSuggestion> {
+
+  const suggestions = SuggestionFactory.createSuggestionTags(
+    versionRange,
+    releases,
+    prereleases
+  );
+
+  // check for ~{name} suggestion if no matches found
+  const firstSuggestion = suggestions[0];
+  const hasNoMatch = firstSuggestion.name === PackageVersionStatus.nomatch;
+  const isTildeVersion = versionRange.charAt(0) === '~';
+
+  if (hasNoMatch && isTildeVersion && releases.length > 0) {
+    const latestRelease = releases[releases.length - 1];
+
+    if (latestRelease === versionRange) {
+      suggestions[0] = SuggestionFactory.createLatestStatus();
+      suggestions.pop();
+    } else {
+      // suggest
+      suggestions[1] = SuggestionFactory.createLatest(latestRelease);
+    }
+
+  }
+
+  return suggestions;
 }
 
 export async function readDubSelections(filePath) {
