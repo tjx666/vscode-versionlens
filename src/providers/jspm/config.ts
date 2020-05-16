@@ -2,15 +2,15 @@ import {
   PackageFileFilter,
   IPackageProviderOptions
 } from "core/packages";
-import { AppConfig } from "presentation/extension";
+import { VersionLensExtension } from "presentation/extension";
 import { NpmConfig } from '../npm/config';
 
 export class JspmConfig
   extends NpmConfig
   implements IPackageProviderOptions {
 
-  constructor(config: AppConfig) {
-    super(config);
+  constructor(extension: VersionLensExtension) {
+    super(extension);
   }
 
   get providerName(): string {

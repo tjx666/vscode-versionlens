@@ -14,7 +14,6 @@ export class SuggestionsOptions {
     this.config = config;
   }
 
-  
   get alwaysShowReleases(): boolean {
     return this.config.getOrDefault<boolean>(
       SuggestionContributions.AlwaysShowReleases,

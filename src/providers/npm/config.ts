@@ -1,4 +1,4 @@
-import { AppConfig } from "presentation/extension";
+import { VersionLensExtension } from "presentation/extension";
 import { PackageFileFilter, IPackageProviderOptions } from "core/packages";
 
 enum NpmContributions {
@@ -18,12 +18,12 @@ const options = {
 
 export class NpmConfig implements IPackageProviderOptions {
 
-  config: AppConfig;
+  extension: VersionLensExtension;
 
   defaultDependencyProperties: Array<string>;
 
-  constructor(config: AppConfig) {
-    this.config = config;
+  constructor(extension: VersionLensExtension) {
+    this.extension = extension;
 
     this.defaultDependencyProperties = [
       'dependencies',
@@ -45,16 +45,15 @@ export class NpmConfig implements IPackageProviderOptions {
     return options.selector;
   }
 
-
   getDependencyProperties() {
-    return this.config.getOrDefault(
+    return this.extension.getOrDefault(
       NpmContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getDistTagFilter() {
-    return this.config.getOrDefault(
+    return this.extension.getOrDefault(
       NpmContributions.DistTagFilter,
       []
     );

@@ -1,5 +1,5 @@
 import { ContextState } from "./models/contextState";
-import { AppConfig } from "presentation/extension";
+import { VersionLensExtension } from "./versionLensExtension";
 
 enum StateContributions {
   Enabled = 'versionlens.enabled',
@@ -18,7 +18,7 @@ export class VersionLensState {
   providerBusy: ContextState<boolean>;
   showDependencyStatuses: ContextState<boolean>;
 
-  constructor(appConfig: AppConfig) {
+  constructor(extension: VersionLensExtension) {
 
     this.providerActive = new ContextState(
       StateContributions.ProviderActive,
@@ -32,12 +32,12 @@ export class VersionLensState {
 
     this.enabled = new ContextState(
       StateContributions.Enabled,
-      appConfig.suggestions.alwaysShowReleases
+      extension.suggestions.alwaysShowReleases
     );
 
     this.prereleasesEnabled = new ContextState(
       StateContributions.PrereleasesEnabled,
-      appConfig.suggestions.alwaysShowPrereleases
+      extension.suggestions.alwaysShowPrereleases
     );
 
     this.showDependencyStatuses = new ContextState(

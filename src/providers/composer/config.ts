@@ -1,5 +1,5 @@
 import { IPackageProviderOptions, PackageFileFilter } from "core/packages";
-import { AppConfig } from 'presentation/extension';
+import { VersionLensExtension } from 'presentation/extension';
 
 enum ComposerContributions {
   DependencyProperties = 'composer.dependencyProperties',
@@ -22,11 +22,11 @@ export class ComposerConfig implements IPackageProviderOptions {
 
   defaultApiUrl: string;
 
-  appConfig: AppConfig;
+  extension: VersionLensExtension;
 
-  constructor(appConfig: AppConfig) {
+  constructor(extension: VersionLensExtension) {
 
-    this.appConfig = appConfig;
+    this.extension = extension;
 
     this.defaultDependencyProperties = [
       "require",
@@ -49,14 +49,14 @@ export class ComposerConfig implements IPackageProviderOptions {
   }
 
   getDependencyProperties() {
-    return this.appConfig.getOrDefault(
+    return this.extension.getOrDefault(
       ComposerContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getApiUrl() {
-    return this.appConfig.getOrDefault(
+    return this.extension.getOrDefault(
       ComposerContributions.ApiUrl,
       this.defaultApiUrl
     );

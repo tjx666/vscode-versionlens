@@ -1,4 +1,4 @@
-import { AppConfig } from "presentation/extension";
+import { VersionLensExtension } from "presentation/extension";
 import { PackageFileFilter, IPackageProviderOptions } from "core/packages";
 
 enum MavenContributions {
@@ -19,14 +19,14 @@ const options = {
 
 export class MavenConfig implements IPackageProviderOptions {
 
-  config: AppConfig;
+  extension: VersionLensExtension;
 
   defaultDependencyProperties: Array<string>;
 
   defaultApiUrl: string;
 
-  constructor(config: AppConfig) {
-    this.config = config;
+  constructor(extension: VersionLensExtension) {
+    this.extension = extension;
 
     this.defaultDependencyProperties = [
       'dependency',
@@ -49,21 +49,21 @@ export class MavenConfig implements IPackageProviderOptions {
   }
 
   getDependencyProperties() {
-    return this.config.getOrDefault(
+    return this.extension.getOrDefault(
       MavenContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getTagFilter() {
-    return this.config.getOrDefault(
+    return this.extension.getOrDefault(
       MavenContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getApiUrl() {
-    return this.config.getOrDefault(
+    return this.extension.getOrDefault(
       MavenContributions.ApiUrl,
       this.defaultApiUrl
     );

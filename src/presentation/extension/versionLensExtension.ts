@@ -1,6 +1,8 @@
-import { AppConfig } from "presentation/extension";
+import { AbstractWorkspaceConfig, IConfig, IRootConfig } from "core/configuration";
 import { VersionLensState } from "presentation/extension";
-import { ILogger } from 'core/logging';
+import { LoggingOptions } from "./options/loggingOptions";
+import { SuggestionsOptions } from "./options/suggestionsOptions";
+import { StatusesOptions } from "./options/statusesOptions";
 
 export enum SuggestionIndicators {
   Update = '\u2191',
@@ -8,21 +10,30 @@ export enum SuggestionIndicators {
   OpenNewWindow = '\u29C9',
 }
 
-export class VersionLensExtension {
-
-  appConfig: AppConfig;
-
-  logger: ILogger;
-
-  state: VersionLensState;
+export class VersionLensExtension extends AbstractWorkspaceConfig {
 
   extensionName: string;
 
-  constructor(appConfig: AppConfig, logger: ILogger) {
+  state: VersionLensState;
+
+  logging: LoggingOptions;
+
+  suggestions: SuggestionsOptions;
+
+  statuses: StatusesOptions;
+
+  constructor(config: IRootConfig) {
+    super(<IConfig>config);
+
     this.extensionName = "versionlens";
-    this.appConfig = appConfig;
-    this.logger = logger;
-    this.state = new VersionLensState(appConfig);
+
+    // instantiate contrib options
+    this.logging = new LoggingOptions(this);
+    this.suggestions = new SuggestionsOptions(this);
+    this.statuses = new StatusesOptions(this);
+
+    // instantiate setContext options
+    this.state = new VersionLensState(this);
   }
 
 }
@@ -30,8 +41,8 @@ export class VersionLensExtension {
 let _extensionSingleton = null;
 export default _extensionSingleton;
 
-export function registerExtension(appConfig: AppConfig, logger: ILogger): VersionLensExtension {
-  _extensionSingleton = new VersionLensExtension(appConfig, logger);
+export function registerExtension(config: IRootConfig): VersionLensExtension {
+  _extensionSingleton = new VersionLensExtension(config);
   return _extensionSingleton;
 }
 

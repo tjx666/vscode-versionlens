@@ -1,18 +1,11 @@
 import { ILogger, LogLevelTypes } from 'core/logging';
-import { AppConfig } from 'presentation/extension';
 
 export class WinstonLogger implements ILogger {
 
   winstonLogger: any;
 
-  config: AppConfig;
-
-  constructor(
-    winstonLogger,
-    config: AppConfig
-  ) {
+  constructor(winstonLogger) {
     this.winstonLogger = winstonLogger;
-    this.config = config;
   }
 
   log(level: LogLevelTypes, message: string, ...splats: any): void {

@@ -9,19 +9,19 @@ import {
 
 import { DotNetConfig } from '/providers/dotnet/config';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
-import { AppConfig } from '/presentation/extension';
+import { VersionLensExtension } from '/presentation/extension';
 import { IConfig } from '/core/configuration';
 
 const assert = require('assert');
 const mock = require('mock-require');
 
-let defaultConfigMock: AppConfig;
+let defaultExtensionMock: VersionLensExtension;
 
 export const DotnetClientRequestTests = {
 
   beforeEach: () => {
 
-    defaultConfigMock = new AppConfig(<IConfig>{
+    defaultExtensionMock = new VersionLensExtension(<IConfig>{
       get: (k) => undefined
     });
 
@@ -68,7 +68,7 @@ export const DotnetClientRequestTests = {
 
       // setup test feeds
       const config = new DotNetConfig(
-        new AppConfig(<IConfig>{
+        new VersionLensExtension(<IConfig>{
           get: (k) => <any>testFeeds
         })
       )
@@ -95,7 +95,7 @@ export const DotnetClientRequestTests = {
 
       // setup test feeds
       const config = new DotNetConfig(
-        new AppConfig(<IConfig>{
+        new VersionLensExtension(<IConfig>{
           get: (k) => <any>testFeeds
         })
       )
@@ -124,7 +124,7 @@ export const DotnetClientRequestTests = {
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
       const cut = new DotNetClient(
-        new DotNetConfig(defaultConfigMock),
+        new DotNetConfig(defaultExtensionMock),
         0,
         new LoggerMock()
       );

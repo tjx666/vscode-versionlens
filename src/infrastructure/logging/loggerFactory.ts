@@ -5,12 +5,12 @@ import {
   createOutputChannelTransport
 } from './transports/outputChannelTransport';
 
-import { AppConfig } from 'presentation/extension';
+import { VersionLensExtension } from 'presentation/extension';
 
 // todo extract to app config
 const timestampFormat = 'YYYY-MM-DD HH:mm:ss';
 
-export function createLogger(appConfig: AppConfig): ILogger {
+export function createLogger(extension: VersionLensExtension): ILogger {
 
   const {
     createLogger,
@@ -42,12 +42,12 @@ export function createLogger(appConfig: AppConfig): ILogger {
       createOutputChannelTransport(
         "VersionLens",
         {
-          level: appConfig.logging.level,
+          level: extension.logging.level,
           format: logFormat
         }
       )
     ]
-  })
+  });
 
-  return new WinstonLogger(winstonLogger, appConfig)
+  return new WinstonLogger(winstonLogger);
 }

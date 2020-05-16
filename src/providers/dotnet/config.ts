@@ -1,5 +1,5 @@
 import { IPackageProviderOptions, PackageFileFilter } from "core/packages";
-import { AppConfig } from 'presentation/extension';
+import { VersionLensExtension } from 'presentation/extension';
 
 export enum DotnetContributions {
   DependencyProperties = 'dotnet.dependencyProperties',
@@ -22,14 +22,14 @@ const options = {
 
 export class DotNetConfig implements IPackageProviderOptions {
 
-  config: AppConfig;
+  extension: VersionLensExtension;
 
   defaultDependencyProperties: Array<string>;
 
   defaultNuGetFeeds: Array<string>;
 
-  constructor(config: AppConfig) {
-    this.config = config;
+  constructor(extension: VersionLensExtension) {
+    this.extension = extension;
 
     this.defaultNuGetFeeds = [
       'https://azuresearch-usnc.nuget.org/autocomplete'
@@ -54,21 +54,21 @@ export class DotNetConfig implements IPackageProviderOptions {
   }
 
   getDependencyProperties() {
-    return this.config.getOrDefault(
+    return this.extension.getOrDefault(
       DotnetContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getTagFilter() {
-    return this.config.getOrDefault(
+    return this.extension.getOrDefault(
       DotnetContributions.TagFilter,
       []
     );
   }
 
   getNuGetFeeds() {
-    return this.config.getOrDefault(
+    return this.extension.getOrDefault(
       DotnetContributions.NugetFeeds,
       this.defaultNuGetFeeds
     );

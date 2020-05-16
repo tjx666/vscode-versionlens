@@ -1,4 +1,4 @@
-import { AppConfig } from "presentation/extension";
+import { VersionLensExtension } from "presentation/extension";
 import { IPackageProviderOptions, PackageFileFilter } from "core/packages";
 
 enum DubContributions {
@@ -18,14 +18,14 @@ const options = {
 
 export class DubConfig implements IPackageProviderOptions {
 
-  config: AppConfig;
+  extension: VersionLensExtension;
 
   defaultDependencyProperties: Array<string>;
 
   defaultApiUrl: string;
 
-  constructor(config: AppConfig) {
-    this.config = config
+  constructor(extension: VersionLensExtension) {
+    this.extension = extension
 
     this.defaultDependencyProperties = [
       'dependencies',
@@ -48,14 +48,14 @@ export class DubConfig implements IPackageProviderOptions {
   }
 
   getDependencyProperties() {
-    return this.config.getOrDefault(
+    return this.extension.getOrDefault(
       DubContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getApiUrl() {
-    return this.config.getOrDefault(
+    return this.extension.getOrDefault(
       DubContributions.ApiUrl,
       this.defaultApiUrl
     );

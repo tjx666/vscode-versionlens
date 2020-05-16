@@ -1,8 +1,8 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
 
+import { IRootConfig } from 'core/configuration';
 import { createLogger } from 'infrastructure/logging';
-import { createAppConfig } from 'presentation/extension';
 import { registerProviders } from 'presentation/providers';
 import {
   registerExtension,
@@ -13,21 +13,19 @@ export async function activate(context: VsCodeTypes.ExtensionContext) {
   const { window, workspace } = require('vscode');
 
   // composition
-  const configuration: VsCodeTypes.WorkspaceConfiguration =
+  const configuration: IRootConfig =
     workspace.getConfiguration('versionlens');
 
-  const appConfig = createAppConfig(configuration);
+  const extension = registerExtension(configuration);
 
-  const logger = createLogger(appConfig);
-
-  const extension = registerExtension(appConfig, logger);
+  const logger = createLogger(extension);
 
   const {
     extensionCommands,
     disposables
-  } = registerCommands(extension, logger)
+  } = registerCommands(extension, logger);
 
-  await registerProviders(appConfig, logger)
+  await registerProviders(extension, logger)
     .then(disposables => {
       disposables.push(...disposables)
     });

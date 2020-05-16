@@ -7,7 +7,7 @@ import { PackageSourceTypes } from 'core/packages';
 import { providerRegistry } from 'presentation/providers';
 
 import { VersionLensExtension } from "./versionLensExtension";
-import { clearDecorations } from './decorations';
+import * as InstalledStatusHelpers from './helpers/installedStatusHelpers';
 import { VersionLensState } from './versionLensState';
 
 export enum CommandContributions {
@@ -77,7 +77,7 @@ export class VersionLensCommands {
   onHideDependencyStatuses(file) {
     this.state.showDependencyStatuses.change(false)
       .then(_ => {
-        clearDecorations();
+        InstalledStatusHelpers.clearDecorations();
       });
   }
 
@@ -130,38 +130,35 @@ export class VersionLensCommands {
   }
 
   onDidChangeTextDocument(changeEvent: VsCodeTypes.TextDocumentChangeEvent) {
-
     // ensure version lens is active
     if (this.state.providerActive.value === false) {
       return;
     }
 
-    // const foundDecorations = [];
-    // const { contentChanges } = changeEvent;
+    const foundDecorations = [];
+    const { contentChanges } = changeEvent;
 
-    // // get all decorations for all the lines that have changed
-    // contentChanges.forEach(change => {
-    //   const startLine = change.range.start.line;
-    //   let endLine = change.range.end.line;
+    // get all decorations for all the lines that have changed
+    contentChanges.forEach(change => {
+      const startLine = change.range.start.line;
+      let endLine = change.range.end.line;
 
-    //   if (change.text.charAt(0) == '\n' || endLine > startLine) {
-    //     removeDecorationsFromLine(startLine)
-    //     return;
-    //   }
+      if (change.text.charAt(0) == '\n' || endLine > startLine) {
+        InstalledStatusHelpers.removeDecorationsFromLine(startLine)
+        return;
+      }
 
-    //   for (let line = startLine; line <= endLine; line++) {
-    //     const lineDecorations = getDecorationsByLine(line);
-    //     if (lineDecorations.length > 0)
-    //       foundDecorations.push(...lineDecorations);
-    //   }
-    // })
+      for (let line = startLine; line <= endLine; line++) {
+        const lineDecorations = InstalledStatusHelpers.getDecorationsByLine(line);
+        if (lineDecorations.length > 0)
+          foundDecorations.push(...lineDecorations);
+      }
+    })
 
-    // if (foundDecorations.length === 0)
-    //   return;
+    if (foundDecorations.length === 0) return;
 
-    // // remove all decorations that have changed
-    // removeDecorations(foundDecorations);
-
+    // remove all decorations that have changed
+    InstalledStatusHelpers.removeDecorations(foundDecorations);
   }
 
 }
@@ -176,13 +173,12 @@ function reloadActiveProviders() {
   return true;
 }
 
-
-export type RegisterCommandsResults = {
+export type RegisterCommandsResult = {
   extensionCommands: VersionLensCommands,
   disposables: Array<VsCodeTypes.Disposable>
 };
 
-export function registerCommands(extension: VersionLensExtension, logger: ILogger): RegisterCommandsResults {
+export function registerCommands(extension: VersionLensExtension, logger: ILogger): RegisterCommandsResult {
 
   const { commands } = require('vscode');
 

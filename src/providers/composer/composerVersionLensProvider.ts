@@ -23,7 +23,7 @@ import {
 import {
   AbstractVersionLensProvider,
   VersionLensFetchResponse,
-  VersionLensFactory, 
+  VersionLensFactory,
   VersionLens
 } from 'presentation/lenses';
 
@@ -42,8 +42,6 @@ export class ComposerVersionLensProvider
     logger: ILogger
   ) {
     super(config, logger);
-
-    // todo get cache durations from config
     this.composerClient = composerClient;
   }
 
@@ -96,31 +94,38 @@ export class ComposerVersionLensProvider
     const currentPackageName = versionLens.package.requested.name;
     const currentPackageVersion = versionLens.package.requested.version;
 
-    if (!versionLens.replaceRange)
-      return;
+    if (!versionLens.replaceRange) return;
 
     if (!this._outdatedCache) {
-      renderMissingDecoration(versionLens.replaceRange);
+      renderMissingDecoration(
+        versionLens.replaceRange,
+        this.config.extension.statuses.notInstalledColour
+      );
       return;
     }
 
     const currentVersion = this._outdatedCache[currentPackageName];
     if (!currentVersion) {
-      renderMissingDecoration(versionLens.replaceRange);
+      renderMissingDecoration(
+        versionLens.replaceRange,
+        this.config.extension.statuses.notInstalledColour
+      );
       return;
     }
 
     if (VersionHelpers.formatWithExistingLeading(currentPackageVersion, currentVersion) == currentPackageVersion) {
       renderInstalledDecoration(
         versionLens.replaceRange,
-        currentPackageVersion
+        currentPackageVersion,
+        this.config.extension.statuses.installedColour
       );
       return;
     }
 
     renderOutdatedDecoration(
       versionLens.replaceRange,
-      currentVersion
+      currentVersion,
+      this.config.extension.statuses.outdatedColour
     );
   }
 

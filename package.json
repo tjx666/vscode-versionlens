@@ -232,10 +232,30 @@
           "default": false,
           "description": "Will always show prereleases when opening a package file in the editor."
         },
-        "versionlens.showDependencyStatusesAtStartup": {
+        "versionlens.statuses.alwaysShowInstalledStatuses": {
           "type": "boolean",
           "default": false,
-          "description": "Show dependency statuses default when vscode starts. You can use the editor toolbar to show/hide dependency statuses at any time."
+          "description": "Will always show prereleases when opening a package file in the editor."
+        },
+        "versionlens.statuses.notInstalledColour": {
+          "type": "string",
+          "default": "red",
+          "description": "The colour used to show missing dependencies. Accept's valid CSS colours"
+        },
+        "versionlens.statuses.installedColour": {
+          "type": "string",
+          "default": "green",
+          "description": "The colour used to show installed dependencies. Accept's valid CSS colours"
+        },
+        "versionlens.statuses.outdatedColour": {
+          "type": "string",
+          "default": "orange",
+          "description": "The colour used to show outdated dependencies. Accept's valid CSS colours"
+        },
+        "versionlens.statuses.prereleaseColour": {
+          "type": "string",
+          "default": "yellowgreen",
+          "description": "The colour used to show prerelease dependencies. Accept's valid CSS colours"
         },
         "versionlens.npm.dependencyProperties": {
           "type": "array",
@@ -308,9 +328,7 @@
           "items": {
             "type": "string"
           },
-          "default": [
-            "https://api-v2v3search-0.nuget.org/autocomplete"
-          ],
+          "default": [],
           "description": "Defines which NuGet feeds to use for package search. Has to be 'SearchAutocompleteService' endpoint, which can be found by navigating to feed index (e.g. https://api.nuget.org/v3/index.json) and looking for Url with that type."
         },
         "versionlens.dotnet.includePrerelease": {
@@ -383,40 +401,41 @@
         "versionlens.missingDependencyColour": {
           "type": "string",
           "default": "red",
-          "description": "The colour used to show missing dependencies. Accept's valid CSS colours"
+          "deprecationMessage": "Use versionlens.statuses.notInstalledColour"
         },
         "versionlens.installedDependencyColour": {
           "type": "string",
           "default": "green",
-          "description": "The colour used to show installed dependencies. Accept's valid CSS colours"
+          "deprecationMessage": "Use versionlens.statuses.installedColour"
         },
         "versionlens.outdatedDependencyColour": {
           "type": "string",
           "default": "orange",
-          "description": "The colour used to show outdated dependencies. Accept's valid CSS colours"
+          "deprecationMessage": "Use versionlens.statuses.outdatedColour"
         },
         "versionlens.prereleaseDependencyColour": {
           "type": "string",
           "default": "yellowgreen",
-          "description": "The colour used to show prerelease dependencies. Accept's valid CSS colours"
+          "deprecationMessage": "Use versionlens.statuses.prereleaseInstalledColour"
         },
         "versionlens.versionPrefix": {
           "type": "string",
-          "deprecationMessage": "This has been replaced with versionlens.suggestions.defaultVersionPrefix",
-          "default": "",
-          "description": "Inserts this prefix before the version when clicking on the code lens link."
+          "deprecationMessage": "This has been replaced with versionlens.suggestions.defaultVersionPrefix"
         },
         "versionlens.showVersionLensesAtStartup": {
           "type": "boolean",
           "default": true,
-          "deprecationMessage": "Use versionlens.suggestions.alwaysShowReleases instead",
-          "description": ""
+          "deprecationMessage": "Use versionlens.suggestions.alwaysShowReleases instead"
         },
         "versionlens.showTaggedVersionsAtStartup": {
           "type": "boolean",
           "default": false,
-          "deprecationMessage": "Use versionlens.suggestions.alwaysShowPrereleases instead",
-          "description": ""
+          "deprecationMessage": "Use versionlens.suggestions.alwaysShowPrereleases instead"
+        },
+        "versionlens.showDependencyStatusesAtStartup": {
+          "type": "boolean",
+          "default": false,
+          "deprecationMessage": "Use versionlens.statuses.alwaysShowInstalledStatuses instead"
         }
       }
     }

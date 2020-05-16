@@ -5,7 +5,7 @@ import { KeyDictionary } from 'core/generic/collections'
 import { IPackageProviderOptions } from "core/packages";
 import { ILogger } from 'core/logging';
 
-import { AppConfig } from 'presentation/extension';
+import { VersionLensExtension } from 'presentation/extension';
 import {
   AbstractVersionLensProvider,
 } from 'presentation/lenses'
@@ -66,7 +66,7 @@ class ProviderRegistry {
 export const providerRegistry = new ProviderRegistry();
 
 export async function registerProviders(
-  config: AppConfig,
+  extension: VersionLensExtension,
   logger: ILogger
 ): Promise<Array<VsCodeTypes.Disposable>> {
 
@@ -80,7 +80,7 @@ export async function registerProviders(
     return import(`providers/${packageManager}/activate`)
       .then(module => {
         logger.verbose('Activating package manager %s', packageManager);
-        const provider = module.activate(config, logger);
+        const provider = module.activate(extension, logger);
 
         logger.info(
           'Activated package manager %s with file filter: %O',

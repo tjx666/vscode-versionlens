@@ -1,6 +1,7 @@
-import appConfig from 'presentation/extension';
+// vscode references
+import * as VsCodeTypes from 'vscode';
 
-const { window, Range, Position } = require('vscode');
+const { window } = require('vscode');
 
 let _decorations = [];
 const _decorationTypeKey = window.createTextEditorDecorationType({
@@ -19,6 +20,7 @@ export function clearDecorations() {
 }
 
 export function setDecorations(decorationList) {
+  const { window } = require('vscode');
   if (!window || !window.activeTextEditor)
     return;
 
@@ -76,7 +78,8 @@ export function createRenderOptions(contentText, color) {
   };
 }
 
-export function renderMissingDecoration(range) {
+export function renderMissingDecoration(range: VsCodeTypes.Range, missingStatusColour: string) {
+  const { Range, Position } = require('vscode');
   updateDecoration({
     range: new Range(
       range.start,
@@ -86,13 +89,17 @@ export function renderMissingDecoration(range) {
     renderOptions: {
       after: createRenderOptions(
         ' ▪ missing install',
-        appConfig.missingDependencyColour
+        missingStatusColour
       )
     }
   });
 }
 
-export function renderInstalledDecoration(range, version) {
+export function renderInstalledDecoration(
+  range: VsCodeTypes.Range,
+  version: string,
+  installedStatusColour: string) {
+  const { Range, Position } = require('vscode');
   updateDecoration({
     range: new Range(
       range.start,
@@ -102,13 +109,18 @@ export function renderInstalledDecoration(range, version) {
     renderOptions: {
       after: createRenderOptions(
         ` ▪ ${version} installed`,
-        appConfig.installedDependencyColour
+        installedStatusColour
       )
     }
   });
 }
 
-export function renderNeedsUpdateDecoration(range, version) {
+export function renderNeedsUpdateDecoration(
+  range: VsCodeTypes.Range,
+  version: string,
+  outdatedStatusColour: string
+) {
+  const { Range, Position } = require('vscode');
   updateDecoration({
     range: new Range(
       range.start,
@@ -118,13 +130,18 @@ export function renderNeedsUpdateDecoration(range, version) {
     renderOptions: {
       after: createRenderOptions(
         ` ▪ ${version} installed, npm update needed`,
-        appConfig.outdatedDependencyColour
+        outdatedStatusColour
       )
     }
   });
 }
 
-export function renderOutdatedDecoration(range, version) {
+export function renderOutdatedDecoration(
+  range: VsCodeTypes.Range,
+  version: string,
+  outdatedStatusColour: string
+) {
+  const { Range, Position } = require('vscode');
   updateDecoration({
     range: new Range(
       range.start,
@@ -134,13 +151,18 @@ export function renderOutdatedDecoration(range, version) {
     renderOptions: {
       after: createRenderOptions(
         ` ▪ ${version} installed`,
-        appConfig.outdatedDependencyColour
+        outdatedStatusColour
       )
     }
   });
 }
 
-export function renderPrereleaseInstalledDecoration(range, version) {
+export function renderPrereleaseInstalledDecoration(
+  range: VsCodeTypes.Range,
+  version: string,
+  prereleaseInstalledStatusColour: string
+) {
+  const { Range, Position } = require('vscode');
   updateDecoration({
     range: new Range(
       range.start,
@@ -150,7 +172,7 @@ export function renderPrereleaseInstalledDecoration(range, version) {
     renderOptions: {
       after: createRenderOptions(
         ` ▪ ${version} prerelease installed`,
-        appConfig.prereleaseDependencyColour
+        prereleaseInstalledStatusColour
       )
     }
   });

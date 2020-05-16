@@ -63,7 +63,6 @@ export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfi
     );
   }
 
-  // get the outdated packages and cache them
   async updateOutdated(packagePath: string): Promise<any> {
     const path = require('path');
     const selectionsFilePath = path.join(packagePath, 'dub.selections.json');
@@ -81,31 +80,38 @@ export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfi
     const currentPackageName = versionLens.package.requested.name;
     const currentPackageVersion = versionLens.package.requested.version;
 
-    if (!versionLens.replaceRange)
-      return;
+    if (!versionLens.replaceRange) return;
 
     if (!this._outdatedCache) {
-      renderMissingDecoration(versionLens.replaceRange);
+      renderMissingDecoration(
+        versionLens.replaceRange,
+        this.config.extension.statuses.notInstalledColour
+      );
       return;
     }
 
     const currentVersion = this._outdatedCache.versions[currentPackageName];
     if (!currentVersion) {
-      renderMissingDecoration(versionLens.replaceRange);
+      renderMissingDecoration(
+        versionLens.replaceRange,
+        this.config.extension.statuses.notInstalledColour
+      );
       return;
     }
 
     if (VersionHelpers.formatWithExistingLeading(currentPackageVersion, currentVersion) == currentPackageVersion) {
       renderInstalledDecoration(
         versionLens.replaceRange,
-        currentPackageVersion
+        currentPackageVersion,
+        this.config.extension.statuses.installedColour
       );
       return;
     }
 
     renderOutdatedDecoration(
       versionLens.replaceRange,
-      currentVersion
+      currentVersion,
+      this.config.extension.statuses.outdatedColour
     );
 
   }

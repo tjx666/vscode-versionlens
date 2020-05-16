@@ -84,7 +84,10 @@ export class NpmVersionLensProvider
 
     const packageDirExists = npmPackageDirExists(documentPath, currentPackageName);
     if (!packageDirExists) {
-      renderMissingDecoration(versionLens.replaceRange);
+      renderMissingDecoration(
+        versionLens.replaceRange,
+        this.config.extension.statuses.notInstalledColour
+      );
       return;
     }
 
@@ -97,7 +100,8 @@ export class NpmVersionLensProvider
         if (findIndex === -1) {
           renderInstalledDecoration(
             versionLens.replaceRange,
-            versionLens.package.requested.version
+            versionLens.package.requested.version,
+            this.config.extension.statuses.installedColour
           );
           return;
         }
@@ -107,7 +111,10 @@ export class NpmVersionLensProvider
 
         // no current means no install at all
         if (!current) {
-          renderMissingDecoration(versionLens.replaceRange);
+          renderMissingDecoration(
+            versionLens.replaceRange,
+            this.config.extension.statuses.notInstalledColour
+          );
           return;
         }
 
@@ -118,19 +125,22 @@ export class NpmVersionLensProvider
             // up to date
             renderInstalledDecoration(
               versionLens.replaceRange,
-              current
+              current,
+              this.config.extension.statuses.installedColour
             );
           else if (versionLens.matchesPrereleaseVersion())
             // ahead of latest
             renderPrereleaseInstalledDecoration(
               versionLens.replaceRange,
-              entered
+              entered,
+              this.config.extension.statuses.prereleaseInstalledColour
             );
           else
             // out of date
             renderOutdatedDecoration(
               versionLens.replaceRange,
-              current
+              current,
+              this.config.extension.statuses.outdatedColour
             );
 
           return;
@@ -139,7 +149,8 @@ export class NpmVersionLensProvider
         // signal needs update
         renderNeedsUpdateDecoration(
           versionLens.replaceRange,
-          current
+          current,
+          this.config.extension.statuses.outdatedColour
         );
 
       })

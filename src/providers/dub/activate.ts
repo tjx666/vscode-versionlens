@@ -1,12 +1,12 @@
 import { ILogger } from 'core/logging';
-import { AppConfig } from 'presentation/extension';
+import { VersionLensExtension } from 'presentation/extension';
 
 import { DubVersionLensProvider } from './dubVersionLensProvider';
 import { DubConfig } from './config';
 import { DubClient } from './clients/dubClient';
 
-export function activate(appConfig: AppConfig, logger: ILogger) {
-  const config = new DubConfig(appConfig);
+export function activate(extension: VersionLensExtension, logger: ILogger) {
+  const config = new DubConfig(extension);
 
   return new DubVersionLensProvider(
     new DubClient(config, 0, logger),
