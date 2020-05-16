@@ -73,8 +73,11 @@ export class DotNetVersionLensProvider
           autoCompleteUrl,
         }
 
+        const includePrereleases = this.extension.state.prereleasesEnabled.value;
+
         const context = {
           providerName: this.config.providerName,
+          includePrereleases,
           client: this.nugetPackageClient,
           clientData,
           logger: this.logger,
@@ -86,7 +89,7 @@ export class DotNetVersionLensProvider
           context,
         );
 
-      })
+      });
 
     });
 

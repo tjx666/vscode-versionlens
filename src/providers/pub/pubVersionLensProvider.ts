@@ -39,8 +39,11 @@ export class PubVersionLensProvider
     );
     if (packageDepsLenses.length === 0) return null;
 
+    const includePrereleases = this.extension.state.prereleasesEnabled.value;
+
     const context = {
       providerName: this.config.providerName,
+      includePrereleases,
       client: this.pubClient,
       clientData: this.config,
       logger: this.logger,

@@ -49,8 +49,11 @@ export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfi
     );
     if (packageDepsLenses.length === 0) return null;
 
+    const includePrereleases = this.extension.state.prereleasesEnabled.value;
+
     const context = {
       providerName: this.config.providerName,
+      includePrereleases,
       client: this.dubClient,
       clientData: this.config,
       logger: this.logger,

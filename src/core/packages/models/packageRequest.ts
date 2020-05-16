@@ -21,6 +21,7 @@ export type PackageRequest<TClientData> = {
   // package to fetch
   package: PackageIdentifier;
 
-  // 
+  includePrereleases: boolean;
+
   logger: ILogger;
 };

@@ -56,8 +56,11 @@ export class MavenVersionLensProvider
         repositories,
       }
 
+      const includePrereleases = this.extension.state.prereleasesEnabled.value;
+
       const context = {
         providerName: this.config.providerName,
+        includePrereleases,
         client: this.mavenClient,
         clientData,
         logger: this.logger,

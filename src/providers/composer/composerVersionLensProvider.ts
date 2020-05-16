@@ -56,8 +56,11 @@ export class ComposerVersionLensProvider
     );
     if (packageDepsLenses.length === 0) return null;
 
+    const includePrereleases = this.extension.state.prereleasesEnabled.value;
+
     const context = {
       providerName: this.config.providerName,
+      includePrereleases,
       client: this.composerClient,
       clientData: this.config,
       logger: this.logger,

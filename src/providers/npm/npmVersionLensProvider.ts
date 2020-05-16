@@ -54,8 +54,11 @@ export class NpmVersionLensProvider
     );
     if (packageDepsLenses.length === 0) return null;
 
+    const includePrereleases = this.extension.state.prereleasesEnabled.value;
+
     const context = {
       providerName: this.config.providerName,
+      includePrereleases,
       client: this.pacoteClient,
       clientData: this.config,
       logger: this.logger,

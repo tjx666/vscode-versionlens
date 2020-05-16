@@ -17,6 +17,7 @@ import { VersionLens } from '../models/versionLens';
 
 export type CreateVersionLensesContext<TPackageClientData> = {
   providerName: string,
+  includePrereleases: boolean;
   client: IPackageClient<TPackageClientData>,
   clientData: TPackageClientData,
   replaceVersion?: ReplaceVersionFunction,
@@ -61,6 +62,7 @@ async function resolveDependency<TClientData>(
 
   const {
     providerName,
+    includePrereleases,
     client,
     clientData,
     logger,
@@ -69,6 +71,7 @@ async function resolveDependency<TClientData>(
 
   const request: PackageRequest<TClientData> = {
     providerName,
+    includePrereleases,
     clientData,
     package: {
       name,

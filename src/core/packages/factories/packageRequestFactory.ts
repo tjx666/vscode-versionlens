@@ -7,6 +7,7 @@ import {
 
 import { PackageRequest } from "../models/packageRequest";
 import { IPackageClient } from '../definitions/iPackageClient';
+import { PackageSuggestionFlags } from '../models/packageDocument';
 
 export async function createPackageRequest<TClientData>(
   client: IPackageClient<TClientData>,
@@ -30,6 +31,12 @@ export async function createPackageRequest<TClientData>(
         request.package.name,
         request.package.version
       );
+
+      if (request.includePrereleases === false) {
+        document.suggestions = document.suggestions.filter(
+          suggestion => !(suggestion.flags & PackageSuggestionFlags.prerelease)
+        )
+      }
 
       return ResponseFactory.createSuccess(document, replaceVersionFn);
     })
