@@ -4,6 +4,7 @@ import Fixtures from './pacoteApiClient.fixtures'
 import { NpmConfig } from '/providers/npm/config';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
 import { AppConfig } from '/presentation/extension';
+import { IConfig } from '/core/configuration';
 
 const assert = require('assert')
 const path = require('path')
@@ -28,7 +29,7 @@ export default {
     // mock defaults
     pacoteMock.packument = (npaResult, opts) => { }
 
-    defaultConfigMock = new AppConfig( {
+    defaultConfigMock = new AppConfig(<IConfig>{
       get: (k) => undefined
     });
   },

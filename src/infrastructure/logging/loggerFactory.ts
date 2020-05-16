@@ -10,7 +10,7 @@ import { AppConfig } from 'presentation/extension';
 // todo extract to app config
 const timestampFormat = 'YYYY-MM-DD HH:mm:ss';
 
-export function createLogger(config: AppConfig): ILogger {
+export function createLogger(appConfig: AppConfig): ILogger {
 
   const {
     createLogger,
@@ -42,12 +42,12 @@ export function createLogger(config: AppConfig): ILogger {
       createOutputChannelTransport(
         "VersionLens",
         {
-          level: 'info',
+          level: appConfig.logging.level,
           format: logFormat
         }
       )
     ]
   })
 
-  return new WinstonLogger(winstonLogger, config)
+  return new WinstonLogger(winstonLogger, appConfig)
 }

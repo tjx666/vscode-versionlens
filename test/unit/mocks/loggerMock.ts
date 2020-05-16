@@ -6,6 +6,7 @@ let defaultLoggerIntercepts = {
   debug: () => 0,
   error: () => 0,
   info: () => 0,
+  verbose: () => 0
 };
 
 export class LoggerMock implements ILogger {
@@ -34,6 +35,10 @@ export class LoggerMock implements ILogger {
 
   error(message: string, ...splats: any): void {
     this.intercepts['error'](message, splats);
+  }
+
+  verbose(message: string, ...splats: any): void {
+    this.intercepts['verbose'](message, splats);
   }
 
 }

@@ -1,49 +1,36 @@
-import { WorkspaceConfig as AbstractWorkspaceConfig } from '../../core/configuration/abstractWorkspaceConfig'
+import { AbstractWorkspaceConfig, IRootConfig } from 'core/configuration'
 import { IConfig } from "core/configuration";
+import { LoggingOptions } from "./options/loggingOptions";
+import { SuggestionsOptions } from "./options/suggestionsOptions";
 
 enum AppContributions {
-  ShowVersionLensesAtStartup = 'showVersionLensesAtStartup',
-  ShowTaggedVersionsAtStartup = 'showTaggedVersionsAtStartup',
+  // vscode ui (todo move to options class)
   ShowDependencyStatusesAtStartup = 'showDependencyStatusesAtStartup',
-  VersionPrefix = 'versionPrefix',
   MissingDependencyColour = 'missingDependencyColour',
   InstalledDependencyColour = 'installedDependencyColour',
   OutdatedDependencyColour = 'outdatedDependencyColour',
   PrereleaseDependencyColour = 'prereleaseDependencyColour',
+
   GithubTaggedCommits = 'github.taggedCommits',
 }
 
 export class AppConfig extends AbstractWorkspaceConfig {
 
+  logging: LoggingOptions;
+  suggestions: SuggestionsOptions;
+
   constructor(config: IConfig) {
     super(config);
+
+    this.logging = new LoggingOptions(this);
+    this.suggestions = new SuggestionsOptions(this);
   }
 
-  get showVersionLensesAtStartup() {
-    return this.getOrDefault(
-      AppContributions.ShowVersionLensesAtStartup,
-      true
-    );
-  }
-
-  get showTaggedVersionsAtStartup() {
-    return this.getOrDefault(
-      AppContributions.ShowTaggedVersionsAtStartup,
-      false
-    );
-  }
 
   get showDependencyStatusesAtStartup() {
     return this.getOrDefault(
       AppContributions.ShowDependencyStatusesAtStartup,
       false
-    );
-  }
-
-  get versionPrefix() {
-    return this.getOrDefault(
-      AppContributions.VersionPrefix,
-      ''
     );
   }
 
@@ -90,8 +77,8 @@ let _appConfigSingleton = null;
 
 export default _appConfigSingleton;
 
-export function createAppConfig(configRoot: IConfig) {
-  _appConfigSingleton = new AppConfig(configRoot);
+export function createAppConfig(configRoot: IRootConfig) {
+  _appConfigSingleton = new AppConfig(<IConfig>configRoot);
 
   return _appConfigSingleton;
 }

@@ -8,7 +8,7 @@
   },
   "author": "Peter Flannery",
   "license": "MIT",
-  "version": "0.27.0",
+  "version": "1.0.0-alpha.0",
   "publisher": "pflannery",
   "displayName": "Version Lens",
   "icon": "images/logo.png",
@@ -211,20 +211,26 @@
     "configuration": {
       "title": "Versionlens configuration",
       "properties": {
-        "versionlens.versionPrefix": {
+        "versionlens.logging.level": {
           "type": "string",
-          "default": "",
-          "description": "Inserts this prefix before the version when clicking on the code lens link."
+          "enum": [
+            "error",
+            "info",
+            "debug",
+            "verbose"
+          ],
+          "default": "info",
+          "description": "Sets the level for logging written to the output channel."
         },
-        "versionlens.showVersionLensesAtStartup": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show dependency versions by default. You can use the editor toolbar to show/hide versions at any time."
-        },
-        "versionlens.showTaggedVersionsAtStartup": {
+        "versionlens.suggestions.alwaysShowReleases": {
           "type": "boolean",
           "default": false,
-          "description": "Show dist tags by default when vscode starts. You can use the editor toolbar to show/hide dist tags at any time."
+          "description": "Will always show releases when opening a package file in the editor."
+        },
+        "versionlens.suggestions.alwaysShowPrereleases": {
+          "type": "boolean",
+          "default": false,
+          "description": "Will always show prereleases when opening a package file in the editor."
         },
         "versionlens.showDependencyStatusesAtStartup": {
           "type": "boolean",
@@ -393,6 +399,24 @@
           "type": "string",
           "default": "yellowgreen",
           "description": "The colour used to show prerelease dependencies. Accept's valid CSS colours"
+        },
+        "versionlens.versionPrefix": {
+          "type": "string",
+          "deprecationMessage": "This has been replaced with versionlens.suggestions.defaultVersionPrefix",
+          "default": "",
+          "description": "Inserts this prefix before the version when clicking on the code lens link."
+        },
+        "versionlens.showVersionLensesAtStartup": {
+          "type": "boolean",
+          "default": true,
+          "deprecationMessage": "Use versionlens.suggestions.alwaysShowReleases instead",
+          "description": ""
+        },
+        "versionlens.showTaggedVersionsAtStartup": {
+          "type": "boolean",
+          "default": false,
+          "deprecationMessage": "Use versionlens.suggestions.alwaysShowPrereleases instead",
+          "description": ""
         }
       }
     }

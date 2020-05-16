@@ -5,6 +5,7 @@ import { UrlHelpers } from '/core/clients';
 import { DotNetConfig } from '/providers/dotnet/config';
 import { LoggerMock } from 'test/unit/mocks/loggerMock'
 import { AppConfig } from '/presentation/extension';
+import { IConfig } from '/core/configuration';
 
 const assert = require('assert');
 const mock = require('mock-require');
@@ -16,7 +17,7 @@ export const NuGetResourceClientTests = {
 
   beforeEach: () => {
 
-    defaultConfigMock = new AppConfig({
+    defaultConfigMock = new AppConfig(<IConfig>{
       get: (k) => undefined
     });
 
@@ -79,9 +80,11 @@ export const NuGetResourceClientTests = {
       mock('request-light', { xhr: () => Promise.reject(mockResponse) })
 
       // setup test feeds
-      const config = new DotNetConfig(new AppConfig({
-        get: (k) => <any>[expected]
-      }))
+      const config = new DotNetConfig(
+        new AppConfig(<IConfig>{
+          get: (k) => <any>[expected]
+        })
+      )
 
       const cut = new NuGetResourceClient(config, 0, new LoggerMock())
       return cut.fetchResource(testSource)
@@ -109,9 +112,11 @@ export const NuGetResourceClientTests = {
       mock('request-light', { xhr: () => Promise.reject(mockResponse) })
 
       // setup test feeds
-      const config = new DotNetConfig(new AppConfig({
-        get: (k) => <any>[]
-      }))
+      const config = new DotNetConfig(
+        new AppConfig(<IConfig>{
+          get: (k) => <any>[]
+        })
+      )
 
       const cut = new NuGetResourceClient(config, 0, new LoggerMock())
       return cut.fetchResource(testSource)

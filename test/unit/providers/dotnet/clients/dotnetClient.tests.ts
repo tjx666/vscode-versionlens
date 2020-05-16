@@ -10,6 +10,7 @@ import {
 import { DotNetConfig } from '/providers/dotnet/config';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
 import { AppConfig } from '/presentation/extension';
+import { IConfig } from '/core/configuration';
 
 const assert = require('assert');
 const mock = require('mock-require');
@@ -20,7 +21,7 @@ export const DotnetClientRequestTests = {
 
   beforeEach: () => {
 
-    defaultConfigMock = new AppConfig({
+    defaultConfigMock = new AppConfig(<IConfig>{
       get: (k) => undefined
     });
 
@@ -67,7 +68,7 @@ export const DotnetClientRequestTests = {
 
       // setup test feeds
       const config = new DotNetConfig(
-        new AppConfig({
+        new AppConfig(<IConfig>{
           get: (k) => <any>testFeeds
         })
       )
@@ -94,7 +95,7 @@ export const DotnetClientRequestTests = {
 
       // setup test feeds
       const config = new DotNetConfig(
-        new AppConfig({
+        new AppConfig(<IConfig>{
           get: (k) => <any>testFeeds
         })
       )

@@ -1,10 +1,8 @@
 export enum LogLevelTypes {
-  // Trace = "trce",
-  Debug = "dbug",
+  Verbose = "verbose",
+  Debug = "debug",
   Info = "info",
-  // Warn = "warn",
   Error = "fail",
-  // Crit = "crit",
 }
 
 export interface ILogger {
@@ -20,5 +18,7 @@ export interface ILogger {
   debug(message: string, ...splats: any): void;
 
   error(message: string, ...splats: any): void;
+
+  verbose(message: string, ...splats: any): void;
 
 }

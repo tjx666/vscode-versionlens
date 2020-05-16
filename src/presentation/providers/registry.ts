@@ -74,16 +74,32 @@ export async function registerProviders(
     languages: { registerCodeLensProvider }
   } = require('vscode');
 
+  logger.debug('Registering providers %o', providerNames);
+
   const promisedActivation = providerNames.map(packageManager => {
     return import(`providers/${packageManager}/activate`)
       .then(module => {
+        logger.verbose('Activating package manager %s', packageManager);
         const provider = module.activate(config, logger);
+
+        logger.info(
+          'Activated package manager %s with file filter: %O',
+          provider.config.providerName,
+          provider.config.selector,
+        );
         return providerRegistry.register(provider);
       })
       .then(provider => {
         return registerCodeLensProvider(
           provider.config.selector,
           provider
+        );
+      })
+      .catch(error => {
+        logger.error(
+          'Could not register package manager %s. Reason: %O',
+          packageManager,
+          error,
         );
       });
   });

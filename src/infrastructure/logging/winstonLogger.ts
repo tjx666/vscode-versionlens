@@ -31,4 +31,8 @@ export class WinstonLogger implements ILogger {
     this.winstonLogger.log(LogLevelTypes.Error, message, ...splats);
   }
 
+  verbose(message: string, ...splats: any): void {
+    this.winstonLogger.log(LogLevelTypes.Verbose, message, ...splats);
+  }
+
 }

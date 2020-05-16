@@ -1,8 +1,8 @@
 import { IConfig } from "core/configuration";
 
-export abstract class WorkspaceConfig implements IConfig {
+export abstract class AbstractWorkspaceConfig implements IConfig {
 
-  configuration: IConfig;
+  private configuration: IConfig;
 
   constructor(configuration: IConfig) {
     this.configuration = configuration;

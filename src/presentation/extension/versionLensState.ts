@@ -32,18 +32,20 @@ export class VersionLensState {
 
     this.enabled = new ContextState(
       StateContributions.Enabled,
-      false
-    );
-
-    this.showDependencyStatuses = new ContextState(
-      StateContributions.ShowDependencyStatuses,
-      appConfig.showDependencyStatusesAtStartup === true
+      appConfig.suggestions.alwaysShowReleases
     );
 
     this.prereleasesEnabled = new ContextState(
       StateContributions.PrereleasesEnabled,
-      appConfig.showTaggedVersionsAtStartup === true
+      appConfig.suggestions.alwaysShowPrereleases
     );
+
+    this.showDependencyStatuses = new ContextState(
+      StateContributions.ShowDependencyStatuses,
+      false
+    );
+
+
 
   }
 
