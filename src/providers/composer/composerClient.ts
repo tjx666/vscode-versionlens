@@ -34,7 +34,7 @@ export class ComposerClient
     cacheDuration: number,
     logger: ILogger
   ) {
-    super({}, cacheDuration)
+    super(logger, {}, cacheDuration)
     this.options = config;
   }
 

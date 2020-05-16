@@ -6,6 +6,7 @@ import {
 import {
   JsonHttpClientRequest,
 } from 'infrastructure/clients'
+import { LoggerMock } from 'test/unit/mocks/loggerMock'
 
 const assert = require('assert')
 const mock = require('mock-require')
@@ -47,7 +48,7 @@ export const JsonClientRequestTests = {
         return Promise.resolve(testResponse)
       };
 
-      const rut = new JsonHttpClientRequest();
+      const rut = new JsonHttpClientRequest(new LoggerMock());
 
       await rut.requestJson(
         HttpClientRequestMethods.get,

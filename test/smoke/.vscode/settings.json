@@ -2,7 +2,7 @@
 {
   "versionlens.suggestions.alwaysShowReleases": true,
   "versionlens.suggestions.alwaysShowPrereleases": true,
-  "versionlens.logging.level":"verbose" ,
+  "versionlens.logging.level":"debug" ,
   "versionlens.npm.dependencyProperties": [
     "dependencies",
     "devDependencies",

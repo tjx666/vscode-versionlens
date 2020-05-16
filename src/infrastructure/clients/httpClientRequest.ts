@@ -1,4 +1,5 @@
 import { KeyStringDictionary } from 'core/generic/collections';
+import { ILogger } from 'core/logging';
 
 import {
   AbstractClientRequest,
@@ -17,10 +18,13 @@ export class HttpClientRequest
   extends AbstractClientRequest<number, string>
   implements IHttpClientRequest {
 
+  logger: ILogger;
+
   headers: KeyStringDictionary;
 
-  constructor(headers?: KeyStringDictionary, cacheDuration?: number) {
+  constructor(logger: ILogger, headers?: KeyStringDictionary, cacheDuration?: number) {
     super(cacheDuration);
+    this.logger = logger;
     this.headers = headers || {};
   }
 
@@ -36,6 +40,8 @@ export class HttpClientRequest
     if (this.cache.cacheDuration > 0 && this.cache.hasExpired(cacheKey) === false) {
       return Promise.resolve(this.cache.get(cacheKey));
     }
+
+    this.logger.debug("HttpRequest: %s", url)
 
     const requestLight = require('request-light');
     return requestLight.xhr({

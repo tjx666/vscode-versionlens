@@ -1,13 +1,17 @@
+import { ILogger } from 'core/logging';
 import { HttpClientRequestMethods } from 'core/clients';
 import { JsonHttpClientRequest } from './jsonHttpClientRequest';
 
 export class GithubRequest extends JsonHttpClientRequest {
 
-  constructor() {
-    super({
-      accept: 'application\/vnd.github.v3+json',
-      'user-agent': 'vscode-contrib/vscode-versionlens'
-    });
+  constructor(logger) {
+    super(
+      logger,
+      {
+        accept: 'application\/vnd.github.v3+json',
+        'user-agent': 'vscode-contrib/vscode-versionlens'
+      }
+    );
   }
 
   async getCommitBySha(userRepo, sha) {

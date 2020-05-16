@@ -22,7 +22,7 @@ export class NuGetResourceClient extends JsonHttpClientRequest {
     cacheDuration: number,
     logger: ILogger
   ) {
-    super({}, cacheDuration)
+    super(logger, {}, cacheDuration)
     this.config = config;
     this.logger = logger;
   }

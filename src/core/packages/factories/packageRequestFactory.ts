@@ -16,7 +16,7 @@ export async function createPackageRequest<TClientData>(
 ): Promise<Array<PackageResponse> | PackageResponse> {
 
   request.logger.info(
-    `Queuing %s package: %s`,
+    `Queued %s package: %s`,
     request.providerName,
     request.package.name
   );

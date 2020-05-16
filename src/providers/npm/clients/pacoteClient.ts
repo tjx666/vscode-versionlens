@@ -36,7 +36,7 @@ export class PacoteClient
     cacheDuration: number,
     logger: ILogger
   ) {
-    super({}, cacheDuration);
+    super(logger, {}, cacheDuration);
     this.options = config;
   }
 

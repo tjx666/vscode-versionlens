@@ -1,5 +1,6 @@
 import { TestFixtureMap } from 'test/unit/utils'
 import { GithubRequest } from 'infrastructure/clients'
+import { LoggerMock } from 'test/unit/mocks/loggerMock'
 
 const assert = require('assert')
 const mock = require('mock-require')
@@ -20,7 +21,7 @@ export const GithubRequestTests = {
   afterAll: () => mock.stopAll(),
 
   beforeEach: () => {
-    testContext.rut = new GithubRequest();
+    testContext.rut = new GithubRequest(new LoggerMock());
     requestLightMock.xhr = _ => { throw new Error("Not implemented") }
   },
 
@@ -108,7 +109,7 @@ export const GithubRequestTests = {
         return resultPromise
       };
 
-      const rut = new GithubRequest();
+      const rut = new GithubRequest(new LoggerMock());
       await rut.getLatestTag('testRepo')
         .then(entry => {
           assert.equal(entry.category, 'tag', "Expected category to match");

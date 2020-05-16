@@ -1,4 +1,5 @@
 import { KeyStringDictionary } from 'core/generic/collections';
+import { ILogger } from 'core/logging';
 
 import {
   HttpClientResponse,
@@ -13,8 +14,8 @@ export class JsonHttpClientRequest
   extends HttpClientRequest
   implements IJsonHttpClientRequest {
 
-  constructor(headers?: KeyStringDictionary, cacheDuration?: number) {
-    super(headers, cacheDuration);
+  constructor(logger: ILogger, headers?: KeyStringDictionary, cacheDuration?: number) {
+    super(logger, headers, cacheDuration);
   }
 
   async requestJson(

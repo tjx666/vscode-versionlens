@@ -10,6 +10,7 @@ import {
   HttpClientRequest,
 } from 'infrastructure/clients'
 
+import { LoggerMock } from 'test/unit/mocks/loggerMock'
 
 const assert = require('assert')
 const mock = require('mock-require')
@@ -29,7 +30,7 @@ export const HttpRequestTests = {
   afterAll: () => mock.stopAll(),
 
   beforeEach: () => {
-    testContext.rut = new HttpClientRequest();
+    testContext.rut = new HttpClientRequest(new LoggerMock());
     requestLightMock.xhr = _ => { throw new Error("Not implemented") }
   },
 
@@ -137,7 +138,11 @@ export const HttpRequestTests = {
         })
       };
 
-      testContext.rut = new HttpClientRequest({}, 0);
+      testContext.rut = new HttpClientRequest(
+        new LoggerMock(),
+        {},
+        0
+      );
 
       await testContext.rut.request(
         HttpClientRequestMethods.get,

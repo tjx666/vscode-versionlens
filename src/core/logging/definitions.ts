@@ -1,8 +1,8 @@
 export enum LogLevelTypes {
+  Error = "error",
+  Info = "info",
   Verbose = "verbose",
   Debug = "debug",
-  Info = "info",
-  Error = "fail",
 }
 
 export interface ILogger {

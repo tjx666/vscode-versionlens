@@ -80,7 +80,7 @@ export function isFourSegmentedVersion(versionToCheck: string): boolean {
 
 const commonReleaseIdentities = [
   ['legacy'],
-  ['alpha', 'a'],
+  ['alpha', 'preview', 'a'],
   ['beta', 'b'],
   ['next'],
   ['milestone', 'm'],
