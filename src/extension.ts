@@ -1,19 +1,21 @@
-import { registerProviders } from 'presentation/providers';
-import registerCommands from 'presentation/commands/register';
-import subscribeToEditorEvents from 'presentation/editor/events';
 import { createVersionLensLogger } from 'infrastructure/logging';
+import { registerProviders } from 'presentation/providers';
+import { createEditorSettings } from 'presentation/editor/editor';
+import { createAppConfig } from 'presentation/configuration';
 
 export async function activate(context) {
-  const { workspace, languages } = require('vscode');
+  const { window, workspace, languages } = require('vscode');
 
   const configuration = workspace.getConfiguration('versionlens');
 
+  const appConfig = createAppConfig(configuration);
+
+  const editorSettings = createEditorSettings(appConfig);
+
   const logger = createVersionLensLogger(configuration);
 
-  const providers = await registerProviders(configuration, logger);
-
   const disposables = [];
-
+  const providers = await registerProviders(configuration, logger);
   providers.forEach(
     function (provider) {
       disposables.push(
@@ -25,11 +27,8 @@ export async function activate(context) {
     }
   );
 
-  registerCommands().forEach(command => {
-    disposables.push(command);
-  });
+  context.subscriptions.push(...editorSettings.disposables);
 
-  context.subscriptions.push(...disposables);
-
-  subscribeToEditorEvents();
+  // check current editor if versionLens.providerActive
+  editorSettings.onDidChangeActiveTextEditor(window.activeTextEditor);
 }

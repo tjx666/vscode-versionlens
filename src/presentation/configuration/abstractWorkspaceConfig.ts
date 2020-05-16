@@ -1,8 +1,8 @@
 import * as VsCodeTypes from "vscode";
 
-import { IProviderConfig } from "../definitions";
+import { IConfig } from "core/configuration";
 
-export class AbstractProviderConfig implements IProviderConfig {
+export class AbstractWorkspaceConfig implements IConfig {
 
   configuration: VsCodeTypes.WorkspaceConfiguration;
 

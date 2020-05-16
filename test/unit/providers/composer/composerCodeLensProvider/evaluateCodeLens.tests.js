@@ -1,4 +1,4 @@
-import appSettings from '/appSettings';
+import editorSettings from 'presentation/editor/editorSettings';
 import { PackageCodeLens } from 'providers/shared/packageCodeLens';
 import { ComposerCodeLensProvider } from 'providers/composer/composerCodeLensProvider';
 import * as ComposerAPIModule from 'providers/composer/composerAPI';
@@ -23,7 +23,7 @@ export default {
     }
 
     Reflect.defineProperty(
-      appSettings,
+      editorSettings,
       "showVersionLenses", {
       get: () => true
     }

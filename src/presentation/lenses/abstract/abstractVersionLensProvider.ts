@@ -2,15 +2,21 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import appSettings from 'appSettings';
+import { getEditorSettings, Editor } from 'presentation/editor/editor';
 import { ILogger } from 'core/generic/logging';
-import { PackageSourceTypes, PackageResponseErrors } from 'core/packages';
-import * as CommandFactory from 'presentation/commands/factory';
-import { IVersionCodeLens, VersionLens } from "presentation/lenses";
-import { VersionLensFetchResponse } from "../definitions";
-import { IPackageProviderOptions } from "core/packages";
 
-// import { OutputChannelLogger } from '../logging/outputChannelLogger';
+import {
+  PackageSourceTypes,
+  PackageResponseErrors,
+  IPackageProviderOptions
+} from 'core/packages';
+
+import * as CommandFactory from 'presentation/commands/factory';
+
+import { IVersionCodeLens } from "../definitions/iVersionCodeLens";
+import { VersionLens } from "../models/versionLens";
+
+export type VersionLensFetchResponse = Promise<VersionLens[] | null>;
 
 export abstract class AbstractVersionLensProvider<TConfig extends IPackageProviderOptions> {
 
@@ -22,6 +28,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
 
   // packagePath: string;
   logger: ILogger;
+  editor: Editor;
 
   abstract updateOutdated(packagePath: string): Promise<any>;
 
@@ -41,6 +48,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
     this._onChangeCodeLensesEmitter = new EventEmitter();
     this.onDidChangeCodeLenses = this._onChangeCodeLensesEmitter.event;
     this.logger = logger;
+    this.editor = getEditorSettings();
   }
 
   reload() {
@@ -51,10 +59,10 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): Promise<VersionLens[] | null> {
-    if (appSettings.showVersionLenses === false) return null;
+    if (this.editor.palette.enabled.value === false) return null;
 
     // set in progress
-    appSettings.inProgress = true;
+    this.editor.palette.providerBusy.value = true;
 
     // todo clear output channel
     // if (this.logger){
@@ -70,7 +78,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
   ): Promise<VersionLens> {
     if (codeLens instanceof VersionLens) {
       // set in progress
-      appSettings.inProgress = true;
+      this.editor.palette.providerBusy.value = true;
 
       // evaluate the code lens
       const evaluated = this.evaluateCodeLens(codeLens, token);
@@ -78,7 +86,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
       // update the progress
       return Promise.resolve(evaluated)
         .then(result => {
-          appSettings.inProgress = false;
+          this.editor.palette.providerBusy.value = false;
           return result;
         })
     }

@@ -1,4 +1,4 @@
-import  appContrib  from '../../appContrib';
+import appConfig from 'presentation/configuration';
 
 const { window, Range, Position } = require('vscode');
 
@@ -8,8 +8,8 @@ const _decorationTypeKey = window.createTextEditorDecorationType({
 });
 
 export function clearDecorations() {
-  if (!window || !window.activeTextEditor)
-    return;
+  const { window } = require('vscode');
+  if (!window || !window.activeTextEditor) return;
 
   _decorations = [];
   window.activeTextEditor.setDecorations(
@@ -86,7 +86,7 @@ export function renderMissingDecoration(range) {
     renderOptions: {
       after: createRenderOptions(
         ' ▪ missing install',
-        appContrib.missingDependencyColour
+        appConfig.missingDependencyColour
       )
     }
   });
@@ -102,7 +102,7 @@ export function renderInstalledDecoration(range, version) {
     renderOptions: {
       after: createRenderOptions(
         ` ▪ ${version} installed`,
-        appContrib.installedDependencyColour
+        appConfig.installedDependencyColour
       )
     }
   });
@@ -118,7 +118,7 @@ export function renderNeedsUpdateDecoration(range, version) {
     renderOptions: {
       after: createRenderOptions(
         ` ▪ ${version} installed, npm update needed`,
-        appContrib.outdatedDependencyColour
+        appConfig.outdatedDependencyColour
       )
     }
   });
@@ -134,7 +134,7 @@ export function renderOutdatedDecoration(range, version) {
     renderOptions: {
       after: createRenderOptions(
         ` ▪ ${version} installed`,
-        appContrib.outdatedDependencyColour
+        appConfig.outdatedDependencyColour
       )
     }
   });
@@ -150,7 +150,7 @@ export function renderPrereleaseInstalledDecoration(range, version) {
     renderOptions: {
       after: createRenderOptions(
         ` ▪ ${version} prerelease installed`,
-        appContrib.prereleaseDependencyColour
+        appConfig.prereleaseDependencyColour
       )
     }
   });

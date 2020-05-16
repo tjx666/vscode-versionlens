@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import { TestFixtureMap } from "../../../utils";
-import appSettings from '/appSettings';
+import editorSettings from 'presentation/editor/editorSettings';
 import { PubCodeLensProvider } from "providers/pub/pubCodeLensProvider";
 import * as PubAPIModule from "providers/pub/pubAPI";
 
@@ -27,7 +27,7 @@ export default {
     };
 
     Reflect.defineProperty(
-      appSettings,
+      editorSettings,
       "showVersionLenses", {
       get: () => true
     }

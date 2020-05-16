@@ -76,43 +76,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "versionlens.showDependencyStatuses",
-        "title": "Show dependency statuses",
-        "category": "VersionLens",
-        "icon": {
-          "dark": "images/icons/dep-status-dark.svg",
-          "light": "images/icons/dep-status-light.svg"
-        }
-      },
-      {
-        "command": "versionlens.hideDependencyStatuses",
-        "title": "Hide dependency statuses",
-        "category": "VersionLens",
-        "icon": {
-          "dark": "images/icons/dep-status-active.svg",
-          "light": "images/icons/dep-status-active.svg"
-        }
-      },
-      {
-        "command": "versionlens.showTaggedVersions",
-        "title": "Show tagged dependency versions",
-        "category": "VersionLens",
-        "icon": {
-          "dark": "images/icons/tag-dark.svg",
-          "light": "images/icons/tag-light.svg"
-        }
-      },
-      {
-        "command": "versionlens.hideTaggedVersions",
-        "title": "Hide tagged dependency versions",
-        "category": "VersionLens",
-        "icon": {
-          "dark": "images/icons/tag-active.svg",
-          "light": "images/icons/tag-active.svg"
-        }
-      },
-      {
-        "command": "versionlens.showVersionLenses",
+        "command": "versionlens.onShowVersionLenses",
         "title": "Show dependency versions",
         "category": "VersionLens",
         "icon": {
@@ -121,7 +85,7 @@
         }
       },
       {
-        "command": "versionlens.hideVersionLenses",
+        "command": "versionlens.onHideVersionLenses",
         "title": "Hide dependency versions",
         "category": "VersionLens",
         "icon": {
@@ -130,7 +94,43 @@
         }
       },
       {
-        "command": "versionlens.showingProgress",
+        "command": "versionlens.onShowDependencyStatuses",
+        "title": "Show dependency statuses",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/dep-status-dark.svg",
+          "light": "images/icons/dep-status-light.svg"
+        }
+      },
+      {
+        "command": "versionlens.onHideDependencyStatuses",
+        "title": "Hide dependency statuses",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/dep-status-active.svg",
+          "light": "images/icons/dep-status-active.svg"
+        }
+      },
+      {
+        "command": "versionlens.onShowTaggedVersions",
+        "title": "Show tagged dependency versions",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/tag-dark.svg",
+          "light": "images/icons/tag-light.svg"
+        }
+      },
+      {
+        "command": "versionlens.onHideTaggedVersions",
+        "title": "Hide tagged dependency versions",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/tag-active.svg",
+          "light": "images/icons/tag-active.svg"
+        }
+      },
+      {
+        "command": "versionlens.onShowingProgress",
         "title": "Analyzing dependencies...",
         "category": "VersionLens",
         "icon": {
@@ -142,68 +142,68 @@
     "menus": {
       "commandPalette": [
         {
-          "command": "versionlens.showingProgress",
+          "command": "versionlens.onShowingProgress",
           "when": "false"
         },
         {
-          "command": "versionlens.showDependencyStatuses",
-          "when": "versionlens.show && versionlens.isActive"
+          "command": "versionlens.onShowDependencyStatuses",
+          "when": "versionlens.enabled && versionlens.providerActive"
         },
         {
-          "command": "versionlens.hideDependencyStatuses",
-          "when": "versionlens.show && versionlens.isActive"
+          "command": "versionlens.onHideDependencyStatuses",
+          "when": "versionlens.enabled && versionlens.providerActive"
         },
         {
-          "command": "versionlens.showTaggedVersions",
-          "when": "versionlens.show && versionlens.isActive"
+          "command": "versionlens.onShowTaggedVersions",
+          "when": "versionlens.enabled && versionlens.providerActive"
         },
         {
-          "command": "versionlens.hideTaggedVersions",
-          "when": "versionlens.show && versionlens.isActive"
+          "command": "versionlens.onHideTaggedVersions",
+          "when": "versionlens.enabled && versionlens.providerActive"
         },
         {
-          "command": "versionlens.showVersionLenses",
-          "when": "versionlens.show && versionlens.isActive"
+          "command": "versionlens.onShowVersionLenses",
+          "when": "versionlens.enabled && versionlens.providerActive"
         },
         {
-          "command": "versionlens.hideVersionLenses",
-          "when": "versionlens.show && versionlens.isActive"
+          "command": "versionlens.onHideVersionLenses",
+          "when": "versionlens.enabled && versionlens.providerActive"
         }
       ],
       "editor/title": [
         {
-          "command": "versionlens.showDependencyStatuses",
-          "when": "versionlens.showDependencyStatuses == false && versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
+          "command": "versionlens.onShowDependencyStatuses",
+          "when": "versionlens.showDependencyStatuses == false && versionlens.enabled && versionlens.providerActive && textCompareEditorVisible == false",
           "group": "navigation@3"
         },
         {
-          "command": "versionlens.hideDependencyStatuses",
-          "when": "versionlens.showDependencyStatuses && versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
+          "command": "versionlens.onHideDependencyStatuses",
+          "when": "versionlens.showDependencyStatuses && versionlens.enabled && versionlens.providerActive && textCompareEditorVisible == false",
           "group": "navigation@3"
         },
         {
-          "command": "versionlens.showTaggedVersions",
-          "when": "versionlens.showTaggedVersions == false && versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
+          "command": "versionlens.onShowTaggedVersions",
+          "when": "versionlens.prereleasesEnabled == false && versionlens.enabled && versionlens.providerActive && textCompareEditorVisible == false",
           "group": "navigation@2"
         },
         {
-          "command": "versionlens.hideTaggedVersions",
-          "when": "versionlens.showTaggedVersions && versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
+          "command": "versionlens.onHideTaggedVersions",
+          "when": "versionlens.prereleasesEnabled && versionlens.enabled && versionlens.providerActive && textCompareEditorVisible == false",
           "group": "navigation@2"
         },
         {
-          "command": "versionlens.showVersionLenses",
-          "when": "versionlens.show == false && versionlens.isActive && versionlens.inProgress == false && textCompareEditorVisible == false",
+          "command": "versionlens.onShowVersionLenses",
+          "when": "versionlens.enabled == false && versionlens.providerActive && versionlens.providerBusy == false && textCompareEditorVisible == false",
           "group": "navigation@1"
         },
         {
-          "command": "versionlens.hideVersionLenses",
-          "when": "versionlens.show && versionlens.isActive && versionlens.inProgress == false && textCompareEditorVisible == false",
+          "command": "versionlens.onHideVersionLenses",
+          "when": "versionlens.enabled && versionlens.providerActive && versionlens.providerBusy == false && textCompareEditorVisible == false",
           "group": "navigation@1"
         },
         {
-          "command": "versionlens.showingProgress",
-          "when": "versionlens.show && versionlens.isActive && versionlens.inProgress && textCompareEditorVisible == false",
+          "command": "versionlens.onShowingProgress",
+          "when": "versionlens.enabled && versionlens.providerActive && versionlens.providerBusy && textCompareEditorVisible == false",
           "group": "navigation@1"
         }
       ]

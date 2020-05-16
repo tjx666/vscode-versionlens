@@ -1,6 +1,6 @@
 import * as VsCodeTypes from "vscode";
 
-import { AbstractProviderConfig } from "presentation/providers";
+import { AbstractWorkspaceConfig } from "presentation/configuration";
 import { PackageFileFilter, IPackageProviderOptions } from "core/packages";
 
 enum MavenContributions {
@@ -20,7 +20,7 @@ const options = {
 }
 
 export class MavenConfig
-  extends AbstractProviderConfig
+  extends AbstractWorkspaceConfig
   implements IPackageProviderOptions {
 
   defaultDependencyProperties: Array<string>;

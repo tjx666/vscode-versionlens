@@ -3,7 +3,7 @@ import * as VsCodeTypes from 'vscode';
 
 import {
   AbstractVersionLensProvider,
-} from './abstract/abstractVersionLensProvider'
+} from 'presentation/lenses'
 
 import { KeyDictionary } from 'core/generic/collections'
 
@@ -50,6 +50,7 @@ class ProviderRegistry {
     const filename = path.basename(fileName);
     const filtered = providerNames
       .map(name => this.providers[name])
+      .filter(provider => !!provider)
       .filter(provider => matchesFilename(
         filename,
         provider.config.selector.pattern

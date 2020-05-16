@@ -2,7 +2,7 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { AbstractVersionLensProvider } from 'presentation/providers/abstract/abstractVersionLensProvider';
+import { AbstractVersionLensProvider } from 'presentation/lenses';
 import { extractMavenLensDataFromDocument } from 'providers/maven/mavenPackageParser';
 import { VersionLensFactory } from 'presentation/lenses';
 import { MavenConfig } from './config';

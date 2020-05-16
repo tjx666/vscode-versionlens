@@ -4,10 +4,9 @@ import * as VsCodeTypes from 'vscode';
 // imports
 import {
   AbstractVersionLensProvider,
-  VersionLensFetchResponse
-} from 'presentation/providers';
-
-import { VersionLensFactory } from 'presentation/lenses';
+  VersionLensFetchResponse,
+  VersionLensFactory
+} from 'presentation/lenses';
 
 import { DotNetConfig } from './config';
 import { extractDotnetLensDataFromDocument } from './dotnetPackageParser'

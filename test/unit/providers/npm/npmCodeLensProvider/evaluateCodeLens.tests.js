@@ -2,7 +2,7 @@
  * Copyright (c) Peter Flannery. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import appSettings from '/appSettings';
+import editorSettings from 'presentation/editor/editorSettings';
 import { generatePackage } from 'test/unit/utils.js';
 import { PackageErrors } from 'providers/shared/definitions';
 import { PackageCodeLens } from 'providers/shared/packageCodeLens';
@@ -27,7 +27,7 @@ export default {
     // mock app settings
     testContext.showDependencyStatusesMock = false;
     Reflect.defineProperty(
-      appSettings,
+      editorSettings,
       "showDependencyStatuses", {
         get: () => testContext.showDependencyStatusesMock
       }

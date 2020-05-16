@@ -1,6 +1,6 @@
 import { resolveNpmPackage } from 'providers/npm/npmPackageResolver.js';
 import * as NpmClientApiMock from 'providers/npm/npmClient.js';
-import appSettings from '/appSettings';
+import editorSettings from 'presentation/editor/editorSettings';
 
 const assert = require('assert');
 const mock = require('mock-require');
@@ -32,7 +32,7 @@ export default {
     )
 
     Reflect.defineProperty(
-      appSettings,
+      editorSettings,
       "showTaggedVersions", {
       get: () => false
     }

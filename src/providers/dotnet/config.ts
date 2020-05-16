@@ -1,7 +1,7 @@
 import * as VsCodeTypes from "vscode";
 
-import { AbstractProviderConfig } from "presentation/providers";
 import { IPackageProviderOptions, PackageFileFilter } from "core/packages";
+import { AbstractWorkspaceConfig } from 'presentation/configuration';
 
 export enum DotnetContributions {
   DependencyProperties = 'dotnet.dependencyProperties',
@@ -23,7 +23,7 @@ const options = {
 }
 
 export class DotNetConfig
-  extends AbstractProviderConfig
+  extends AbstractWorkspaceConfig
   implements IPackageProviderOptions {
 
   defaultDependencyProperties: Array<string>;

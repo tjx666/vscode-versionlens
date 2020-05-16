@@ -12,7 +12,7 @@ import {
   IPackageClient
 } from 'core/packages';
 
-import { VersionLensFetchResponse } from '../../providers';
+import { VersionLensFetchResponse } from 'presentation/lenses';
 import { VersionLens } from '../models/versionLens';
 
 export type CreateVersionLensesContext<TPackageClientData> = {

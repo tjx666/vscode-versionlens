@@ -1,6 +1,6 @@
 import * as VsCodeTypes from "vscode";
 
-import { AbstractProviderConfig } from 'presentation/providers';
+import { AbstractWorkspaceConfig } from "presentation/configuration";
 import { PackageFileFilter, IPackageProviderOptions } from "core/packages";
 
 enum NpmContributions {
@@ -19,7 +19,7 @@ const options = {
 }
 
 export class NpmConfig
-  extends AbstractProviderConfig
+  extends AbstractWorkspaceConfig
   implements IPackageProviderOptions {
 
   defaultDependencyProperties: Array<string>;

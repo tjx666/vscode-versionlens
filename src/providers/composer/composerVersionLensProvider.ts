@@ -22,10 +22,11 @@ import {
 
 import {
   AbstractVersionLensProvider,
-  VersionLensFetchResponse
-} from 'presentation/providers';
+  VersionLensFetchResponse,
+  VersionLensFactory, 
+  VersionLens
+} from 'presentation/lenses';
 
-import { VersionLensFactory, VersionLens } from 'presentation/lenses';
 import { ILogger } from 'core/generic/logging';
 
 export class ComposerVersionLensProvider

@@ -1,6 +1,6 @@
-import appSettings from 'appSettings';
-import { VersionHelpers, PackageSuggestionFlags } from 'core/packages';
-import { githubRequest } from 'infrastructure/clients/githubClientRequest';
+import { CommandContributions, SuggestionIndicators } from 'presentation/editor/editor';
+import { PackageSuggestionFlags } from 'core/packages';
+// import { githubRequest } from 'infrastructure/clients/githubClientRequest';
 import { VersionLens } from 'presentation/lenses';
 
 export function createErrorCommand(errorMsg, codeLens) {
@@ -11,15 +11,15 @@ export function createTagCommand(tag, codeLens) {
   return codeLens.setCommand(tag);
 }
 
-export function createRemoteLinkCommand(codeLens) {
-  const cmd = `${appSettings.extensionName}.linkCommand`;
-  const title = `${appSettings.openNewWindowIndicator} ${codeLens.package.meta.remoteUrl}`;
-  return codeLens.setCommand(title, cmd, [codeLens]);
-}
+// export function createRemoteLinkCommand(codeLens) {
+//   const cmd = CommandContributions.LinkCommand;
+//   const title = `${SuggestionIndicators.OpenNewWindow} ${codeLens.package.meta.remoteUrl}`;
+//   return codeLens.setCommand(title, cmd, [codeLens]);
+// }
 
 export function createDirectoryLinkCommand(codeLens) {
   let title;
-  let cmd = `${appSettings.extensionName}.linkCommand`;
+  let cmd = CommandContributions.LinkCommand;
   const path = require('path');
   const fs = require('fs');
   const filePath = path.resolve(path.dirname(codeLens.documentUrl.fsPath), codeLens.package.suggestion.version);
@@ -27,44 +27,44 @@ export function createDirectoryLinkCommand(codeLens) {
   if (fileExists === false)
     title = (cmd = null) || 'Specified resource does not exist';
   else
-    title = `${appSettings.openNewWindowIndicator} ${codeLens.package.requested.version}`;
+    title = `${SuggestionIndicators.OpenNewWindow} ${codeLens.package.requested.version}`;
 
   return codeLens.setCommand(title, cmd, [codeLens]);
 }
 
-export function createGithubCommand(codeLens) {
-  const meta = codeLens.package.meta;
-  const fnName = `getLatest${meta.category}`;
+// export function createGithubCommand(codeLens) {
+//   const meta = codeLens.package.meta;
+//   const fnName = `getLatest${meta.category}`;
 
-  return githubRequest[fnName](meta.userRepo)
-    .then(entry => {
-      if (!entry)
-        return createTagCommand(`${meta.category}: none`, codeLens);
+//   return githubRequest[fnName](meta.userRepo)
+//     .then(entry => {
+//       if (!entry)
+//         return createTagCommand(`${meta.category}: none`, codeLens);
 
-      if (meta.commitish === '' ||
-        (VersionHelpers.semverLeadingChars.includes(meta.commitish[0]) ? meta.commitish[0] : '') + entry.version === meta.commitish)
-        return createTagCommand(`${meta.category}: latest`, codeLens);
+//       if (meta.commitish === '' ||
+//         (VersionHelpers.semverLeadingChars.includes(meta.commitish[0]) ? meta.commitish[0] : '') + entry.version === meta.commitish)
+//         return createTagCommand(`${meta.category}: latest`, codeLens);
 
-      const newVersion = codeLens.replaceVersionFn(entry.version);
-      return codeLens.setCommand(
-        `${meta.category}: ${codeLens.getInstallIndicator()} ${entry.version}`,
-        `${appSettings.extensionName}.updateDependencyCommand`,
-        [codeLens, `${newVersion}`]
-      );
-    })
-    .catch(error => {
-      if (error.rateLimitExceeded)
-        return createTagCommand('Rate limit exceeded', codeLens);
+//       const newVersion = codeLens.replaceVersionFn(entry.version);
+//       return codeLens.setCommand(
+//         `${meta.category}: ${codeLens.getInstallIndicator()} ${entry.version}`,
+//         CommandContributions.UpdateDependencyCommand,
+//         [codeLens, `${newVersion}`]
+//       );
+//     })
+//     .catch(error => {
+//       if (error.rateLimitExceeded)
+//         return createTagCommand('Rate limit exceeded', codeLens);
 
-      if (error.resourceNotFound)
-        return createTagCommand('Git resource not found', codeLens);
+//       if (error.resourceNotFound)
+//         return createTagCommand('Git resource not found', codeLens);
 
-      if (error.badCredentials)
-        return createTagCommand('Bad credentials', codeLens);
+//       if (error.badCredentials)
+//         return createTagCommand('Bad credentials', codeLens);
 
-      return Promise.reject(error);
-    });
-}
+//       return Promise.reject(error);
+//     });
+// }
 
 export function createSuggestedVersionCommand(codeLens: VersionLens) {
   const { name, version, flags } = codeLens.package.suggestion;
@@ -79,8 +79,9 @@ export function createSuggestedVersionCommand(codeLens: VersionLens) {
 
     const prefix = isTag ? '' : name + ': ';
     return codeLens.setCommand(
-      `${prefix}${appSettings.updateIndicator} ${version}`,
-      `${appSettings.extensionName}.updateDependencyCommand`,
+
+      `${prefix}${SuggestionIndicators.Update} ${version}`,
+      CommandContributions.UpdateDependencyCommand,
       [codeLens, `${replaceWithVersion}`]
     );
   }

@@ -6,10 +6,10 @@ import { extractPackageDependenciesFromYaml } from "core/packages";
 
 import {
   AbstractVersionLensProvider,
-  VersionLensFetchResponse
-} from "presentation/providers";
+  VersionLensFetchResponse,
+  VersionLensFactory
+} from 'presentation/lenses';
 
-import { VersionLensFactory } from 'presentation/lenses';
 import { PubConfig } from './config';
 import { PubClient } from './pubClient';
 import { ILogger } from 'core/generic/logging';

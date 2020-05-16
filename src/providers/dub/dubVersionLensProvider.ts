@@ -6,10 +6,10 @@ import { extractPackageDependenciesFromJson, VersionHelpers } from 'core/package
 
 import {
   AbstractVersionLensProvider,
-  VersionLensFetchResponse
-} from 'presentation/providers';
-
-import { VersionLensFactory, VersionLens } from 'presentation/lenses';
+  VersionLensFetchResponse,
+  VersionLensFactory,
+  VersionLens
+} from 'presentation/lenses';
 
 import {
   renderMissingDecoration,

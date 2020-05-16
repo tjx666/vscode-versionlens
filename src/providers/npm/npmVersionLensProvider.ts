@@ -14,10 +14,10 @@ import {
 
 import {
   AbstractVersionLensProvider,
-  VersionLensFetchResponse
-} from 'presentation/providers';
-
-import { VersionLensFactory, VersionLens } from 'presentation/lenses';
+  VersionLensFetchResponse,
+  VersionLensFactory,
+  VersionLens
+} from 'presentation/lenses';
 
 import { PacoteClient } from './clients/pacoteClient';
 import { npmGetOutdated, npmPackageDirExists } from './clients/npmClient';

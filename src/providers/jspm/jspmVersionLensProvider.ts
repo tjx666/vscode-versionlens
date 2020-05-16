@@ -2,8 +2,11 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { VersionLensFactory } from 'presentation/lenses';
-import { VersionLensFetchResponse } from 'presentation/providers';
+import {
+  VersionLensFactory,
+  VersionLensFetchResponse
+} from 'presentation/lenses';
+
 import { NpmVersionLensProvider } from 'providers/npm/npmVersionLensProvider';
 import { extractPackageDependenciesFromJson } from './jspmPackageParser';
 import { npmReplaceVersion } from 'providers/npm/npmVersionUtils';
