@@ -1,11 +1,11 @@
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 import { WinstonLogger } from './winstonLogger';
 
 import {
   createOutputChannelTransport
 } from './transports/outputChannelTransport';
 
-import { AppConfig } from 'presentation/configuration';
+import { AppConfig } from 'presentation/extension';
 
 // todo extract to app config
 const timestampFormat = 'YYYY-MM-DD HH:mm:ss';

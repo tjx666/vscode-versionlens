@@ -1,6 +1,6 @@
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 import { PacoteClient } from 'providers/npm/clients/pacoteClient';
-import { AppConfig } from 'presentation/configuration';
+import { AppConfig } from 'presentation/extension';
 
 import { JspmVersionLensProvider } from './jspmVersionLensProvider';
 import { JspmConfig } from './config';

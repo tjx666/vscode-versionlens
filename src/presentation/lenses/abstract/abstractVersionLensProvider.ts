@@ -3,7 +3,7 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import { getExtension, VersionLensExtension } from 'presentation/extension';
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
 import {
   PackageSourceTypes,

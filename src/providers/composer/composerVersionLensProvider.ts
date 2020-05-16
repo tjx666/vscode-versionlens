@@ -27,7 +27,7 @@ import {
   VersionLens
 } from 'presentation/lenses';
 
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
 export class ComposerVersionLensProvider
   extends AbstractVersionLensProvider<ComposerConfig> {

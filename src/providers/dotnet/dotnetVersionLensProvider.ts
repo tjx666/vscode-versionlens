@@ -15,7 +15,7 @@ import { NuGetPackageClient } from './clients/nugetPackageClient';
 import { NuGetResourceClient } from './clients/nugetResourceClient';
 import { NuGetClientData } from './definitions/nuget';
 import { RegistryProtocols } from 'core/clients/helpers/urlHelpers';
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
 export class DotNetVersionLensProvider
   extends AbstractVersionLensProvider<DotNetConfig> {

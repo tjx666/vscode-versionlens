@@ -23,7 +23,7 @@ import { PacoteClient } from './clients/pacoteClient';
 import { npmGetOutdated, npmPackageDirExists } from './clients/npmClient';
 import { NpmConfig } from './config';
 import { npmReplaceVersion } from './npmVersionUtils';
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
 export class NpmVersionLensProvider
   extends AbstractVersionLensProvider<NpmConfig> {

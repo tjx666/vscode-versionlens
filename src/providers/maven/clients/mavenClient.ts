@@ -22,7 +22,7 @@ import {
 import { MavenClientData } from '../definitions';
 
 import { MavenConfig } from '../config';
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
 export class MavenClient
   extends HttpClientRequest

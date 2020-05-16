@@ -1,5 +1,5 @@
 import { ContextState } from "./models/contextState";
-import { AppConfig } from "presentation/configuration";
+import { AppConfig } from "presentation/extension";
 
 enum StateContributions {
   Enabled = 'versionlens.enabled',

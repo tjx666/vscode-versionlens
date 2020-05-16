@@ -12,7 +12,7 @@ import { extractPackageDependenciesFromJson } from './jspmPackageParser';
 import { npmReplaceVersion } from 'providers/npm/npmVersionUtils';
 import { JspmConfig } from './config';
 import { PacoteClient } from 'providers/npm/clients/pacoteClient';
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
 export class JspmVersionLensProvider extends NpmVersionLensProvider {
 

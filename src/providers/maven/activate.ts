@@ -1,5 +1,5 @@
-import { ILogger } from 'core/generic/logging';
-import { AppConfig } from 'presentation/configuration';
+import { ILogger } from 'core/logging';
+import { AppConfig } from 'presentation/extension';
 
 import { MavenVersionLensProvider } from './mavenVersionLensProvider';
 import { MavenConfig } from './config';

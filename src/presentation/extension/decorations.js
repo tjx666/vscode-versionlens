@@ -1,4 +1,4 @@
-import appConfig from 'presentation/configuration';
+import appConfig from 'presentation/extension';
 
 const { window, Range, Position } = require('vscode');
 

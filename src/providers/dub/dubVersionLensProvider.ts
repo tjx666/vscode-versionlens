@@ -20,7 +20,7 @@ import {
 import { DubConfig } from 'providers/dub/config';
 
 import { readDubSelections, DubClient } from 'providers/dub/clients/dubClient';
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
 export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfig> {
 

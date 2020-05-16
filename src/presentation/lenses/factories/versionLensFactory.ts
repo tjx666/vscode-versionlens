@@ -2,7 +2,7 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 import {
   PackageDependencyLens,
   PackageResponseAggregate,

@@ -3,9 +3,9 @@ import * as VsCodeTypes from 'vscode';
 
 import { KeyDictionary } from 'core/generic/collections'
 import { IPackageProviderOptions } from "core/packages";
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
-import { AppConfig } from 'presentation/configuration';
+import { AppConfig } from 'presentation/extension';
 import {
   AbstractVersionLensProvider,
 } from 'presentation/lenses'

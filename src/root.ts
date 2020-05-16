@@ -2,7 +2,7 @@
 import * as VsCodeTypes from 'vscode';
 
 import { createLogger } from 'infrastructure/logging';
-import { createAppConfig } from 'presentation/configuration';
+import { createAppConfig } from 'presentation/extension';
 import { registerProviders } from 'presentation/providers';
 import {
   registerExtension,

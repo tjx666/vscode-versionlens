@@ -10,7 +10,7 @@ import { MavenClientData } from './definitions';
 import { MvnClient } from './clients/mvnClient';
 import { MavenClient } from './clients/mavenClient';
 import { RegistryProtocols } from 'core/clients/helpers/urlHelpers';
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
 export class MavenVersionLensProvider
   extends AbstractVersionLensProvider<MavenConfig> {

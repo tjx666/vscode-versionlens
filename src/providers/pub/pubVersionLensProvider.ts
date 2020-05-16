@@ -12,7 +12,7 @@ import {
 
 import { PubConfig } from './config';
 import { PubClient } from './pubClient';
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
 export class PubVersionLensProvider
   extends AbstractVersionLensProvider<PubConfig> {

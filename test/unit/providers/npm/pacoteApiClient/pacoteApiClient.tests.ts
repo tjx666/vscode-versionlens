@@ -3,7 +3,7 @@ import { PacoteClient } from 'providers/npm/clients/pacoteClient'
 import Fixtures from './pacoteApiClient.fixtures'
 import { NpmConfig } from '/providers/npm/config';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
-import { AppConfig } from '/presentation/configuration';
+import { AppConfig } from '/presentation/extension';
 
 const assert = require('assert')
 const path = require('path')

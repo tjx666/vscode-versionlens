@@ -22,7 +22,7 @@ import {
 } from 'infrastructure/clients';
 
 import { DubConfig } from '../config';
-import { ILogger } from "core/generic/logging";
+import { ILogger } from "core/logging";
 
 export class DubClient
   extends JsonHttpClientRequest

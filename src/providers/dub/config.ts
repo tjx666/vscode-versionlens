@@ -1,4 +1,4 @@
-import { AppConfig } from "presentation/configuration";
+import { AppConfig } from "presentation/extension";
 import { IPackageProviderOptions, PackageFileFilter } from "core/packages";
 
 enum DubContributions {

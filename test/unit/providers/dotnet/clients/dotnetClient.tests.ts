@@ -9,7 +9,7 @@ import {
 
 import { DotNetConfig } from '/providers/dotnet/config';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
-import { AppConfig } from '/presentation/configuration';
+import { AppConfig } from '/presentation/extension';
 
 const assert = require('assert');
 const mock = require('mock-require');

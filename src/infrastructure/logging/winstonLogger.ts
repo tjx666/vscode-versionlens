@@ -1,5 +1,5 @@
-import { ILogger, LogLevelTypes } from 'core/generic/logging';
-import { AppConfig } from 'presentation/configuration';
+import { ILogger, LogLevelTypes } from 'core/logging';
+import { AppConfig } from 'presentation/extension';
 
 export class WinstonLogger implements ILogger {
 
@@ -17,6 +17,10 @@ export class WinstonLogger implements ILogger {
 
   log(level: LogLevelTypes, message: string, ...splats: any): void {
     this.winstonLogger.log(level, message, ...splats)
+  }
+
+  debug(message: string, ...splats: any): void {
+    this.winstonLogger.log(LogLevelTypes.Debug, message, ...splats);
   }
 
   info(message: string, ...splats: any): void {

@@ -1,4 +1,4 @@
-import { AppConfig } from "presentation/configuration";
+import { AppConfig } from "presentation/extension";
 import { PackageFileFilter, IPackageProviderOptions } from "core/packages";
 
 enum NpmContributions {

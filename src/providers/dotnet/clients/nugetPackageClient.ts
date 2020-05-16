@@ -23,7 +23,7 @@ import { DotNetVersionSpec } from '../definitions/dotnet';
 
 import { parseVersionSpec } from '../dotnetUtils.js';
 import { DotNetConfig } from '../config';
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
 export class NuGetPackageClient
   extends JsonHttpClientRequest

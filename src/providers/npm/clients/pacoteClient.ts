@@ -23,7 +23,7 @@ import {
 } from 'infrastructure/clients';
 
 import { NpmConfig } from '../config';
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
 export class PacoteClient
   extends JsonHttpClientRequest

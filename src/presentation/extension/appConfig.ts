@@ -1,4 +1,4 @@
-import { WorkspaceConfig as AbstractWorkspaceConfig } from './abstractWorkspaceConfig'
+import { WorkspaceConfig as AbstractWorkspaceConfig } from '../../core/configuration/abstractWorkspaceConfig'
 import { IConfig } from "core/configuration";
 
 enum AppContributions {

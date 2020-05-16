@@ -1,7 +1,7 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
 
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 import { PackageSourceTypes } from 'core/packages';
 
 import { providerRegistry } from 'presentation/providers';

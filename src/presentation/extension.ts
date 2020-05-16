@@ -1,3 +1,4 @@
+export * from './extension/appConfig';
 export * from './extension/versionLensExtension';
 export * from './extension/versionLensCommands';
 export * from './extension/versionLensState';

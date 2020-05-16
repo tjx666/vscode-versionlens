@@ -10,7 +10,7 @@ import {
 import { NugetServiceIndexResponse } from '../definitions/nuget';
 import { DotNetSource } from '../definitions/dotnet';
 import { DotNetConfig } from '../config';
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
 export class NuGetResourceClient extends JsonHttpClientRequest {
 

@@ -1,6 +1,6 @@
-import { AppConfig } from "presentation/configuration";
+import { AppConfig } from "presentation/extension";
 import { VersionLensState } from "presentation/extension";
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
 export enum SuggestionIndicators {
   Update = '\u2191',

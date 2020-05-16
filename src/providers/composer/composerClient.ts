@@ -21,7 +21,7 @@ import {
 } from 'infrastructure/clients';
 
 import { ComposerConfig } from './config';
-import { ILogger } from "core/generic/logging";
+import { ILogger } from "core/logging";
 
 export class ComposerClient
   extends JsonHttpClientRequest

@@ -20,7 +20,7 @@ import {
 } from 'infrastructure/clients';
 
 import { PubConfig } from './config';
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
 export class PubClient
   extends JsonHttpClientRequest

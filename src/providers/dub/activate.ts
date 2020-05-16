@@ -1,5 +1,5 @@
-import { ILogger } from 'core/generic/logging';
-import { AppConfig } from 'presentation/configuration';
+import { ILogger } from 'core/logging';
+import { AppConfig } from 'presentation/extension';
 
 import { DubVersionLensProvider } from './dubVersionLensProvider';
 import { DubConfig } from './config';

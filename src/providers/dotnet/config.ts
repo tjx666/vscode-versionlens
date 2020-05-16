@@ -1,5 +1,5 @@
 import { IPackageProviderOptions, PackageFileFilter } from "core/packages";
-import { AppConfig } from 'presentation/configuration';
+import { AppConfig } from 'presentation/extension';
 
 export enum DotnetContributions {
   DependencyProperties = 'dotnet.dependencyProperties',

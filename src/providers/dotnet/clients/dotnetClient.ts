@@ -2,7 +2,7 @@ import { UrlHelpers } from 'core/clients';
 import { ProcessClientRequest } from 'infrastructure/clients';
 import { DotNetSource } from '../definitions/dotnet';
 import { DotNetConfig } from '../config';
-import { ILogger } from 'core/generic/logging';
+import { ILogger } from 'core/logging';
 
 export class DotNetClient extends ProcessClientRequest {
 
