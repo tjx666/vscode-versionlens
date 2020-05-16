@@ -10,7 +10,7 @@ import {
 const timestampFormat = 'YYYY-MM-DD HH:mm:ss';
 
 
-export function createVersionLensLogger(
+export function createLogger(
   configuration: VsCodeTypes.WorkspaceConfiguration
 ): ILogger {
 

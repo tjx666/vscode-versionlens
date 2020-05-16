@@ -1,7 +1,7 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
 
-import { createVersionLensLogger } from 'infrastructure/logging';
+import { createLogger } from 'infrastructure/logging';
 import { createAppConfig } from 'presentation/configuration';
 import { registerProviders } from 'presentation/providers';
 import { 
@@ -17,7 +17,7 @@ export async function activate(context: VsCodeTypes.ExtensionContext) {
 
   const appConfig = createAppConfig(configuration);
 
-  const logger = createVersionLensLogger(configuration);
+  const logger = createLogger(configuration);
 
   const extension = registerExtension(appConfig, logger);
 
