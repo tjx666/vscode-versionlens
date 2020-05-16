@@ -1,17 +1,16 @@
-import * as VsCodeTypes from "vscode";
-
-import { NpmConfig } from '../npm/config';
 import {
   PackageFileFilter,
   IPackageProviderOptions
 } from "core/packages";
+import { AppConfig } from "presentation/configuration";
+import { NpmConfig } from '../npm/config';
 
 export class JspmConfig
   extends NpmConfig
   implements IPackageProviderOptions {
 
-  constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
-    super(configuration);
+  constructor(config: AppConfig) {
+    super(config);
   }
 
   get providerName(): string {

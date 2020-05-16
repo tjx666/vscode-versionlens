@@ -1,19 +1,18 @@
-// references
-import * as VsCodeTypes from 'vscode';
-
 import { ILogger, LogLevelTypes } from 'core/generic/logging';
+import { AppConfig } from 'presentation/configuration';
 
 export class WinstonLogger implements ILogger {
 
   winstonLogger: any;
-  configuration: VsCodeTypes.WorkspaceConfiguration;
+
+  config: AppConfig;
 
   constructor(
     winstonLogger,
-    configuration: VsCodeTypes.WorkspaceConfiguration
+    config: AppConfig
   ) {
     this.winstonLogger = winstonLogger;
-    this.configuration = configuration;
+    this.config = config;
   }
 
   log(level: LogLevelTypes, message: string, ...splats: any): void {

@@ -1,17 +1,15 @@
-import * as VsCodeTypes from 'vscode';
+import { ILogger } from 'core/generic/logging';
+import { AppConfig } from 'presentation/configuration';
 
 import { ComposerVersionLensProvider } from './composerVersionLensProvider';
 import { ComposerConfig } from './config';
 import { ComposerClient } from './composerClient';
-import { ILogger } from 'core/generic/logging';
 
-export function activate(
-  configuration: VsCodeTypes.WorkspaceConfiguration,
-  logger: ILogger
-) {
-  const config = new ComposerConfig(configuration);
+export function activate(appConfig: AppConfig, logger: ILogger) {
+  const config = new ComposerConfig(appConfig);
+  const client = new ComposerClient(config, 0, logger);
   return new ComposerVersionLensProvider(
-    new ComposerClient(config, 0, logger),
+    client,
     config,
     logger
   );

@@ -1,6 +1,5 @@
-import * as VsCodeTypes from "vscode";
-
-import { AbstractWorkspaceConfig } from './abstractWorkspaceConfig'
+import { WorkspaceConfig as AbstractWorkspaceConfig } from './abstractWorkspaceConfig'
+import { IConfig } from "core/configuration";
 
 enum AppContributions {
   ShowVersionLensesAtStartup = 'showVersionLensesAtStartup',
@@ -16,68 +15,68 @@ enum AppContributions {
 
 export class AppConfig extends AbstractWorkspaceConfig {
 
-  constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
-    super(configuration);
+  constructor(config: IConfig) {
+    super(config);
   }
 
   get showVersionLensesAtStartup() {
-    return super.get(
+    return this.getOrDefault(
       AppContributions.ShowVersionLensesAtStartup,
       true
     );
   }
 
   get showTaggedVersionsAtStartup() {
-    return super.get(
+    return this.getOrDefault(
       AppContributions.ShowTaggedVersionsAtStartup,
       false
     );
   }
 
   get showDependencyStatusesAtStartup() {
-    return super.get(
+    return this.getOrDefault(
       AppContributions.ShowDependencyStatusesAtStartup,
       false
     );
   }
 
   get versionPrefix() {
-    return super.get(
+    return this.getOrDefault(
       AppContributions.VersionPrefix,
       ''
     );
   }
 
   get githubTaggedCommits() {
-    return super.get(
+    return this.getOrDefault(
       AppContributions.GithubTaggedCommits,
       ['Release', 'Tag']
     );
   }
 
   get missingDependencyColour() {
-    return super.get(
+    return this.getOrDefault(
       AppContributions.MissingDependencyColour,
       'red'
     );
   }
 
   get installedDependencyColour() {
-    return super.get(
+    return this.getOrDefault(
       AppContributions.InstalledDependencyColour,
       'green'
     );
   }
 
   get outdatedDependencyColour() {
-    return super.get(
+    return this.getOrDefault(
       AppContributions.InstalledDependencyColour,
       'orange'
     );
   }
 
   get prereleaseDependencyColour() {
-    return super.get(
+    return this.getOrDefault(
       AppContributions.PrereleaseDependencyColour,
       'yellowgreen'
     );
@@ -85,12 +84,14 @@ export class AppConfig extends AbstractWorkspaceConfig {
 
 }
 
-let appConfig = null;
 
-export default appConfig;
+// todo remove decorators dep and use new keyword in root
+let _appConfigSingleton = null;
 
-export function createAppConfig(configuration: VsCodeTypes.WorkspaceConfiguration) {
-  appConfig = new AppConfig(configuration);
+export default _appConfigSingleton;
 
-  return appConfig;
+export function createAppConfig(configRoot: IConfig) {
+  _appConfigSingleton = new AppConfig(configRoot);
+
+  return _appConfigSingleton;
 }

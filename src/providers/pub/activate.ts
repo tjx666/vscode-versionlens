@@ -1,15 +1,12 @@
-import * as VsCodeTypes from 'vscode';
+import { ILogger } from 'core/generic/logging';
+import { AppConfig } from 'presentation/configuration';
 
 import { PubVersionLensProvider } from './pubVersionLensProvider';
 import { PubConfig } from './config';
 import { PubClient } from './pubClient';
-import { ILogger } from 'core/generic/logging';
 
-export function activate(
-  configuration: VsCodeTypes.WorkspaceConfiguration,
-  logger: ILogger
-) {
-  const config = new PubConfig(configuration);
+export function activate(appConfig: AppConfig, logger: ILogger) {
+  const config = new PubConfig(appConfig);
   const client = new PubClient(config, 0, logger);
   return new PubVersionLensProvider(
     client,

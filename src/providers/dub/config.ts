@@ -1,6 +1,4 @@
-import * as VsCodeTypes from "vscode";
-
-import { AbstractWorkspaceConfig } from "presentation/configuration";
+import { AppConfig } from "presentation/configuration";
 import { IPackageProviderOptions, PackageFileFilter } from "core/packages";
 
 enum DubContributions {
@@ -18,16 +16,16 @@ const options = {
   }
 };
 
-export class DubConfig
-  extends AbstractWorkspaceConfig
-  implements IPackageProviderOptions {
+export class DubConfig implements IPackageProviderOptions {
+
+  config: AppConfig;
 
   defaultDependencyProperties: Array<string>;
 
   defaultApiUrl: string;
 
-  constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
-    super(configuration);
+  constructor(config: AppConfig) {
+    this.config = config
 
     this.defaultDependencyProperties = [
       'dependencies',
@@ -50,14 +48,14 @@ export class DubConfig
   }
 
   getDependencyProperties() {
-    return this.get(
+    return this.config.getOrDefault(
       DubContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getApiUrl() {
-    return this.get(
+    return this.config.getOrDefault(
       DubContributions.ApiUrl,
       this.defaultApiUrl
     );

@@ -3,13 +3,24 @@ import Fixtures from './fixtures/nugetResources'
 import { NuGetResourceClient } from 'providers/dotnet/clients/nugetResourceClient';
 import { UrlHelpers } from '/core/clients';
 import { DotNetConfig } from '/providers/dotnet/config';
-import { ConfigurationMock } from 'test/unit/mocks/configurationMock'
 import { LoggerMock } from 'test/unit/mocks/loggerMock'
+import { AppConfig } from '/presentation/configuration';
 
 const assert = require('assert');
 const mock = require('mock-require');
 
+let defaultConfigMock: AppConfig;
+
 export const NuGetResourceClientTests = {
+
+
+  beforeEach: () => {
+
+    defaultConfigMock = new AppConfig({
+      get: (k) => undefined
+    });
+
+  },
 
   //  reset mocks
   afterEach: () => mock.stop('request-light'),
@@ -39,7 +50,7 @@ export const NuGetResourceClientTests = {
       })
 
       // setup test feeds
-      const config = new DotNetConfig(new ConfigurationMock())
+      const config = new DotNetConfig(defaultConfigMock)
 
       const cut = new NuGetResourceClient(config, 0, new LoggerMock())
 
@@ -68,8 +79,8 @@ export const NuGetResourceClientTests = {
       mock('request-light', { xhr: () => Promise.reject(mockResponse) })
 
       // setup test feeds
-      const config = new DotNetConfig(new ConfigurationMock({
-        get: (k, d) => [expected]
+      const config = new DotNetConfig(new AppConfig({
+        get: (k) => <any>[expected]
       }))
 
       const cut = new NuGetResourceClient(config, 0, new LoggerMock())
@@ -98,8 +109,8 @@ export const NuGetResourceClientTests = {
       mock('request-light', { xhr: () => Promise.reject(mockResponse) })
 
       // setup test feeds
-      const config = new DotNetConfig(new ConfigurationMock({
-        get: (k, d) => []
+      const config = new DotNetConfig(new AppConfig({
+        get: (k) => <any>[]
       }))
 
       const cut = new NuGetResourceClient(config, 0, new LoggerMock())

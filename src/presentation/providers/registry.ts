@@ -1,14 +1,14 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
 
+import { KeyDictionary } from 'core/generic/collections'
+import { IPackageProviderOptions } from "core/packages";
+import { ILogger } from 'core/generic/logging';
+
+import { AppConfig } from 'presentation/configuration';
 import {
   AbstractVersionLensProvider,
 } from 'presentation/lenses'
-
-import { KeyDictionary } from 'core/generic/collections'
-
-import { IPackageProviderOptions } from "core/packages";
-import { ILogger } from 'core/generic/logging';
 
 export const providerNames = [
   'composer',
@@ -66,7 +66,7 @@ class ProviderRegistry {
 export const providerRegistry = new ProviderRegistry();
 
 export async function registerProviders(
-  configuration: VsCodeTypes.WorkspaceConfiguration,
+  config: AppConfig,
   logger: ILogger
 ): Promise<Array<VsCodeTypes.Disposable>> {
 
@@ -77,7 +77,7 @@ export async function registerProviders(
   const promisedActivation = providerNames.map(packageManager => {
     return import(`providers/${packageManager}/activate`)
       .then(module => {
-        const provider = module.activate(configuration, logger);
+        const provider = module.activate(config, logger);
         return providerRegistry.register(provider);
       })
       .then(provider => {

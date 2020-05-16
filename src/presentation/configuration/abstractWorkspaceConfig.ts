@@ -1,17 +1,19 @@
-import * as VsCodeTypes from "vscode";
-
 import { IConfig } from "core/configuration";
 
-export class AbstractWorkspaceConfig implements IConfig {
+export abstract class WorkspaceConfig implements IConfig {
 
-  configuration: VsCodeTypes.WorkspaceConfiguration;
+  configuration: IConfig;
 
-  constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
+  constructor(configuration: IConfig) {
     this.configuration = configuration;
   }
 
-  get<T>(key: string, defaultValue: T): T {
-    return this.configuration.get(key, defaultValue);
+  get<T>(key: string): T {
+    return this.configuration.get(key);
+  }
+
+  getOrDefault<T>(key: string, defaultValue: T): T {
+    return this.configuration.get(key) || defaultValue;
   }
 
 }

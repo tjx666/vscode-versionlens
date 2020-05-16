@@ -1,7 +1,5 @@
-import * as VsCodeTypes from "vscode";
-
 import { IPackageProviderOptions, PackageFileFilter } from "core/packages";
-import { AbstractWorkspaceConfig } from 'presentation/configuration';
+import { AppConfig } from 'presentation/configuration';
 
 enum ComposerContributions {
   DependencyProperties = 'composer.dependencyProperties',
@@ -18,16 +16,17 @@ const options = {
   }
 }
 
-export class ComposerConfig
-  extends AbstractWorkspaceConfig
-  implements IPackageProviderOptions {
+export class ComposerConfig implements IPackageProviderOptions {
 
   defaultDependencyProperties: Array<string>;
 
   defaultApiUrl: string;
 
-  constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
-    super(configuration);
+  appConfig: AppConfig;
+
+  constructor(appConfig: AppConfig) {
+
+    this.appConfig = appConfig;
 
     this.defaultDependencyProperties = [
       "require",
@@ -50,14 +49,14 @@ export class ComposerConfig
   }
 
   getDependencyProperties() {
-    return this.get(
+    return this.appConfig.getOrDefault(
       ComposerContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getApiUrl() {
-    return this.get(
+    return this.appConfig.getOrDefault(
       ComposerContributions.ApiUrl,
       this.defaultApiUrl
     );

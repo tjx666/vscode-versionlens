@@ -8,21 +8,22 @@ import {
 } from '/core/clients';
 
 import { DotNetConfig } from '/providers/dotnet/config';
-import { ConfigurationMock } from 'test/unit/mocks/configurationMock'
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
+import { AppConfig } from '/presentation/configuration';
 
 const assert = require('assert');
 const mock = require('mock-require');
 
-let defaultConfigurationMock: ConfigurationMock;
+let defaultConfigMock: AppConfig;
 
 export const DotnetClientRequestTests = {
 
   beforeEach: () => {
 
-    defaultConfigurationMock = new ConfigurationMock({
-      get: (k, d) => d
+    defaultConfigMock = new AppConfig({
+      get: (k) => undefined
     });
+
   },
 
   // reset all require mocks
@@ -66,8 +67,8 @@ export const DotnetClientRequestTests = {
 
       // setup test feeds
       const config = new DotNetConfig(
-        new ConfigurationMock({
-          get: (k, d) => testFeeds
+        new AppConfig({
+          get: (k) => <any>testFeeds
         })
       )
 
@@ -93,8 +94,8 @@ export const DotnetClientRequestTests = {
 
       // setup test feeds
       const config = new DotNetConfig(
-        new ConfigurationMock({
-          get: (k, d) => testFeeds
+        new AppConfig({
+          get: (k) => <any>testFeeds
         })
       )
 
@@ -122,7 +123,7 @@ export const DotnetClientRequestTests = {
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
       const cut = new DotNetClient(
-        new DotNetConfig(defaultConfigurationMock),
+        new DotNetConfig(defaultConfigMock),
         0,
         new LoggerMock()
       );

@@ -1,5 +1,3 @@
-// references
-import * as VsCodeTypes from 'vscode';
 import { ILogger } from 'core/generic/logging';
 import { WinstonLogger } from './winstonLogger';
 
@@ -7,12 +5,12 @@ import {
   createOutputChannelTransport
 } from './transports/outputChannelTransport';
 
+import { AppConfig } from 'presentation/configuration';
+
+// todo extract to app config
 const timestampFormat = 'YYYY-MM-DD HH:mm:ss';
 
-
-export function createLogger(
-  configuration: VsCodeTypes.WorkspaceConfiguration
-): ILogger {
+export function createLogger(config: AppConfig): ILogger {
 
   const {
     createLogger,
@@ -51,5 +49,5 @@ export function createLogger(
     ]
   })
 
-  return new WinstonLogger(winstonLogger, configuration)
+  return new WinstonLogger(winstonLogger, config)
 }

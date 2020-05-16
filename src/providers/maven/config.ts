@@ -1,6 +1,4 @@
-import * as VsCodeTypes from "vscode";
-
-import { AbstractWorkspaceConfig } from "presentation/configuration";
+import { AppConfig } from "presentation/configuration";
 import { PackageFileFilter, IPackageProviderOptions } from "core/packages";
 
 enum MavenContributions {
@@ -19,16 +17,16 @@ const options = {
   }
 }
 
-export class MavenConfig
-  extends AbstractWorkspaceConfig
-  implements IPackageProviderOptions {
+export class MavenConfig implements IPackageProviderOptions {
+
+  config: AppConfig;
 
   defaultDependencyProperties: Array<string>;
 
   defaultApiUrl: string;
 
-  constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
-    super(configuration)
+  constructor(config: AppConfig) {
+    this.config = config;
 
     this.defaultDependencyProperties = [
       'dependency',
@@ -51,21 +49,21 @@ export class MavenConfig
   }
 
   getDependencyProperties() {
-    return this.get(
+    return this.config.getOrDefault(
       MavenContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getTagFilter() {
-    return this.get(
+    return this.config.getOrDefault(
       MavenContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getApiUrl() {
-    return this.get(
+    return this.config.getOrDefault(
       MavenContributions.ApiUrl,
       this.defaultApiUrl
     );

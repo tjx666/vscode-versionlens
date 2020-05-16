@@ -1,6 +1,4 @@
-import * as VsCodeTypes from "vscode";
-
-import { AbstractWorkspaceConfig } from "presentation/configuration";
+import { AppConfig } from "presentation/configuration";
 import { PackageFileFilter, IPackageProviderOptions } from "core/packages";
 
 enum NpmContributions {
@@ -18,14 +16,14 @@ const options = {
   }
 }
 
-export class NpmConfig
-  extends AbstractWorkspaceConfig
-  implements IPackageProviderOptions {
+export class NpmConfig implements IPackageProviderOptions {
+
+  config: AppConfig;
 
   defaultDependencyProperties: Array<string>;
 
-  constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
-    super(configuration);
+  constructor(config: AppConfig) {
+    this.config = config;
 
     this.defaultDependencyProperties = [
       'dependencies',
@@ -49,14 +47,14 @@ export class NpmConfig
 
 
   getDependencyProperties() {
-    return this.get(
+    return this.config.getOrDefault(
       NpmContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getDistTagFilter() {
-    return this.get(
+    return this.config.getOrDefault(
       NpmContributions.DistTagFilter,
       []
     );

@@ -1,7 +1,5 @@
-import * as VsCodeTypes from "vscode";
-
 import { IPackageProviderOptions, PackageFileFilter } from "core/packages";
-import { AbstractWorkspaceConfig } from 'presentation/configuration';
+import { AppConfig } from 'presentation/configuration';
 
 export enum DotnetContributions {
   DependencyProperties = 'dotnet.dependencyProperties',
@@ -22,16 +20,16 @@ const options = {
   }
 }
 
-export class DotNetConfig
-  extends AbstractWorkspaceConfig
-  implements IPackageProviderOptions {
+export class DotNetConfig implements IPackageProviderOptions {
+
+  config: AppConfig;
 
   defaultDependencyProperties: Array<string>;
 
   defaultNuGetFeeds: Array<string>;
 
-  constructor(configuration: VsCodeTypes.WorkspaceConfiguration) {
-    super(configuration);
+  constructor(config: AppConfig) {
+    this.config = config;
 
     this.defaultNuGetFeeds = [
       'https://azuresearch-usnc.nuget.org/autocomplete'
@@ -56,21 +54,21 @@ export class DotNetConfig
   }
 
   getDependencyProperties() {
-    return this.get(
+    return this.config.getOrDefault(
       DotnetContributions.DependencyProperties,
       this.defaultDependencyProperties
     );
   }
 
   getTagFilter() {
-    return this.get(
+    return this.config.getOrDefault(
       DotnetContributions.TagFilter,
       []
     );
   }
 
   getNuGetFeeds() {
-    return this.get(
+    return this.config.getOrDefault(
       DotnetContributions.NugetFeeds,
       this.defaultNuGetFeeds
     );

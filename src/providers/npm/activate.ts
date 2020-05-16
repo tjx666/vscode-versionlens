@@ -1,15 +1,12 @@
-import * as VsCodeTypes from 'vscode';
+import { ILogger } from 'core/generic/logging';
+import { AppConfig } from 'presentation/configuration';
 
 import { NpmVersionLensProvider } from './npmVersionLensProvider';
 import { NpmConfig } from './config';
 import { PacoteClient } from './clients/pacoteClient';
-import { ILogger } from 'core/generic/logging';
 
-export function activate(
-  configuration: VsCodeTypes.WorkspaceConfiguration,
-  logger: ILogger
-) {
-  const config = new NpmConfig(configuration);
+export function activate(appConfig: AppConfig, logger: ILogger) {
+  const config = new NpmConfig(appConfig);
   const client = new PacoteClient(config, 0, logger);
   return new NpmVersionLensProvider(
     client,
