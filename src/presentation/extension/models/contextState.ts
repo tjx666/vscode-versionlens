@@ -1,11 +1,6 @@
-// export interface ExecuteCommand<T> {
-//   (command: string, ...rest: any[]): Promise<T | undefined>;
-// }
-
-export class VsCodePaletteState<T> {
+export class ContextState<T> {
 
   private key: string;
-  // private executeCommand: ExecuteCommand<T>;
   private _value: T;
 
   constructor(
@@ -13,7 +8,6 @@ export class VsCodePaletteState<T> {
     defaultValue: T
   ) {
     this.key = key;
-    // this.executeCommand = executeCommand;
     this.change(defaultValue);
   }
 

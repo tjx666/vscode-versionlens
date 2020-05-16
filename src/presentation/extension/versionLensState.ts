@@ -1,4 +1,4 @@
-import { VsCodePaletteState } from "./vsCodeContextState";
+import { ContextState } from "./models/contextState";
 import { AppConfig } from "presentation/configuration";
 
 enum StateContributions {
@@ -12,35 +12,35 @@ enum StateContributions {
 export class VersionLensState {
 
   // states
-  enabled: VsCodePaletteState<boolean>;
-  prereleasesEnabled: VsCodePaletteState<boolean>;
-  providerActive: VsCodePaletteState<boolean>;
-  providerBusy: VsCodePaletteState<boolean>;
-  showDependencyStatuses: VsCodePaletteState<boolean>;
+  enabled: ContextState<boolean>;
+  prereleasesEnabled: ContextState<boolean>;
+  providerActive: ContextState<boolean>;
+  providerBusy: ContextState<boolean>;
+  showDependencyStatuses: ContextState<boolean>;
 
   constructor(appConfig: AppConfig) {
 
-    this.providerActive = new VsCodePaletteState(
+    this.providerActive = new ContextState(
       StateContributions.ProviderActive,
       false
     );
 
-    this.providerBusy = new VsCodePaletteState(
+    this.providerBusy = new ContextState(
       StateContributions.ProviderBusy,
       false
     );
 
-    this.enabled = new VsCodePaletteState(
+    this.enabled = new ContextState(
       StateContributions.Enabled,
       false
     );
 
-    this.showDependencyStatuses = new VsCodePaletteState(
+    this.showDependencyStatuses = new ContextState(
       StateContributions.ShowDependencyStatuses,
       appConfig.showDependencyStatusesAtStartup === true
     );
 
-    this.prereleasesEnabled = new VsCodePaletteState(
+    this.prereleasesEnabled = new ContextState(
       StateContributions.PrereleasesEnabled,
       appConfig.showTaggedVersionsAtStartup === true
     );
