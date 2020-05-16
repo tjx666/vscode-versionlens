@@ -68,7 +68,11 @@ export const providerRegistry = new ProviderRegistry();
 export async function registerProviders(
   configuration: VsCodeTypes.WorkspaceConfiguration,
   logger: ILogger
-): Promise<Array<AbstractVersionLensProvider<IPackageProviderOptions>>> {
+): Promise<Array<VsCodeTypes.Disposable>> {
+
+  const {
+    languages: { registerCodeLensProvider }
+  } = require('vscode');
 
   const promisedActivation = providerNames.map(packageManager => {
     return import(`providers/${packageManager}/activate`)
@@ -76,7 +80,13 @@ export async function registerProviders(
         const provider = module.activate(configuration, logger);
         return providerRegistry.register(provider);
       })
-  })
+      .then(provider => {
+        return registerCodeLensProvider(
+          provider.config.selector,
+          provider
+        );
+      });
+  });
 
   return Promise.all(promisedActivation);
 }

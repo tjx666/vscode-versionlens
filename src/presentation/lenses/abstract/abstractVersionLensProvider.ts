@@ -2,7 +2,7 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { getEditorSettings, Editor } from 'presentation/editor/editor';
+import { getEditor, Editor } from 'presentation/editor/editor';
 import { ILogger } from 'core/generic/logging';
 
 import {
@@ -48,7 +48,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
     this._onChangeCodeLensesEmitter = new EventEmitter();
     this.onDidChangeCodeLenses = this._onChangeCodeLensesEmitter.event;
     this.logger = logger;
-    this.editor = getEditorSettings();
+    this.editor = getEditor();
   }
 
   reload() {

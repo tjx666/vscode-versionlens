@@ -6,6 +6,7 @@ import { MenuCommandPalette } from "presentation/editor/menuCommandPalette";
 import { providerRegistry } from 'presentation/providers';
 import { clearDecorations } from '../editor/decorations';
 import { PackageSourceTypes } from "core/packages";
+import { ILogger } from 'core/generic/logging';
 
 export enum CommandContributions {
   ShowDependencyStatuses = 'versionlens.onShowDependencyStatuses',
@@ -24,17 +25,20 @@ export enum SuggestionIndicators {
   Revert = '\u2193',
   OpenNewWindow = '\u29C9',
 }
+
 export class Editor {
 
-  // icons
+  logger: ILogger;
+
   palette: MenuCommandPalette;
 
   disposables: Array<VsCodeTypes.Disposable>
 
   extensionName: string;
 
-  constructor(appConfig: AppConfig) {
+  constructor(appConfig: AppConfig, logger: ILogger) {
     this.extensionName = "versionlens";
+    this.logger = logger;
     this.palette = new MenuCommandPalette(appConfig);
 
     const { commands, window, workspace } = require('vscode');
@@ -198,16 +202,15 @@ export function reloadActiveProviders() {
 }
 
 
-let _editorSettings = null;
+let _editorSingleton = null;
+export default _editorSingleton;
 
-export default _editorSettings;
-
-export function createEditorSettings(appConfig: AppConfig) {
-  _editorSettings = new Editor(appConfig);
-
-  return _editorSettings;
+export function registerEditor(appConfig: AppConfig, logger: ILogger) {
+  _editorSingleton = new Editor(appConfig, logger);
+  return _editorSingleton;
 }
 
-export function getEditorSettings(): Editor {
-  return _editorSettings;
+// todo change how this is accessed
+export function getEditor(): Editor {
+  return _editorSingleton;
 }

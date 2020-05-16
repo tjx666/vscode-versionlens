@@ -20,7 +20,6 @@ export class MenuCommandPalette {
 
   constructor(appConfig: AppConfig) {
 
-    // palette states
     this.providerActive = new VsCodePaletteState(
       IconStateContributions.ProviderActive,
       false
