@@ -1,4 +1,4 @@
-import editorSettings from 'presentation/editor/editorSettings';
+import editorSettings from 'presentation/extension';
 import { PackageCodeLens } from 'providers/shared/packageCodeLens';
 import { ComposerCodeLensProvider } from 'providers/composer/composerCodeLensProvider';
 import * as ComposerAPIModule from 'providers/composer/composerAPI';

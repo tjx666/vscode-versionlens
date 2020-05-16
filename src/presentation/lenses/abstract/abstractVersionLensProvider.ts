@@ -2,7 +2,7 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { getEditor, Editor } from 'presentation/editor/editor';
+import { getExtension, VersionLensExtension } from 'presentation/extension';
 import { ILogger } from 'core/generic/logging';
 
 import {
@@ -28,7 +28,8 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
 
   // packagePath: string;
   logger: ILogger;
-  editor: Editor;
+
+  extension: VersionLensExtension;
 
   abstract updateOutdated(packagePath: string): Promise<any>;
 
@@ -48,7 +49,9 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
     this._onChangeCodeLensesEmitter = new EventEmitter();
     this.onDidChangeCodeLenses = this._onChangeCodeLensesEmitter.event;
     this.logger = logger;
-    this.editor = getEditor();
+
+    // todo add to constructor
+    this.extension = getExtension();
   }
 
   reload() {
@@ -59,10 +62,10 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): Promise<VersionLens[] | null> {
-    if (this.editor.palette.enabled.value === false) return null;
+    if (this.extension.state.enabled.value === false) return null;
 
     // set in progress
-    this.editor.palette.providerBusy.value = true;
+    this.extension.state.providerBusy.value = true;
 
     // todo clear output channel
     // if (this.logger){
@@ -78,7 +81,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
   ): Promise<VersionLens> {
     if (codeLens instanceof VersionLens) {
       // set in progress
-      this.editor.palette.providerBusy.value = true;
+      this.extension.state.providerBusy.value = true;
 
       // evaluate the code lens
       const evaluated = this.evaluateCodeLens(codeLens, token);
@@ -86,7 +89,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
       // update the progress
       return Promise.resolve(evaluated)
         .then(result => {
-          this.editor.palette.providerBusy.value = false;
+          this.extension.state.providerBusy.value = false;
           return result;
         })
     }

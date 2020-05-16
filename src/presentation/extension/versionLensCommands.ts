@@ -1,12 +1,14 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
 
-import { AppConfig } from "presentation/configuration";
-import { MenuCommandPalette } from "presentation/editor/menuCommandPalette";
-import { providerRegistry } from 'presentation/providers';
-import { clearDecorations } from '../editor/decorations';
-import { PackageSourceTypes } from "core/packages";
 import { ILogger } from 'core/generic/logging';
+import { PackageSourceTypes } from 'core/packages';
+
+import { providerRegistry } from 'presentation/providers';
+
+import { VersionLensExtension } from "./versionLensExtension";
+import { clearDecorations } from './decorations';
+import { VersionLensState } from './versionLensState';
 
 export enum CommandContributions {
   ShowDependencyStatuses = 'versionlens.onShowDependencyStatuses',
@@ -20,44 +22,17 @@ export enum CommandContributions {
   LinkCommand = "versionlens.onLinkCommand"
 }
 
-export enum SuggestionIndicators {
-  Update = '\u2191',
-  Revert = '\u2193',
-  OpenNewWindow = '\u29C9',
-}
-
-export class Editor {
+export class VersionLensCommands {
 
   logger: ILogger;
 
-  palette: MenuCommandPalette;
+  state: VersionLensState;
 
-  disposables: Array<VsCodeTypes.Disposable>
-
-  extensionName: string;
-
-  constructor(appConfig: AppConfig, logger: ILogger) {
-    this.extensionName = "versionlens";
+  constructor(extensionState: VersionLensState, logger: ILogger) {
     this.logger = logger;
-    this.palette = new MenuCommandPalette(appConfig);
+    this.state = extensionState;
 
-    const { commands, window, workspace } = require('vscode');
-
-    this.disposables = [];
-
-    // register commands
-    Object.keys(CommandContributions)
-      .forEach(enumKey => {
-        const command = CommandContributions[enumKey];
-        const handler = this[`on${enumKey}`];
-        if (!handler) throw new Error(`Could not find ${command} handler on editor class`)
-        this.disposables.push(
-          commands.registerCommand(
-            command,
-            handler.bind(this)
-          )
-        )
-      });
+    const { window, workspace } = require('vscode');
 
     // register window and workspace events
     window.onDidChangeActiveTextEditor(this.onDidChangeActiveTextEditor.bind(this));
@@ -65,42 +40,42 @@ export class Editor {
   }
 
   onShowVersionLenses(file) {
-    this.palette.enabled.change(true)
+    this.state.enabled.change(true)
       .then(_ => {
         reloadActiveProviders();
       });
   }
 
   onHideVersionLenses(file) {
-    this.palette.enabled.change(false)
+    this.state.enabled.change(false)
       .then(_ => {
         reloadActiveProviders();
       });
   }
 
   onShowTaggedVersions() {
-    this.palette.prereleasesEnabled.change(true)
+    this.state.prereleasesEnabled.change(true)
       .then(_ => {
         reloadActiveProviders();
       });
   }
 
   onHideTaggedVersions(file) {
-    this.palette.prereleasesEnabled.change(false)
+    this.state.prereleasesEnabled.change(false)
       .then(_ => {
         reloadActiveProviders();
       });
   }
 
   onShowDependencyStatuses(file) {
-    this.palette.showDependencyStatuses.change(true)
+    this.state.showDependencyStatuses.change(true)
       .then(_ => {
         reloadActiveProviders();
       });
   }
 
   onHideDependencyStatuses(file) {
-    this.palette.showDependencyStatuses.change(false)
+    this.state.showDependencyStatuses.change(false)
       .then(_ => {
         clearDecorations();
       });
@@ -131,33 +106,33 @@ export class Editor {
     opener(codeLens.package.meta.remoteUrl);
   }
 
-  onDidChangeActiveTextEditor(editor: VsCodeTypes.TextEditor) {
-    // update versionLens.isActive palette state
-    //  each time the active editor changes
-    if (!editor) {
-      this.palette.providerActive.value = false;
+  onDidChangeActiveTextEditor(textEditor: VsCodeTypes.TextEditor) {
+    // maintain versionLens.providerActive state
+    // each time the active editor changes
+    if (!textEditor) {
+      this.state.providerActive.value = false;
       return;
     }
 
     // clearDecorations();
 
-    if (!editor.document) {
-      this.palette.providerActive.value = false;
+    if (!textEditor.document) {
+      this.state.providerActive.value = false;
       return;
     }
 
-    if (providerRegistry.getByFileName(editor.document.fileName)) {
-      this.palette.providerActive.value = true;
+    if (providerRegistry.getByFileName(textEditor.document.fileName)) {
+      this.state.providerActive.value = true;
       return;
     }
 
-    this.palette.providerActive.value = false;
+    this.state.providerActive.value = false;
   }
 
   onDidChangeTextDocument(changeEvent: VsCodeTypes.TextDocumentChangeEvent) {
 
     // ensure version lens is active
-    if (this.palette.providerActive.value === false) {
+    if (this.state.providerActive.value === false) {
       return;
     }
 
@@ -191,7 +166,7 @@ export class Editor {
 
 }
 
-export function reloadActiveProviders() {
+function reloadActiveProviders() {
   const { window } = require('vscode');
   const fileName = window.activeTextEditor.document.fileName;
   const providers = providerRegistry.getByFileName(fileName);
@@ -202,15 +177,48 @@ export function reloadActiveProviders() {
 }
 
 
-let _editorSingleton = null;
-export default _editorSingleton;
+export type RegisterCommandsResults = {
+  extensionCommands: VersionLensCommands,
+  disposables: Array<VsCodeTypes.Disposable>
+};
 
-export function registerEditor(appConfig: AppConfig, logger: ILogger) {
-  _editorSingleton = new Editor(appConfig, logger);
-  return _editorSingleton;
-}
+export function registerCommands(extension: VersionLensExtension, logger: ILogger): RegisterCommandsResults {
 
-// todo change how this is accessed
-export function getEditor(): Editor {
-  return _editorSingleton;
+  const { commands } = require('vscode');
+
+  const disposables = [];
+
+  const extensionCommands = new VersionLensCommands(
+    extension.state,
+    logger
+  );
+
+  // loop enum keys
+  Object.keys(CommandContributions)
+    .forEach(enumKey => {
+
+      // register command
+      const command = CommandContributions[enumKey];
+      const handler = extensionCommands[`on${enumKey}`];
+      if (!handler) {
+        // todo roll up errors to a semantic factory
+        const msg = `Could not find %s handler on %s class`;
+        logger.error(msg, command, VersionLensCommands.name)
+        // just return here?
+        throw new Error(`Could not find ${command} handler on ${VersionLensCommands.name} class`)
+      }
+
+      // collect disposables
+      disposables.push(
+        commands.registerCommand(
+          command,
+          handler.bind(extensionCommands)
+        )
+      )
+    });
+
+  return {
+    extensionCommands,
+    disposables
+  };
 }

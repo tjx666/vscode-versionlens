@@ -2,7 +2,7 @@
  * Copyright (c) Peter Flannery. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import editorSettings from 'presentation/editor/editorSettings';
+import editorSettings from 'presentation/extension';
 import { TestFixtureMap } from 'test/unit/utils.js';
 import { NpmCodeLensProvider } from 'providers/npm/npmCodeLensProvider.js';
 

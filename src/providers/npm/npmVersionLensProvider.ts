@@ -10,7 +10,7 @@ import {
   renderOutdatedDecoration,
   renderNeedsUpdateDecoration,
   renderPrereleaseInstalledDecoration
-} from 'presentation/editor/decorations';
+} from 'presentation/extension';
 
 import {
   AbstractVersionLensProvider,

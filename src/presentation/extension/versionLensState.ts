@@ -1,7 +1,7 @@
-import { VsCodePaletteState } from "../commands/model/vsCodePaletteState";
+import { VsCodePaletteState } from "./vsCodeContextState";
 import { AppConfig } from "presentation/configuration";
 
-enum IconStateContributions {
+enum StateContributions {
   Enabled = 'versionlens.enabled',
   PrereleasesEnabled = 'versionlens.prereleasesEnabled',
   ProviderActive = 'versionlens.providerActive',
@@ -9,7 +9,7 @@ enum IconStateContributions {
   ShowDependencyStatuses = 'versionlens.showDependencyStatuses',
 }
 
-export class MenuCommandPalette {
+export class VersionLensState {
 
   // states
   enabled: VsCodePaletteState<boolean>;
@@ -21,27 +21,27 @@ export class MenuCommandPalette {
   constructor(appConfig: AppConfig) {
 
     this.providerActive = new VsCodePaletteState(
-      IconStateContributions.ProviderActive,
+      StateContributions.ProviderActive,
       false
     );
 
     this.providerBusy = new VsCodePaletteState(
-      IconStateContributions.ProviderBusy,
+      StateContributions.ProviderBusy,
       false
     );
 
     this.enabled = new VsCodePaletteState(
-      IconStateContributions.Enabled,
+      StateContributions.Enabled,
       false
     );
 
     this.showDependencyStatuses = new VsCodePaletteState(
-      IconStateContributions.ShowDependencyStatuses,
+      StateContributions.ShowDependencyStatuses,
       appConfig.showDependencyStatusesAtStartup === true
     );
 
     this.prereleasesEnabled = new VsCodePaletteState(
-      IconStateContributions.PrereleasesEnabled,
+      StateContributions.PrereleasesEnabled,
       appConfig.showTaggedVersionsAtStartup === true
     );
 

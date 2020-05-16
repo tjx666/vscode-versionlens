@@ -35,6 +35,6 @@
   ],
   "files": [
     "loader.js",
-    "extension.ts"
+    "root.ts"
   ]
 }

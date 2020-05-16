@@ -18,7 +18,7 @@ import {
   renderMissingDecoration,
   renderInstalledDecoration,
   renderOutdatedDecoration
-} from 'presentation/editor/decorations';
+} from 'presentation/extension';
 
 import {
   AbstractVersionLensProvider,

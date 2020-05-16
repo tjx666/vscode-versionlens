@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 import { TestFixtureMap } from "../../../utils";
-import editorSettings from 'presentation/editor/editorSettings';
+import editorSettings from 'presentation/extension';
 import { PubCodeLensProvider } from "providers/pub/pubCodeLensProvider";
 import * as PubAPIModule from "providers/pub/pubAPI";
 

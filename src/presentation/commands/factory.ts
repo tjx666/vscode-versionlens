@@ -1,4 +1,8 @@
-import { CommandContributions, SuggestionIndicators } from 'presentation/editor/editor';
+import {
+  CommandContributions,
+  SuggestionIndicators
+} from 'presentation/extension';
+
 import { PackageSuggestionFlags } from 'core/packages';
 // import { githubRequest } from 'infrastructure/clients/githubClientRequest';
 import { VersionLens } from 'presentation/lenses';

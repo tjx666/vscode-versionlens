@@ -2,7 +2,7 @@
  * Copyright (c) Peter Flannery. All rights reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
-import editorSettings from 'presentation/editor/editorSettings';
+import editorSettings from 'presentation/extension';
 import { generatePackage } from 'test/unit/utils.js';
 import { PackageErrors } from 'providers/shared/definitions';
 import { PackageCodeLens } from 'providers/shared/packageCodeLens';

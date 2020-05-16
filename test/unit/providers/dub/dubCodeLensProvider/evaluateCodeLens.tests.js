@@ -7,7 +7,7 @@ import { PackageCodeLens } from 'providers/shared/packageCodeLens';
 import { DubCodeLensProvider } from 'providers/dub/dubCodeLensProvider';
 import * as DubAPIModule from 'providers/dub/dubAPI';
 import { generatePackage } from 'test/unit/utils.js';
-import editorSettings from 'presentation/editor/editorSettings';
+import editorSettings from 'presentation/extension';
 
 const assert = require('assert');
 

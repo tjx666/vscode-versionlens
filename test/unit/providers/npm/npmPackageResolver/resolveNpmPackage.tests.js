@@ -1,6 +1,6 @@
 import { resolveNpmPackage } from 'providers/npm/npmPackageResolver.js';
 import * as NpmClientApiMock from 'providers/npm/npmClient.js';
-import editorSettings from 'presentation/editor/editorSettings';
+import editorSettings from 'presentation/extension';
 
 const assert = require('assert');
 const mock = require('mock-require');
