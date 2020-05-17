@@ -29,6 +29,7 @@ export class PubVersionLensProvider
   }
 
   async fetchVersionLenses(
+    packagePath: string,
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {

@@ -40,6 +40,7 @@ export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfi
   }
 
   async fetchVersionLenses(
+    packagePath: string,
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {

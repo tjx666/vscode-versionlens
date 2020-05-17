@@ -43,6 +43,7 @@ export class NpmVersionLensProvider
   }
 
   async fetchVersionLenses(
+    packagePath: string,
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {

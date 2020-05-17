@@ -39,6 +39,7 @@ export class DotNetVersionLensProvider
   }
 
   async fetchVersionLenses(
+    packagePath: string,
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
@@ -48,10 +49,6 @@ export class DotNetVersionLensProvider
       this.config.getDependencyProperties()
     );
     if (packageDepsLenses.length === 0) return null;
-
-    // package path (todo abstract this)
-    const { dirname } = require('path');
-    const packagePath = dirname(document.uri.fsPath);
 
     // gets source feeds from the project path
     const promisedSources = this.dotnetClient.fetchSources(packagePath);

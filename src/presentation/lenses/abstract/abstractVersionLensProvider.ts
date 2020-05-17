@@ -36,6 +36,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
   // abstract generateDecorations(versionLens: VersionLens);
 
   abstract fetchVersionLenses(
+    packagePath: string,
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse;
@@ -64,6 +65,11 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
   ): Promise<VersionLens[] | null> {
     if (this.extension.state.enabled.value === false) return null;
 
+
+    // package path (todo abstract this)
+    const { dirname } = require('path');
+    const packagePath = dirname(document.uri.fsPath);
+
     // set in progress
     this.extension.state.providerBusy.value = true;
 
@@ -72,7 +78,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
     //    this.logger.clear()
     // }
 
-    return this.fetchVersionLenses(document, token);
+    return this.fetchVersionLenses(packagePath, document, token);
   }
 
   async resolveCodeLens(

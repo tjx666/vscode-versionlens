@@ -31,6 +31,7 @@ export class MavenVersionLensProvider
   }
 
   async fetchVersionLenses(
+    packagePath: string,
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken,
   ) {
@@ -39,10 +40,6 @@ export class MavenVersionLensProvider
       this.config.getDependencyProperties()
     );
     if (packageDependencies.length === 0) return null;
-
-    // package path
-    const { dirname } = require('path');
-    const packagePath = dirname(document.uri.fsPath);
 
     // gets source feeds from the project path
     const promisedRepos = this.mvnClient.fetchRepositories(packagePath);

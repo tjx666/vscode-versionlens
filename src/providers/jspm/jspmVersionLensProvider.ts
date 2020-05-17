@@ -27,6 +27,7 @@ export class JspmVersionLensProvider extends NpmVersionLensProvider {
   }
 
   async fetchVersionLenses(
+    packagePath: string,
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
