@@ -114,7 +114,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
     if (codeLens.hasPackageError(PackageResponseErrors.GitNotFound))
       return CommandFactory.createPackageMessageCommand(codeLens);
 
-    if (codeLens.hasPackageSource(PackageSourceTypes.directory))
+    if (codeLens.hasPackageSource(PackageSourceTypes.Directory))
       return CommandFactory.createDirectoryLinkCommand(codeLens);
 
     // generate decoration

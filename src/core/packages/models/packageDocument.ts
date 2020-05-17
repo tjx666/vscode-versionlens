@@ -4,35 +4,35 @@ import { PackageResponseStatus } from "./packageResponse";
 export type PackageResolverDelegate = (packagePath: string, name: string, version: string, replaceVersionFn) => Promise<PackageDocument>;
 
 export enum PackageSourceTypes {
-  directory = 'directory',
-  file = 'file',
-  git = 'git',
-  registry = 'registry',
+  Directory = 'directory',
+  File = 'file',
+  Git = 'git',
+  Github = 'github',
+  Registry = 'registry',
 }
 
 export enum PackageVersionTypes {
-  version = 'version',
-  range = 'range',
-  tag = 'tag',
-  alias = 'alias',
-  committish = 'committish',
+  Version = 'version',
+  Range = 'range',
+  Tag = 'tag',
+  Alias = 'alias',
+  Committish = 'committish',
 }
 
 export enum PackageVersionStatus {
-  notfound = 'package not found',
-  notsupported = 'not supported',
-  invalid = 'invalid entry',
-  nomatch = 'no match',
-  satisfies = 'satisfies',
-  latest = 'latest',
-  fixed = 'fixed',
+  NotFound = 'package not found',
+  NotSupported = 'not supported',
+  Invalid = 'invalid entry',
+  NoMatch = 'no match',
+  Satisfies = 'satisfies',
+  Latest = 'latest',
+  Fixed = 'fixed',
 }
 
 export type PackageNameVersion = {
   name: string,
   version: string,
 }
-
 
 export enum PackageSuggestionFlags {
   // bitwise

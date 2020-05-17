@@ -116,8 +116,8 @@ export function parseSemver(packageVersion: string): SemverSpec {
   return {
     rawVersion: packageVersion,
     type: !!isVersion ?
-      PackageVersionTypes.version :
-      !!isRange ? PackageVersionTypes.range :
+      PackageVersionTypes.Version :
+      !!isRange ? PackageVersionTypes.Range :
         null,
   };
 }

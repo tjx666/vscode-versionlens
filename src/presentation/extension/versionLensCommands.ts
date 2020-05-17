@@ -95,7 +95,7 @@ export class VersionLensCommands {
   onLinkCommand(codeLens) {
     const path = require('path');
     const opener = require('opener');
-    if (codeLens.package.source === PackageSourceTypes.directory) {
+    if (codeLens.package.source === PackageSourceTypes.Directory) {
       const filePathToOpen = path.resolve(
         path.dirname(codeLens.documentUrl.fsPath),
         codeLens.package.resolved.version

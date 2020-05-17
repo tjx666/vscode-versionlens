@@ -1,7 +1,7 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
 
-import { extractPackageDependenciesFromJson } from 'core/packages';
+import { extractPackageDependenciesFromJson, IPackageClient } from 'core/packages';
 
 // imports
 import {
@@ -19,7 +19,6 @@ import {
   VersionLens
 } from 'presentation/lenses';
 
-import { PacoteClient } from './clients/pacoteClient';
 import { npmGetOutdated, npmPackageDirExists } from './clients/npmClient';
 import { NpmConfig } from './config';
 import { npmReplaceVersion } from './npmVersionUtils';
@@ -30,17 +29,17 @@ export class NpmVersionLensProvider
 
   _outdatedCache: Array<any>;
 
-  pacoteClient: PacoteClient;
+  packageClient: IPackageClient<NpmConfig>;
 
   constructor(
-    pacoteClient: PacoteClient,
+    pacoteClient: IPackageClient<NpmConfig>,
     config: NpmConfig,
     logger: ILogger
   ) {
     super(config, logger);
     this._outdatedCache = [];
 
-    this.pacoteClient = pacoteClient;
+    this.packageClient = pacoteClient;
   }
 
   async fetchVersionLenses(
@@ -59,7 +58,7 @@ export class NpmVersionLensProvider
     const context = {
       providerName: this.config.providerName,
       includePrereleases,
-      client: this.pacoteClient,
+      client: this.packageClient,
       clientData: this.config,
       logger: this.logger,
       replaceVersion: npmReplaceVersion

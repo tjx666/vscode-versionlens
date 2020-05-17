@@ -13,7 +13,7 @@ export default {
     "when releases and prereleases are empty": () => {
       const expected = [
         {
-          name: PackageVersionStatus.nomatch,
+          name: PackageVersionStatus.NoMatch,
           version: '',
           flags: PackageSuggestionFlags.status
         }
@@ -37,12 +37,12 @@ export default {
 
       const expected = [
         {
-          name: PackageVersionStatus.nomatch,
+          name: PackageVersionStatus.NoMatch,
           version: '',
           flags: PackageSuggestionFlags.status
         },
         {
-          name: PackageVersionStatus.latest,
+          name: PackageVersionStatus.Latest,
           version: '1.0.0',
           flags: PackageSuggestionFlags.release
         }
@@ -67,7 +67,7 @@ export default {
 
       const expected = [
         {
-          name: PackageVersionStatus.latest,
+          name: PackageVersionStatus.Latest,
           version: '',
           flags: PackageSuggestionFlags.status
         }
@@ -99,12 +99,12 @@ export default {
 
       const expected = [
         {
-          name: PackageVersionStatus.satisfies,
+          name: PackageVersionStatus.Satisfies,
           version: 'latest',
           flags: PackageSuggestionFlags.status
         },
         {
-          name: PackageVersionStatus.latest,
+          name: PackageVersionStatus.Latest,
           version: '3.0.0',
           flags: PackageSuggestionFlags.release
         },
@@ -130,12 +130,12 @@ export default {
 
       const expected = [
         {
-          name: PackageVersionStatus.satisfies,
+          name: PackageVersionStatus.Satisfies,
           version: '2.1.0',
           flags: PackageSuggestionFlags.release
         },
         {
-          name: PackageVersionStatus.latest,
+          name: PackageVersionStatus.Latest,
           version: '3.0.0',
           flags: PackageSuggestionFlags.release
         }

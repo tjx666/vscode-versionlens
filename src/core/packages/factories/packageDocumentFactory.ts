@@ -14,7 +14,7 @@ export function createNotFound(
   type: PackageVersionTypes,
   response: PackageResponseStatus
 ): PackageDocument {
-  const source: PackageSourceTypes = PackageSourceTypes.registry;
+  const source: PackageSourceTypes = PackageSourceTypes.Registry;
 
   const suggestions: Array<PackageSuggestion> = [
     SuggestFactory.createNotFound()
@@ -37,7 +37,7 @@ export function createInvalidVersion(
   response: PackageResponseStatus,
   type: PackageVersionTypes
 ): PackageDocument {
-  const source: PackageSourceTypes = PackageSourceTypes.registry;
+  const source: PackageSourceTypes = PackageSourceTypes.Registry;
   const suggestions: Array<PackageSuggestion> = [
     SuggestFactory.createInvalid(requested.version),
     SuggestFactory.createLatest(),
@@ -60,7 +60,7 @@ export function createNotSupported(
   response: PackageResponseStatus,
   type: PackageVersionTypes
 ): PackageDocument {
-  const source: PackageSourceTypes = PackageSourceTypes.registry;
+  const source: PackageSourceTypes = PackageSourceTypes.Registry;
   const suggestions: Array<PackageSuggestion> = [
     SuggestFactory.createNotSupported(),
     SuggestFactory.createLatest(),
@@ -83,7 +83,7 @@ export function createGitFailed(
   response: PackageResponseStatus,
   type: PackageVersionTypes
 ): PackageDocument {
-  const source: PackageSourceTypes = PackageSourceTypes.git;
+  const source: PackageSourceTypes = PackageSourceTypes.Git;
   const suggestions = [
     SuggestFactory.createNotFound(),
   ]
@@ -107,6 +107,7 @@ export function createNoMatch(
   response: PackageResponseStatus,
   latestVersion?: string
 ): PackageDocument {
+
   const suggestions: Array<PackageSuggestion> = [
     SuggestFactory.createNoMatch(),
     SuggestFactory.createLatest(latestVersion),
@@ -129,8 +130,33 @@ export function createFourSegment(
   response: PackageResponseStatus,
   type: PackageVersionTypes
 ): PackageDocument {
-  const source: PackageSourceTypes = PackageSourceTypes.registry;
+  const source: PackageSourceTypes = PackageSourceTypes.Registry;
   const suggestions: Array<PackageSuggestion> = [];
+
+  return {
+    provider,
+    source,
+    type,
+    requested,
+    response,
+    resolved: null,
+    suggestions
+  };
+}
+
+
+export function createFixed(
+  provider: string,
+  source: PackageSourceTypes,
+  requested: PackageIdentifier,
+  response: PackageResponseStatus,
+  type: PackageVersionTypes,
+  fixedVersion: string
+): PackageDocument {
+
+  const suggestions: Array<PackageSuggestion> = [
+    SuggestFactory.createFixedStatus(fixedVersion)
+  ];
 
   return {
     provider,

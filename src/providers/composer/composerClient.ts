@@ -104,7 +104,7 @@ async function createRemotePackageDocument(
 
       return {
         provider,
-        source: PackageSourceTypes.registry,
+        source: PackageSourceTypes.Registry,
         response,
         type: semverSpec.type,
         requested,

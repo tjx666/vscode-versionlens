@@ -105,7 +105,7 @@ async function createRemotePackageDocument(
 
       return {
         provider,
-        source: PackageSourceTypes.registry,
+        source: PackageSourceTypes.Registry,
         response,
         type: semverSpec.type,
         requested,
@@ -131,14 +131,14 @@ export function createSuggestionTags(
 
   // check for ~{name} suggestion if no matches found
   const firstSuggestion = suggestions[0];
-  const hasNoMatch = firstSuggestion.name === PackageVersionStatus.nomatch;
+  const hasNoMatch = firstSuggestion.name === PackageVersionStatus.NoMatch;
   const isTildeVersion = versionRange.charAt(0) === '~';
 
   if (hasNoMatch && isTildeVersion && releases.length > 0) {
     const latestRelease = releases[releases.length - 1];
 
     if (latestRelease === versionRange) {
-      suggestions[0] = SuggestionFactory.createLatestStatus();
+      suggestions[0] = SuggestionFactory.createMatchesLatest();
       suggestions.pop();
     } else {
       // suggest

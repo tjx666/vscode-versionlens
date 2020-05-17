@@ -1,7 +1,4 @@
-import {
-  ClientResponseSource,
-  HttpClientResponse,
-} from "core/clients";
+import { ClientResponseSource, HttpClientResponse } from "core/clients";
 import { PackageDocument, PackageSuggestion } from "../models/packageDocument";
 
 import {

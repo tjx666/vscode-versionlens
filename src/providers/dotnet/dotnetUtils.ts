@@ -48,8 +48,8 @@ export function parseVersionSpec(rawVersion: string): DotNetVersionSpec {
   }
 
   const type: PackageVersionTypes = isValidVersion ?
-    PackageVersionTypes.version :
-    isValidRange ? PackageVersionTypes.range : null
+    PackageVersionTypes.Version :
+    isValidRange ? PackageVersionTypes.Range : null
 
   const resolvedVersion = spec ? version : '';
 

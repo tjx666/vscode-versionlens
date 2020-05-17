@@ -87,7 +87,7 @@ async function createRemotePackageDocument(
 
       const packageInfo = data;
 
-      const source = PackageSourceTypes.registry;
+      const source = PackageSourceTypes.Registry;
 
       const provider = request.providerName;
 
@@ -119,7 +119,7 @@ async function createRemotePackageDocument(
         return Promise.resolve(DocumentFactory.createNoMatch(
           provider,
           source,
-          PackageVersionTypes.version,
+          PackageVersionTypes.Version,
           requested,
           response,
           // suggest the latest release if available

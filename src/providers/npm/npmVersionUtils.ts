@@ -6,11 +6,11 @@ import {
 } from "core/packages";
 
 export function npmReplaceVersion(packageInfo: PackageResponse, newVersion: string): string {
-  if (packageInfo.source === PackageSourceTypes.git) {
+  if (packageInfo.source === PackageSourceTypes.Git) {
     return replaceGitVersion(packageInfo, newVersion);
   }
 
-  if (packageInfo.type === PackageVersionTypes.alias) {
+  if (packageInfo.type === PackageVersionTypes.Alias) {
     return replaceAliasVersion(packageInfo, newVersion);
   }
 

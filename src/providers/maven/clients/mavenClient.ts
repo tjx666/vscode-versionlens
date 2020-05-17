@@ -76,7 +76,7 @@ async function createRemotePackageDocument(
 
       const { data } = httpResponse;
 
-      const source = PackageSourceTypes.registry;
+      const source = PackageSourceTypes.Registry;
 
       const provider = request.providerName;
 

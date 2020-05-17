@@ -7,21 +7,23 @@ import {
   VersionLensFetchResponse
 } from 'presentation/lenses';
 
+import { NpmConfig } from 'providers/npm/config';
 import { NpmVersionLensProvider } from 'providers/npm/npmVersionLensProvider';
-import { extractPackageDependenciesFromJson } from './jspmPackageParser';
 import { npmReplaceVersion } from 'providers/npm/npmVersionUtils';
+
+import { extractPackageDependenciesFromJson } from './jspmPackageParser';
 import { JspmConfig } from './config';
-import { PacoteClient } from 'providers/npm/clients/pacoteClient';
 import { ILogger } from 'core/logging';
+import { IPackageClient } from 'core/packages';
 
 export class JspmVersionLensProvider extends NpmVersionLensProvider {
 
   constructor(
-    pacoteClient: PacoteClient,
+    packageClient: IPackageClient<NpmConfig>,
     config: JspmConfig,
     logger: ILogger
   ) {
-    super(pacoteClient, config, logger);
+    super(packageClient, config, logger);
   }
 
   async fetchVersionLenses(
@@ -40,7 +42,7 @@ export class JspmVersionLensProvider extends NpmVersionLensProvider {
     const context = {
       providerName: this.config.providerName,
       includePrereleases,
-      client: this.pacoteClient,
+      client: this.packageClient,
       clientData: this.config,
       logger: this.logger,
       replaceVersion: npmReplaceVersion,

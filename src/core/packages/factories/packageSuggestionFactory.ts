@@ -43,39 +43,29 @@ export function createSuggestionTags(
     )
   else if (isLatest && noSuggestionNeeded)
     // latest
-    suggestions.push(createLatestStatus());
+    suggestions.push(createMatchesLatest());
   else if (isLatest)
     suggestions.push(
       // satisfies latest
-      createSuggestion(
-        PackageVersionStatus.satisfies,
-        'latest',
-        PackageSuggestionFlags.status
-      ),
+      createSatisifiesLatest(),
       // suggest latestVersion
       createLatest(latestVersion),
     );
   else if (satisfiesVersion) {
 
     if (isFixedVersion(versionRange)) {
-
       suggestions.push(
         // fixed
-        createSuggestion(
-          PackageVersionStatus.fixed,
-          versionRange,
-          PackageSuggestionFlags.status
-        ),
+        createFixedStatus(versionRange),
         // suggest latestVersion
         createLatest(latestVersion),
       );
-
     } else {
 
       suggestions.push(
         // satisfies >x.y.z <x.y.z
         createSuggestion(
-          PackageVersionStatus.satisfies,
+          PackageVersionStatus.Satisfies,
           satisfiesVersion,
           noSuggestionNeeded ?
             PackageSuggestionFlags.status :
@@ -111,7 +101,7 @@ export function createSuggestionTags(
 
 export function createNotFound(): PackageSuggestion {
   return {
-    name: PackageVersionStatus.notfound,
+    name: PackageVersionStatus.NotFound,
     version: '',
     flags: PackageSuggestionFlags.status
   };
@@ -119,7 +109,7 @@ export function createNotFound(): PackageSuggestion {
 
 export function createInvalid(requestedVersion: string): PackageSuggestion {
   return {
-    name: PackageVersionStatus.invalid,
+    name: PackageVersionStatus.Invalid,
     version: requestedVersion,
     flags: PackageSuggestionFlags.status
   };
@@ -127,7 +117,7 @@ export function createInvalid(requestedVersion: string): PackageSuggestion {
 
 export function createNotSupported(): PackageSuggestion {
   return {
-    name: PackageVersionStatus.notsupported,
+    name: PackageVersionStatus.NotSupported,
     version: '',
     flags: PackageSuggestionFlags.status
   };
@@ -135,7 +125,7 @@ export function createNotSupported(): PackageSuggestion {
 
 export function createNoMatch(): PackageSuggestion {
   return {
-    name: PackageVersionStatus.nomatch,
+    name: PackageVersionStatus.NoMatch,
     version: '',
     flags: PackageSuggestionFlags.status
   };
@@ -145,18 +135,34 @@ export function createLatest(requestedVersion?: string): PackageSuggestion {
   // treats requestedVersion as latest version
   // if no requestedVersion then uses the 'latest' tag instead
   return {
-    name: PackageVersionStatus.latest,
+    name: PackageVersionStatus.Latest,
     version: requestedVersion || 'latest',
     flags: requestedVersion ? PackageSuggestionFlags.release : PackageSuggestionFlags.tag
   };
 }
 
-export function createLatestStatus(): PackageSuggestion {
+export function createMatchesLatest(): PackageSuggestion {
   return {
-    name: PackageVersionStatus.latest,
+    name: PackageVersionStatus.Latest,
     version: '',
     flags: PackageSuggestionFlags.status
   };
+}
+
+export function createSatisifiesLatest(): PackageSuggestion {
+  return createSuggestion(
+    PackageVersionStatus.Satisfies,
+    'latest',
+    PackageSuggestionFlags.status
+  )
+}
+
+export function createFixedStatus(version: string): PackageSuggestion {
+  return createSuggestion(
+    PackageVersionStatus.Fixed,
+    version,
+    PackageSuggestionFlags.status
+  );
 }
 
 export function createSuggestion(name: string, version: string, flags: PackageSuggestionFlags): PackageSuggestion {

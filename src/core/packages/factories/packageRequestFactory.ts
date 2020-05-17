@@ -50,6 +50,15 @@ export async function createPackageRequest<TClientData>(
         error
       );
 
-      return error;
+      return ResponseFactory.createUnexpected(
+        error.provider,
+        request.package,
+        {
+          source: error.response.source,
+          status: error.response.status,
+          data: 'Unexpected error occurred'
+        }
+      )
+
     })
 }
