@@ -127,8 +127,6 @@ async function createPacotePackageDocument(
         requested,
         resolved,
         suggestions,
-        releases,
-        prereleases,
       };
 
     }).catch(error => {

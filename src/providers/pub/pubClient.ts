@@ -65,7 +65,7 @@ async function createRemotePackageDocument(
 ): Promise<PackageDocument> {
 
   return client.requestJson(HttpClientRequestMethods.get, url, {})
-    .then(httpResponse => {
+    .then(function (httpResponse): PackageDocument {
 
       const packageInfo = httpResponse.data;
 
@@ -105,8 +105,6 @@ async function createRemotePackageDocument(
         type: semverSpec.type,
         requested,
         resolved,
-        releases,
-        prereleases,
         suggestions,
       };
 

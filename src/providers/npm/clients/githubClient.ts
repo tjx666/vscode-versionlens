@@ -6,7 +6,9 @@ import {
   PackageVersionTypes,
   VersionHelpers,
   SuggestionFactory,
-  PackageDocument
+  PackageDocument,
+  DocumentFactory,
+  ResponseFactory
 } from "core/packages";
 
 import { JsonHttpClientRequest } from "infrastructure/clients";
@@ -18,11 +20,7 @@ export class GithubClient extends JsonHttpClientRequest {
 
   config: NpmConfig;
 
-  constructor(
-    config: NpmConfig,
-    cacheDuration: number,
-    logger: ILogger
-  ) {
+  constructor(config: NpmConfig, cacheDuration: number, logger: ILogger) {
     super(
       logger,
       {
@@ -56,13 +54,16 @@ export class GithubClient extends JsonHttpClientRequest {
     return this.fetchCommits(request, npaSpec);
   }
 
-  fetchTags(request: PackageRequest<NpmConfig>, npaSpec: NpaSpec) {
+  fetchTags(
+    request: PackageRequest<NpmConfig>,
+    npaSpec: NpaSpec
+  ): Promise<PackageDocument> {
     // todo pass in auth
     const { user, project } = npaSpec.hosted;
     const tagsRepoUrl = `https://api.github.com/repos/${user}/${project}/tags`;
 
     return this.requestJson(HttpClientRequestMethods.get, tagsRepoUrl, {})
-      .then((response: JsonClientResponse) => {
+      .then(function (response: JsonClientResponse): PackageDocument {
         // extract versions
         const tags = <[]>response.data;
 
@@ -107,15 +108,13 @@ export class GithubClient extends JsonHttpClientRequest {
           requested,
           resolved,
           suggestions,
-          releases,
-          prereleases,
         };
 
       });
 
   }
 
-  fetchCommits(request: PackageRequest<NpmConfig>, npaSpec: NpaSpec) {
+  fetchCommits(request: PackageRequest<NpmConfig>, npaSpec: NpaSpec): Promise<PackageDocument> {
     // todo pass in auth
     const { user, project } = npaSpec.hosted;
     const commitsRepoUrl = `https://api.github.com/repos/${user}/${project}/commits`;
@@ -137,9 +136,14 @@ export class GithubClient extends JsonHttpClientRequest {
 
         const versionRange = npaSpec.gitCommittish;
 
-        // no commits found
         if (commits.length === 0) {
-          return;
+          // no commits found
+          return DocumentFactory.createNotFound(
+            provider,
+            requested,
+            PackageVersionTypes.Version,
+            ResponseFactory.createResponseStatus(response.source, 404)
+          )
         }
 
         const commitIndex = commits.findIndex(commit => commit.indexOf(versionRange) > -1);
@@ -181,8 +185,6 @@ export class GithubClient extends JsonHttpClientRequest {
           requested,
           resolved,
           suggestions,
-          releases: [],
-          prereleases: [],
         };
 
       });

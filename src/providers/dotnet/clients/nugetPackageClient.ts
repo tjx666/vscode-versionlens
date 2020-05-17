@@ -7,6 +7,7 @@ import {
   PackageRequest,
   VersionHelpers,
   IPackageClient,
+  ResponseFactory,
 } from 'core/packages';
 
 import {
@@ -31,11 +32,7 @@ export class NuGetPackageClient
 
   options: DotNetConfig;
 
-  constructor(
-    config: DotNetConfig,
-    cacheDuration: number,
-    logger: ILogger
-  ) {
+  constructor(config: DotNetConfig, cacheDuration: number, logger: ILogger) {
     super(logger, {}, cacheDuration)
     this.options = config;
   }
@@ -77,21 +74,26 @@ async function createRemotePackageDocument(
   };
 
   return client.requestJson(HttpClientRequestMethods.get, url, queryParams)
-    .then(httpResponse => {
+    .then(function (httpResponse): PackageDocument {
 
       const { data } = httpResponse;
-
-      if (data.totalHits === 0) {
-        return Promise.reject({ status: 404, data })
-      }
-
-      const packageInfo = data;
 
       const source = PackageSourceTypes.Registry;
 
       const provider = request.providerName;
 
       const requested = request.package;
+
+      if (data.totalHits === 0) {
+        return DocumentFactory.createNotFound(
+          provider,
+          requested,
+          PackageVersionTypes.Version,
+          ResponseFactory.createResponseStatus(httpResponse.source, 404)
+        )
+      }
+
+      const packageInfo = data;
 
       const response = {
         source: httpResponse.source,
@@ -106,25 +108,25 @@ async function createRemotePackageDocument(
 
       // four segment is not supported
       if (dotnetSpec.spec && dotnetSpec.spec.hasFourSegments) {
-        return Promise.resolve(DocumentFactory.createFourSegment(
+        return DocumentFactory.createFourSegment(
           provider,
           requested,
-          response,
-          dotnetSpec.type,
-        ))
+          ResponseFactory.createResponseStatus(httpResponse.source, 404),
+          <any>dotnetSpec.type,
+        )
       }
 
       // no match if null type
       if (dotnetSpec.type === null) {
-        return Promise.resolve(DocumentFactory.createNoMatch(
+        return DocumentFactory.createNoMatch(
           provider,
           source,
           PackageVersionTypes.Version,
           requested,
-          response,
+          ResponseFactory.createResponseStatus(httpResponse.source, 404),
           // suggest the latest release if available
           releases.length > 0 ? releases[releases.length - 1] : null,
-        ))
+        )
       }
 
       const versionRange = dotnetSpec.resolvedVersion;
@@ -148,8 +150,6 @@ async function createRemotePackageDocument(
         type: dotnetSpec.type,
         requested,
         resolved,
-        releases,
-        prereleases,
         suggestions,
       };
     });
