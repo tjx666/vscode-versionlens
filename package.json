@@ -112,7 +112,7 @@
         }
       },
       {
-        "command": "versionlens.onShowTaggedVersions",
+        "command": "versionlens.onShowPrereleaseVersions",
         "title": "Show tagged dependency versions",
         "category": "VersionLens",
         "icon": {
@@ -121,7 +121,7 @@
         }
       },
       {
-        "command": "versionlens.onHideTaggedVersions",
+        "command": "versionlens.onHidePrereleaseVersions",
         "title": "Hide tagged dependency versions",
         "category": "VersionLens",
         "icon": {
@@ -154,11 +154,11 @@
           "when": "versionlens.enabled && versionlens.providerActive"
         },
         {
-          "command": "versionlens.onShowTaggedVersions",
+          "command": "versionlens.onShowPrereleaseVersions",
           "when": "versionlens.enabled && versionlens.providerActive"
         },
         {
-          "command": "versionlens.onHideTaggedVersions",
+          "command": "versionlens.onHidePrereleaseVersions",
           "when": "versionlens.enabled && versionlens.providerActive"
         },
         {
@@ -182,12 +182,12 @@
           "group": "navigation@3"
         },
         {
-          "command": "versionlens.onShowTaggedVersions",
+          "command": "versionlens.onShowPrereleaseVersions",
           "when": "versionlens.prereleasesEnabled == false && versionlens.enabled && versionlens.providerActive && textCompareEditorVisible == false",
           "group": "navigation@2"
         },
         {
-          "command": "versionlens.onHideTaggedVersions",
+          "command": "versionlens.onHidePrereleaseVersions",
           "when": "versionlens.prereleasesEnabled && versionlens.enabled && versionlens.providerActive && textCompareEditorVisible == false",
           "group": "navigation@2"
         },

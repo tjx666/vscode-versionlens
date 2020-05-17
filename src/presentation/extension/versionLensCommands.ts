@@ -12,8 +12,8 @@ import { VersionLensState } from './versionLensState';
 export enum CommandContributions {
   ShowInstalledStatuses = 'versionlens.onShowInstalledStatuses',
   HideInstalledStatuses = 'versionlens.onHideInstalledStatuses',
-  ShowTaggedVersions = 'versionlens.onShowTaggedVersions',
-  HideTaggedVersions = 'versionlens.onHideTaggedVersions',
+  ShowPrereleaseVersions = 'versionlens.onShowPrereleaseVersions',
+  HidePrereleaseVersions = 'versionlens.onHidePrereleaseVersions',
   ShowVersionLenses = 'versionlens.onShowVersionLenses',
   HideVersionLenses = 'versionlens.onHideVersionLenses',
   ShowingProgress = 'versionlens.onShowingProgress',
@@ -46,14 +46,14 @@ export class VersionLensCommands {
       });
   }
 
-  onShowTaggedVersions() {
+  onShowPrereleaseVersions() {
     this.state.prereleasesEnabled.change(true)
       .then(_ => {
         reloadActiveProviders();
       });
   }
 
-  onHideTaggedVersions(file) {
+  onHidePrereleaseVersions(file) {
     this.state.prereleasesEnabled.change(false)
       .then(_ => {
         reloadActiveProviders();

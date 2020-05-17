@@ -82,8 +82,8 @@ export async function registerProviders(
 
         logger.info(
           'Activated package manager %s with file filter: %O',
-          provider.config.providerName,
-          provider.config.selector,
+          provider.config.options.providerName,
+          provider.config.options.selector,
         );
         return providerRegistry.register(provider);
       })
