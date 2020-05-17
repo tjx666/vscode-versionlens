@@ -6,7 +6,7 @@ import { ILogger } from 'core/logging';
 
 import { VersionLensExtension } from 'presentation/extension';
 import { AbstractVersionLensProvider } from 'presentation/lenses'
-import { IProviderConfig } from 'presentation/lenses/abstract/abstractProviderConfig';
+import { IProviderConfig } from './definitions/iProviderConfig';
 
 export const providerNames = [
   'composer',

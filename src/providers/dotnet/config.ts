@@ -3,7 +3,7 @@ import {
   IProviderOptions,
   IProviderConfig,
   ProviderSupport
-} from "presentation/lenses";
+} from "presentation/providers";
 
 export enum DotnetContributions {
   DependencyProperties = 'dotnet.dependencyProperties',

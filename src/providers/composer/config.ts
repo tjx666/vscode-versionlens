@@ -3,7 +3,7 @@ import {
   ProviderSupport,
   IProviderConfig,
   IProviderOptions
-} from "presentation/lenses";
+} from "presentation/providers";
 
 enum ComposerContributions {
   DependencyProperties = 'composer.dependencyProperties',

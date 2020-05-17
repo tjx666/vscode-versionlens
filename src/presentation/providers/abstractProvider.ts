@@ -12,9 +12,9 @@ import {
 
 import * as CommandFactory from 'presentation/commands/factory';
 
-import { IVersionCodeLens } from "../definitions/iVersionCodeLens";
-import { VersionLens } from "../models/versionLens";
-import { IProviderConfig } from './abstractProviderConfig';
+import { IVersionCodeLens } from "../lenses/definitions/iVersionCodeLens";
+import { VersionLens } from "../lenses/models/versionLens";
+import { IProviderConfig } from './definitions/iProviderConfig';
 
 export type VersionLensFetchResponse = Promise<VersionLens[] | null>;
 

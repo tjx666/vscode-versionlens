@@ -4,7 +4,6 @@ import {
 } from 'presentation/extension';
 
 import { PackageSuggestionFlags } from 'core/packages';
-// import { githubRequest } from 'infrastructure/clients/githubClientRequest';
 import { VersionLens } from 'presentation/lenses';
 
 export function createErrorCommand(errorMsg, codeLens) {
