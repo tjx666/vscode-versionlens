@@ -26,9 +26,9 @@ import { ILogger } from "core/logging";
 
 export class DubClient
   extends JsonHttpClientRequest
-  implements IPackageClient<DubConfig> {
+  implements IPackageClient<null> {
 
-  options: DubConfig;
+  config: DubConfig;
 
   constructor(
     config: DubConfig,
@@ -36,18 +36,18 @@ export class DubClient
     logger: ILogger
   ) {
     super(logger, {}, cacheDuration);
-    this.options = config;
+    this.config = config;
   }
 
-  async fetchPackage(request: PackageRequest<DubConfig>): Promise<PackageDocument> {
+  async fetchPackage(request: PackageRequest<null>): Promise<PackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
-    const url = `${this.options.getApiUrl()}/${encodeURIComponent(request.package.name)}/info`;
+    const url = `${this.config.getApiUrl()}/${encodeURIComponent(request.package.name)}/info`;
 
     return createRemotePackageDocument(this, url, request, semverSpec)
       .catch((error: HttpClientResponse) => {
         if (error.status === 404) {
           return DocumentFactory.createNotFound(
-            this.options.providerName,
+            request.providerName,
             request.package,
             null,
             ResponseFactory.createResponseStatus(error.source, error.status)
@@ -62,7 +62,7 @@ export class DubClient
 async function createRemotePackageDocument(
   client: JsonHttpClientRequest,
   url: string,
-  request: PackageRequest<DubConfig>,
+  request: PackageRequest<null>,
   semverSpec: SemverSpec
 ): Promise<PackageDocument> {
 
@@ -75,7 +75,7 @@ async function createRemotePackageDocument(
 
       const packageInfo = httpResponse.data;
 
-      const provider = request.providerName;
+      const { providerName } = request;
 
       const versionRange = semverSpec.rawVersion;
 
@@ -104,7 +104,7 @@ async function createRemotePackageDocument(
       );
 
       return {
-        provider,
+        providerName,
         source: PackageSourceTypes.Registry,
         response,
         type: semverSpec.type,

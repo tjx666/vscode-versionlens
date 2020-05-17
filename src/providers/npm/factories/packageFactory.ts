@@ -14,7 +14,7 @@ import { NpaSpec } from '../models/npaSpec';
 export const fileDependencyRegex = /^file:(.*)$/;
 
 export function createDirectory(
-  provider: string,
+  providerName: string,
   requested: PackageIdentifier,
   response: PackageResponseStatus,
   npaSpec: NpaSpec
@@ -23,7 +23,7 @@ export function createDirectory(
   const fileRegExpResult = fileDependencyRegex.exec(requested.version);
   if (!fileRegExpResult) {
     return DocumentFactory.createInvalidVersion(
-      provider,
+      providerName,
       requested,
       response,
       <any>npaSpec.type // todo create a converter
@@ -42,12 +42,12 @@ export function createDirectory(
     {
       name: 'file://',
       version: resolved.version,
-      flags: PackageSuggestionFlags.prerelease
+      flags: PackageSuggestionFlags.release
     },
   ]
 
   return {
-    provider,
+    providerName,
     source,
     type,
     requested,

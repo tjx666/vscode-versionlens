@@ -60,14 +60,12 @@ export class ComposerVersionLensProvider
     const includePrereleases = this.extension.state.prereleasesEnabled.value;
 
     const context = {
-      providerName: this.config.providerName,
       includePrereleases,
-      client: this.composerClient,
-      clientData: this.config,
-      logger: this.logger,
+      clientData: null,
     }
 
     return VersionLensFactory.createVersionLenses(
+      this.composerClient,
       document,
       packageDepsLenses,
       context,

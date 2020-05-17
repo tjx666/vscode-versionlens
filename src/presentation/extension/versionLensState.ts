@@ -6,7 +6,7 @@ enum StateContributions {
   PrereleasesEnabled = 'versionlens.prereleasesEnabled',
   ProviderActive = 'versionlens.providerActive',
   ProviderBusy = 'versionlens.providerBusy',
-  ShowDependencyStatuses = 'versionlens.showDependencyStatuses',
+  ShowInstalledStatuses = 'versionlens.showInstalledStatuses',
 }
 
 export class VersionLensState {
@@ -16,7 +16,7 @@ export class VersionLensState {
   prereleasesEnabled: ContextState<boolean>;
   providerActive: ContextState<boolean>;
   providerBusy: ContextState<boolean>;
-  showDependencyStatuses: ContextState<boolean>;
+  showInstalledStatuses: ContextState<boolean>;
 
   constructor(extension: VersionLensExtension) {
 
@@ -40,12 +40,10 @@ export class VersionLensState {
       extension.suggestions.alwaysShowPrereleases
     );
 
-    this.showDependencyStatuses = new ContextState(
-      StateContributions.ShowDependencyStatuses,
+    this.showInstalledStatuses = new ContextState(
+      StateContributions.ShowInstalledStatuses,
       false
     );
-
-
 
   }
 

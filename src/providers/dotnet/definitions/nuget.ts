@@ -13,7 +13,6 @@ export interface NugetServiceIndex {
 export type NugetServiceIndexResponse = ClientResponse<number, NugetServiceIndex>
 
 export type NuGetClientData = {
-  provider: string,
   autoCompleteUrl: string,
 }
 

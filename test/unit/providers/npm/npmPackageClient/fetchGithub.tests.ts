@@ -37,9 +37,7 @@ export default {
     'returns a #semver:x.x.x. package': async () => {
 
       const testRequest: any = {
-        clientData: {
-          providerName: 'testnpmprovider',
-        },
+        providerName: 'testnpmprovider',
         package: {
           path: 'packagepath',
           name: 'core.js',
@@ -95,9 +93,7 @@ export default {
     'returns a #x.x.x': async () => {
 
       const testRequest: any = {
-        clientData: {
-          providerName: 'testnpmprovider',
-        },
+        providerName: 'testnpmprovider',
         package: {
           path: 'packagepath',
           name: 'core.js',
@@ -124,7 +120,7 @@ export default {
         .then((actual) => {
           assert.equal(actual.source, 'github')
           assert.equal(actual.type, 'range')
-          assert.equal(actual.provider, testRequest.clientData.providerName)
+          assert.equal(actual.providerName, testRequest.providerName)
           assert.equal(actual.resolved.name, testRequest.package.name)
           assert.deepEqual(actual.requested, testRequest.package)
 
@@ -146,9 +142,7 @@ export default {
     'returns a #sha commit': async () => {
 
       const testRequest: any = {
-        clientData: {
-          providerName: 'testnpmprovider',
-        },
+        providerName: 'testnpmprovider',
         package: {
           path: 'packagepath',
           name: 'core.js',
@@ -175,7 +169,7 @@ export default {
         .then((actual) => {
           assert.equal(actual.source, 'github')
           assert.equal(actual.type, 'committish')
-          assert.equal(actual.provider, testRequest.clientData.providerName)
+          assert.equal(actual.providerName, testRequest.providerName)
           assert.equal(actual.resolved.name, testRequest.package.name)
           assert.deepEqual(actual.requested, testRequest.package)
 

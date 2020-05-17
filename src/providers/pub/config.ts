@@ -1,22 +1,29 @@
 import { VersionLensExtension } from "presentation/extension";
-import { PackageFileFilter, IPackageProviderOptions } from "core/packages";
+import {
+  ProviderSupport,
+  IProviderConfig,
+  IProviderOptions,
+} from "presentation/lenses";
 
 enum PubContributions {
   DependencyProperties = 'pub.dependencyProperties',
   ApiUrl = 'pub.apiUrl',
 }
 
-const options = {
-  name: 'pub',
-  group: [],
-  selector: {
-    language: "yaml",
-    scheme: "file",
-    pattern: "**/pubspec.yaml",
-  }
-}
+export class PubConfig implements IProviderConfig {
 
-export class PubConfig implements IPackageProviderOptions {
+  options: IProviderOptions = {
+    providerName: 'pub',
+    supports: [
+      ProviderSupport.Releases,
+      ProviderSupport.Prereleases,
+    ],
+    selector: {
+      language: "yaml",
+      scheme: "file",
+      pattern: "**/pubspec.yaml",
+    }
+  };
 
   extension: VersionLensExtension;
 
@@ -33,18 +40,6 @@ export class PubConfig implements IPackageProviderOptions {
     ];
 
     this.defaultApiUrl = 'https://pub.dev/';
-  }
-
-  get providerName(): string {
-    return options.name;
-  }
-
-  get group(): Array<string> {
-    return options.group;
-  }
-
-  get selector(): PackageFileFilter {
-    return options.selector;
   }
 
   getDependencyProperties() {

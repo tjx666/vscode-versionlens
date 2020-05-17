@@ -2,13 +2,11 @@
 import * as VsCodeTypes from 'vscode';
 
 import { KeyDictionary } from 'core/generic/collections'
-import { IPackageProviderOptions } from "core/packages";
 import { ILogger } from 'core/logging';
 
 import { VersionLensExtension } from 'presentation/extension';
-import {
-  AbstractVersionLensProvider,
-} from 'presentation/lenses'
+import { AbstractVersionLensProvider } from 'presentation/lenses'
+import { IProviderConfig } from 'presentation/lenses/abstract/abstractProviderConfig';
 
 export const providerNames = [
   'composer',
@@ -22,16 +20,16 @@ export const providerNames = [
 
 class ProviderRegistry {
 
-  providers: KeyDictionary<AbstractVersionLensProvider<IPackageProviderOptions>>;
+  providers: KeyDictionary<AbstractVersionLensProvider<IProviderConfig>>;
 
   constructor() {
     this.providers = {};
   }
 
   register(
-    provider: AbstractVersionLensProvider<IPackageProviderOptions>
-  ): AbstractVersionLensProvider<IPackageProviderOptions> {
-    const key = provider.config.providerName;
+    provider: AbstractVersionLensProvider<IProviderConfig>
+  ): AbstractVersionLensProvider<IProviderConfig> {
+    const key = provider.config.options.providerName;
     if (this.has(key)) throw new Error('Provider already registered');
     this.providers[key] = provider;
     return provider;
@@ -53,7 +51,7 @@ class ProviderRegistry {
       .filter(provider => !!provider)
       .filter(provider => matchesFilename(
         filename,
-        provider.config.selector.pattern
+        provider.config.options.selector.pattern
       ))
 
     if (filtered.length === 0) return null;
@@ -91,7 +89,7 @@ export async function registerProviders(
       })
       .then(provider => {
         return registerCodeLensProvider(
-          provider.config.selector,
+          provider.config.options.selector,
           provider
         );
       })

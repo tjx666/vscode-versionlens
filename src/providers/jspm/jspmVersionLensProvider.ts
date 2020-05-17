@@ -7,7 +7,6 @@ import {
   VersionLensFetchResponse
 } from 'presentation/lenses';
 
-import { NpmConfig } from 'providers/npm/config';
 import { NpmVersionLensProvider } from 'providers/npm/npmVersionLensProvider';
 import { npmReplaceVersion } from 'providers/npm/npmVersionUtils';
 
@@ -19,7 +18,7 @@ import { IPackageClient } from 'core/packages';
 export class JspmVersionLensProvider extends NpmVersionLensProvider {
 
   constructor(
-    packageClient: IPackageClient<NpmConfig>,
+    packageClient: IPackageClient<null>,
     config: JspmConfig,
     logger: ILogger
   ) {
@@ -41,16 +40,14 @@ export class JspmVersionLensProvider extends NpmVersionLensProvider {
     const includePrereleases = this.extension.state.prereleasesEnabled.value;
 
     const context = {
-      providerName: this.config.providerName,
       includePrereleases,
-      client: this.packageClient,
-      clientData: this.config,
-      logger: this.logger,
+      clientData: null,
       replaceVersion: npmReplaceVersion,
     }
 
     // fetch from npm
     return VersionLensFactory.createVersionLenses(
+      this.packageClient,
       document,
       jspmDependencyLenses,
       context,

@@ -15,9 +15,7 @@ import {
   HttpClientRequestMethods,
 } from "core/clients";
 
-import {
-  HttpClientRequest
-} from 'infrastructure/clients';
+import { HttpClientRequest } from 'infrastructure/clients';
 
 import { MavenClientData } from '../definitions';
 
@@ -28,15 +26,15 @@ export class MavenClient
   extends HttpClientRequest
   implements IPackageClient<MavenClientData> {
 
-  options: MavenConfig;
+  config: MavenConfig;
 
   constructor(
     config: MavenConfig,
     cacheDuration: number,
-    logger: ILogger 
+    logger: ILogger
   ) {
     super(logger, {}, cacheDuration)
-    this.options = config;
+    this.config = config;
   }
 
   async fetchPackage(request: PackageRequest<MavenClientData>): Promise<PackageDocument> {
@@ -52,7 +50,7 @@ export class MavenClient
       .catch((error: HttpClientResponse) => {
         if (error.status === 404) {
           return DocumentFactory.createNotFound(
-            request.clientData.provider,
+            request.providerName,
             request.package,
             semverSpec.type,
             ResponseFactory.createResponseStatus(error.source, error.status)
@@ -78,7 +76,7 @@ async function createRemotePackageDocument(
 
       const source = PackageSourceTypes.Registry;
 
-      const provider = request.providerName;
+      const { providerName } = request;
 
       const requested = request.package;
 
@@ -113,7 +111,7 @@ async function createRemotePackageDocument(
       );
 
       return {
-        provider,
+        providerName,
         source,
         response,
         type: semverSpec.type,

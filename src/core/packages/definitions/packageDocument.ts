@@ -47,7 +47,7 @@ export type PackageSuggestion = {
 }
 
 export type PackageDocument = {
-  provider: string,
+  providerName: string,
   source: PackageSourceTypes,
   response?: PackageResponseStatus,
   type: PackageVersionTypes,

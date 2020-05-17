@@ -34,7 +34,7 @@ export class GithubClient extends JsonHttpClientRequest {
   }
 
   fetchGithub(
-    request: PackageRequest<NpmConfig>,
+    request: PackageRequest<null>,
     npaSpec: NpaSpec
   ): Promise<PackageDocument> {
     const { validRange } = require('semver');
@@ -55,7 +55,7 @@ export class GithubClient extends JsonHttpClientRequest {
   }
 
   fetchTags(
-    request: PackageRequest<NpmConfig>,
+    request: PackageRequest<null>,
     npaSpec: NpaSpec
   ): Promise<PackageDocument> {
     // todo pass in auth
@@ -73,7 +73,7 @@ export class GithubClient extends JsonHttpClientRequest {
 
         const source: PackageSourceTypes = PackageSourceTypes.Github;
 
-        const provider = request.clientData.providerName;
+        const { providerName } = request;
 
         const requested = request.package;
 
@@ -101,7 +101,7 @@ export class GithubClient extends JsonHttpClientRequest {
         );
 
         return {
-          provider,
+          providerName,
           source,
           response,
           type,
@@ -114,7 +114,10 @@ export class GithubClient extends JsonHttpClientRequest {
 
   }
 
-  fetchCommits(request: PackageRequest<NpmConfig>, npaSpec: NpaSpec): Promise<PackageDocument> {
+  fetchCommits(
+    request: PackageRequest<null>,
+    npaSpec: NpaSpec
+  ): Promise<PackageDocument> {
     // todo pass in auth
     const { user, project } = npaSpec.hosted;
     const commitsRepoUrl = `https://api.github.com/repos/${user}/${project}/commits`;
@@ -128,7 +131,7 @@ export class GithubClient extends JsonHttpClientRequest {
 
         const source: PackageSourceTypes = PackageSourceTypes.Github;
 
-        const provider = request.clientData.providerName;
+        const { providerName } = request;
 
         const requested = request.package;
 
@@ -139,14 +142,16 @@ export class GithubClient extends JsonHttpClientRequest {
         if (commits.length === 0) {
           // no commits found
           return DocumentFactory.createNotFound(
-            provider,
+            providerName,
             requested,
             PackageVersionTypes.Version,
             ResponseFactory.createResponseStatus(response.source, 404)
           )
         }
 
-        const commitIndex = commits.findIndex(commit => commit.indexOf(versionRange) > -1);
+        const commitIndex = commits.findIndex(
+          commit => commit.indexOf(versionRange) > -1
+        );
 
         const latestCommit = commits[commits.length - 1].substring(0, 8);
 
@@ -178,7 +183,7 @@ export class GithubClient extends JsonHttpClientRequest {
         }
 
         return {
-          provider,
+          providerName,
           source,
           response,
           type,

@@ -9,7 +9,7 @@ import { PackageIdentifier } from '../definitions/packageRequest';
 import { PackageResponseStatus } from '../definitions/packageResponse';
 
 export function createNotFound(
-  provider: string,
+  providerName: string,
   requested: PackageIdentifier,
   type: PackageVersionTypes,
   response: PackageResponseStatus
@@ -21,7 +21,7 @@ export function createNotFound(
   ];
 
   return {
-    provider,
+    providerName,
     source,
     type,
     requested,
@@ -32,7 +32,7 @@ export function createNotFound(
 }
 
 export function createInvalidVersion(
-  provider: string,
+  providerName: string,
   requested: PackageIdentifier,
   response: PackageResponseStatus,
   type: PackageVersionTypes
@@ -44,7 +44,7 @@ export function createInvalidVersion(
   ];
 
   return {
-    provider,
+    providerName,
     source,
     type,
     requested,
@@ -55,7 +55,7 @@ export function createInvalidVersion(
 }
 
 export function createNotSupported(
-  provider: string,
+  providerName: string,
   requested: PackageIdentifier,
   response: PackageResponseStatus,
   type: PackageVersionTypes
@@ -67,7 +67,7 @@ export function createNotSupported(
   ];
 
   return {
-    provider,
+    providerName,
     source,
     type,
     requested,
@@ -78,7 +78,7 @@ export function createNotSupported(
 }
 
 export function createGitFailed(
-  provider: string,
+  providerName: string,
   requested: PackageIdentifier,
   response: PackageResponseStatus,
   type: PackageVersionTypes
@@ -89,7 +89,7 @@ export function createGitFailed(
   ]
 
   return {
-    provider,
+    providerName,
     source,
     type,
     requested,
@@ -100,7 +100,7 @@ export function createGitFailed(
 }
 
 export function createNoMatch(
-  provider: string,
+  providerName: string,
   source: PackageSourceTypes,
   type: PackageVersionTypes,
   requested: PackageIdentifier,
@@ -114,7 +114,7 @@ export function createNoMatch(
   ];
 
   return {
-    provider,
+    providerName,
     source,
     type,
     requested,
@@ -125,7 +125,7 @@ export function createNoMatch(
 }
 
 export function createFourSegment(
-  provider: string,
+  providerName: string,
   requested: PackageIdentifier,
   response: PackageResponseStatus,
   type: PackageVersionTypes
@@ -134,7 +134,7 @@ export function createFourSegment(
   const suggestions: Array<PackageSuggestion> = [];
 
   return {
-    provider,
+    providerName,
     source,
     type,
     requested,
@@ -146,7 +146,7 @@ export function createFourSegment(
 
 
 export function createFixed(
-  provider: string,
+  providerName: string,
   source: PackageSourceTypes,
   requested: PackageIdentifier,
   response: PackageResponseStatus,
@@ -159,7 +159,7 @@ export function createFixed(
   ];
 
   return {
-    provider,
+    providerName,
     source,
     type,
     requested,

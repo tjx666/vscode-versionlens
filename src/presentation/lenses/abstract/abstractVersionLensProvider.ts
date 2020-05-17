@@ -2,23 +2,23 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { getExtension, VersionLensExtension } from 'presentation/extension';
+import { VersionLensExtension } from 'presentation/extension';
 import { ILogger } from 'core/logging';
 
 import {
   PackageSourceTypes,
-  PackageResponseErrors,
-  IPackageProviderOptions
+  PackageResponseErrors
 } from 'core/packages';
 
 import * as CommandFactory from 'presentation/commands/factory';
 
 import { IVersionCodeLens } from "../definitions/iVersionCodeLens";
 import { VersionLens } from "../models/versionLens";
+import { IProviderConfig } from './abstractProviderConfig';
 
 export type VersionLensFetchResponse = Promise<VersionLens[] | null>;
 
-export abstract class AbstractVersionLensProvider<TConfig extends IPackageProviderOptions> {
+export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfig>  {
 
   _onChangeCodeLensesEmitter: VsCodeTypes.EventEmitter<void>;
 
@@ -26,14 +26,13 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
 
   config: TConfig;
 
-  // packagePath: string;
   logger: ILogger;
 
   extension: VersionLensExtension;
 
-  abstract updateOutdated(packagePath: string): Promise<any>;
+  // abstract updateOutdated(packagePath: string): Promise<any>;
 
-  // abstract generateDecorations(versionLens: VersionLens);
+  // abstract generateDecorations(versionLens: VersionLens): void;
 
   abstract fetchVersionLenses(
     packagePath: string,
@@ -41,18 +40,13 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse;
 
-  constructor(
-    config: TConfig,
-    logger: ILogger
-  ) {
+  constructor(config: TConfig, logger: ILogger) {
     const { EventEmitter } = require('vscode');
     this.config = config;
     this._onChangeCodeLensesEmitter = new EventEmitter();
     this.onDidChangeCodeLenses = this._onChangeCodeLensesEmitter.event;
     this.logger = logger;
-
-    // todo add to constructor
-    this.extension = getExtension();
+    this.extension = config.extension;
   }
 
   reload() {
@@ -65,8 +59,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
   ): Promise<VersionLens[] | null> {
     if (this.extension.state.enabled.value === false) return null;
 
-
-    // package path (todo abstract this)
+    // package path
     const { dirname } = require('path');
     const packagePath = dirname(document.uri.fsPath);
 
@@ -78,7 +71,11 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
     //    this.logger.clear()
     // }
 
-    return this.fetchVersionLenses(packagePath, document, token);
+    return this.fetchVersionLenses(
+      packagePath,
+      document,
+      token
+    );
   }
 
   async resolveCodeLens(
@@ -105,9 +102,6 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
     codeLens: IVersionCodeLens,
     token: VsCodeTypes.CancellationToken
   ) {
-    // if (codeLens.isMetaType('github'))
-    //   return CommandFactory.createGithubCommand(codeLens);
-
     if (codeLens.hasPackageError(PackageResponseErrors.Unexpected))
       return CommandFactory.createPackageUnexpectedError(codeLens);
 
@@ -122,9 +116,6 @@ export abstract class AbstractVersionLensProvider<TConfig extends IPackageProvid
 
     if (codeLens.hasPackageSource(PackageSourceTypes.Directory))
       return CommandFactory.createDirectoryLinkCommand(codeLens);
-
-    // generate decoration
-    // if (appSettings.showDependencyStatuses) this.generateDecoration(codeLens);
 
     return CommandFactory.createSuggestedVersionCommand(codeLens)
   }

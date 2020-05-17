@@ -48,22 +48,19 @@ export class MavenVersionLensProvider
 
       const repositories = repos.filter(repo => repo.protocol === RegistryProtocols.https)
 
+      const includePrereleases = this.extension.state.prereleasesEnabled.value;
+
       const clientData: MavenClientData = {
-        provider: this.config.providerName,
         repositories,
       }
 
-      const includePrereleases = this.extension.state.prereleasesEnabled.value;
-
       const context = {
-        providerName: this.config.providerName,
         includePrereleases,
-        client: this.mavenClient,
         clientData,
-        logger: this.logger,
       }
 
       return VersionLensFactory.createVersionLenses(
+        this.mavenClient,
         document,
         packageDependencies,
         context,
@@ -71,10 +68,6 @@ export class MavenVersionLensProvider
 
     })
 
-  }
-
-  async updateOutdated(packagePath: string): Promise<any> {
-    return Promise.resolve();
   }
 
 }

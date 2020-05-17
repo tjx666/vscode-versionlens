@@ -12,7 +12,7 @@ export async function createPackageRequest<TClientData>(
   replaceVersionFn: ReplaceVersionFunction,
 ): Promise<Array<PackageResponse> | PackageResponse> {
 
-  request.logger.info(
+  client.logger.info(
     `Queued %s package: %s`,
     request.providerName,
     request.package.name
@@ -21,9 +21,9 @@ export async function createPackageRequest<TClientData>(
   return client.fetchPackage(request)
     .then(function (document) {
 
-      request.logger.info(
+      client.logger.info(
         'Fetched %s package from %s: %s@%s',
-        document.provider,
+        document.providerName,
         document.response.source,
         request.package.name,
         request.package.version
@@ -39,16 +39,16 @@ export async function createPackageRequest<TClientData>(
     })
     .catch(function (error: PackageResponse) {
 
-      request.logger.error(
+      client.logger.error(
         `Provider: %s\tFunction: %s\tPackage: %O\t Error: %j`,
-        error.provider,
+        error.providerName,
         createPackageRequest.name,
         request.package,
         error
       );
 
       return ResponseFactory.createUnexpected(
-        error.provider,
+        error.providerName,
         request.package,
         {
           source: error.response.source,

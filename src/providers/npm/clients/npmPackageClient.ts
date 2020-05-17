@@ -20,9 +20,11 @@ import { PacoteClient } from './pacoteClient';
 import { GithubClient } from './githubClient';
 import { createResponseStatus } from 'core/packages/factories/packageResponseFactory';
 
-export class NpmPackageClient implements IPackageClient<NpmConfig> {
+export class NpmPackageClient implements IPackageClient<null> {
 
-  options: NpmConfig;
+  logger: ILogger;
+
+  config: NpmConfig;
 
   pacoteClient: PacoteClient;
 
@@ -33,12 +35,13 @@ export class NpmPackageClient implements IPackageClient<NpmConfig> {
     cacheDuration: number,
     logger: ILogger
   ) {
-    this.options = config;
+    this.config = config;
+    this.logger = logger;
     this.pacoteClient = new PacoteClient(config, cacheDuration, logger);
     this.githubClient = new GithubClient(config, cacheDuration, logger);
   }
 
-  async fetchPackage(request: PackageRequest<NpmConfig>): Promise<PackageDocument> {
+  async fetchPackage(request: PackageRequest<null>): Promise<PackageDocument> {
     const npa = require('npm-package-arg');
 
     return new Promise<PackageDocument>((resolve, reject) => {
@@ -54,7 +57,7 @@ export class NpmPackageClient implements IPackageClient<NpmConfig> {
       } catch (error) {
         return reject(
           ResponseFactory.createUnexpected(
-            this.options.providerName,
+            request.providerName,
             request.package,
             {
               source: ClientResponseSource.remote,
@@ -69,7 +72,7 @@ export class NpmPackageClient implements IPackageClient<NpmConfig> {
       if (npaSpec.type === NpaTypes.Directory || npaSpec.type === NpaTypes.File) {
         return resolve(
           PackageFactory.createDirectory(
-            this.options.providerName,
+            request.providerName,
             request.package,
             ResponseFactory.createResponseStatus(ClientResponseSource.local, 200),
             npaSpec,
@@ -83,7 +86,7 @@ export class NpmPackageClient implements IPackageClient<NpmConfig> {
           // could not resolve
           return resolve(
             DocumentFactory.createInvalidVersion(
-              this.options.providerName,
+              request.providerName,
               request.package,
               createResponseStatus(ClientResponseSource.local, 0),
               PackageVersionTypes.Committish
@@ -95,7 +98,7 @@ export class NpmPackageClient implements IPackageClient<NpmConfig> {
         if (!npaSpec.gitCommittish && npaSpec.hosted.default !== 'shortcut') {
           return resolve(
             DocumentFactory.createFixed(
-              this.options.providerName,
+              request.providerName,
               PackageSourceTypes.Git,
               request.package,
               createResponseStatus(ClientResponseSource.local, 0),
@@ -119,7 +122,7 @@ export class NpmPackageClient implements IPackageClient<NpmConfig> {
 
       if (response.status === 'E404') {
         return DocumentFactory.createNotFound(
-          this.options.providerName,
+          request.providerName,
           request.package,
           null,
           ResponseFactory.createResponseStatus(response.source, 404)
@@ -128,7 +131,7 @@ export class NpmPackageClient implements IPackageClient<NpmConfig> {
 
       if (response.status === 'EINVALIDTAGNAME' || response.data.includes('Invalid comparator:')) {
         return DocumentFactory.createInvalidVersion(
-          this.options.providerName,
+          request.providerName,
           request.package,
           ResponseFactory.createResponseStatus(response.source, 404),
           null
@@ -137,7 +140,7 @@ export class NpmPackageClient implements IPackageClient<NpmConfig> {
 
       if (response.status === 'EUNSUPPORTEDPROTOCOL') {
         return DocumentFactory.createNotSupported(
-          this.options.providerName,
+          request.providerName,
           request.package,
           ResponseFactory.createResponseStatus(response.source, 404),
           null
@@ -146,7 +149,7 @@ export class NpmPackageClient implements IPackageClient<NpmConfig> {
 
       if (response.status === 128) {
         return DocumentFactory.createGitFailed(
-          this.options.providerName,
+          request.providerName,
           request.package,
           ResponseFactory.createResponseStatus(response.source, 404),
           null

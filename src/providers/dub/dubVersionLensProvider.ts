@@ -53,14 +53,12 @@ export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfi
     const includePrereleases = this.extension.state.prereleasesEnabled.value;
 
     const context = {
-      providerName: this.config.providerName,
       includePrereleases,
-      client: this.dubClient,
-      clientData: this.config,
-      logger: this.logger,
+      clientData: null,
     }
 
     return VersionLensFactory.createVersionLenses(
+      this.dubClient,
       document,
       packageDepsLenses,
       context,
@@ -80,7 +78,7 @@ export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfi
       })
   }
 
-  generateDecoration(versionLens: VersionLens) {
+  generateDecorations(versionLens: VersionLens): void {
     const currentPackageName = versionLens.package.requested.name;
     const currentPackageVersion = versionLens.package.requested.version;
 

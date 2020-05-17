@@ -2,7 +2,6 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { ILogger } from 'core/logging';
 import {
   IPackageDependencyLens,
   PackageResponseAggregate,
@@ -15,19 +14,17 @@ import {
 import { VersionLensFetchResponse } from 'presentation/lenses';
 import { VersionLens } from '../models/versionLens';
 
-export type CreateVersionLensesContext<TPackageClientData> = {
-  providerName: string,
+export type PackageClientContext<TClientData> = {
   includePrereleases: boolean;
-  client: IPackageClient<TPackageClientData>,
-  clientData: TPackageClientData,
+  clientData: TClientData,
   replaceVersion?: ReplaceVersionFunction,
-  logger: ILogger,
 }
 
 export async function createVersionLenses<TClientData>(
+  client: IPackageClient<TClientData>,
   document: VsCodeTypes.TextDocument,
   dependencies: Array<IPackageDependencyLens>,
-  context: CreateVersionLensesContext<TClientData>,
+  context: PackageClientContext<TClientData>,
 ): VersionLensFetchResponse {
 
   const results = [];
@@ -37,6 +34,7 @@ export async function createVersionLenses<TClientData>(
   const promises = dependencies.map(
     function (dependency) {
       const promisedDependency = resolveDependency(
+        client,
         packagePath,
         dependency,
         document,
@@ -52,33 +50,30 @@ export async function createVersionLenses<TClientData>(
 }
 
 async function resolveDependency<TClientData>(
+  client: IPackageClient<TClientData>,
   packagePath: string,
   dependency: IPackageDependencyLens,
   document: VsCodeTypes.TextDocument,
-  context: CreateVersionLensesContext<TClientData>,
+  context: PackageClientContext<TClientData>,
 ): Promise<Array<VersionLens>> {
 
   const { name, version } = dependency.packageInfo;
 
   const {
-    providerName,
     includePrereleases,
-    client,
     clientData,
-    logger,
     replaceVersion,
   } = context;
 
   const request: PackageRequest<TClientData> = {
-    providerName,
+    providerName: client.config.options.providerName,
     includePrereleases,
     clientData,
     package: {
       name,
       version,
       path: packagePath,
-    },
-    logger
+    }
   };
 
   return RequestFactory.createPackageRequest(

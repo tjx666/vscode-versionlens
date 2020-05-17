@@ -19,7 +19,7 @@ export function createSuccess(document: PackageDocument, replaceVersionFn: Repla
   // map the documents to responses
   return document.suggestions.map(function (suggestion: PackageSuggestion): PackageResponse {
     return {
-      provider: document.provider,
+      providerName: document.providerName,
       source: document.source,
       type: document.type,
       requested: document.requested,
@@ -30,9 +30,9 @@ export function createSuccess(document: PackageDocument, replaceVersionFn: Repla
   });
 }
 
-export function createNotSupported(provider: string, requested: PackageIdentifier): PackageResponse {
+export function createNotSupported(providerName: string, requested: PackageIdentifier): PackageResponse {
   const error: PackageResponse = {
-    provider,
+    providerName,
     requested,
     error: PackageResponseErrors.NotSupported,
     errorMessage: "Package registry not supported",
@@ -40,9 +40,9 @@ export function createNotSupported(provider: string, requested: PackageIdentifie
   return error;
 }
 
-export function createNotFound(provider: string, requested: PackageIdentifier): PackageResponse {
+export function createNotFound(providerName: string, requested: PackageIdentifier): PackageResponse {
   const error: PackageResponse = {
-    provider,
+    providerName,
     requested,
     error: PackageResponseErrors.NotFound,
     errorMessage: "Package not found",
@@ -76,12 +76,12 @@ export function createNotFound(provider: string, requested: PackageIdentifier): 
 // }
 
 export function createUnexpected(
-  provider: string,
+  providerName: string,
   requested: PackageIdentifier,
   response: HttpClientResponse
 ): PackageResponse {
   const error: PackageResponse = {
-    provider,
+    providerName,
     requested,
     error: PackageResponseErrors.Unexpected,
     errorMessage: response.data,

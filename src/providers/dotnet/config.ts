@@ -1,5 +1,9 @@
-import { IPackageProviderOptions, PackageFileFilter } from "core/packages";
 import { VersionLensExtension } from 'presentation/extension';
+import {
+  IProviderOptions,
+  IProviderConfig,
+  ProviderSupport
+} from "presentation/lenses";
 
 export enum DotnetContributions {
   DependencyProperties = 'dotnet.dependencyProperties',
@@ -10,17 +14,20 @@ export enum DotnetContributions {
   IncludePrerelease = 'dotnet.includePrerelease',
 }
 
-const options = {
-  name: 'dotnet',
-  group: ['tags'],
-  selector: {
-    language: 'xml',
-    scheme: 'file',
-    pattern: '**/*.{csproj,fsproj,targets,props}',
-  }
-}
+export class DotNetConfig implements IProviderConfig {
 
-export class DotNetConfig implements IPackageProviderOptions {
+  options: IProviderOptions = {
+    providerName: 'dotnet',
+    supports: [
+      ProviderSupport.Releases,
+      ProviderSupport.Prereleases,
+    ],
+    selector: {
+      language: 'xml',
+      scheme: 'file',
+      pattern: '**/*.{csproj,fsproj,targets,props}',
+    }
+  };
 
   extension: VersionLensExtension;
 
@@ -39,18 +46,6 @@ export class DotNetConfig implements IPackageProviderOptions {
       'PackageReference',
       'DotNetCliToolReference'
     ];
-  }
-
-  get providerName(): string {
-    return options.name;
-  }
-
-  get group(): Array<string> {
-    return options.group;
-  }
-
-  get selector(): PackageFileFilter {
-    return options.selector;
   }
 
   getDependencyProperties() {

@@ -9,7 +9,7 @@ export default {
 
     "handles #tag|commit|semver:": () => {
       const packageInfo: PackageResponse = {
-        provider: 'testreplace',
+        providerName: 'testreplace',
         source: PackageSourceTypes.Github,
         requested: {
           path: 'packagepath',

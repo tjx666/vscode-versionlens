@@ -29,10 +29,10 @@ export class NpmVersionLensProvider
 
   _outdatedCache: Array<any>;
 
-  packageClient: IPackageClient<NpmConfig>;
+  packageClient: IPackageClient<null>;
 
   constructor(
-    pacoteClient: IPackageClient<NpmConfig>,
+    pacoteClient: IPackageClient<null>,
     config: NpmConfig,
     logger: ILogger
   ) {
@@ -57,15 +57,13 @@ export class NpmVersionLensProvider
     const includePrereleases = this.extension.state.prereleasesEnabled.value;
 
     const context = {
-      providerName: this.config.providerName,
       includePrereleases,
-      client: this.packageClient,
-      clientData: this.config,
-      logger: this.logger,
+      clientData: null,
       replaceVersion: npmReplaceVersion
     }
 
     return VersionLensFactory.createVersionLenses(
+      this.packageClient,
       document,
       packageDepsLenses,
       context
@@ -158,7 +156,6 @@ export class NpmVersionLensProvider
 
       })
       .catch(console.error);
-
   }
 
 } // End NpmCodeLensProvider

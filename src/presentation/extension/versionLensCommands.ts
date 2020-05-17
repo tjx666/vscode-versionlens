@@ -3,7 +3,6 @@ import * as VsCodeTypes from 'vscode';
 
 import { ILogger } from 'core/logging';
 import { PackageSourceTypes } from 'core/packages';
-
 import { providerRegistry } from 'presentation/providers';
 
 import { VersionLensExtension } from "./versionLensExtension";
@@ -11,8 +10,8 @@ import * as InstalledStatusHelpers from './helpers/installedStatusHelpers';
 import { VersionLensState } from './versionLensState';
 
 export enum CommandContributions {
-  ShowDependencyStatuses = 'versionlens.onShowDependencyStatuses',
-  HideDependencyStatuses = 'versionlens.onHideDependencyStatuses',
+  ShowInstalledStatuses = 'versionlens.onShowInstalledStatuses',
+  HideInstalledStatuses = 'versionlens.onHideInstalledStatuses',
   ShowTaggedVersions = 'versionlens.onShowTaggedVersions',
   HideTaggedVersions = 'versionlens.onHideTaggedVersions',
   ShowVersionLenses = 'versionlens.onShowVersionLenses',
@@ -31,12 +30,6 @@ export class VersionLensCommands {
   constructor(extensionState: VersionLensState, logger: ILogger) {
     this.logger = logger;
     this.state = extensionState;
-
-    const { window, workspace } = require('vscode');
-
-    // register window and workspace events
-    window.onDidChangeActiveTextEditor(this.onDidChangeActiveTextEditor.bind(this));
-    workspace.onDidChangeTextDocument(this.onDidChangeTextDocument.bind(this))
   }
 
   onShowVersionLenses(file) {
@@ -67,15 +60,15 @@ export class VersionLensCommands {
       });
   }
 
-  onShowDependencyStatuses(file) {
-    this.state.showDependencyStatuses.change(true)
+  onShowInstalledStatuses(file) {
+    this.state.showInstalledStatuses.change(true)
       .then(_ => {
         reloadActiveProviders();
       });
   }
 
-  onHideDependencyStatuses(file) {
-    this.state.showDependencyStatuses.change(false)
+  onHideInstalledStatuses(file) {
+    this.state.showInstalledStatuses.change(false)
       .then(_ => {
         InstalledStatusHelpers.clearDecorations();
       });
@@ -106,61 +99,6 @@ export class VersionLensCommands {
     opener(codeLens.package.meta.remoteUrl);
   }
 
-  onDidChangeActiveTextEditor(textEditor: VsCodeTypes.TextEditor) {
-    // maintain versionLens.providerActive state
-    // each time the active editor changes
-    if (!textEditor) {
-      this.state.providerActive.value = false;
-      return;
-    }
-
-    // clearDecorations();
-
-    if (!textEditor.document) {
-      this.state.providerActive.value = false;
-      return;
-    }
-
-    if (providerRegistry.getByFileName(textEditor.document.fileName)) {
-      this.state.providerActive.value = true;
-      return;
-    }
-
-    this.state.providerActive.value = false;
-  }
-
-  onDidChangeTextDocument(changeEvent: VsCodeTypes.TextDocumentChangeEvent) {
-    // ensure version lens is active
-    if (this.state.providerActive.value === false) {
-      return;
-    }
-
-    const foundDecorations = [];
-    const { contentChanges } = changeEvent;
-
-    // get all decorations for all the lines that have changed
-    contentChanges.forEach(change => {
-      const startLine = change.range.start.line;
-      let endLine = change.range.end.line;
-
-      if (change.text.charAt(0) == '\n' || endLine > startLine) {
-        InstalledStatusHelpers.removeDecorationsFromLine(startLine)
-        return;
-      }
-
-      for (let line = startLine; line <= endLine; line++) {
-        const lineDecorations = InstalledStatusHelpers.getDecorationsByLine(line);
-        if (lineDecorations.length > 0)
-          foundDecorations.push(...lineDecorations);
-      }
-    })
-
-    if (foundDecorations.length === 0) return;
-
-    // remove all decorations that have changed
-    InstalledStatusHelpers.removeDecorations(foundDecorations);
-  }
-
 }
 
 function reloadActiveProviders() {
@@ -173,12 +111,10 @@ function reloadActiveProviders() {
   return true;
 }
 
-export type RegisterCommandsResult = {
-  extensionCommands: VersionLensCommands,
-  disposables: Array<VsCodeTypes.Disposable>
-};
-
-export function registerCommands(extension: VersionLensExtension, logger: ILogger): RegisterCommandsResult {
+export function registerCommands(
+  extension: VersionLensExtension,
+  logger: ILogger
+): Array<VsCodeTypes.Disposable> {
 
   const { commands } = require('vscode');
 
@@ -213,8 +149,5 @@ export function registerCommands(extension: VersionLensExtension, logger: ILogge
       )
     });
 
-  return {
-    extensionCommands,
-    disposables
-  };
+  return disposables;
 }

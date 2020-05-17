@@ -12,7 +12,7 @@ import {
 } from "../definitions/packageResponse";
 
 export class PackageResponse {
-  provider: string;
+  providerName: string;
   requested: PackageIdentifier;
   error?: PackageResponseErrors;
   errorMessage?: string;

@@ -45,8 +45,3 @@ export function registerExtension(config: IRootConfig): VersionLensExtension {
   _extensionSingleton = new VersionLensExtension(config);
   return _extensionSingleton;
 }
-
-// todo change how this is accessed
-export function getExtension(): VersionLensExtension {
-  return _extensionSingleton;
-}

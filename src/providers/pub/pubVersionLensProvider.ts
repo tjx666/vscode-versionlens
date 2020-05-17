@@ -19,11 +19,7 @@ export class PubVersionLensProvider
 
   pubClient: PubClient;
 
-  constructor(
-    pubClient: PubClient,
-    config: PubConfig,
-    logger: ILogger
-  ) {
+  constructor(pubClient: PubClient, config: PubConfig, logger: ILogger) {
     super(config, logger);
     this.pubClient = pubClient;
   }
@@ -43,14 +39,12 @@ export class PubVersionLensProvider
     const includePrereleases = this.extension.state.prereleasesEnabled.value;
 
     const context = {
-      providerName: this.config.providerName,
       includePrereleases,
-      client: this.pubClient,
-      clientData: this.config,
-      logger: this.logger,
-    }
+      clientData: null,
+    };
 
     return VersionLensFactory.createVersionLenses(
+      this.pubClient,
       document,
       packageDepsLenses,
       context,

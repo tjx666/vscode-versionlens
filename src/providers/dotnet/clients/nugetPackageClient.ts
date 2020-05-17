@@ -30,11 +30,11 @@ export class NuGetPackageClient
   extends JsonHttpClientRequest
   implements IPackageClient<NuGetClientData> {
 
-  options: DotNetConfig;
+  config: DotNetConfig;
 
   constructor(config: DotNetConfig, cacheDuration: number, logger: ILogger) {
     super(logger, {}, cacheDuration)
-    this.options = config;
+    this.config = config;
   }
 
   async fetchPackage(request: PackageRequest<NuGetClientData>): Promise<PackageDocument> {
@@ -46,7 +46,7 @@ export class NuGetPackageClient
       .catch((error: HttpClientResponse) => {
         if (error.status === 404) {
           return DocumentFactory.createNotFound(
-            request.clientData.provider,
+            request.providerName,
             request.package,
             null,
             { status: error.status, source: error.source }
@@ -80,13 +80,13 @@ async function createRemotePackageDocument(
 
       const source = PackageSourceTypes.Registry;
 
-      const provider = request.providerName;
+      const { providerName } = request;
 
       const requested = request.package;
 
       if (data.totalHits === 0) {
         return DocumentFactory.createNotFound(
-          provider,
+          providerName,
           requested,
           PackageVersionTypes.Version,
           ResponseFactory.createResponseStatus(httpResponse.source, 404)
@@ -109,7 +109,7 @@ async function createRemotePackageDocument(
       // four segment is not supported
       if (dotnetSpec.spec && dotnetSpec.spec.hasFourSegments) {
         return DocumentFactory.createFourSegment(
-          provider,
+          providerName,
           requested,
           ResponseFactory.createResponseStatus(httpResponse.source, 404),
           <any>dotnetSpec.type,
@@ -119,7 +119,7 @@ async function createRemotePackageDocument(
       // no match if null type
       if (dotnetSpec.type === null) {
         return DocumentFactory.createNoMatch(
-          provider,
+          providerName,
           source,
           PackageVersionTypes.Version,
           requested,
@@ -144,7 +144,7 @@ async function createRemotePackageDocument(
       );
 
       return {
-        provider,
+        providerName,
         source,
         response,
         type: dotnetSpec.type,

@@ -34,19 +34,19 @@ export class PacoteClient extends JsonHttpClientRequest {
     this.options = config;
   }
 
-  async fetchPackage(request: PackageRequest<NpmConfig>, npaSpec: NpaSpec): Promise<PackageDocument> {
+  async fetchPackage(request: PackageRequest<null>, npaSpec: NpaSpec): Promise<PackageDocument> {
     return createPacotePackageDocument(request, npaSpec)
   }
 
 }
 
 async function createPacotePackageDocument(
-  request: PackageRequest<NpmConfig>,
+  request: PackageRequest<null>,
   npaSpec: NpaSpec
 ): Promise<PackageDocument> {
 
   const pacote = require('pacote');
-  
+
   const npmConfig = require('libnpmconfig');
 
   // get npm config
@@ -63,10 +63,10 @@ async function createPacotePackageDocument(
 
   return pacote.packument(npaSpec, npmOpts)
     .then(function (packumentResponse): PackageDocument {
-      
+
       const { compareLoose } = require("semver");
 
-      const { providerName: provider } = request.clientData;
+      const { providerName } = request;
 
       const source: PackageSourceTypes = PackageSourceTypes.Registry;
 
@@ -102,7 +102,7 @@ async function createPacotePackageDocument(
       if (npaSpec.type === NpaTypes.Tag) {
         versionRange = distTags[requested.version];
         if (!versionRange) return DocumentFactory.createNoMatch(
-          provider,
+          providerName,
           source,
           type,
           requested,
@@ -120,7 +120,7 @@ async function createPacotePackageDocument(
       );
 
       return {
-        provider,
+        providerName,
         source,
         response,
         type,
@@ -137,7 +137,7 @@ async function createPacotePackageDocument(
       };
       return Promise.reject(
         ResponseFactory.createUnexpected(
-          request.clientData.providerName,
+          request.providerName,
           request.package,
           response,
         )

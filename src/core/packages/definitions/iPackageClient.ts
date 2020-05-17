@@ -1,12 +1,16 @@
-import { IPackageProviderOptions } from "core/packages";
 import { PackageRequest } from "./packageRequest";
 import { PackageDocument } from "./packageDocument";
+import { IProviderConfig } from "presentation/lenses";
+import { ILogger } from "core/logging/definitions";
 
-export interface IPackageClient<TClientConfig> {
+export interface IPackageClient<TClientData> {
 
-  options: IPackageProviderOptions,
+  logger: ILogger;
 
-  fetchPackage: (request: PackageRequest<TClientConfig>)
+  config: IProviderConfig,
+
+
+  fetchPackage: (request: PackageRequest<TClientData>)
     => Promise<PackageDocument>;
 
 }

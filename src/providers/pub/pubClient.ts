@@ -24,9 +24,9 @@ import { ILogger } from 'core/logging';
 
 export class PubClient
   extends JsonHttpClientRequest
-  implements IPackageClient<PubConfig> {
+  implements IPackageClient<null> {
 
-  options: PubConfig;
+  config: PubConfig;
 
   constructor(
     config: PubConfig,
@@ -34,18 +34,18 @@ export class PubClient
     logger: ILogger
   ) {
     super(logger, {}, cacheDuration)
-    this.options = config;
+    this.config = config;
   }
 
-  async fetchPackage(request: PackageRequest<PubConfig>): Promise<PackageDocument> {
+  async fetchPackage(request: PackageRequest<null>): Promise<PackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
-    const url = `${this.options.getApiUrl()}/api/documentation/${request.package.name}`;
+    const url = `${this.config.getApiUrl()}/api/documentation/${request.package.name}`;
 
     return createRemotePackageDocument(this, url, request, semverSpec)
       .catch((error: HttpClientResponse) => {
         if (error.status === 404) {
           return DocumentFactory.createNotFound(
-            this.options.providerName,
+            request.providerName,
             request.package,
             null,
             ResponseFactory.createResponseStatus(error.source, error.status)
@@ -60,7 +60,7 @@ export class PubClient
 async function createRemotePackageDocument(
   client: JsonHttpClientRequest,
   url: string,
-  request: PackageRequest<PubConfig>,
+  request: PackageRequest<null>,
   semverSpec: SemverSpec
 ): Promise<PackageDocument> {
 
@@ -69,7 +69,7 @@ async function createRemotePackageDocument(
 
       const packageInfo = httpResponse.data;
 
-      const provider = request.providerName;
+      const { providerName } = request;
 
       const versionRange = semverSpec.rawVersion;
 
@@ -99,7 +99,7 @@ async function createRemotePackageDocument(
 
       // return PackageDocument
       return {
-        provider,
+        providerName,
         source: PackageSourceTypes.Registry,
         response,
         type: semverSpec.type,

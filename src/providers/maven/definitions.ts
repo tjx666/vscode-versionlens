@@ -6,6 +6,5 @@ export type MavenRepository = {
 }
 
 export type MavenClientData = {
-  provider: string,
   repositories: Array<MavenRepository>
 }

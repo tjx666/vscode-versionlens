@@ -6,7 +6,9 @@ import { createLogger } from 'infrastructure/logging';
 import { registerProviders } from 'presentation/providers';
 import {
   registerExtension,
-  registerCommands
+  registerCommands,
+  registerTextEditorEvents,
+  registerTextDocumentEvents,
 } from 'presentation/extension';
 
 export async function activate(context: VsCodeTypes.ExtensionContext) {
@@ -20,10 +22,11 @@ export async function activate(context: VsCodeTypes.ExtensionContext) {
 
   const logger = createLogger(extension);
 
-  const {
-    extensionCommands,
-    disposables
-  } = registerCommands(extension, logger);
+  const textEditorEvents = registerTextEditorEvents(extension.state);
+
+  registerTextDocumentEvents(extension.state);
+
+  const disposables = registerCommands(extension, logger);
 
   await registerProviders(extension, logger)
     .then(disposables => {
@@ -34,7 +37,7 @@ export async function activate(context: VsCodeTypes.ExtensionContext) {
   context.subscriptions.push(<any>disposables);
 
   // show icons in active text editor if versionLens.providerActive
-  extensionCommands.onDidChangeActiveTextEditor(
+  textEditorEvents.onDidChangeActiveTextEditor(
     window.activeTextEditor
   );
 }

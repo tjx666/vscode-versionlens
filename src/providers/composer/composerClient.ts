@@ -16,18 +16,16 @@ import {
   JsonClientResponse,
 } from "core/clients";
 
-import {
-  JsonHttpClientRequest
-} from 'infrastructure/clients';
+import { JsonHttpClientRequest } from 'infrastructure/clients';
 
 import { ComposerConfig } from './config';
 import { ILogger } from "core/logging";
 
 export class ComposerClient
   extends JsonHttpClientRequest
-  implements IPackageClient<ComposerConfig> {
+  implements IPackageClient<null> {
 
-  options: ComposerConfig;
+  config: ComposerConfig;
 
   constructor(
     config: ComposerConfig,
@@ -35,18 +33,18 @@ export class ComposerClient
     logger: ILogger
   ) {
     super(logger, {}, cacheDuration)
-    this.options = config;
+    this.config = config;
   }
 
-  async fetchPackage(request: PackageRequest<ComposerConfig>): Promise<PackageDocument> {
+  async fetchPackage<TClientData>(request: PackageRequest<TClientData>): Promise<PackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
-    const url = `${this.options.getApiUrl()}/${request.package.name}.json`;
+    const url = `${this.config.getApiUrl()}/${request.package.name}.json`;
 
     return createRemotePackageDocument(this, url, request, semverSpec)
       .catch((error: HttpClientResponse) => {
         if (error.status === 404) {
           return DocumentFactory.createNotFound(
-            this.options.providerName,
+            request.providerName,
             request.package,
             null,
             ResponseFactory.createResponseStatus(error.source, error.status)
@@ -58,10 +56,10 @@ export class ComposerClient
 
 }
 
-async function createRemotePackageDocument(
+async function createRemotePackageDocument<TClientData>(
   client: JsonHttpClientRequest,
   url: string,
-  request: PackageRequest<ComposerConfig>,
+  request: PackageRequest<TClientData>,
   semverSpec: SemverSpec
 ): Promise<PackageDocument> {
 
@@ -69,7 +67,7 @@ async function createRemotePackageDocument(
     .then(function (httpResponse: JsonClientResponse): PackageDocument {
       const packageInfo = httpResponse.data.packages[request.package.name];
 
-      const provider = request.providerName;
+      const { providerName } = request;
 
       const versionRange = semverSpec.rawVersion;
 
@@ -103,7 +101,7 @@ async function createRemotePackageDocument(
       );
 
       return {
-        provider,
+        providerName,
         source: PackageSourceTypes.Registry,
         response,
         type: semverSpec.type,

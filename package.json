@@ -94,7 +94,7 @@
         }
       },
       {
-        "command": "versionlens.onShowDependencyStatuses",
+        "command": "versionlens.onShowInstalledStatuses",
         "title": "Show dependency statuses",
         "category": "VersionLens",
         "icon": {
@@ -103,7 +103,7 @@
         }
       },
       {
-        "command": "versionlens.onHideDependencyStatuses",
+        "command": "versionlens.onHideInstalledStatuses",
         "title": "Hide dependency statuses",
         "category": "VersionLens",
         "icon": {
@@ -146,11 +146,11 @@
           "when": "false"
         },
         {
-          "command": "versionlens.onShowDependencyStatuses",
+          "command": "versionlens.onShowInstalledStatuses",
           "when": "versionlens.enabled && versionlens.providerActive"
         },
         {
-          "command": "versionlens.onHideDependencyStatuses",
+          "command": "versionlens.onHideInstalledStatuses",
           "when": "versionlens.enabled && versionlens.providerActive"
         },
         {
@@ -172,13 +172,13 @@
       ],
       "editor/title": [
         {
-          "command": "versionlens.onShowDependencyStatuses",
-          "when": "versionlens.showDependencyStatuses == false && versionlens.enabled && versionlens.providerActive && textCompareEditorVisible == false",
+          "command": "versionlens.onShowInstalledStatuses",
+          "when": "versionlens.showInstalledStatuses == false && versionlens.enabled && versionlens.providerActive && textCompareEditorVisible == false",
           "group": "navigation@3"
         },
         {
-          "command": "versionlens.onHideDependencyStatuses",
-          "when": "versionlens.showDependencyStatuses && versionlens.enabled && versionlens.providerActive && textCompareEditorVisible == false",
+          "command": "versionlens.onHideInstalledStatuses",
+          "when": "versionlens.showInstalledStatuses && versionlens.enabled && versionlens.providerActive && textCompareEditorVisible == false",
           "group": "navigation@3"
         },
         {

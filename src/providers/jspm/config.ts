@@ -1,28 +1,11 @@
-import {
-  PackageFileFilter,
-  IPackageProviderOptions
-} from "core/packages";
-import { VersionLensExtension } from "presentation/extension";
-import { NpmConfig } from '../npm/config';
+import { VersionLensExtension } from 'presentation/extension';
+import { NpmConfig } from 'providers/npm/config';
 
-export class JspmConfig
-  extends NpmConfig
-  implements IPackageProviderOptions {
+export class JspmConfig extends NpmConfig {
 
   constructor(extension: VersionLensExtension) {
     super(extension);
-  }
-
-  get providerName(): string {
-    return 'jspm';
-  }
-
-  get group(): Array<string> {
-    return super.group;
-  }
-
-  get selector(): PackageFileFilter {
-    return super.selector;
+    this.options.providerName = 'jspm';
   }
 
 }

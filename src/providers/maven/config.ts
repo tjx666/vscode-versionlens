@@ -1,5 +1,9 @@
-import { VersionLensExtension } from "presentation/extension";
-import { PackageFileFilter, IPackageProviderOptions } from "core/packages";
+import { VersionLensExtension } from 'presentation/extension';
+import {
+  ProviderSupport,
+  IProviderConfig,
+  IProviderOptions
+} from "presentation/lenses";
 
 enum MavenContributions {
   DependencyProperties = 'maven.dependencyProperties',
@@ -7,17 +11,20 @@ enum MavenContributions {
   ApiUrl = 'maven.apiUrl',
 }
 
-const options = {
-  name: 'maven',
-  group: ['tags'],
-  selector: {
-    language: 'xml',
-    scheme: 'file',
-    pattern: '**/pom.xml',
-  }
-}
+export class MavenConfig implements IProviderConfig {
 
-export class MavenConfig implements IPackageProviderOptions {
+  options: IProviderOptions = {
+    providerName: 'maven',
+    supports: [
+      ProviderSupport.Releases,
+      ProviderSupport.Prereleases,
+    ],
+    selector: {
+      language: 'xml',
+      scheme: 'file',
+      pattern: '**/pom.xml',
+    }
+  };
 
   extension: VersionLensExtension;
 
@@ -34,18 +41,6 @@ export class MavenConfig implements IPackageProviderOptions {
     ];
 
     this.defaultApiUrl = 'https://code.dlang.org/api/packages';
-  }
-
-  get providerName(): string {
-    return options.name;
-  }
-
-  get group(): Array<string> {
-    return options.group;
-  }
-
-  get selector(): PackageFileFilter {
-    return options.selector;
   }
 
   getDependencyProperties() {

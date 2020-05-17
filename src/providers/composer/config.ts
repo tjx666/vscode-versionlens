@@ -1,31 +1,38 @@
-import { IPackageProviderOptions, PackageFileFilter } from "core/packages";
 import { VersionLensExtension } from 'presentation/extension';
+import {
+  ProviderSupport,
+  IProviderConfig,
+  IProviderOptions
+} from "presentation/lenses";
 
 enum ComposerContributions {
   DependencyProperties = 'composer.dependencyProperties',
   ApiUrl = 'composer.apiUrl',
 }
 
-const options = {
-  name: 'composer',
-  group: ['tags'],
-  selector: {
-    language: 'json',
-    scheme: 'file',
-    pattern: '**/composer.json',
-  }
-}
+export class ComposerConfig implements IProviderConfig {
 
-export class ComposerConfig implements IPackageProviderOptions {
+  options: IProviderOptions = {
+    providerName: 'composer',
+    supports: [
+      ProviderSupport.Releases,
+      ProviderSupport.Prereleases,
+      ProviderSupport.InstalledStatuses,
+    ],
+    selector: {
+      language: 'json',
+      scheme: 'file',
+      pattern: '**/composer.json',
+    }
+  }
+
+  extension: VersionLensExtension
 
   defaultDependencyProperties: Array<string>;
 
   defaultApiUrl: string;
 
-  extension: VersionLensExtension;
-
   constructor(extension: VersionLensExtension) {
-
     this.extension = extension;
 
     this.defaultDependencyProperties = [
@@ -34,18 +41,6 @@ export class ComposerConfig implements IPackageProviderOptions {
     ];
 
     this.defaultApiUrl = 'https://repo.packagist.org/p';
-  }
-
-  get providerName(): string {
-    return options.name;
-  }
-
-  get group(): Array<string> {
-    return options.group;
-  }
-
-  get selector(): PackageFileFilter {
-    return options.selector;
   }
 
   getDependencyProperties() {

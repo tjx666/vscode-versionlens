@@ -1,4 +1,3 @@
-import { ILogger } from 'core/logging';
 import { PackageDocument } from './packageDocument';
 
 export type PackageIdentifier = {
@@ -22,6 +21,4 @@ export type PackageRequest<TClientData> = {
   package: PackageIdentifier;
 
   includePrereleases: boolean;
-
-  logger: ILogger;
 };

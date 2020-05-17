@@ -1,22 +1,30 @@
-import { VersionLensExtension } from "presentation/extension";
-import { IPackageProviderOptions, PackageFileFilter } from "core/packages";
+import { VersionLensExtension } from 'presentation/extension';
+import {
+  IProviderOptions,
+  IProviderConfig,
+  ProviderSupport
+} from "presentation/lenses";
 
 enum DubContributions {
   DependencyProperties = 'dub.dependencyProperties',
   ApiUrl = 'dub.apiUrl',
 }
 
-const options = {
-  name: 'dub',
-  group: ['statuses'],
-  selector: {
-    language: 'json',
-    scheme: 'file',
-    pattern: '**/{dub.json,dub.selections.json}',
-  }
-};
+export class DubConfig implements IProviderConfig {
 
-export class DubConfig implements IPackageProviderOptions {
+  options: IProviderOptions = {
+    providerName: 'dub',
+    supports: [
+      ProviderSupport.Releases,
+      ProviderSupport.Prereleases,
+      ProviderSupport.InstalledStatuses,
+    ],
+    selector: {
+      language: 'json',
+      scheme: 'file',
+      pattern: '**/{dub.json,dub.selections.json}',
+    }
+  };
 
   extension: VersionLensExtension;
 
@@ -25,7 +33,7 @@ export class DubConfig implements IPackageProviderOptions {
   defaultApiUrl: string;
 
   constructor(extension: VersionLensExtension) {
-    this.extension = extension
+    this.extension = extension;
 
     this.defaultDependencyProperties = [
       'dependencies',
@@ -33,18 +41,6 @@ export class DubConfig implements IPackageProviderOptions {
     ];
 
     this.defaultApiUrl = 'https://code.dlang.org/api/packages';
-  }
-
-  get providerName(): string {
-    return options.name;
-  }
-
-  get group(): Array<string> {
-    return options.group;
-  }
-
-  get selector(): PackageFileFilter {
-    return options.selector;
   }
 
   getDependencyProperties() {

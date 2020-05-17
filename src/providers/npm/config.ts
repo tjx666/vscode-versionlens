@@ -1,24 +1,32 @@
-import { VersionLensExtension } from "presentation/extension";
-import { PackageFileFilter, IPackageProviderOptions } from "core/packages";
+import { VersionLensExtension } from 'presentation/extension';
+import {
+  ProviderSupport,
+  IProviderConfig,
+  IProviderOptions
+} from "presentation/lenses";
 
 enum NpmContributions {
   DependencyProperties = 'npm.dependencyProperties',
   DistTagFilter = 'npm.distTagFilter',
 }
 
-const options = {
-  name: 'npm',
-  group: ['tags', 'statuses'],
-  selector: {
-    language: 'json',
-    scheme: 'file',
-    pattern: '**/package.json',
-  }
-}
+export class NpmConfig implements IProviderConfig {
 
-export class NpmConfig implements IPackageProviderOptions {
+  options: IProviderOptions = {
+    providerName: 'npm',
+    supports: [
+      ProviderSupport.Releases,
+      ProviderSupport.Prereleases,
+      ProviderSupport.InstalledStatuses,
+    ],
+    selector: {
+      language: 'json',
+      scheme: 'file',
+      pattern: '**/package.json',
+    }
+  };
 
-  extension: VersionLensExtension;
+  extension: VersionLensExtension
 
   defaultDependencyProperties: Array<string>;
 
@@ -31,18 +39,6 @@ export class NpmConfig implements IPackageProviderOptions {
       'peerDependencies',
       'optionalDependencies'
     ];
-  }
-
-  get providerName(): string {
-    return options.name;
-  }
-
-  get group(): Array<string> {
-    return options.group;
-  }
-
-  get selector(): PackageFileFilter {
-    return options.selector;
   }
 
   getDependencyProperties() {
