@@ -1,11 +1,14 @@
 import * as VsCodeTypes from 'vscode';
 
-import { PackageDependencyLens } from "core/packages";
+import { IPackageDependencyLens } from "core/packages";
 
 const xmldoc = require('xmldoc');
 const { window } = require('vscode');
 
-export function extractMavenLensDataFromDocument(document: VsCodeTypes.TextDocument, filterPropertyNames: string[]): PackageDependencyLens[] {
+export function extractMavenLensDataFromDocument(
+  document: VsCodeTypes.TextDocument,
+  filterPropertyNames: Array<string>
+): IPackageDependencyLens[] {
   const xmlDoc = new xmldoc.XmlDocument(document.getText());
   if (!xmlDoc) return [];
 

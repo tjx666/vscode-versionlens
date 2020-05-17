@@ -2,12 +2,15 @@
 import { TextDocument } from 'vscode';
 
 // imports
-import { PackageDependencyLens } from "core/packages";
+import { IPackageDependencyLens } from "core/packages";
 
 const xmldoc = require('xmldoc');
 const { Range } = require('vscode');
 
-export function extractDotnetLensDataFromDocument(document: TextDocument, filterPropertyNames: string[]): PackageDependencyLens[] {
+export function extractDotnetLensDataFromDocument(
+  document: TextDocument,
+  filterPropertyNames: Array<string>
+): Array<IPackageDependencyLens> {
   const xmlDoc = new xmldoc.XmlDocument(document.getText());
   if (!xmlDoc) return [];
 
@@ -33,7 +36,7 @@ function extractPackageLensDataFromNodes(topLevelNodes, document, filterProperty
   return collector
 }
 
-function createFromAttribute(node, document): PackageDependencyLens {
+function createFromAttribute(node, document): IPackageDependencyLens {
   const nameRange = {
     start: node.startTagPosition,
     end: node.startTagPosition,

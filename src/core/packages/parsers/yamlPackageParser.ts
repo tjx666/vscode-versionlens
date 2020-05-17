@@ -1,4 +1,4 @@
-import { PackageDependencyLens } from "../models/packageDependencyLens";
+import { IPackageDependencyLens } from "../definitions/iPackageDependencyLens";
 
 type YamlOptions = {
   hasCrLf: boolean,
@@ -8,7 +8,7 @@ type YamlOptions = {
 export function extractPackageDependenciesFromYaml(
   yaml: string,
   filterPropertyNames: Array<string>
-): Array<PackageDependencyLens> {
+): Array<IPackageDependencyLens> {
   const { Document, parseCST } = require('yaml');
 
   // verbose parsing to handle CRLF scenarios
@@ -26,7 +26,7 @@ export function extractPackageDependenciesFromYaml(
   return extractDependenciesFromNodes(yamlDoc.contents.items, opts);
 }
 
-export function extractDependenciesFromNodes(topLevelNodes, opts: YamlOptions): PackageDependencyLens[] {
+export function extractDependenciesFromNodes(topLevelNodes, opts: YamlOptions): IPackageDependencyLens[] {
   const collector = [];
 
   topLevelNodes.forEach(
@@ -100,7 +100,7 @@ export function createDependencyLensFromMapType(nodes, parentKey, opts: YamlOpti
 
 }
 
-export function createDependencyLensFromPlainType(pair, opts: YamlOptions): PackageDependencyLens {
+export function createDependencyLensFromPlainType(pair, opts: YamlOptions): IPackageDependencyLens {
   const keyRange = getRangeFromCstNode(pair.key.cstNode, opts);
   const nameRange = createRange(
     keyRange.start,

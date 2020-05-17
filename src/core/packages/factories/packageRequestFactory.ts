@@ -1,13 +1,10 @@
 import * as ResponseFactory from './packageResponseFactory';
 
-import {
-  PackageResponse,
-  ReplaceVersionFunction
-} from '../models/packageResponse';
-
-import { PackageRequest } from "../models/packageRequest";
+import { PackageRequest } from "../definitions/packageRequest";
+import { ReplaceVersionFunction } from '../definitions/packageResponse';
 import { IPackageClient } from '../definitions/iPackageClient';
-import { PackageSuggestionFlags } from '../models/packageDocument';
+import { PackageSuggestionFlags } from '../definitions/packageDocument';
+import { PackageResponse } from '../models/packageResponse';
 
 export async function createPackageRequest<TClientData>(
   client: IPackageClient<TClientData>,

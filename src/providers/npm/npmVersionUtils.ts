@@ -6,7 +6,7 @@ import {
 } from "core/packages";
 
 export function npmReplaceVersion(packageInfo: PackageResponse, newVersion: string): string {
-  if (packageInfo.source === PackageSourceTypes.Git) {
+  if (packageInfo.source === PackageSourceTypes.Github) {
     return replaceGitVersion(packageInfo, newVersion);
   }
 
@@ -22,8 +22,10 @@ export function npmReplaceVersion(packageInfo: PackageResponse, newVersion: stri
 }
 
 function replaceGitVersion(packageInfo: PackageResponse, newVersion: string): string {
-  // return `${packageInfo.meta.userRepo}#${preservedLeadingVersion}`
-  return 'Not implemented yet'
+  return packageInfo.requested.version.replace(
+    packageInfo.resolved.version,
+    newVersion
+  )
 }
 
 function replaceAliasVersion(packageInfo: PackageResponse, newVersion: string): string {

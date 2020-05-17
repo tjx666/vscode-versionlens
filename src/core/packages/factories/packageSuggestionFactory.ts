@@ -2,7 +2,7 @@ import {
   PackageVersionStatus,
   PackageSuggestionFlags,
   PackageSuggestion
-} from "../models/packageDocument";
+} from "../definitions/packageDocument";
 
 import {
   filterPrereleasesWithinRange,

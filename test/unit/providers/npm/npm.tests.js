@@ -13,3 +13,8 @@ export const NpmPackageClientTests = {
   fetchGithub,
   fetchGit
 }
+
+import * as replaceGitVersion from './npmVersionUtils/replaceGitVersion.tests'
+export const NpmVersionUtilsTests = {
+  replaceGitVersion,
+}

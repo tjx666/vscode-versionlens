@@ -4,7 +4,7 @@ import * as VsCodeTypes from 'vscode';
 // imports
 import { ILogger } from 'core/logging';
 import {
-  PackageDependencyLens,
+  IPackageDependencyLens,
   PackageResponseAggregate,
   ReplaceVersionFunction,
   PackageRequest,
@@ -26,7 +26,7 @@ export type CreateVersionLensesContext<TPackageClientData> = {
 
 export async function createVersionLenses<TClientData>(
   document: VsCodeTypes.TextDocument,
-  dependencies: Array<PackageDependencyLens>,
+  dependencies: Array<IPackageDependencyLens>,
   context: CreateVersionLensesContext<TClientData>,
 ): VersionLensFetchResponse {
 
@@ -53,7 +53,7 @@ export async function createVersionLenses<TClientData>(
 
 async function resolveDependency<TClientData>(
   packagePath: string,
-  dependency: PackageDependencyLens,
+  dependency: IPackageDependencyLens,
   document: VsCodeTypes.TextDocument,
   context: CreateVersionLensesContext<TClientData>,
 ): Promise<Array<VersionLens>> {

@@ -3,7 +3,7 @@ import { SemverSpec } from "../definitions/semverSpec";
 import {
   PackageNameVersion,
   PackageVersionTypes,
-} from "../models/packageDocument";
+} from "../definitions/packageDocument";
 
 export const formatTagNameRegex = /^[^0-9\-]*/;
 export const loosePrereleases = { loose: true, includePrerelease: true };

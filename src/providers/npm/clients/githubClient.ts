@@ -107,7 +107,7 @@ export class GithubClient extends JsonHttpClientRequest {
           type,
           requested,
           resolved,
-          suggestions,
+          suggestions
         };
 
       });
@@ -152,7 +152,7 @@ export class GithubClient extends JsonHttpClientRequest {
 
         const noMatch = commitIndex === -1;
 
-        const isLatest = commitIndex === 0;
+        const isLatest = versionRange === latestCommit;
 
         const resolved = {
           name: project,
@@ -185,6 +185,7 @@ export class GithubClient extends JsonHttpClientRequest {
           requested,
           resolved,
           suggestions,
+          gitSpec: npaSpec.saveSpec
         };
 
       });

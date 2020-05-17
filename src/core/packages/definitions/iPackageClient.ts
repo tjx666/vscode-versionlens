@@ -1,6 +1,6 @@
 import { IPackageProviderOptions } from "core/packages";
-import { PackageRequest } from "../models/packageRequest";
-import { PackageDocument } from "../models/packageDocument";
+import { PackageRequest } from "./packageRequest";
+import { PackageDocument } from "./packageDocument";
 
 export interface IPackageClient<TClientConfig> {
 

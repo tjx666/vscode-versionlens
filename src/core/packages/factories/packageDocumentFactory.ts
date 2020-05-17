@@ -4,9 +4,9 @@ import {
   PackageSourceTypes,
   PackageDocument,
   PackageSuggestion,
-} from '../models/packageDocument'
-import { PackageIdentifier } from '../models/packageRequest';
-import { PackageResponseStatus } from '../models/packageResponse';
+} from '../definitions/packageDocument'
+import { PackageIdentifier } from '../definitions/packageRequest';
+import { PackageResponseStatus } from '../definitions/packageResponse';
 
 export function createNotFound(
   provider: string,

@@ -1,10 +1,4 @@
-
-export type PackageFileParserDelegate = (
-  packageFileText: string,
-  filterPropertyNames: string[]
-) => PackageDependencyLens[];
-
-export interface PackageDependencyLens {
+export interface IPackageDependencyLens {
   nameRange: {
     start: number;
     end: number;

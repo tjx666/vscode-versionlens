@@ -1,14 +1,12 @@
 import { ClientResponseSource, HttpClientResponse } from "core/clients";
-import { PackageDocument, PackageSuggestion } from "../models/packageDocument";
-
 import {
-  PackageResponse,
   PackageResponseErrors,
   ReplaceVersionFunction,
   PackageResponseStatus,
-} from "../models/packageResponse";
-
-import { PackageIdentifier } from "../models/packageRequest";
+} from "../definitions/packageResponse";
+import { PackageIdentifier } from "../definitions/packageRequest";
+import { PackageDocument, PackageSuggestion } from "../definitions/packageDocument";
+import { PackageResponse } from "../models/packageResponse";
 
 export function createResponseStatus(source: ClientResponseSource, status: number): PackageResponseStatus {
   return {
