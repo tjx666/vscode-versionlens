@@ -2,6 +2,7 @@
 import * as VsCodeTypes from 'vscode';
 import { providerRegistry } from 'presentation/providers';
 import { VersionLensState } from '../versionLensState';
+import { ProviderSupport } from 'presentation/providers/definitions/iProviderOptions';
 
 export class TextEditorEvents {
 
@@ -21,6 +22,7 @@ export class TextEditorEvents {
     // maintain versionLens.providerActive state
     // each time the active editor changes
     if (!textEditor) {
+      // disable icons when no editor
       this.state.providerActive.value = false;
       return;
     }
@@ -28,15 +30,37 @@ export class TextEditorEvents {
     // clearDecorations();
 
     if (!textEditor.document) {
+      // disable icons when no document
       this.state.providerActive.value = false;
       return;
     }
 
-    if (providerRegistry.getByFileName(textEditor.document.fileName)) {
+    const providersMatchingFilename = providerRegistry.getByFileName(
+      textEditor.document.fileName
+    );
+
+    if (providersMatchingFilename.length > 0) {
+
+      // determine prerelease support
+      const providerSupportsPrereleases = providersMatchingFilename.reduce(
+        (v, p) => p.config.options.supports.includes(ProviderSupport.Prereleases)
+        , false
+      );
+
+      // determine installed statuses support
+      const providerSupportsInstalledStatuses = providersMatchingFilename.reduce(
+        (v, p) => p.config.options.supports.includes(ProviderSupport.InstalledStatuses)
+        , false
+      );
+
+      this.state.providerSupportsPrereleases.value = providerSupportsPrereleases;
+      this.state.providerSupportsInstalledStatuses.value = providerSupportsInstalledStatuses;
       this.state.providerActive.value = true;
+
       return;
     }
 
+    // disable icons if no match found
     this.state.providerActive.value = false;
   }
 
