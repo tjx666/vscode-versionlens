@@ -9,14 +9,14 @@ import {
   PackageSourceTypes,
 } from 'core/packages';
 
-import { IVersionCodeLens } from "../definitions/iVersionCodeLens";
+import { IVersionCodeLens } from "./definitions/iVersionCodeLens";
 
 // vscode implementations
 const { CodeLens } = require('vscode');
 
 export class VersionLens extends CodeLens implements IVersionCodeLens {
 
-  replaceRange: any;
+  replaceRange: VsCodeTypes.Range;
 
   package: PackageResponse;
 
@@ -24,7 +24,12 @@ export class VersionLens extends CodeLens implements IVersionCodeLens {
 
   command: any;
 
-  constructor(commandRange, replaceRange, response: PackageResponse, documentUrl: VsCodeTypes.Uri) {
+  constructor(
+    commandRange: VsCodeTypes.Range,
+    replaceRange: VsCodeTypes.Range,
+    response: PackageResponse,
+    documentUrl: VsCodeTypes.Uri
+  ) {
     super(commandRange);
     this.replaceRange = replaceRange || commandRange;
     this.package = response;
@@ -32,11 +37,19 @@ export class VersionLens extends CodeLens implements IVersionCodeLens {
     this.command = null;
   }
 
-  replaceVersionFn(newVersion) {
-    if (!this.package.replaceVersionFn)
-      return VersionHelpers.formatWithExistingLeading(this.package.requested.version, newVersion);
+  replaceVersionFn(newVersion: string) {
+    if (!this.package.replaceVersionFn) {
+      return VersionHelpers.formatWithExistingLeading(
+        this.package.requested.version,
+        newVersion
+      );
+    }
 
-    return this.package.replaceVersionFn.call(this, this.package, newVersion);
+    return this.package.replaceVersionFn.call(
+      this,
+      this.package,
+      newVersion
+    );
   }
 
   hasPackageSource(source: PackageSourceTypes): boolean {
@@ -47,7 +60,7 @@ export class VersionLens extends CodeLens implements IVersionCodeLens {
     return this.package.error == error;
   }
 
-  setCommand(title, command, args) {
+  setCommand(title: string, command, args) {
     this.command = {
       title,
       command,

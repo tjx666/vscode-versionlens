@@ -1,4 +1,3 @@
-export * from './providers/abstractProvider';
 export * from './lenses/definitions/iVersionCodeLens';
-export * as VersionLensFactory from './lenses/factories/versionLensFactory';
-export * from './lenses/models/versionLens';
+export * as VersionLensFactory from './lenses/versionLensFactory';
+export * from './lenses/versionLens';

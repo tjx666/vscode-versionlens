@@ -2,15 +2,17 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { AbstractVersionLensProvider } from 'presentation/lenses';
-import { extractMavenLensDataFromDocument } from 'providers/maven/mavenPackageParser';
+import { ILogger } from 'core/logging';
+import { UrlHelpers } from 'core/clients';
+
+import { AbstractVersionLensProvider } from 'presentation/providers';
 import { VersionLensFactory } from 'presentation/lenses';
+
+import { extractMavenLensDataFromDocument } from 'providers/maven/mavenPackageParser';
 import { MavenConfig } from './config';
 import { MavenClientData } from './definitions';
 import { MvnClient } from './clients/mvnClient';
 import { MavenClient } from './clients/mavenClient';
-import { RegistryProtocols } from 'core/clients/helpers/urlHelpers';
-import { ILogger } from 'core/logging';
 
 export class MavenVersionLensProvider
   extends AbstractVersionLensProvider<MavenConfig> {
@@ -46,7 +48,9 @@ export class MavenVersionLensProvider
 
     return promisedRepos.then(repos => {
 
-      const repositories = repos.filter(repo => repo.protocol === RegistryProtocols.https)
+      const repositories = repos.filter(
+        repo => repo.protocol === UrlHelpers.RegistryProtocols.https
+      );
 
       const includePrereleases = this.extension.state.prereleasesEnabled.value;
 

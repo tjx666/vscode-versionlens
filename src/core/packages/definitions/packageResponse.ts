@@ -2,7 +2,6 @@ import { ClientResponseSource } from "core/clients";
 import { IPackageDependencyLens } from "../definitions/iPackageDependencyLens";
 import { PackageResponse } from "../models/packageResponse";
 
-
 export type ReplaceVersionFunction = (
   response: PackageResponse,
   version: string

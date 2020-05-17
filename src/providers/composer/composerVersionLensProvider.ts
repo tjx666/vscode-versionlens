@@ -2,35 +2,21 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { ComposerConfig } from 'providers/composer/config';
-
-import {
-  VersionHelpers,
-  extractPackageDependenciesFromJson
-} from 'core/packages';
-
-import {
-  readComposerSelections,
-  ComposerClient
-} from 'providers/composer/composerClient';
+import { ILogger } from 'core/logging';
+import { VersionHelpers, extractPackageDependenciesFromJson } from 'core/packages';
 
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
   renderOutdatedDecoration
 } from 'presentation/extension';
+import { VersionLensFactory, VersionLens } from 'presentation/lenses';
+import { VersionLensFetchResponse, AbstractVersionLensProvider } from 'presentation/providers';
 
-import {
-  AbstractVersionLensProvider,
-  VersionLensFetchResponse,
-  VersionLensFactory,
-  VersionLens
-} from 'presentation/lenses';
+import { ComposerConfig } from 'providers/composer/config';
+import { readComposerSelections, ComposerClient } from 'providers/composer/composerClient';
 
-import { ILogger } from 'core/logging';
-
-export class ComposerVersionLensProvider
-  extends AbstractVersionLensProvider<ComposerConfig> {
+export class ComposerVersionLensProvider extends AbstractVersionLensProvider<ComposerConfig> {
 
   _outdatedCache: {};
 

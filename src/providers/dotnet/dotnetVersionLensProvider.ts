@@ -2,11 +2,10 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import {
-  AbstractVersionLensProvider,
-  VersionLensFetchResponse,
-  VersionLensFactory
-} from 'presentation/lenses';
+import { ILogger } from 'core/logging';
+
+import { VersionLensFactory } from 'presentation/lenses';
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers';
 
 import { DotNetConfig } from './config';
 import { extractDotnetLensDataFromDocument } from './dotnetPackageParser'
@@ -15,7 +14,6 @@ import { NuGetPackageClient } from './clients/nugetPackageClient';
 import { NuGetResourceClient } from './clients/nugetResourceClient';
 import { NuGetClientData } from './definitions/nuget';
 import { RegistryProtocols } from 'core/clients/helpers/urlHelpers';
-import { ILogger } from 'core/logging';
 
 export class DotNetVersionLensProvider
   extends AbstractVersionLensProvider<DotNetConfig> {

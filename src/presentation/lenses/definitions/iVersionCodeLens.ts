@@ -7,7 +7,7 @@ import {
 } from "core/packages";
 
 export interface IVersionCodeLens {
-  replaceRange: any;
+  replaceRange: VsCodeTypes.Range;
   package: PackageResponse;
   documentUrl: VsCodeTypes.Uri;
   command: any;

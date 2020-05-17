@@ -2,15 +2,11 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
+import { ILogger } from 'core/logging';
 import { extractPackageDependenciesFromJson, VersionHelpers } from 'core/packages';
 
-import {
-  AbstractVersionLensProvider,
-  VersionLensFetchResponse,
-  VersionLensFactory,
-  VersionLens
-} from 'presentation/lenses';
-
+import { VersionLensFactory, VersionLens } from 'presentation/lenses';
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers';
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
@@ -18,9 +14,7 @@ import {
 } from 'presentation/extension';
 
 import { DubConfig } from 'providers/dub/config';
-
 import { readDubSelections, DubClient } from 'providers/dub/clients/dubClient';
-import { ILogger } from 'core/logging';
 
 export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfig> {
 

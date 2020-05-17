@@ -5,7 +5,7 @@ import { KeyDictionary } from 'core/generic/collections'
 import { ILogger } from 'core/logging';
 
 import { VersionLensExtension } from 'presentation/extension';
-import { AbstractVersionLensProvider } from 'presentation/lenses'
+import { AbstractVersionLensProvider } from 'presentation/providers'
 import { IProviderConfig } from './definitions/iProviderConfig';
 
 export const providerNames = [

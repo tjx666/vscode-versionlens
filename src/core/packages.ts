@@ -4,6 +4,7 @@ export * from './packages/definitions/iPackageDependencyLens';
 export * from './packages/definitions/packageDocument';
 export * from "./packages/definitions/packageRequest";
 export * from "./packages/definitions/packageResponse";
+export * from "./packages/definitions/packageClientContext";
 
 export * from './packages/options/iPackageProviderOptions';
 export * from './packages/options/iPackageClientOptions';

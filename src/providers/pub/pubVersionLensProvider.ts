@@ -2,17 +2,14 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
+import { ILogger } from 'core/logging';
 import { extractPackageDependenciesFromYaml } from "core/packages";
 
-import {
-  AbstractVersionLensProvider,
-  VersionLensFetchResponse,
-  VersionLensFactory
-} from 'presentation/lenses';
+import { VersionLensFactory } from 'presentation/lenses';
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers';
 
 import { PubConfig } from './config';
 import { PubClient } from './pubClient';
-import { ILogger } from 'core/logging';
 
 export class PubVersionLensProvider
   extends AbstractVersionLensProvider<PubConfig> {

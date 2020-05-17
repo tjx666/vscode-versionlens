@@ -12,12 +12,8 @@ import {
   renderPrereleaseInstalledDecoration
 } from 'presentation/extension';
 
-import {
-  AbstractVersionLensProvider,
-  VersionLensFetchResponse,
-  VersionLensFactory,
-  VersionLens
-} from 'presentation/lenses';
+import { VersionLensFactory, VersionLens } from 'presentation/lenses';
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers';
 
 import { npmGetOutdated, npmPackageDirExists } from './clients/npmClient';
 import { NpmConfig } from './config';

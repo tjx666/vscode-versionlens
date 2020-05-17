@@ -5,20 +5,14 @@ import * as VsCodeTypes from 'vscode';
 import {
   IPackageDependencyLens,
   PackageResponseAggregate,
-  ReplaceVersionFunction,
   PackageRequest,
   RequestFactory,
-  IPackageClient
+  IPackageClient,
+  PackageClientContext,
 } from 'core/packages';
 
-import { VersionLensFetchResponse } from 'presentation/lenses';
-import { VersionLens } from '../models/versionLens';
-
-export type PackageClientContext<TClientData> = {
-  includePrereleases: boolean;
-  clientData: TClientData,
-  replaceVersion?: ReplaceVersionFunction,
-}
+import { VersionLensFetchResponse } from 'presentation/providers';
+import { VersionLens } from './versionLens';
 
 export async function createVersionLenses<TClientData>(
   client: IPackageClient<TClientData>,
@@ -76,11 +70,7 @@ async function resolveDependency<TClientData>(
     }
   };
 
-  return RequestFactory.createPackageRequest(
-    client,
-    request,
-    replaceVersion
-  )
+  return RequestFactory.createPackageRequest(client, request, replaceVersion)
     .then(function (responses): Array<VersionLens> {
 
       if (Array.isArray(responses)) {
