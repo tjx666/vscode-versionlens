@@ -4,6 +4,7 @@ import {
   ClientResponseSource,
   UrlHelpers,
   HttpClientRequestMethods,
+  CachingOptions,
 } from 'core/clients'
 
 import {
@@ -30,7 +31,13 @@ export const HttpRequestTests = {
   afterAll: () => mock.stopAll(),
 
   beforeEach: () => {
-    testContext.rut = new HttpClientRequest(new LoggerMock());
+    testContext.rut = new HttpClientRequest(
+      new LoggerMock(),
+      <CachingOptions>{
+        duration: 30000
+      }
+    );
+
     requestLightMock.xhr = _ => { throw new Error("Not implemented") }
   },
 
@@ -152,8 +159,10 @@ export const HttpRequestTests = {
 
       testContext.rut = new HttpClientRequest(
         new LoggerMock(),
-        {},
-        0
+        <CachingOptions>{
+          duration: 0
+        },
+        {}
       );
 
       await testContext.rut.request(

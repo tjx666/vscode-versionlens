@@ -2,7 +2,7 @@ import { ILogger } from 'core/logging';
 import { VersionLensExtension } from 'presentation/extension';
 
 import { DubVersionLensProvider } from './dubVersionLensProvider';
-import { DubConfig } from './config';
+import { DubConfig } from './dubConfig';
 
 export function activate(extension: VersionLensExtension, logger: ILogger) {
   const config = new DubConfig(extension);

@@ -1,2 +1,4 @@
-export * from './configuration/definitions';
-export * from './configuration/abstractWorkspaceConfig';
+export * from './configuration/definitions/iRootConfig';
+export * from './configuration/definitions/iConfig';
+
+export * from './configuration/abstractConfig';

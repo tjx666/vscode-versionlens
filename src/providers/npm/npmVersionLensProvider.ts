@@ -16,7 +16,7 @@ import { VersionLensFactory, VersionLens } from 'presentation/lenses';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers';
 
 import { npmGetOutdated, npmPackageDirExists } from './clients/npmClient';
-import { NpmConfig } from './config';
+import { NpmConfig } from './npmConfig';
 import { npmReplaceVersion } from './npmVersionUtils';
 import { ILogger } from 'core/logging';
 import { NpmPackageClient } from './clients/npmPackageClient';

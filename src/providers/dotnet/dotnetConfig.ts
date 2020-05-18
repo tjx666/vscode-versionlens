@@ -1,18 +1,19 @@
 import { VersionLensExtension } from 'presentation/extension';
 import {
   IProviderOptions,
-  IProviderConfig,
-  ProviderSupport
+  ProviderSupport,
+  AbstractProviderConfig
 } from "presentation/providers";
+import { CachingOptions } from 'core/clients';
 
 export enum DotnetContributions {
-  CacheDuration = 'dotnet.caching.duration',
+  Caching = 'dotnet.caching',
   DependencyProperties = 'dotnet.dependencyProperties',
   NugetFeeds = 'dotnet.nugetFeeds',
   TagFilter = 'dotnet.tagFilter',
 }
 
-export class DotNetConfig implements IProviderConfig {
+export class DotNetConfig extends AbstractProviderConfig {
 
   options: IProviderOptions = {
     providerName: 'dotnet',
@@ -27,10 +28,16 @@ export class DotNetConfig implements IProviderConfig {
     }
   };
 
-  extension: VersionLensExtension;
+  caching: CachingOptions;
 
   constructor(extension: VersionLensExtension) {
-    this.extension = extension;
+    super(extension);
+
+    this.caching = new CachingOptions(
+      DotnetContributions.Caching, 
+      extension, 
+      'caching'
+    );
   }
 
   get dependencyProperties(): Array<string> {
@@ -43,13 +50,6 @@ export class DotNetConfig implements IProviderConfig {
 
   get nuGetFeeds(): Array<string> {
     return this.extension.get(DotnetContributions.NugetFeeds);
-  }
-
-  get cacheDuration(): number {
-    return this.extension.getOrDefault<number>(
-      DotnetContributions.CacheDuration,
-      this.extension.caching.duration
-    );
   }
 
 }

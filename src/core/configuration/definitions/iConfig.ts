@@ -1,8 +1,4 @@
-export interface IRootConfig {
-
-  get<T>(key: string): T;
-
-}
+import { IRootConfig } from "./iRootConfig";
 
 export interface IConfig extends IRootConfig {
 

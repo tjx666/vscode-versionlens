@@ -1,17 +1,18 @@
 import { VersionLensExtension } from 'presentation/extension';
 import {
   IProviderOptions,
-  IProviderConfig,
-  ProviderSupport
+  ProviderSupport,
+  AbstractProviderConfig
 } from "presentation/providers";
+import { CachingOptions } from 'core/clients';
 
 enum DubContributions {
-  CacheDuration = 'dub.caching.duration',
+  Caching = 'dub.caching',
   DependencyProperties = 'dub.dependencyProperties',
   ApiUrl = 'dub.apiUrl',
 }
 
-export class DubConfig implements IProviderConfig {
+export class DubConfig extends AbstractProviderConfig {
 
   options: IProviderOptions = {
     providerName: 'dub',
@@ -27,10 +28,16 @@ export class DubConfig implements IProviderConfig {
     }
   };
 
-  extension: VersionLensExtension;
+  caching: CachingOptions;
 
   constructor(extension: VersionLensExtension) {
-    this.extension = extension;
+    super(extension);
+
+    this.caching = new CachingOptions(
+      DubContributions.Caching,
+      extension,
+      'caching'
+    );
   }
 
   get dependencyProperties(): Array<string> {
@@ -39,13 +46,6 @@ export class DubConfig implements IProviderConfig {
 
   get apiUrl(): Array<string> {
     return this.extension.get(DubContributions.ApiUrl);
-  }
-
-  get cacheDuration(): number {
-    return this.extension.getOrDefault<number>(
-      DubContributions.CacheDuration,
-      this.extension.caching.duration
-    );
   }
 
 }

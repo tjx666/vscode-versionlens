@@ -8,17 +8,12 @@ import {
   PackageVersionTypes,
   PackageSourceTypes
 } from 'core/packages';
-
-import {
-  ClientResponseSource
-} from "core/clients";
-
-import {
-  JsonHttpClientRequest
-} from 'infrastructure/clients';
-
-import { NpmConfig } from '../config';
 import { ILogger } from 'core/logging';
+import { ClientResponseSource } from "core/clients";
+
+import { JsonHttpClientRequest } from 'infrastructure/clients';
+
+import { NpmConfig } from '../npmConfig';
 import { NpaSpec, NpaTypes } from '../models/npaSpec';
 
 export class PacoteClient extends JsonHttpClientRequest {
@@ -26,7 +21,7 @@ export class PacoteClient extends JsonHttpClientRequest {
   config: NpmConfig;
 
   constructor(config: NpmConfig, logger: ILogger) {
-    super(logger, {}, config.cacheDuration);
+    super(logger, config.caching, {});
     this.config = config;
   }
 

@@ -1,9 +1,15 @@
-import { AbstractWorkspaceConfig, IConfig, IRootConfig } from "core/configuration";
+import {
+  AbstractConfig,
+  IRootConfig,
+} from "core/configuration";
+import { CachingOptions } from "core/clients";
+
 import { VersionLensState } from "presentation/extension";
-import { LoggingOptions } from "./options/loggingOptions";
-import { CachingOptions } from "./options/cachingOptions";
+
+import { LoggingOptions } from "../../core/logging/loggingOptions";
 import { SuggestionsOptions } from "./options/suggestionsOptions";
 import { StatusesOptions } from "./options/statusesOptions";
+
 
 export enum SuggestionIndicators {
   Update = '\u2191',
@@ -11,7 +17,7 @@ export enum SuggestionIndicators {
   OpenNewWindow = '\u29C9',
 }
 
-export class VersionLensExtension extends AbstractWorkspaceConfig {
+export class VersionLensExtension extends AbstractConfig {
 
   extensionName: string;
 
@@ -26,13 +32,13 @@ export class VersionLensExtension extends AbstractWorkspaceConfig {
   statuses: StatusesOptions;
 
   constructor(config: IRootConfig) {
-    super(<IConfig>config);
+    super('', config);
 
     this.extensionName = "versionlens";
 
     // instantiate contrib options
-    this.logging = new LoggingOptions(this);
-    this.caching = new CachingOptions(this);
+    this.logging = new LoggingOptions('logging', this);
+    this.caching = new CachingOptions('caching', this);
     this.suggestions = new SuggestionsOptions(this);
     this.statuses = new StatusesOptions(this);
 

@@ -19,7 +19,7 @@ import { HttpClientRequest } from 'infrastructure/clients';
 
 import { MavenClientData } from '../definitions';
 
-import { MavenConfig } from '../config';
+import { MavenConfig } from '../mavenConfig';
 import { ILogger } from 'core/logging';
 
 export class MavenClient
@@ -29,7 +29,7 @@ export class MavenClient
   config: MavenConfig;
 
   constructor(config: MavenConfig, logger: ILogger) {
-    super(logger, {}, config.cacheDuration)
+    super(logger, config.caching, {})
     this.config = config;
   }
 

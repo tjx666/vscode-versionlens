@@ -15,8 +15,7 @@ export async function activate(context: VsCodeTypes.ExtensionContext) {
   const { window, workspace } = require('vscode');
 
   // composition
-  const configuration: IRootConfig =
-    workspace.getConfiguration('versionlens');
+  const configuration: IRootConfig = workspace.getConfiguration('versionlens');
 
   const extension = registerExtension(configuration);
 

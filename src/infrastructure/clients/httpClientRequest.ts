@@ -6,7 +6,8 @@ import {
   HttpClientResponse,
   IHttpClientRequest,
   HttpClientRequestMethods,
-  UrlHelpers
+  UrlHelpers,
+  CachingOptions
 } from 'core/clients';
 
 type RequestLightHttpResponse = {
@@ -22,8 +23,8 @@ export class HttpClientRequest
 
   headers: KeyStringDictionary;
 
-  constructor(logger: ILogger, headers?: KeyStringDictionary, cacheDuration?: number) {
-    super(cacheDuration);
+  constructor(logger: ILogger, options: CachingOptions, headers?: KeyStringDictionary) {
+    super(options);
     this.logger = logger;
     this.headers = headers || {};
   }
@@ -37,7 +38,7 @@ export class HttpClientRequest
     const url = UrlHelpers.createUrl(baseUrl, query);
     const cacheKey = method + '_' + url;
 
-    if (this.cache.cacheDuration > 0 && this.cache.hasExpired(cacheKey) === false) {
+    if (this.cache.options.duration > 0 && this.cache.hasExpired(cacheKey) === false) {
       const cachedResp = this.cache.get(cacheKey);
       if (cachedResp.rejected) return Promise.reject(cachedResp);
       return Promise.resolve(cachedResp);

@@ -1,17 +1,18 @@
 import { VersionLensExtension } from 'presentation/extension';
 import {
   ProviderSupport,
-  IProviderConfig,
-  IProviderOptions
+  IProviderOptions,
+  AbstractProviderConfig
 } from "presentation/providers";
+import { CachingOptions } from 'core/clients';
 
 enum NpmContributions {
-  CacheDuration = 'npm.caching.duration',
+  Caching = 'npm.caching',
   DependencyProperties = 'npm.dependencyProperties',
   DistTagFilter = 'npm.distTagFilter',
 }
 
-export class NpmConfig implements IProviderConfig {
+export class NpmConfig extends AbstractProviderConfig {
 
   options: IProviderOptions = {
     providerName: 'npm',
@@ -27,19 +28,16 @@ export class NpmConfig implements IProviderConfig {
     }
   };
 
-  extension: VersionLensExtension
-
-  defaultDependencyProperties: Array<string>;
+  caching: CachingOptions;
 
   constructor(extension: VersionLensExtension) {
-    this.extension = extension;
+    super(extension);
 
-    this.defaultDependencyProperties = [
-      'dependencies',
-      'devDependencies',
-      'peerDependencies',
-      'optionalDependencies'
-    ];
+    this.caching = new CachingOptions(
+      NpmContributions.Caching,
+      extension,
+      'caching'
+    );
   }
 
   get dependencyProperties(): Array<string> {
@@ -48,13 +46,6 @@ export class NpmConfig implements IProviderConfig {
 
   get distTagFilter(): Array<string> {
     return this.extension.get(NpmContributions.DistTagFilter);
-  }
-
-  get cacheDuration(): number {
-    return this.extension.getOrDefault<number>(
-      NpmContributions.CacheDuration,
-      this.extension.caching.duration
-    );
   }
 
 }

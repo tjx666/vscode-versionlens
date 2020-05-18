@@ -13,7 +13,7 @@ import {
 import { VersionLensFactory, VersionLens } from 'presentation/lenses';
 import { VersionLensFetchResponse, AbstractVersionLensProvider } from 'presentation/providers';
 
-import { ComposerConfig } from 'providers/composer/config';
+import { ComposerConfig } from 'providers/composer/composerConfig';
 import { readComposerSelections, ComposerClient } from 'providers/composer/composerClient';
 
 export class ComposerVersionLensProvider extends AbstractVersionLensProvider<ComposerConfig> {

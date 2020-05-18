@@ -4,13 +4,14 @@ import {
   ClientResponse,
   ClientResponseSource
 } from "../definitions/clientResponses";
+import { CachingOptions } from '../options/cachingOptions';
 
 export class AbstractClientRequest<TStatus, TData> {
 
   cache: ExpiryCacheMap<ClientResponse<TStatus, TData>>;
 
-  constructor(cacheDuration?: number) {
-    this.cache = new ExpiryCacheMap(cacheDuration);
+  constructor(options: CachingOptions) {
+    this.cache = new ExpiryCacheMap(options);
   }
 
   createCachedResponse(
@@ -20,7 +21,7 @@ export class AbstractClientRequest<TStatus, TData> {
     rejected: boolean = false,
     source: ClientResponseSource = ClientResponseSource.remote
   ): ClientResponse<TStatus, TData> {
-    const cacheEnabled = this.cache.cacheDuration > 0;
+    const cacheEnabled = this.cache.options.duration > 0;
 
     if (cacheEnabled) {
       //  cache reponse (don't return, keep immutable)

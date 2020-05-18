@@ -13,7 +13,7 @@ import {
   renderOutdatedDecoration
 } from 'presentation/extension';
 
-import { DubConfig } from 'providers/dub/config';
+import { DubConfig } from 'providers/dub/dubConfig';
 import { readDubSelections, DubClient } from 'providers/dub/clients/dubClient';
 
 export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfig> {

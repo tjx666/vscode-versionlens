@@ -9,7 +9,7 @@ import { AbstractVersionLensProvider } from 'presentation/providers';
 import { VersionLensFactory } from 'presentation/lenses';
 
 import { extractMavenLensDataFromDocument } from 'providers/maven/mavenPackageParser';
-import { MavenConfig } from './config';
+import { MavenConfig } from './mavenConfig';
 import { MavenClientData } from './definitions';
 import { MvnClient } from './clients/mvnClient';
 import { MavenClient } from './clients/mavenClient';

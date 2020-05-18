@@ -21,7 +21,7 @@ import {
   JsonHttpClientRequest
 } from 'infrastructure/clients';
 
-import { DubConfig } from '../config';
+import { DubConfig } from '../dubConfig';
 import { ILogger } from "core/logging";
 
 export class DubClient
@@ -31,7 +31,7 @@ export class DubClient
   config: DubConfig;
 
   constructor(config: DubConfig, logger: ILogger) {
-    super(logger, {}, config.cacheDuration);
+    super(logger, config.caching, {});
     this.config = config;
   }
 

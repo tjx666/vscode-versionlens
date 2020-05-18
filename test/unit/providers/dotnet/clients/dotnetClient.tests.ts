@@ -7,7 +7,7 @@ import {
   UrlHelpers
 } from '/core/clients';
 
-import { DotNetConfig } from '/providers/dotnet/config';
+import { DotNetConfig } from 'providers/dotnet/dotnetConfig';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
 import { VersionLensExtension } from '/presentation/extension';
 import { IConfig } from '/core/configuration';

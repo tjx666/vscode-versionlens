@@ -1,9 +1,10 @@
 import { VersionLensExtension } from 'presentation/extension';
 import {
   ProviderSupport,
-  IProviderConfig,
-  IProviderOptions
+  IProviderOptions,
+  AbstractProviderConfig
 } from "presentation/providers";
+import { CachingOptions } from 'core/clients';
 
 enum ComposerContributions {
   DependencyProperties = 'composer.dependencyProperties',
@@ -11,7 +12,7 @@ enum ComposerContributions {
   CacheDuration = 'composer.caching.duration',
 }
 
-export class ComposerConfig implements IProviderConfig {
+export class ComposerConfig extends AbstractProviderConfig {
 
   options: IProviderOptions = {
     providerName: 'composer',
@@ -27,14 +28,14 @@ export class ComposerConfig implements IProviderConfig {
     }
   }
 
-  extension: VersionLensExtension
-
-  defaultDependencyProperties: Array<string>;
-
-  defaultApiUrl: string;
+  caching: CachingOptions;
 
   constructor(extension: VersionLensExtension) {
-    this.extension = extension;
+    super(extension);
+
+    this.caching = new CachingOptions(
+      'composer.caching', extension, 'caching'
+    );
   }
 
   get dependencyProperties(): Array<string> {
@@ -43,13 +44,6 @@ export class ComposerConfig implements IProviderConfig {
 
   get apiUrl(): string {
     return this.extension.get(ComposerContributions.ApiUrl);
-  }
-
-  get cacheDuration(): number {
-    return this.extension.getOrDefault<number>(
-      ComposerContributions.CacheDuration,
-      this.extension.caching.duration
-    );
   }
 
 }

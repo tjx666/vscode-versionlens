@@ -2,7 +2,7 @@ import { ILogger } from 'core/logging';
 import { VersionLensExtension } from 'presentation/extension';
 
 import { ComposerVersionLensProvider } from './composerVersionLensProvider';
-import { ComposerConfig } from './config';
+import { ComposerConfig } from './composerConfig';
 
 export function activate(extension: VersionLensExtension, logger: ILogger) {
   const config = new ComposerConfig(extension);

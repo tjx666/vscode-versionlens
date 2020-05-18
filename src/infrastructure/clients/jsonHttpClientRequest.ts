@@ -5,7 +5,8 @@ import {
   HttpClientResponse,
   JsonClientResponse,
   HttpClientRequestMethods,
-  IJsonHttpClientRequest
+  IJsonHttpClientRequest,
+  CachingOptions
 } from "core/clients";
 
 import { HttpClientRequest } from "./httpClientRequest";
@@ -14,8 +15,8 @@ export class JsonHttpClientRequest
   extends HttpClientRequest
   implements IJsonHttpClientRequest {
 
-  constructor(logger: ILogger, headers?: KeyStringDictionary, cacheDuration?: number) {
-    super(logger, headers, cacheDuration);
+  constructor(logger: ILogger, options: CachingOptions, headers?: KeyStringDictionary) {
+    super(logger, options, headers);
   }
 
   async requestJson(

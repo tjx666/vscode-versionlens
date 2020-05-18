@@ -18,7 +18,7 @@ import {
 
 import { JsonHttpClientRequest } from 'infrastructure/clients';
 
-import { ComposerConfig } from './config';
+import { ComposerConfig } from './composerConfig';
 import { ILogger } from "core/logging";
 
 export class ComposerClient
@@ -28,7 +28,7 @@ export class ComposerClient
   config: ComposerConfig;
 
   constructor(config: ComposerConfig, logger: ILogger) {
-    super(logger, {}, config.cacheDuration)
+    super(logger, config.caching, {})
     this.config = config;
   }
 

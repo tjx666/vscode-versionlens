@@ -7,7 +7,7 @@ import { ILogger } from 'core/logging';
 import { VersionLensFactory } from 'presentation/lenses';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers';
 
-import { DotNetConfig } from './config';
+import { DotNetConfig } from './dotnetConfig';
 import { extractDotnetLensDataFromDocument } from './dotnetPackageParser'
 import { DotNetClient } from './clients/dotnetClient';
 import { NuGetPackageClient } from './clients/nugetPackageClient';

@@ -9,7 +9,7 @@ import {
 
 import { NugetServiceIndexResponse } from '../definitions/nuget';
 import { DotNetSource } from '../definitions/dotnet';
-import { DotNetConfig } from '../config';
+import { DotNetConfig } from '../dotnetConfig';
 import { ILogger } from 'core/logging';
 
 export class NuGetResourceClient extends JsonHttpClientRequest {
@@ -18,7 +18,7 @@ export class NuGetResourceClient extends JsonHttpClientRequest {
   logger: ILogger;
 
   constructor(config: DotNetConfig, logger: ILogger) {
-    super(logger, {}, config.cacheDuration)
+    super(logger, config.caching, {})
     this.config = config;
     this.logger = logger;
   }

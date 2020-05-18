@@ -1,7 +1,7 @@
 import { UrlHelpers } from 'core/clients';
 import { ProcessClientRequest } from 'infrastructure/clients';
 import { DotNetSource } from '../definitions/dotnet';
-import { DotNetConfig } from '../config';
+import { DotNetConfig } from '../dotnetConfig';
 import { ILogger } from 'core/logging';
 
 export class DotNetClient extends ProcessClientRequest {
@@ -9,7 +9,7 @@ export class DotNetClient extends ProcessClientRequest {
   config: DotNetConfig;
 
   constructor(config: DotNetConfig, logger: ILogger) {
-    super(config.cacheDuration)
+    super(config.caching)
     this.config = config;
   }
 

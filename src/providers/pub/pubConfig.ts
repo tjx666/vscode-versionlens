@@ -1,17 +1,18 @@
 import { VersionLensExtension } from "presentation/extension";
 import {
   ProviderSupport,
-  IProviderConfig,
   IProviderOptions,
+  AbstractProviderConfig,
 } from "presentation/providers";
+import { CachingOptions } from "core/clients";
 
 enum PubContributions {
-  CacheDuration = 'pub.caching.duration',
+  Caching = 'pub.caching',
   DependencyProperties = 'pub.dependencyProperties',
   ApiUrl = 'pub.apiUrl',
 }
 
-export class PubConfig implements IProviderConfig {
+export class PubConfig extends AbstractProviderConfig {
 
   options: IProviderOptions = {
     providerName: 'pub',
@@ -26,10 +27,16 @@ export class PubConfig implements IProviderConfig {
     }
   };
 
-  extension: VersionLensExtension;
+  caching: CachingOptions;
 
   constructor(extension: VersionLensExtension) {
-    this.extension = extension;
+    super(extension);
+
+    this.caching = new CachingOptions(
+      PubContributions.Caching,
+      extension,
+      'caching'
+    );
   }
 
   get dependencyProperties(): Array<string> {
@@ -38,13 +45,6 @@ export class PubConfig implements IProviderConfig {
 
   get apiUrl(): string {
     return this.extension.get(PubContributions.ApiUrl);
-  }
-
-  get cacheDuration(): number {
-    return this.extension.getOrDefault<number>(
-      PubContributions.CacheDuration,
-      this.extension.caching.duration
-    );
   }
 
 }

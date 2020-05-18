@@ -1,3 +1,5 @@
+import { CachingOptions } from "../options/cachingOptions";
+
 export type CacheEntry<T> = {
   expiryTime: number,
   data: T
@@ -8,11 +10,11 @@ type CacheMap<T> = {
 };
 
 export class ExpiryCacheMap<T> {
-  cacheDuration: number;
+  options: CachingOptions;
   cacheMap: CacheMap<T>;
 
-  constructor(cacheDuration: number = 300000) {
-    this.cacheDuration = cacheDuration; // defaults to 5mins in ms
+  constructor(options: CachingOptions) {
+    this.options = options;
     this.cacheMap = {};
   }
 
@@ -39,7 +41,7 @@ export class ExpiryCacheMap<T> {
   }
 
   set(key: string, data: T): T {
-    const expiryTime = Date.now() + this.cacheDuration;
+    const expiryTime = Date.now() + this.options.duration;
     const newEntry = {
       expiryTime,
       data

@@ -223,7 +223,9 @@
           "description": "Sets the level for logging written to the output channel."
         },
         "versionlens.caching.duration": {
-          "type": "number",
+          "type": [
+            "number, null"
+          ],
           "default": "30000",
           "description": "Sets the length of time all package managers cache their version suggestion results. Default is 5 minutes. Note: You can override each individual package manager e.g. npm.caching.duration"
         },
@@ -263,7 +265,9 @@
           "description": "The colour used to show prerelease dependencies. Accept's valid CSS colours"
         },
         "versionlens.npm.caching.duration": {
-          "type": "number",
+          "type": [
+            "number, null"
+          ],
           "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
         "versionlens.npm.dependencyProperties": {
@@ -292,7 +296,9 @@
           "description": "Define which common dist tags you want to see. i.e. [alpha, beta]. If you don't specify any dist tags then all the dist-tags for a package will be shown."
         },
         "versionlens.pub.caching.duration": {
-          "type": "number",
+          "type": [
+            "number, null"
+          ],
           "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
         "versionlens.pub.dependencyProperties": {
@@ -314,7 +320,9 @@
           "description": "Defines the pub api to use for package searching."
         },
         "versionlens.dotnet.caching.duration": {
-          "type": "number",
+          "type": [
+            "number, null"
+          ],
           "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
         "versionlens.dotnet.dependencyProperties": {
@@ -354,7 +362,9 @@
           "description": "Include NuGet pre-release packages"
         },
         "versionlens.dub.caching.duration": {
-          "type": "number",
+          "type": [
+            "number, null"
+          ],
           "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
         "versionlens.dub.apiUrl": {
@@ -398,7 +408,9 @@
           "description": "Defines which properties in composer.json should be parsed by this extension"
         },
         "versionlens.maven.caching.duration": {
-          "type": "number",
+          "type": [
+            "number, null"
+          ],
           "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
         "versionlens.maven.apiUrl": {

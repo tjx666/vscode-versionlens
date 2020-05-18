@@ -12,7 +12,7 @@ import {
 
 import { ClientResponseSource } from "core/clients";
 
-import { NpmConfig } from '../config';
+import { NpmConfig } from '../npmConfig';
 
 import * as PackageFactory from '../factories/packageFactory';
 import { NpaSpec, NpaTypes } from '../models/npaSpec';

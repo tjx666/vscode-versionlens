@@ -1,7 +1,8 @@
 import {
   ClientResponseSource,
   ProcessClientResponse,
-  IProcessClientRequest
+  IProcessClientRequest,
+  CachingOptions
 } from "core/clients";
 
 import { AbstractClientRequest } from "../../core/clients/requests/abstractClientRequest";
@@ -10,8 +11,8 @@ export class ProcessClientRequest
   extends AbstractClientRequest<string, string>
   implements IProcessClientRequest {
 
-  constructor(cacheDuration?: number) {
-    super(cacheDuration);
+  constructor(options: CachingOptions) {
+    super(options);
   }
 
   async request(
@@ -22,7 +23,7 @@ export class ProcessClientRequest
 
     const cacheKey = `${cmd} ${args.join(' ')}`;
 
-    if (this.cache.cacheDuration > 0 && this.cache.hasExpired(cacheKey) === false) {
+    if (this.cache.options.duration > 0 && this.cache.hasExpired(cacheKey) === false) {
       const cachedResp = this.cache.get(cacheKey);
       if (cachedResp.rejected) return Promise.reject(cachedResp);
       return Promise.resolve(cachedResp);

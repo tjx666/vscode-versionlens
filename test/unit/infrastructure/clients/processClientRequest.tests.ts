@@ -1,4 +1,4 @@
-import { ClientResponseSource } from 'core/clients'
+import { ClientResponseSource, CachingOptions } from 'core/clients'
 import { ProcessClientRequest } from 'infrastructure/clients'
 
 const assert = require('assert')
@@ -25,7 +25,9 @@ export const ProcessClientRequestTests = {
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
-      const rut = new ProcessClientRequest()
+      const rut = new ProcessClientRequest(<CachingOptions>{
+        duration: 30000
+      });
       return await rut.request(
         'missing',
         ['--ooppss'],
@@ -60,7 +62,9 @@ export const ProcessClientRequestTests = {
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
-      const rut = new ProcessClientRequest()
+      const rut = new ProcessClientRequest(<CachingOptions>{
+        duration: 30000
+      })
 
       await rut.request(
         'echo',
@@ -97,7 +101,9 @@ export const ProcessClientRequestTests = {
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
-      const rut = new ProcessClientRequest(0)
+      const rut = new ProcessClientRequest(<CachingOptions>{
+        duration: 0
+      })
       await rut.request(
         'echo',
         ['123'],

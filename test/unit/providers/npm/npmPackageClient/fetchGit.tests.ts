@@ -1,5 +1,5 @@
 // import { testPath } from 'test/unit/utils';
-import { NpmConfig } from '/providers/npm/config';
+import { NpmConfig } from 'providers/npm/npmConfig';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
 import { VersionLensExtension } from '/presentation/extension';
 import { IConfig } from '/core/configuration';

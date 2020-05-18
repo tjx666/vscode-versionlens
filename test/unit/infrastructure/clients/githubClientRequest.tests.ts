@@ -1,6 +1,7 @@
 import { TestFixtureMap } from 'test/unit/utils'
 import { GithubRequest } from 'infrastructure/clients'
 import { LoggerMock } from 'test/unit/mocks/loggerMock'
+import { CachingOptions } from '/core/clients'
 
 const assert = require('assert')
 const mock = require('mock-require')
@@ -21,7 +22,10 @@ export const GithubRequestTests = {
   afterAll: () => mock.stopAll(),
 
   beforeEach: () => {
-    testContext.rut = new GithubRequest(new LoggerMock());
+    testContext.rut = new GithubRequest(
+      new LoggerMock(),
+      <CachingOptions>{ duration: 0 }
+    );
     requestLightMock.xhr = _ => { throw new Error("Not implemented") }
   },
 
@@ -38,8 +42,7 @@ export const GithubRequestTests = {
         })
       };
 
-      await testContext.rut.httpGet('testRepo', 'testCategory')
-
+      return await testContext.rut.httpGet('testRepo', 'testCategory')
     },
 
   },
@@ -109,7 +112,11 @@ export const GithubRequestTests = {
         return resultPromise
       };
 
-      const rut = new GithubRequest(new LoggerMock());
+      const rut = new GithubRequest(
+        new LoggerMock(),
+        <CachingOptions>{ duration: 0 }
+      );
+
       await rut.getLatestTag('testRepo')
         .then(entry => {
           assert.equal(entry.category, 'tag', "Expected category to match");

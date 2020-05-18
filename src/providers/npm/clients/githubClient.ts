@@ -13,7 +13,7 @@ import {
 
 import { JsonHttpClientRequest } from "infrastructure/clients";
 
-import { NpmConfig } from "../config";
+import { NpmConfig } from "../npmConfig";
 import { NpaSpec } from "../models/npaSpec";
 
 export class GithubClient extends JsonHttpClientRequest {
@@ -23,11 +23,11 @@ export class GithubClient extends JsonHttpClientRequest {
   constructor(config: NpmConfig, logger: ILogger) {
     super(
       logger,
+      config.caching,
       {
         accept: 'application\/vnd.github.v3+json',
         'user-agent': 'vscode-contrib/vscode-versionlens'
       },
-      config.cacheDuration
     );
 
     this.config = config;

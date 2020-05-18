@@ -1,9 +1,13 @@
 import {
   ClientResponseSource,
   AbstractClientRequest,
+  CachingOptions,
 } from 'core/clients'
 
 const assert = require('assert')
+
+class TestClientRequest extends AbstractClientRequest<number, string> { }
+
 
 export const AbstractClientRequestTests = {
 
@@ -29,7 +33,9 @@ export const AbstractClientRequestTests = {
         rejected: false
       };
 
-      const rut = new class extends AbstractClientRequest<number, string> { }
+      const rut = new TestClientRequest(<CachingOptions>{
+        duration: 30000
+      });
 
       const actualFirstResp = rut.createCachedResponse(
         testKey,
@@ -58,7 +64,9 @@ export const AbstractClientRequestTests = {
         rejected: false
       };
 
-      const rut = new (class extends AbstractClientRequest<number, string> { })(0)
+      const rut = new TestClientRequest(<CachingOptions>{
+        duration: 0
+      });
 
       const actualFirstResp = rut.createCachedResponse(
         testKey,

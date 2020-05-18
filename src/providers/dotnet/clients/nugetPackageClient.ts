@@ -23,7 +23,7 @@ import { NuGetClientData } from '../definitions/nuget';
 import { DotNetVersionSpec } from '../definitions/dotnet';
 
 import { parseVersionSpec } from '../dotnetUtils.js';
-import { DotNetConfig } from '../config';
+import { DotNetConfig } from '../dotnetConfig';
 import { ILogger } from 'core/logging';
 
 export class NuGetPackageClient
@@ -33,7 +33,7 @@ export class NuGetPackageClient
   config: DotNetConfig;
 
   constructor(config: DotNetConfig, logger: ILogger) {
-    super(logger, {}, config.cacheDuration)
+    super(logger, config.caching, {})
     this.config = config;
   }
 

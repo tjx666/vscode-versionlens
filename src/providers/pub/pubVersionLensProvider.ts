@@ -8,7 +8,7 @@ import { extractPackageDependenciesFromYaml } from "core/packages";
 import { VersionLensFactory } from 'presentation/lenses';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers';
 
-import { PubConfig } from './config';
+import { PubConfig } from './pubConfig';
 import { PubClient } from './pubClient';
 
 export class PubVersionLensProvider

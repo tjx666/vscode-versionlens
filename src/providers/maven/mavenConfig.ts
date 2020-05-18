@@ -1,18 +1,19 @@
 import { VersionLensExtension } from 'presentation/extension';
 import {
   ProviderSupport,
-  IProviderConfig,
-  IProviderOptions
+  IProviderOptions,
+  AbstractProviderConfig
 } from "presentation/providers";
+import { CachingOptions } from 'core/clients';
 
 enum MavenContributions {
-  CacheDuration = 'maven.caching.duration',
+  Caching = 'maven.caching',
   DependencyProperties = 'maven.dependencyProperties',
   TagFilter = 'maven.tagFilter',
   ApiUrl = 'maven.apiUrl',
 }
 
-export class MavenConfig implements IProviderConfig {
+export class MavenConfig extends AbstractProviderConfig {
 
   options: IProviderOptions = {
     providerName: 'maven',
@@ -26,11 +27,17 @@ export class MavenConfig implements IProviderConfig {
       pattern: '**/pom.xml',
     }
   };
-
-  extension: VersionLensExtension;
+  
+  caching: CachingOptions;
 
   constructor(extension: VersionLensExtension) {
-    this.extension = extension;
+    super(extension);
+
+    this.caching = new CachingOptions(
+      MavenContributions.Caching,
+      extension,
+      'caching'
+    );
   }
 
   get dependencyProperties(): Array<string> {
@@ -43,13 +50,6 @@ export class MavenConfig implements IProviderConfig {
 
   get apiUrl(): string {
     return this.extension.get(MavenContributions.ApiUrl);
-  }
-
-  get cacheDuration(): number {
-    return this.extension.getOrDefault<number>(
-      MavenContributions.CacheDuration,
-      this.extension.caching.duration
-    );
   }
 
 }

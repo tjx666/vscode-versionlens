@@ -1,12 +1,13 @@
 import { ILogger } from 'core/logging';
-import { HttpClientRequestMethods } from 'core/clients';
+import { HttpClientRequestMethods, CachingOptions } from 'core/clients';
 import { JsonHttpClientRequest } from './jsonHttpClientRequest';
 
 export class GithubRequest extends JsonHttpClientRequest {
 
-  constructor(logger) {
+  constructor(logger, cachingOptions) {
     super(
       logger,
+      cachingOptions,
       {
         accept: 'application\/vnd.github.v3+json',
         'user-agent': 'vscode-contrib/vscode-versionlens'

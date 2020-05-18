@@ -1,6 +1,7 @@
 import {
   ClientResponseSource,
   HttpClientRequestMethods,
+  CachingOptions,
 } from 'core/clients'
 
 import {
@@ -48,7 +49,12 @@ export const JsonClientRequestTests = {
         return Promise.resolve(testResponse)
       };
 
-      const rut = new JsonHttpClientRequest(new LoggerMock());
+      const rut = new JsonHttpClientRequest(
+        new LoggerMock(),
+        <CachingOptions>{
+          duration: 30000
+        }
+      );
 
       await rut.requestJson(
         HttpClientRequestMethods.get,

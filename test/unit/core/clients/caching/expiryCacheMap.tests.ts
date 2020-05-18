@@ -1,6 +1,6 @@
 import { delay } from 'test/unit/utils';
 
-import { ExpiryCacheMap } from 'core/clients';
+import { ExpiryCacheMap, CachingOptions } from 'core/clients';
 
 const assert = require('assert');
 
@@ -10,7 +10,7 @@ export const ExpiryCacheMapTests = {
 
   beforeEach: () => {
     // setup the client cache
-    testCacheMap = new ExpiryCacheMap(60000)
+    testCacheMap = new ExpiryCacheMap(<CachingOptions>{ duration: 30000 })
   },
 
   "hasExpired(key)": {
@@ -30,7 +30,7 @@ export const ExpiryCacheMapTests = {
     "returns true when the cache entry is beyond the cache duration": () => {
       const testKey = 'key1';
 
-      testCacheMap = new ExpiryCacheMap(-1);
+      testCacheMap = new ExpiryCacheMap(<CachingOptions>{ duration: -1 });
       testCacheMap.set(testKey, {});
       const actual = testCacheMap.hasExpired(testKey);
       assert.ok(actual, 'ExpiryCacheMap.hasExpired(key): A cache entry beyond the cache duration should be expired');
@@ -40,7 +40,7 @@ export const ExpiryCacheMapTests = {
       const testKey = 'duration';
       const testDuration = 250;
 
-      testCacheMap = new ExpiryCacheMap(testDuration);
+      testCacheMap = new ExpiryCacheMap(<CachingOptions>{ duration: testDuration });
       testCacheMap.set(testKey, "should of expired")
 
       return delay(testDuration + 10)
@@ -54,7 +54,7 @@ export const ExpiryCacheMapTests = {
       const testKey = 'duration';
       const testDuration = 250;
 
-      testCacheMap = new ExpiryCacheMap(testDuration);
+      testCacheMap = new ExpiryCacheMap(<CachingOptions>{ duration: testDuration });
       testCacheMap.set(testKey, "should not be expired")
 
       return delay(testDuration - 10)
@@ -78,7 +78,7 @@ export const ExpiryCacheMapTests = {
       const testKey = 'key1';
       const testData = {};
 
-      testCacheMap = new ExpiryCacheMap(-1);
+      testCacheMap = new ExpiryCacheMap(<CachingOptions>{ duration: -1 });
       testCacheMap.set(testKey, testData);
       const actual = testCacheMap.get(testKey);
       assert.equal(actual, testData, 'ExpiryCacheMap.set(key, data): Should store the data by the key');

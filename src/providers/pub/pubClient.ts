@@ -19,7 +19,7 @@ import {
   JsonHttpClientRequest
 } from 'infrastructure/clients';
 
-import { PubConfig } from './config';
+import { PubConfig } from './pubConfig';
 import { ILogger } from 'core/logging';
 
 export class PubClient
@@ -29,7 +29,7 @@ export class PubClient
   config: PubConfig;
 
   constructor(config: PubConfig, logger: ILogger) {
-    super(logger, {}, config.cacheDuration)
+    super(logger, config.caching, {})
     this.config = config;
   }
 

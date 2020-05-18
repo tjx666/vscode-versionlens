@@ -1,6 +1,6 @@
 import { UrlHelpers } from 'core/clients';
 import { ProcessClientRequest } from 'infrastructure/clients';
-import { MavenConfig } from '../config';
+import { MavenConfig } from '../mavenConfig';
 import { MavenRepository } from '../definitions';
 import { ILogger } from 'core/logging';
 
@@ -9,7 +9,7 @@ export class MvnClient extends ProcessClientRequest {
   config: MavenConfig;
 
   constructor(config: MavenConfig, logger: ILogger) {
-    super(config.cacheDuration)
+    super(config.caching)
     this.config = config;
   }
 
