@@ -6,13 +6,13 @@ import { ILogger } from 'core/logging';
 import { UrlHelpers } from 'core/clients';
 
 import { AbstractVersionLensProvider } from 'presentation/providers';
-import { VersionLensFactory } from 'presentation/lenses';
 
 import { extractMavenLensDataFromDocument } from 'providers/maven/mavenPackageParser';
 import { MavenConfig } from './mavenConfig';
 import { MavenClientData } from './definitions';
 import { MvnClient } from './clients/mvnClient';
 import { MavenClient } from './clients/mavenClient';
+import { RequestFactory } from 'core/packages';
 
 export class MavenVersionLensProvider
   extends AbstractVersionLensProvider<MavenConfig> {
@@ -58,13 +58,12 @@ export class MavenVersionLensProvider
         clientData,
       }
 
-      return VersionLensFactory.createVersionLenses(
+      return RequestFactory.executeDependencyRequests(
+        packagePath,
         this.mavenClient,
-        document,
         packageDependencies,
         context,
       );
-
     })
 
   }

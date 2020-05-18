@@ -3,9 +3,8 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import { ILogger } from 'core/logging';
-import { extractPackageDependenciesFromYaml } from "core/packages";
+import { extractPackageDependenciesFromYaml, RequestFactory } from "core/packages";
 
-import { VersionLensFactory } from 'presentation/lenses';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers';
 
 import { PubConfig } from './pubConfig';
@@ -27,11 +26,11 @@ export class PubVersionLensProvider
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
 
-    const packageDepsLenses = extractPackageDependenciesFromYaml(
+    const packageDependencies = extractPackageDependenciesFromYaml(
       document.getText(),
       this.config.dependencyProperties
     );
-    if (packageDepsLenses.length === 0) return null;
+    if (packageDependencies.length === 0) return null;
 
     const includePrereleases = this.extension.state.prereleasesEnabled.value;
 
@@ -40,10 +39,10 @@ export class PubVersionLensProvider
       clientData: null,
     };
 
-    return VersionLensFactory.createVersionLenses(
+    return RequestFactory.executeDependencyRequests(
+      packagePath,
       this.pubClient,
-      document,
-      packageDepsLenses,
+      packageDependencies,
       context,
     );
   }

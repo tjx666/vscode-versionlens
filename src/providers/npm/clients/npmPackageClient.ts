@@ -18,7 +18,7 @@ import * as PackageFactory from '../factories/packageFactory';
 import { NpaSpec, NpaTypes } from '../models/npaSpec';
 import { PacoteClient } from './pacoteClient';
 import { GithubClient } from './githubClient';
-import { createResponseStatus } from 'core/packages/factories/packageResponseFactory';
+import * as NpmUtils from '../npmUtils';
 
 export class NpmPackageClient implements IPackageClient<null> {
 
@@ -50,18 +50,9 @@ export class NpmPackageClient implements IPackageClient<null> {
           request.package.version,
           request.package.path
         );
-      } catch (error) {
-        return reject(
-          ResponseFactory.createUnexpected(
-            request.providerName,
-            request.package,
-            {
-              source: ClientResponseSource.remote,
-              status: error.code,
-              data: error.message
-            },
-          )
-        );
+      }
+      catch (error) {
+        return reject(NpmUtils.convertNpmErrorToResponse(error, ClientResponseSource.local));
       }
 
       // return if directory or file document
@@ -84,7 +75,7 @@ export class NpmPackageClient implements IPackageClient<null> {
             DocumentFactory.createInvalidVersion(
               request.providerName,
               request.package,
-              createResponseStatus(ClientResponseSource.local, 0),
+              ResponseFactory.createResponseStatus(ClientResponseSource.local, 0),
               PackageVersionTypes.Committish
             )
           );
@@ -97,7 +88,7 @@ export class NpmPackageClient implements IPackageClient<null> {
               request.providerName,
               PackageSourceTypes.Git,
               request.package,
-              createResponseStatus(ClientResponseSource.local, 0),
+              ResponseFactory.createResponseStatus(ClientResponseSource.local, 0),
               PackageVersionTypes.Committish,
               'git repository'
             )
@@ -111,12 +102,15 @@ export class NpmPackageClient implements IPackageClient<null> {
       // otherwise return registry result
       return resolve(this.pacoteClient.fetchPackage(request, npaSpec));
 
-    }).catch(error => {
-      const { response } = error
+    }).catch(response => {
+      if (!response.data) {
+        response = NpmUtils.convertNpmErrorToResponse(
+          response,
+          ClientResponseSource.remote
+        );
+      }
 
-      if (!response) return Promise.reject(error);
-
-      if (response.status === 'E404') {
+      if (response.status === 404 || response.status === 'E404') {
         return DocumentFactory.createNotFound(
           request.providerName,
           request.package,
@@ -152,7 +146,7 @@ export class NpmPackageClient implements IPackageClient<null> {
         );
       }
 
-      return Promise.reject(error);
+      return Promise.reject(response);
     });
 
   }

@@ -5,14 +5,14 @@ import * as VsCodeTypes from 'vscode';
 import { VersionLensExtension } from 'presentation/extension';
 import { ILogger } from 'core/logging';
 
-import { PackageSourceTypes, PackageResponseErrors } from 'core/packages';
+import { PackageSourceTypes, PackageResponseErrors, PackageResponse } from 'core/packages';
 
 import * as CommandFactory from 'presentation/commands/factory';
 
-import { IVersionCodeLens, VersionLens } from "presentation/lenses";
+import { IVersionCodeLens, VersionLens, VersionLensFactory } from "presentation/lenses";
 import { IProviderConfig } from './definitions/iProviderConfig';
 
-export type VersionLensFetchResponse = Promise<VersionLens[] | null>;
+export type VersionLensFetchResponse = Promise<Array<PackageResponse>>;
 
 export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfig>  {
 
@@ -70,11 +70,13 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
     //    this.logger.clear()
     // }
 
-    return this.fetchVersionLenses(
-      packagePath,
-      document,
-      token
-    );
+    return this.fetchVersionLenses(packagePath, document, token)
+      .then(responses => {
+        return VersionLensFactory.createVersionLensesFromResponses(
+          document,
+          responses
+        );
+      })
   }
 
   async resolveCodeLens(

@@ -7,31 +7,39 @@ import { ILogger } from 'core/logging';
 import { VersionLensExtension } from 'presentation/extension';
 import { AbstractVersionLensProvider } from 'presentation/providers'
 import { IProviderConfig } from './definitions/iProviderConfig';
-
-export const providerNames = [
-  'composer',
-  'dotnet',
-  'dub',
-  'jspm',
-  'maven',
-  'npm',
-  'pub',
-];
+// import { regsiterCache } from 'core/packages';
 
 class ProviderRegistry {
 
   providers: KeyDictionary<AbstractVersionLensProvider<IProviderConfig>>;
 
+  providerNames: Array<string>;
+
   constructor() {
     this.providers = {};
+
+    this.providerNames = [
+      'composer',
+      'dotnet',
+      'dub',
+      'jspm',
+      'maven',
+      'npm',
+      'pub',
+    ];
   }
 
   register(
     provider: AbstractVersionLensProvider<IProviderConfig>
   ): AbstractVersionLensProvider<IProviderConfig> {
+
     const key = provider.config.options.providerName;
     if (this.has(key)) throw new Error('Provider already registered');
+
     this.providers[key] = provider;
+
+    // regsiterCache(key, provider.config.caching);
+
     return provider;
   }
 
@@ -43,16 +51,15 @@ class ProviderRegistry {
     return !!this.providers[key];
   }
 
-  getByFileName(fileName: string) {
+  getByFileName(fileName: string): Array<AbstractVersionLensProvider<IProviderConfig>> {
     const path = require('path');
     const filename = path.basename(fileName);
-    const filtered = providerNames
+    const filtered = this.providerNames
       .map(name => this.providers[name])
-      .filter(provider => !!provider)
       .filter(provider => matchesFilename(
         filename,
         provider.config.options.selector.pattern
-      ))
+      ));
 
     if (filtered.length === 0) return null;
 
@@ -64,13 +71,14 @@ class ProviderRegistry {
 export const providerRegistry = new ProviderRegistry();
 
 export async function registerProviders(
-  extension: VersionLensExtension,
-  logger: ILogger
+  extension: VersionLensExtension, logger: ILogger
 ): Promise<Array<VsCodeTypes.Disposable>> {
 
   const {
     languages: { registerCodeLensProvider }
   } = require('vscode');
+
+  const providerNames = providerRegistry.providerNames;
 
   logger.info('Registering providers %o', providerNames);
 

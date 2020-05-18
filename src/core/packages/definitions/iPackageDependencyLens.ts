@@ -1,14 +1,17 @@
+export type PackageDependencyRange = {
+  start: number;
+  end: number;
+}
+
 export interface IPackageDependencyLens {
-  nameRange: {
-    start: number;
-    end: number;
-  };
-  versionRange: {
-    start: number;
-    end: number;
-  };
+
+  nameRange: PackageDependencyRange;
+
+  versionRange: PackageDependencyRange;
+
   packageInfo: {
     name: string;
     version: string;
   };
+
 };

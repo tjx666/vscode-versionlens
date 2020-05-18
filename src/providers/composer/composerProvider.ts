@@ -3,14 +3,14 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import { ILogger } from 'core/logging';
-import { VersionHelpers, extractPackageDependenciesFromJson } from 'core/packages';
+import { VersionHelpers, extractPackageDependenciesFromJson, RequestFactory } from 'core/packages';
 
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
   renderOutdatedDecoration
 } from 'presentation/extension';
-import { VersionLensFactory, VersionLens } from 'presentation/lenses';
+import { VersionLens } from 'presentation/lenses';
 import { VersionLensFetchResponse, AbstractVersionLensProvider } from 'presentation/providers';
 
 import { ComposerConfig } from 'providers/composer/composerConfig';
@@ -33,11 +33,11 @@ export class ComposerVersionLensProvider extends AbstractVersionLensProvider<Com
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
 
-    const packageDepsLenses = extractPackageDependenciesFromJson(
+    const packageDependencies = extractPackageDependenciesFromJson(
       document.getText(),
       this.config.dependencyProperties
     );
-    if (packageDepsLenses.length === 0) return null;
+    if (packageDependencies.length === 0) return null;
 
     const includePrereleases = this.extension.state.prereleasesEnabled.value;
 
@@ -46,10 +46,10 @@ export class ComposerVersionLensProvider extends AbstractVersionLensProvider<Com
       clientData: null,
     }
 
-    return VersionLensFactory.createVersionLenses(
+    return RequestFactory.executeDependencyRequests(
+      packagePath,
       this.composerClient,
-      document,
-      packageDepsLenses,
+      packageDependencies,
       context,
     );
   }

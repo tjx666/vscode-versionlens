@@ -3,9 +3,9 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import { ILogger } from 'core/logging';
-import { extractPackageDependenciesFromJson, VersionHelpers } from 'core/packages';
+import { extractPackageDependenciesFromJson, VersionHelpers, RequestFactory } from 'core/packages';
 
-import { VersionLensFactory, VersionLens } from 'presentation/lenses';
+import { VersionLens } from 'presentation/lenses';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers';
 import {
   renderMissingDecoration,
@@ -34,23 +34,23 @@ export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfi
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
-    const packageDepsLenses = extractPackageDependenciesFromJson(
+    const packageDependencies = extractPackageDependenciesFromJson(
       document.getText(),
       this.config.dependencyProperties
     );
-    if (packageDepsLenses.length === 0) return null;
+    if (packageDependencies.length === 0) return null;
 
     const includePrereleases = this.extension.state.prereleasesEnabled.value;
-    
+
     const context = {
       includePrereleases,
       clientData: null,
     }
 
-    return VersionLensFactory.createVersionLenses(
+    return RequestFactory.executeDependencyRequests(
+      packagePath,
       this.dubClient,
-      document,
-      packageDepsLenses,
+      packageDependencies,
       context,
     );
   }

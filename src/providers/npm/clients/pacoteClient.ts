@@ -1,6 +1,5 @@
 import {
   DocumentFactory,
-  ResponseFactory,
   PackageRequest,
   SuggestionFactory,
   VersionHelpers,
@@ -12,6 +11,7 @@ import { ILogger } from 'core/logging';
 import { ClientResponseSource } from "core/clients";
 import { NpmConfig } from '../npmConfig';
 import { NpaSpec, NpaTypes } from '../models/npaSpec';
+import * as NpmUtils from '../npmUtils';
 
 export class PacoteClient {
 
@@ -21,116 +21,102 @@ export class PacoteClient {
     this.config = config;
   }
 
-  async fetchPackage(
-    request: PackageRequest<null>,
-    npaSpec: NpaSpec
+  async  fetchPackage(
+    request: PackageRequest<null>, npaSpec: NpaSpec
   ): Promise<PackageDocument> {
-    return createPacotePackageDocument(request, npaSpec)
-  }
 
-}
+    const pacote = require('pacote');
+    const npmConfig = require('libnpmconfig');
 
-async function createPacotePackageDocument(
-  request: PackageRequest<null>,
-  npaSpec: NpaSpec
-): Promise<PackageDocument> {
+    // get npm config
+    const npmOpts = npmConfig.read(
+      {
+        where: request.package.path,
+        fullMetadata: false,
+        // 'prefer-online': true,
+      },
+      {
+        cwd: request.package.path,
+      }
+    );
 
-  const pacote = require('pacote');
+    return pacote.packument(npaSpec, npmOpts)
+      .then(function (packumentResponse): PackageDocument {
 
-  const npmConfig = require('libnpmconfig');
+        const { compareLoose } = require("semver");
 
-  // get npm config
-  const npmOpts = npmConfig.read(
-    {
-      where: request.package.path,
-      fullMetadata: false,
-      // 'prefer-online': true,
-    },
-    {
-      cwd: request.package.path,
-    }
-  );
+        const { providerName } = request;
 
-  return pacote.packument(npaSpec, npmOpts)
-    .then(function (packumentResponse): PackageDocument {
+        const source: PackageSourceTypes = PackageSourceTypes.Registry;
 
-      const { compareLoose } = require("semver");
+        const type: PackageVersionTypes = <any>npaSpec.type;
 
-      const { providerName } = request;
+        let versionRange: string = (type === PackageVersionTypes.Alias) ?
+          npaSpec.subSpec.rawSpec :
+          npaSpec.rawSpec;
 
-      const source: PackageSourceTypes = PackageSourceTypes.Registry;
+        const resolved = {
+          name: (type === PackageVersionTypes.Alias) ?
+            npaSpec.subSpec.name :
+            npaSpec.name,
+          version: versionRange,
+        };
 
-      const type: PackageVersionTypes = <any>npaSpec.type;
+        // extract releases
+        const releases = Object.keys(packumentResponse.versions || {}).sort(compareLoose);
 
-      let versionRange: string = (type === PackageVersionTypes.Alias) ?
-        npaSpec.subSpec.rawSpec :
-        npaSpec.rawSpec;
+        // extract prereleases from dist tags
+        const prereleases = VersionHelpers.filterPrereleasesFromDistTags(
+          packumentResponse['dist-tags'] || {}
+        ).sort(compareLoose)
 
-      const resolved = {
-        name: (type === PackageVersionTypes.Alias) ?
-          npaSpec.subSpec.name :
-          npaSpec.name,
-        version: versionRange,
-      };
+        const response = {
+          source: ClientResponseSource.remote,
+          status: 200,
+        };
 
-      // extract releases
-      const releases = Object.keys(packumentResponse.versions || {}).sort(compareLoose);
+        // check if the version requested is a tag. eg latest|next
+        const requested = request.package;
+        const distTags = packumentResponse['dist-tags'] || {};
+        if (npaSpec.type === NpaTypes.Tag) {
+          versionRange = distTags[requested.version];
+          if (!versionRange) return DocumentFactory.createNoMatch(
+            providerName,
+            source,
+            type,
+            requested,
+            response,
+            // suggest the latest release if available
+            releases.length > 0 ? releases[releases.length - 1] : null
+          );
+        }
 
-      // extract prereleases from dist tags
-      const prereleases = VersionHelpers.filterPrereleasesFromDistTags(
-        packumentResponse['dist-tags'] || {}
-      ).sort(compareLoose)
+        // analyse suggestions
+        const suggestions = SuggestionFactory.createSuggestionTags(
+          versionRange,
+          releases,
+          prereleases
+        );
 
-      const response = {
-        source: ClientResponseSource.remote,
-        status: 200,
-      };
-
-      // check if the version requested is a tag. eg latest|next
-      const requested = request.package;
-      const distTags = packumentResponse['dist-tags'] || {};
-      if (npaSpec.type === NpaTypes.Tag) {
-        versionRange = distTags[requested.version];
-        if (!versionRange) return DocumentFactory.createNoMatch(
+        return {
           providerName,
           source,
+          response,
           type,
           requested,
-          response,
-          // suggest the latest release if available
-          releases.length > 0 ? releases[releases.length - 1] : null
+          resolved,
+          suggestions,
+        };
+
+      }).catch(error => {
+        return Promise.reject(
+          NpmUtils.convertNpmErrorToResponse(
+            error,
+            ClientResponseSource.remote
+          )
         );
-      }
+      });
 
-      // analyse suggestions
-      const suggestions = SuggestionFactory.createSuggestionTags(
-        versionRange,
-        releases,
-        prereleases
-      );
+  }
 
-      return {
-        providerName,
-        source,
-        response,
-        type,
-        requested,
-        resolved,
-        suggestions,
-      };
-
-    }).catch(error => {
-      const response = {
-        source: ClientResponseSource.remote,
-        data: error.message,
-        status: error.code
-      };
-      return Promise.reject(
-        ResponseFactory.createUnexpected(
-          request.providerName,
-          request.package,
-          response,
-        )
-      );
-    });
 }

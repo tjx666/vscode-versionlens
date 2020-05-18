@@ -1,7 +1,7 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
 
-import { extractPackageDependenciesFromJson, IPackageClient } from 'core/packages';
+import { extractPackageDependenciesFromJson, IPackageClient, RequestFactory } from 'core/packages';
 
 // imports
 import {
@@ -12,12 +12,12 @@ import {
   renderPrereleaseInstalledDecoration
 } from 'presentation/extension';
 
-import { VersionLensFactory, VersionLens } from 'presentation/lenses';
+import { VersionLens } from 'presentation/lenses';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers';
 
 import { npmGetOutdated, npmPackageDirExists } from './clients/npmClient';
 import { NpmConfig } from './npmConfig';
-import { npmReplaceVersion } from './npmVersionUtils';
+import { npmReplaceVersion } from './npmUtils';
 import { ILogger } from 'core/logging';
 import { NpmPackageClient } from './clients/npmPackageClient';
 
@@ -41,11 +41,11 @@ export class NpmVersionLensProvider
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
 
-    const packageDepsLenses = extractPackageDependenciesFromJson(
+    const packageDependencies = extractPackageDependenciesFromJson(
       document.getText(),
       this.config.dependencyProperties
     );
-    if (packageDepsLenses.length === 0) return null;
+    if (packageDependencies.length === 0) return null;
 
     const includePrereleases = this.extension.state.prereleasesEnabled.value;
 
@@ -55,11 +55,11 @@ export class NpmVersionLensProvider
       replaceVersion: npmReplaceVersion
     }
 
-    return VersionLensFactory.createVersionLenses(
+    return RequestFactory.executeDependencyRequests(
+      packagePath,
       this.packageClient,
-      document,
-      packageDepsLenses,
-      context
+      packageDependencies,
+      context,
     );
   }
 

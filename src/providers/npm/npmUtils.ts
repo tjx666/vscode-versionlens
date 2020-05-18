@@ -4,6 +4,7 @@ import {
   PackageResponse,
   PackageVersionTypes,
 } from "core/packages";
+import { ClientResponseSource, ClientResponse } from "core/clients";
 
 export function npmReplaceVersion(packageInfo: PackageResponse, newVersion: string): string {
   if (packageInfo.source === PackageSourceTypes.Github) {
@@ -36,4 +37,12 @@ function replaceAliasVersion(packageInfo: PackageResponse, newVersion: string): 
   );
 
   return `npm:${packageInfo.resolved.name}@${preservedLeadingVersion}`;
+}
+
+export function convertNpmErrorToResponse(error, source: ClientResponseSource): ClientResponse<number, string> {
+  return {
+    source,
+    status: error.code,
+    data: error.message,
+  }
 }

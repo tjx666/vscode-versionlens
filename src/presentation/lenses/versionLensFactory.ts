@@ -2,115 +2,31 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import {
-  IPackageDependencyLens,
-  PackageResponseAggregate,
-  PackageRequest,
-  RequestFactory,
-  IPackageClient,
-  PackageClientContext,
-} from 'core/packages';
-
-import { VersionLensFetchResponse } from 'presentation/providers';
+import { PackageResponse } from 'core/packages';
 import { VersionLens } from './versionLens';
 
-export async function createVersionLenses<TClientData>(
-  client: IPackageClient<TClientData>,
-  document: VsCodeTypes.TextDocument,
-  dependencies: Array<IPackageDependencyLens>,
-  context: PackageClientContext<TClientData>,
-): VersionLensFetchResponse {
-
-  const results = [];
-  const { dirname } = require('path');
-  const packagePath = dirname(document.uri.fsPath);
-
-  const promises = dependencies.map(
-    function (dependency) {
-      const promisedDependency = resolveDependency(
-        client,
-        packagePath,
-        dependency,
-        document,
-        context,
+export function createVersionLensesFromResponses(
+  document: VsCodeTypes.TextDocument, responses: Array<PackageResponse>
+): Array<VersionLens> {
+  // multiple lens for a package (versions, tags etc...)
+  return responses.map(
+    function (response, order) {
+      return createVersionlensFromEntry(
+        order,
+        response,
+        document
       );
-      return promisedDependency.then(function (lenses) {
-        results.push(...lenses)
-      });
     }
   );
-
-  return Promise.all(promises).then(_ => results)
-}
-
-async function resolveDependency<TClientData>(
-  client: IPackageClient<TClientData>,
-  packagePath: string,
-  dependency: IPackageDependencyLens,
-  document: VsCodeTypes.TextDocument,
-  context: PackageClientContext<TClientData>,
-): Promise<Array<VersionLens>> {
-
-  const { name, version } = dependency.packageInfo;
-
-  const {
-    includePrereleases,
-    clientData,
-    replaceVersion,
-  } = context;
-
-  const request: PackageRequest<TClientData> = {
-    providerName: client.config.options.providerName,
-    includePrereleases,
-    clientData,
-    package: {
-      name,
-      version,
-      path: packagePath,
-    }
-  };
-
-  return RequestFactory.createPackageRequest(client, request, replaceVersion)
-    .then(function (responses): Array<VersionLens> {
-
-      if (Array.isArray(responses)) {
-        // multiple lens for a package (versions, tags etc...)
-        return responses.map(
-          function (response, order) {
-            return createVersionlensFromEntry(
-              {
-                order,
-                dependency,
-                response
-              },
-              document
-            );
-          }
-        );
-      }
-
-      // single lens for a package (errors etc...)
-      return [
-        createVersionlensFromEntry(
-          {
-            order: 0,
-            dependency,
-            response: responses
-          },
-          document
-        )
-      ];
-    });
 }
 
 function createVersionlensFromEntry(
-  entry: PackageResponseAggregate,
-  document: VsCodeTypes.TextDocument
+  order: number, response: PackageResponse, document: VsCodeTypes.TextDocument
 ): VersionLens {
   const { Uri, Range } = require('vscode')
 
-  const { nameRange, versionRange } = entry.dependency;
-  const commandRangePos = nameRange.start + entry.order;
+  const { nameRange, versionRange } = response;
+  const commandRangePos = nameRange.start + order;
   const commandRange = new Range(
     document.positionAt(commandRangePos),
     document.positionAt(commandRangePos)
@@ -122,7 +38,7 @@ function createVersionlensFromEntry(
   return new VersionLens(
     commandRange,
     replaceRange,
-    entry.response,
+    response,
     Uri.file(document.fileName)
   );
 }

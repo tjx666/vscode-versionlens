@@ -10,13 +10,18 @@ import {
   PackageResponseStatus,
   ReplaceVersionFunction
 } from "../definitions/packageResponse";
+import { PackageDependencyRange } from "../definitions/iPackageDependencyLens";
 
 export class PackageResponse {
   providerName: string;
   requested: PackageIdentifier;
+
+  nameRange: PackageDependencyRange;
+  versionRange: PackageDependencyRange;
+
+
   error?: PackageResponseErrors;
   errorMessage?: string;
-
   source?: PackageSourceTypes;
   response?: PackageResponseStatus;
   type?: PackageVersionTypes;

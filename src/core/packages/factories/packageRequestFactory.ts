@@ -1,12 +1,74 @@
-import * as ResponseFactory from './packageResponseFactory';
+import {
+  RequestFactory,
+  ResponseFactory,
+  IPackageDependencyLens,
+  PackageClientContext,
+  PackageRequest,
+  ReplaceVersionFunction,
+  IPackageClient,
+  PackageSuggestionFlags,
+  PackageResponse,
+} from 'core/packages';
 
-import { PackageRequest } from "../definitions/packageRequest";
-import { ReplaceVersionFunction } from '../definitions/packageResponse';
-import { IPackageClient } from '../definitions/iPackageClient';
-import { PackageSuggestionFlags } from '../definitions/packageDocument';
-import { PackageResponse } from '../models/packageResponse';
 
-export async function createPackageRequest<TClientData>(
+export async function executeDependencyRequests<TClientData>(
+  packagePath: string,
+  client: IPackageClient<TClientData>,
+  dependencies: Array<IPackageDependencyLens>,
+  context: PackageClientContext<TClientData>
+): Promise<Array<PackageResponse>> {
+
+  const providerName = client.config.options.providerName;
+
+  const {
+    includePrereleases,
+    clientData,
+    replaceVersion,
+  } = context;
+
+  const results = [];
+  const promises = dependencies.map(
+    function (dependency) {
+
+      // build the client request
+      const { name, version } = dependency.packageInfo;
+      const clientRequest: PackageRequest<TClientData> = {
+        providerName,
+        includePrereleases,
+        clientData,
+        dependency,
+        package: {
+          name,
+          version,
+          path: packagePath,
+        }
+      };
+
+      // execute request
+      const promisedDependency = RequestFactory.executePackageRequest(
+        client,
+        clientRequest,
+        replaceVersion
+      );
+
+      // flatten responses
+      return promisedDependency.then(
+        function (responses) {
+          if (Array.isArray(responses))
+            results.push(...responses)
+          else
+            results.push(responses);
+        }
+      );
+
+    }
+
+  );
+
+  return Promise.all(promises).then(_ => results)
+}
+
+export async function executePackageRequest<TClientData>(
   client: IPackageClient<TClientData>,
   request: PackageRequest<TClientData>,
   replaceVersionFn: ReplaceVersionFunction,
@@ -19,43 +81,34 @@ export async function createPackageRequest<TClientData>(
   );
 
   return client.fetchPackage(request)
-    .then(function (document) {
+    .then(function (response) {
 
       client.logger.debug(
         'Fetched %s package from %s: %s@%s',
-        document.providerName,
-        document.response.source,
+        response.providerName,
+        response.response.source,
         request.package.name,
         request.package.version
       );
 
       if (request.includePrereleases === false) {
-        document.suggestions = document.suggestions.filter(
+        response.suggestions = response.suggestions.filter(
           suggestion => !(suggestion.flags & PackageSuggestionFlags.prerelease)
         )
       }
 
-      return ResponseFactory.createSuccess(document, replaceVersionFn);
+      return ResponseFactory.createSuccess(request, response, replaceVersionFn);
     })
     .catch(function (error: PackageResponse) {
 
       client.logger.error(
         `Provider: %s\tFunction: %s\tPackage: %O\t Error: %j`,
-        error.providerName,
-        createPackageRequest.name,
+        request.providerName,
+        executePackageRequest.name,
         request.package,
         error
       );
 
-      return ResponseFactory.createUnexpected(
-        error.providerName,
-        request.package,
-        {
-          source: error.response.source,
-          status: error.response.status,
-          data: 'Unexpected error occurred'
-        }
-      )
-
+      return Promise.reject(error);
     })
 }

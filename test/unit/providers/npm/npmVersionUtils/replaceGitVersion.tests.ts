@@ -1,4 +1,4 @@
-import * as NpmVersionUtils from 'providers/npm/npmVersionUtils'
+import * as NpmUtils from 'providers/npm/npmUtils'
 import { PackageResponse, PackageSourceTypes } from '/core/packages'
 
 const assert = require('assert')
@@ -11,6 +11,8 @@ export default {
       const packageInfo: PackageResponse = {
         providerName: 'testreplace',
         source: PackageSourceTypes.Github,
+        nameRange: null,
+        versionRange: null,
         requested: {
           path: 'packagepath',
           name: 'packagename',
@@ -25,7 +27,7 @@ export default {
       const expected = 'github:someRepo/someProject#semver:4.2.1'
 
       // NpmVersionUtils
-      const actual = NpmVersionUtils.npmReplaceVersion(
+      const actual = NpmUtils.npmReplaceVersion(
         packageInfo,
         '4.2.1'
       )

@@ -2,15 +2,15 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { VersionLensFactory } from 'presentation/lenses';
 import { VersionLensFetchResponse } from 'presentation/providers';
 
 import { NpmVersionLensProvider } from 'providers/npm/npmProvider';
-import { npmReplaceVersion } from 'providers/npm/npmVersionUtils';
+import { npmReplaceVersion } from 'providers/npm/npmUtils';
 
 import { extractPackageDependenciesFromJson } from './jspmPackageParser';
 import { JspmConfig } from './jspmConfig';
 import { ILogger } from 'core/logging';
+import { RequestFactory } from 'core/packages';
 
 export class JspmVersionLensProvider extends NpmVersionLensProvider {
 
@@ -24,11 +24,11 @@ export class JspmVersionLensProvider extends NpmVersionLensProvider {
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
 
-    const jspmDependencyLenses = extractPackageDependenciesFromJson(
+    const packageDependencies = extractPackageDependenciesFromJson(
       document.getText(),
       this.config.dependencyProperties,
     );
-    if (jspmDependencyLenses.length === 0) return null;
+    if (packageDependencies.length === 0) return null;
 
     const includePrereleases = this.extension.state.prereleasesEnabled.value;
 
@@ -38,11 +38,10 @@ export class JspmVersionLensProvider extends NpmVersionLensProvider {
       replaceVersion: npmReplaceVersion,
     }
 
-    // fetch from npm
-    return VersionLensFactory.createVersionLenses(
+    return RequestFactory.executeDependencyRequests(
+      packagePath,
       this.packageClient,
-      document,
-      jspmDependencyLenses,
+      packageDependencies,
       context,
     );
   }
