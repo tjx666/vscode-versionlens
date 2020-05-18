@@ -222,6 +222,11 @@
           "default": "info",
           "description": "Sets the level for logging written to the output channel."
         },
+        "versionlens.caching.duration": {
+          "type": "number",
+          "default": "30000",
+          "description": "Sets the length of time all package managers cache their version suggestion results. Default is 5 minutes. Note: You can override each individual package manager e.g. npm.caching.duration"
+        },
         "versionlens.suggestions.alwaysShowReleases": {
           "type": "boolean",
           "default": false,
@@ -257,6 +262,10 @@
           "default": "yellowgreen",
           "description": "The colour used to show prerelease dependencies. Accept's valid CSS colours"
         },
+        "versionlens.npm.caching.duration": {
+          "type": "number",
+          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
+        },
         "versionlens.npm.dependencyProperties": {
           "type": "array",
           "items": {
@@ -282,6 +291,10 @@
           "default": [],
           "description": "Define which common dist tags you want to see. i.e. [alpha, beta]. If you don't specify any dist tags then all the dist-tags for a package will be shown."
         },
+        "versionlens.pub.caching.duration": {
+          "type": "number",
+          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
+        },
         "versionlens.pub.dependencyProperties": {
           "type": "array",
           "items": {
@@ -299,6 +312,10 @@
           "type": "string",
           "default": "https://pub.dev/",
           "description": "Defines the pub api to use for package searching."
+        },
+        "versionlens.dotnet.caching.duration": {
+          "type": "number",
+          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
         "versionlens.dotnet.dependencyProperties": {
           "type": "array",
@@ -336,6 +353,15 @@
           "default": true,
           "description": "Include NuGet pre-release packages"
         },
+        "versionlens.dub.caching.duration": {
+          "type": "number",
+          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
+        },
+        "versionlens.dub.apiUrl": {
+          "type": "string",
+          "default": "https://code.dlang.org/api/packages",
+          "description": "Defines the api to use for dub package searching."
+        },
         "versionlens.dub.dependencyProperties": {
           "type": "array",
           "items": {
@@ -348,6 +374,15 @@
             "versions"
           ],
           "description": "Defines which properties in dub.json should be parsed by this extension"
+        },
+        "versionlens.composer.caching.duration": {
+          "type": "number",
+          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
+        },
+        "versionlens.composer.apiUrl": {
+          "type": "string",
+          "default": "https://repo.packagist.org/p",
+          "description": "Defines the api to use for composer package searching."
         },
         "versionlens.composer.dependencyProperties": {
           "type": "array",
@@ -362,28 +397,14 @@
           ],
           "description": "Defines which properties in composer.json should be parsed by this extension"
         },
-        "versionlens.github.taggedCommits": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              "Release",
-              "Tag"
-            ]
-          },
-          "uniqueItems": true,
-          "minItems": 1,
-          "maxItems": 2,
-          "default": [
-            "Release",
-            "Tag"
-          ],
-          "description": "Defines what tags to include when comparing github package versions."
+        "versionlens.maven.caching.duration": {
+          "type": "number",
+          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
-        "versionlens.github.accessToken": {
+        "versionlens.maven.apiUrl": {
           "type": "string",
           "default": "",
-          "description": "Used for making basic read only github api requests. To generate a token see https://help.github.com/articles/creating-an-access-token-for-command-line-use/#creating-a-token. When no token is provided then access to the github api is rate limited to 60 requests every 10 minutes or so."
+          "description": "Defines the api to use for maven package searching."
         },
         "versionlens.maven.dependencyProperties": {
           "type": "array",
@@ -398,43 +419,36 @@
           ],
           "description": "Defines which properties in pom.xml should be parsed by this extension"
         },
-        "versionlens.missingDependencyColour": {
+        "versionlens.github.accessToken": {
           "type": "string",
-          "default": "red",
+          "default": "",
+          "description": "Used for making basic read only github api requests. To generate a token see https://help.github.com/articles/creating-an-access-token-for-command-line-use/#creating-a-token. When no token is provided then access to the github api is rate limited to 60 requests every 10 minutes or so."
+        },
+        "versionlens.github.taggedCommits": {
+          "deprecationMessage": "This options is no longer available"
+        },
+        "versionlens.missingDependencyColour": {
           "deprecationMessage": "Use versionlens.statuses.notInstalledColour"
         },
         "versionlens.installedDependencyColour": {
-          "type": "string",
-          "default": "green",
           "deprecationMessage": "Use versionlens.statuses.installedColour"
         },
         "versionlens.outdatedDependencyColour": {
-          "type": "string",
-          "default": "orange",
           "deprecationMessage": "Use versionlens.statuses.outdatedColour"
         },
         "versionlens.prereleaseDependencyColour": {
-          "type": "string",
-          "default": "yellowgreen",
           "deprecationMessage": "Use versionlens.statuses.prereleaseInstalledColour"
         },
         "versionlens.versionPrefix": {
-          "type": "string",
           "deprecationMessage": "This has been replaced with versionlens.suggestions.defaultVersionPrefix"
         },
         "versionlens.showVersionLensesAtStartup": {
-          "type": "boolean",
-          "default": true,
           "deprecationMessage": "Use versionlens.suggestions.alwaysShowReleases instead"
         },
         "versionlens.showTaggedVersionsAtStartup": {
-          "type": "boolean",
-          "default": false,
           "deprecationMessage": "Use versionlens.suggestions.alwaysShowPrereleases instead"
         },
         "versionlens.showDependencyStatusesAtStartup": {
-          "type": "boolean",
-          "default": false,
           "deprecationMessage": "Use versionlens.statuses.alwaysShowInstalledStatuses instead"
         }
       }

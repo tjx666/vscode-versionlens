@@ -27,18 +27,14 @@ export class ComposerClient
 
   config: ComposerConfig;
 
-  constructor(
-    config: ComposerConfig,
-    cacheDuration: number,
-    logger: ILogger
-  ) {
-    super(logger, {}, cacheDuration)
+  constructor(config: ComposerConfig, logger: ILogger) {
+    super(logger, {}, config.cacheDuration)
     this.config = config;
   }
 
   async fetchPackage<TClientData>(request: PackageRequest<TClientData>): Promise<PackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
-    const url = `${this.config.getApiUrl()}/${request.package.name}.json`;
+    const url = `${this.config.apiUrl}/${request.package.name}.json`;
 
     return createRemotePackageDocument(this, url, request, semverSpec)
       .catch((error: HttpClientResponse) => {

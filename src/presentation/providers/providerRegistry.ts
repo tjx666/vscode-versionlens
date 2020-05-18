@@ -72,7 +72,7 @@ export async function registerProviders(
     languages: { registerCodeLensProvider }
   } = require('vscode');
 
-  logger.verbose('Registering providers %o', providerNames);
+  logger.info('Registering providers %o', providerNames);
 
   const promisedActivation = providerNames.map(packageManager => {
     return import(`providers/${packageManager}/activate`)
@@ -80,7 +80,7 @@ export async function registerProviders(
         logger.debug('Activating package manager %s', packageManager);
         const provider = module.activate(extension, logger);
 
-        logger.info(
+        logger.debug(
           'Activated package manager %s with file filter: %O',
           provider.config.options.providerName,
           provider.config.options.selector,

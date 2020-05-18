@@ -6,6 +6,7 @@ import {
 } from "presentation/providers";
 
 enum DubContributions {
+  CacheDuration = 'dub.caching.duration',
   DependencyProperties = 'dub.dependencyProperties',
   ApiUrl = 'dub.apiUrl',
 }
@@ -28,32 +29,22 @@ export class DubConfig implements IProviderConfig {
 
   extension: VersionLensExtension;
 
-  defaultDependencyProperties: Array<string>;
-
-  defaultApiUrl: string;
-
   constructor(extension: VersionLensExtension) {
     this.extension = extension;
-
-    this.defaultDependencyProperties = [
-      'dependencies',
-      'versions'
-    ];
-
-    this.defaultApiUrl = 'https://code.dlang.org/api/packages';
   }
 
-  getDependencyProperties() {
-    return this.extension.getOrDefault(
-      DubContributions.DependencyProperties,
-      this.defaultDependencyProperties
-    );
+  get dependencyProperties(): Array<string> {
+    return this.extension.get(DubContributions.DependencyProperties);
   }
 
-  getApiUrl() {
-    return this.extension.getOrDefault(
-      DubContributions.ApiUrl,
-      this.defaultApiUrl
+  get apiUrl(): Array<string> {
+    return this.extension.get(DubContributions.ApiUrl);
+  }
+
+  get cacheDuration(): number {
+    return this.extension.getOrDefault<number>(
+      DubContributions.CacheDuration,
+      this.extension.caching.duration
     );
   }
 

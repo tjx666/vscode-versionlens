@@ -18,13 +18,15 @@ export const AbstractClientRequestTests = {
       const expectedFirstResponse = {
         source: testSource,
         status: testStatus,
-        data: testCache
+        data: testCache,
+        rejected: false
       };
 
       const expectedCacheResponse = {
         source: ClientResponseSource.cache,
         status: testStatus,
-        data: testCache
+        data: testCache,
+        rejected: false
       };
 
       const rut = new class extends AbstractClientRequest<number, string> { }
@@ -33,6 +35,7 @@ export const AbstractClientRequestTests = {
         testKey,
         testStatus,
         testCache,
+        false,
         testSource,
       )
       assert.deepEqual(actualFirstResp, expectedFirstResponse)
@@ -51,7 +54,8 @@ export const AbstractClientRequestTests = {
       const expectedResponse = {
         source: testSource,
         status: testStatus,
-        data: testCache
+        data: testCache,
+        rejected: false
       };
 
       const rut = new (class extends AbstractClientRequest<number, string> { })(0)
@@ -60,6 +64,7 @@ export const AbstractClientRequestTests = {
         testKey,
         testStatus,
         testCache,
+        false,
         testSource,
       )
       assert.deepEqual(actualFirstResp, expectedResponse)

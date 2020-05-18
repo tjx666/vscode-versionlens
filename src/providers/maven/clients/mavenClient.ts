@@ -28,12 +28,8 @@ export class MavenClient
 
   config: MavenConfig;
 
-  constructor(
-    config: MavenConfig,
-    cacheDuration: number,
-    logger: ILogger
-  ) {
-    super(logger, {}, cacheDuration)
+  constructor(config: MavenConfig, logger: ILogger) {
+    super(logger, {}, config.cacheDuration)
     this.config = config;
   }
 

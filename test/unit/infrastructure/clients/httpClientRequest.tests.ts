@@ -80,6 +80,7 @@ export const HttpRequestTests = {
         source: ClientResponseSource.cache,
         status: testResponse.status,
         data: testResponse.responseText,
+        rejected: false
       }
 
       requestLightMock.xhr = options => {
@@ -90,11 +91,10 @@ export const HttpRequestTests = {
         HttpClientRequestMethods.get,
         testUrl,
         testQueryParams
-      )
-        .then(response => {
-          const cachedData = testContext.rut.cache.get('GET_' + testUrl);
-          assert.deepEqual(cachedData, expectedCacheData);
-        })
+      ).then(response => {
+        const cachedData = testContext.rut.cache.get('GET_' + testUrl);
+        assert.deepEqual(cachedData, expectedCacheData);
+      })
     },
 
     "caches url response when rejected": async () => {
@@ -110,21 +110,33 @@ export const HttpRequestTests = {
         status: testResponse.status,
         data: testResponse.responseText,
         source: ClientResponseSource.cache,
+        rejected: true,
       }
 
       requestLightMock.xhr = options => {
         return Promise.reject(testResponse)
       };
 
+      // first request
       await testContext.rut.request(
         HttpClientRequestMethods.get,
         testUrl,
         testQueryParams
-      )
-        .catch(response => {
-          const cachedData = testContext.rut.cache.get('GET_' + testUrl);
-          assert.deepEqual(cachedData, expectedCacheData);
-        })
+      ).catch(response => {
+        const cachedData = testContext.rut.cache.get('GET_' + testUrl);
+        assert.deepEqual(cachedData, expectedCacheData);
+      })
+
+      // accessing a cached rejection should also reject
+      await testContext.rut.request(
+        HttpClientRequestMethods.get,
+        testUrl,
+        testQueryParams
+      ).catch(response => {
+        const cachedData = testContext.rut.cache.get('GET_' + testUrl);
+        assert.deepEqual(cachedData, expectedCacheData);
+      })
+
     },
 
     "does not cache when cache duration is 0": async () => {
@@ -148,11 +160,10 @@ export const HttpRequestTests = {
         HttpClientRequestMethods.get,
         testUrl,
         testQueryParams
-      )
-        .then(response => {
-          const cachedData = testContext.rut.cache.get('GET_' + testUrl);
-          assert.equal(cachedData, expectedCacheData);
-        })
+      ).then(response => {
+        const cachedData = testContext.rut.cache.get('GET_' + testUrl);
+        assert.equal(cachedData, expectedCacheData);
+      })
     },
 
   },

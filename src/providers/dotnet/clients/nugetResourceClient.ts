@@ -17,12 +17,8 @@ export class NuGetResourceClient extends JsonHttpClientRequest {
   config: DotNetConfig;
   logger: ILogger;
 
-  constructor(
-    config: DotNetConfig,
-    cacheDuration: number,
-    logger: ILogger
-  ) {
-    super(logger, {}, cacheDuration)
+  constructor(config: DotNetConfig, logger: ILogger) {
+    super(logger, {}, config.cacheDuration)
     this.config = config;
     this.logger = logger;
   }
@@ -35,7 +31,7 @@ export class NuGetResourceClient extends JsonHttpClientRequest {
           .filter(res => res["@type"] === 'SearchAutocompleteService');
         return autocompleteServices[0]["@id"];
       }).catch((error: HttpClientResponse) => {
-        const feeds = this.config.getNuGetFeeds();
+        const feeds = this.config.nuGetFeeds;
         return feeds.length > 0 ?
           feeds[0] :
           Promise.reject("Could not obtain a nuget resource")

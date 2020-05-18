@@ -10,6 +10,7 @@ export type ClientResponse<TStatus, TData> = {
   source: ClientResponseSource;
   status: TStatus;
   data: TData;
+  rejected?: boolean;
 }
 
 export type HttpClientResponse = ClientResponse<number, string>;

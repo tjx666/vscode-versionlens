@@ -11,16 +11,11 @@ import { npmReplaceVersion } from 'providers/npm/npmVersionUtils';
 import { extractPackageDependenciesFromJson } from './jspmPackageParser';
 import { JspmConfig } from './config';
 import { ILogger } from 'core/logging';
-import { IPackageClient } from 'core/packages';
 
 export class JspmVersionLensProvider extends NpmVersionLensProvider {
 
-  constructor(
-    packageClient: IPackageClient<null>,
-    config: JspmConfig,
-    logger: ILogger
-  ) {
-    super(packageClient, config, logger);
+  constructor(config: JspmConfig, logger: ILogger) {
+    super(config, logger);
   }
 
   async fetchVersionLenses(
@@ -31,7 +26,7 @@ export class JspmVersionLensProvider extends NpmVersionLensProvider {
 
     const jspmDependencyLenses = extractPackageDependenciesFromJson(
       document.getText(),
-      this.config.getDependencyProperties(),
+      this.config.dependencyProperties,
     );
     if (jspmDependencyLenses.length === 0) return null;
 

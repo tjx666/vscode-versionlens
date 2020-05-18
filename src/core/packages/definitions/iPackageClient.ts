@@ -9,7 +9,6 @@ export interface IPackageClient<TClientData> {
 
   config: IProviderConfig,
 
-
   fetchPackage: (request: PackageRequest<TClientData>)
     => Promise<PackageDocument>;
 

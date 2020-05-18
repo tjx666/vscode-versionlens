@@ -6,6 +6,7 @@ import {
 } from "presentation/providers";
 
 enum PubContributions {
+  CacheDuration = 'pub.caching.duration',
   DependencyProperties = 'pub.dependencyProperties',
   ApiUrl = 'pub.apiUrl',
 }
@@ -27,32 +28,22 @@ export class PubConfig implements IProviderConfig {
 
   extension: VersionLensExtension;
 
-  defaultDependencyProperties: Array<string>;
-
-  defaultApiUrl: string;
-
   constructor(extension: VersionLensExtension) {
     this.extension = extension;
-
-    this.defaultDependencyProperties = [
-      'dependencies',
-      'dev_dependencies'
-    ];
-
-    this.defaultApiUrl = 'https://pub.dev/';
   }
 
-  getDependencyProperties() {
-    return this.extension.getOrDefault(
-      PubContributions.DependencyProperties,
-      this.defaultDependencyProperties
-    );
+  get dependencyProperties(): Array<string> {
+    return this.extension.get(PubContributions.DependencyProperties);
   }
 
-  getApiUrl() {
-    return this.extension.getOrDefault(
-      PubContributions.ApiUrl,
-      this.defaultApiUrl
+  get apiUrl(): string {
+    return this.extension.get(PubContributions.ApiUrl);
+  }
+
+  get cacheDuration(): number {
+    return this.extension.getOrDefault<number>(
+      PubContributions.CacheDuration,
+      this.extension.caching.duration
     );
   }
 

@@ -73,7 +73,7 @@ export const DotnetClientRequestTests = {
         })
       )
 
-      const cut = new DotNetClient(config, 0, new LoggerMock());
+      const cut = new DotNetClient(config, new LoggerMock());
       return cut.fetchSources('.')
         .then(actualSources => {
           assert.deepEqual(actualSources, expected);
@@ -100,7 +100,7 @@ export const DotnetClientRequestTests = {
         })
       )
 
-      const cut = new DotNetClient(config, 0, new LoggerMock());
+      const cut = new DotNetClient(config, new LoggerMock());
       return cut.fetchSources('.')
         .then(actualSources => {
           assert.equal(actualSources.length, 0);
@@ -111,8 +111,9 @@ export const DotnetClientRequestTests = {
 
       const expectedErrorResp = {
         source: ClientResponseSource.local,
-        status: 'ENOENT',
+        status: '0',
         data: Fixtures.invalidSources,
+        rejected: false,
       }
 
       let promiseSpawnMock = (cmd, args, opts) => {
@@ -125,7 +126,6 @@ export const DotnetClientRequestTests = {
 
       const cut = new DotNetClient(
         new DotNetConfig(defaultExtensionMock),
-        0,
         new LoggerMock()
       );
 

@@ -22,18 +22,12 @@ export class DotNetVersionLensProvider
   nugetPackageClient: NuGetPackageClient;
   nugetResourceClient: NuGetResourceClient;
 
-  constructor(
-    packageClient: NuGetPackageClient,
-    resourceClient: NuGetResourceClient,
-    config: DotNetConfig,
-    logger: ILogger
-  ) {
+  constructor(config: DotNetConfig, logger: ILogger) {
     super(config, logger);
 
-    // todo get cache durations from config
-    this.dotnetClient = new DotNetClient(config, 0, logger);
-    this.nugetPackageClient = packageClient;
-    this.nugetResourceClient = resourceClient;
+    this.dotnetClient = new DotNetClient(config, logger);
+    this.nugetPackageClient = new NuGetPackageClient(config, logger);
+    this.nugetResourceClient = new NuGetResourceClient(config, logger);
   }
 
   async fetchVersionLenses(
@@ -44,7 +38,7 @@ export class DotNetVersionLensProvider
 
     const packageDepsLenses = extractDotnetLensDataFromDocument(
       document,
-      this.config.getDependencyProperties()
+      this.config.dependencyProperties
     );
     if (packageDepsLenses.length === 0) return null;
 

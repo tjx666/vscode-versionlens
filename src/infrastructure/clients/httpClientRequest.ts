@@ -38,7 +38,9 @@ export class HttpClientRequest
     const cacheKey = method + '_' + url;
 
     if (this.cache.cacheDuration > 0 && this.cache.hasExpired(cacheKey) === false) {
-      return Promise.resolve(this.cache.get(cacheKey));
+      const cachedResp = this.cache.get(cacheKey);
+      if (cachedResp.rejected) return Promise.reject(cachedResp);
+      return Promise.resolve(cachedResp);
     }
 
     this.logger.debug("HttpRequest: %s", url)
@@ -53,14 +55,16 @@ export class HttpClientRequest
         return this.createCachedResponse(
           cacheKey,
           response.status,
-          response.responseText
+          response.responseText,
+          false
         );
       })
       .catch((response: RequestLightHttpResponse) => {
         const result = this.createCachedResponse(
           cacheKey,
           response.status,
-          response.responseText
+          response.responseText,
+          true
         );
         return Promise.reject<HttpClientResponse>(result);
       });

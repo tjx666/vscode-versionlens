@@ -6,6 +6,7 @@ import {
 } from "presentation/providers";
 
 enum MavenContributions {
+  CacheDuration = 'maven.caching.duration',
   DependencyProperties = 'maven.dependencyProperties',
   TagFilter = 'maven.tagFilter',
   ApiUrl = 'maven.apiUrl',
@@ -28,39 +29,26 @@ export class MavenConfig implements IProviderConfig {
 
   extension: VersionLensExtension;
 
-  defaultDependencyProperties: Array<string>;
-
-  defaultApiUrl: string;
-
   constructor(extension: VersionLensExtension) {
     this.extension = extension;
-
-    this.defaultDependencyProperties = [
-      'dependency',
-      'parent'
-    ];
-
-    this.defaultApiUrl = 'https://code.dlang.org/api/packages';
   }
 
-  getDependencyProperties() {
-    return this.extension.getOrDefault(
-      MavenContributions.DependencyProperties,
-      this.defaultDependencyProperties
-    );
+  get dependencyProperties(): Array<string> {
+    return this.extension.get(MavenContributions.DependencyProperties);
   }
 
-  getTagFilter() {
-    return this.extension.getOrDefault(
-      MavenContributions.DependencyProperties,
-      this.defaultDependencyProperties
-    );
+  get tagFilter(): Array<string> {
+    return this.extension.get(MavenContributions.DependencyProperties);
   }
 
-  getApiUrl() {
-    return this.extension.getOrDefault(
-      MavenContributions.ApiUrl,
-      this.defaultApiUrl
+  get apiUrl(): string {
+    return this.extension.get(MavenContributions.ApiUrl);
+  }
+
+  get cacheDuration(): number {
+    return this.extension.getOrDefault<number>(
+      MavenContributions.CacheDuration,
+      this.extension.caching.duration
     );
   }
 

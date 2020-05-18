@@ -8,12 +8,8 @@ export class DotNetClient extends ProcessClientRequest {
 
   config: DotNetConfig;
 
-  constructor(
-    config: DotNetConfig,
-    cacheDuration: number,
-    logger: ILogger
-  ) {
-    super(cacheDuration)
+  constructor(config: DotNetConfig, logger: ILogger) {
+    super(config.cacheDuration)
     this.config = config;
   }
 
@@ -47,7 +43,7 @@ export class DotNetClient extends ProcessClientRequest {
       return parseSourcesArray(lines);
     }).then(sources => {
       // combine the sources where feed take precedent
-      const feedSources = convertFeedsToSources(this.config.getNuGetFeeds());
+      const feedSources = convertFeedsToSources(this.config.nuGetFeeds);
       return [
         ...feedSources,
         ...sources

@@ -1,6 +1,7 @@
 import { AbstractWorkspaceConfig, IConfig, IRootConfig } from "core/configuration";
 import { VersionLensState } from "presentation/extension";
 import { LoggingOptions } from "./options/loggingOptions";
+import { CachingOptions } from "./options/cachingOptions";
 import { SuggestionsOptions } from "./options/suggestionsOptions";
 import { StatusesOptions } from "./options/statusesOptions";
 
@@ -18,6 +19,8 @@ export class VersionLensExtension extends AbstractWorkspaceConfig {
 
   logging: LoggingOptions;
 
+  caching: CachingOptions;
+
   suggestions: SuggestionsOptions;
 
   statuses: StatusesOptions;
@@ -29,6 +32,7 @@ export class VersionLensExtension extends AbstractWorkspaceConfig {
 
     // instantiate contrib options
     this.logging = new LoggingOptions(this);
+    this.caching = new CachingOptions(this);
     this.suggestions = new SuggestionsOptions(this);
     this.statuses = new StatusesOptions(this);
 

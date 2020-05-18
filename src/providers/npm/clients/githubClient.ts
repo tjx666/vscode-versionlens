@@ -20,14 +20,14 @@ export class GithubClient extends JsonHttpClientRequest {
 
   config: NpmConfig;
 
-  constructor(config: NpmConfig, cacheDuration: number, logger: ILogger) {
+  constructor(config: NpmConfig, logger: ILogger) {
     super(
       logger,
       {
         accept: 'application\/vnd.github.v3+json',
         'user-agent': 'vscode-contrib/vscode-versionlens'
       },
-      cacheDuration
+      config.cacheDuration
     );
 
     this.config = config;

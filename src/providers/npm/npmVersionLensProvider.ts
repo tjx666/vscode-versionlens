@@ -19,6 +19,7 @@ import { npmGetOutdated, npmPackageDirExists } from './clients/npmClient';
 import { NpmConfig } from './config';
 import { npmReplaceVersion } from './npmVersionUtils';
 import { ILogger } from 'core/logging';
+import { NpmPackageClient } from './clients/npmPackageClient';
 
 export class NpmVersionLensProvider
   extends AbstractVersionLensProvider<NpmConfig> {
@@ -27,15 +28,11 @@ export class NpmVersionLensProvider
 
   packageClient: IPackageClient<null>;
 
-  constructor(
-    pacoteClient: IPackageClient<null>,
-    config: NpmConfig,
-    logger: ILogger
-  ) {
+  constructor(config: NpmConfig, logger: ILogger) {
     super(config, logger);
     this._outdatedCache = [];
 
-    this.packageClient = pacoteClient;
+    this.packageClient = new NpmPackageClient(config, logger);
   }
 
   async fetchVersionLenses(
@@ -46,7 +43,7 @@ export class NpmVersionLensProvider
 
     const packageDepsLenses = extractPackageDependenciesFromJson(
       document.getText(),
-      this.config.getDependencyProperties()
+      this.config.dependencyProperties
     );
     if (packageDepsLenses.length === 0) return null;
 

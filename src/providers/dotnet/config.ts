@@ -6,12 +6,10 @@ import {
 } from "presentation/providers";
 
 export enum DotnetContributions {
+  CacheDuration = 'dotnet.caching.duration',
   DependencyProperties = 'dotnet.dependencyProperties',
   NugetFeeds = 'dotnet.nugetFeeds',
   TagFilter = 'dotnet.tagFilter',
-
-  // todo depricate this
-  IncludePrerelease = 'dotnet.includePrerelease',
 }
 
 export class DotNetConfig implements IProviderConfig {
@@ -31,41 +29,26 @@ export class DotNetConfig implements IProviderConfig {
 
   extension: VersionLensExtension;
 
-  defaultDependencyProperties: Array<string>;
-
-  defaultNuGetFeeds: Array<string>;
-
   constructor(extension: VersionLensExtension) {
     this.extension = extension;
-
-    this.defaultNuGetFeeds = [
-      'https://azuresearch-usnc.nuget.org/autocomplete'
-    ];
-
-    this.defaultDependencyProperties = [
-      'PackageReference',
-      'DotNetCliToolReference'
-    ];
   }
 
-  getDependencyProperties() {
-    return this.extension.getOrDefault(
-      DotnetContributions.DependencyProperties,
-      this.defaultDependencyProperties
-    );
+  get dependencyProperties(): Array<string> {
+    return this.extension.get(DotnetContributions.DependencyProperties);
   }
 
-  getTagFilter() {
-    return this.extension.getOrDefault(
-      DotnetContributions.TagFilter,
-      []
-    );
+  get tagFilter(): Array<string> {
+    return this.extension.get(DotnetContributions.TagFilter);
   }
 
-  getNuGetFeeds() {
-    return this.extension.getOrDefault(
-      DotnetContributions.NugetFeeds,
-      this.defaultNuGetFeeds
+  get nuGetFeeds(): Array<string> {
+    return this.extension.get(DotnetContributions.NugetFeeds);
+  }
+
+  get cacheDuration(): number {
+    return this.extension.getOrDefault<number>(
+      DotnetContributions.CacheDuration,
+      this.extension.caching.duration
     );
   }
 

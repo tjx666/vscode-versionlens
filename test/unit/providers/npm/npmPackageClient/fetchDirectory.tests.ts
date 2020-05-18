@@ -42,7 +42,6 @@ export default {
 
       const cut = new NpmPackageClient(
         new NpmConfig(defaultExtensionMock),
-        0,
         new LoggerMock()
       );
 

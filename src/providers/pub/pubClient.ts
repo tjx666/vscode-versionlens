@@ -28,18 +28,14 @@ export class PubClient
 
   config: PubConfig;
 
-  constructor(
-    config: PubConfig,
-    cacheDuration: number,
-    logger: ILogger
-  ) {
-    super(logger, {}, cacheDuration)
+  constructor(config: PubConfig, logger: ILogger) {
+    super(logger, {}, config.cacheDuration)
     this.config = config;
   }
 
   async fetchPackage(request: PackageRequest<null>): Promise<PackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
-    const url = `${this.config.getApiUrl()}/api/documentation/${request.package.name}`;
+    const url = `${this.config.apiUrl}/api/documentation/${request.package.name}`;
 
     return createRemotePackageDocument(this, url, request, semverSpec)
       .catch((error: HttpClientResponse) => {

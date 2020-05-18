@@ -12,7 +12,7 @@ export async function createPackageRequest<TClientData>(
   replaceVersionFn: ReplaceVersionFunction,
 ): Promise<Array<PackageResponse> | PackageResponse> {
 
-  client.logger.info(
+  client.logger.debug(
     `Queued %s package: %s`,
     request.providerName,
     request.package.name
@@ -21,7 +21,7 @@ export async function createPackageRequest<TClientData>(
   return client.fetchPackage(request)
     .then(function (document) {
 
-      client.logger.info(
+      client.logger.debug(
         'Fetched %s package from %s: %s@%s',
         document.providerName,
         document.response.source,

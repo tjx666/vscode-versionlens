@@ -7,7 +7,7 @@ import {
 
 export class AbstractClientRequest<TStatus, TData> {
 
-  cache: ExpiryCacheMap;
+  cache: ExpiryCacheMap<ClientResponse<TStatus, TData>>;
 
   constructor(cacheDuration?: number) {
     this.cache = new ExpiryCacheMap(cacheDuration);
@@ -17,6 +17,7 @@ export class AbstractClientRequest<TStatus, TData> {
     cacheKey: string,
     status: TStatus,
     data: TData,
+    rejected: boolean = false,
     source: ClientResponseSource = ClientResponseSource.remote
   ): ClientResponse<TStatus, TData> {
     const cacheEnabled = this.cache.cacheDuration > 0;
@@ -28,7 +29,8 @@ export class AbstractClientRequest<TStatus, TData> {
         {
           source: ClientResponseSource.cache,
           status,
-          data
+          data,
+          rejected
         }
       );
     }
@@ -37,7 +39,8 @@ export class AbstractClientRequest<TStatus, TData> {
     return {
       source,
       status,
-      data
+      data,
+      rejected
     };
   }
 

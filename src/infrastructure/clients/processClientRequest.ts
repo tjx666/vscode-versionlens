@@ -23,7 +23,9 @@ export class ProcessClientRequest
     const cacheKey = `${cmd} ${args.join(' ')}`;
 
     if (this.cache.cacheDuration > 0 && this.cache.hasExpired(cacheKey) === false) {
-      return Promise.resolve(this.cache.get(cacheKey));
+      const cachedResp = this.cache.get(cacheKey);
+      if (cachedResp.rejected) return Promise.reject(cachedResp);
+      return Promise.resolve(cachedResp);
     }
 
     const ps = require('@npmcli/promise-spawn');
@@ -34,6 +36,7 @@ export class ProcessClientRequest
           cacheKey,
           result.code,
           result.stdout,
+          false,
           ClientResponseSource.local
         );
       }).catch(error => {
@@ -41,6 +44,7 @@ export class ProcessClientRequest
           cacheKey,
           error.code,
           error.message,
+          true,
           ClientResponseSource.local
         );
         return Promise.reject<ProcessClientResponse>(result);

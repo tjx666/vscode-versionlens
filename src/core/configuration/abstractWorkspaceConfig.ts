@@ -13,7 +13,11 @@ export abstract class AbstractWorkspaceConfig implements IConfig {
   }
 
   getOrDefault<T>(key: string, defaultValue: T): T {
-    return this.configuration.get(key) || defaultValue;
+    const configValue: T = this.configuration.get(key);
+    if (configValue === undefined) {
+      return defaultValue;
+    }
+    return configValue;
   }
 
 }

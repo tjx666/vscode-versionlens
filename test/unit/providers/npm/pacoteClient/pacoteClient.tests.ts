@@ -61,7 +61,6 @@ export default {
 
       const cut = new PacoteClient(
         new NpmConfig(defaultExtensionMock),
-        0,
         new LoggerMock()
       );
 
@@ -97,7 +96,6 @@ export default {
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentRegistryRange);
       const cut = new PacoteClient(
         new NpmConfig(defaultExtensionMock),
-        0,
         new LoggerMock()
       );
       return cut.fetchPackage(testRequest, npaSpec)
@@ -132,7 +130,6 @@ export default {
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentRegistryVersion);
       const cut = new PacoteClient(
         new NpmConfig(defaultExtensionMock),
-        0,
         new LoggerMock()
       );
       return cut.fetchPackage(testRequest, npaSpec)
@@ -165,7 +162,6 @@ export default {
       pacoteMock.packument = (npaResult, opts) => Promise.resolve(Fixtures.packumentRegistryAlias);
       const cut = new PacoteClient(
         new NpmConfig(defaultExtensionMock),
-        0,
         new LoggerMock()
       );
       return cut.fetchPackage(testRequest, npaSpec)

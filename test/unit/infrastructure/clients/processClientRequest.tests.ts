@@ -42,12 +42,14 @@ export const ProcessClientRequestTests = {
         source: ClientResponseSource.local,
         status: 0,
         data: '123\n',
+        rejected: false
       }
 
       const expectedCacheData = {
         source: ClientResponseSource.cache,
         status: testResponse.status,
         data: testResponse.data,
+        rejected: false
       }
 
       const promiseSpawnMock = (cmd, args, opts) => {
@@ -84,6 +86,7 @@ export const ProcessClientRequestTests = {
         source: ClientResponseSource.local,
         status: 0,
         data: '123\n',
+        rejected: false,
       }
 
       const promiseSpawnMock = (cmd, args, opts) => {

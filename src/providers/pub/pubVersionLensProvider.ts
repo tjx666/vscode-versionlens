@@ -16,9 +16,9 @@ export class PubVersionLensProvider
 
   pubClient: PubClient;
 
-  constructor(pubClient: PubClient, config: PubConfig, logger: ILogger) {
+  constructor(config: PubConfig, logger: ILogger) {
     super(config, logger);
-    this.pubClient = pubClient;
+    this.pubClient = new PubClient(config, logger);
   }
 
   async fetchVersionLenses(
@@ -29,7 +29,7 @@ export class PubVersionLensProvider
 
     const packageDepsLenses = extractPackageDependenciesFromYaml(
       document.getText(),
-      this.config.getDependencyProperties()
+      this.config.dependencyProperties
     );
     if (packageDepsLenses.length === 0) return null;
 

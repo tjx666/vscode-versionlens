@@ -23,15 +23,11 @@ import { NpaSpec, NpaTypes } from '../models/npaSpec';
 
 export class PacoteClient extends JsonHttpClientRequest {
 
-  options: NpmConfig;
+  config: NpmConfig;
 
-  constructor(
-    config: NpmConfig,
-    cacheDuration: number,
-    logger: ILogger
-  ) {
-    super(logger, {}, cacheDuration);
-    this.options = config;
+  constructor(config: NpmConfig, logger: ILogger) {
+    super(logger, {}, config.cacheDuration);
+    this.config = config;
   }
 
   async fetchPackage(request: PackageRequest<null>, npaSpec: NpaSpec): Promise<PackageDocument> {

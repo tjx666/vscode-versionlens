@@ -22,15 +22,11 @@ export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfi
 
   dubClient: DubClient;
 
-  constructor(
-    dubClient: DubClient,
-    config: DubConfig,
-    logger: ILogger
-  ) {
+  constructor(config: DubConfig, logger: ILogger) {
     super(config, logger);
     this._outdatedCache = {};
 
-    this.dubClient = dubClient;
+    this.dubClient = new DubClient(config, logger);
   }
 
   async fetchVersionLenses(
@@ -40,7 +36,7 @@ export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfi
   ): VersionLensFetchResponse {
     const packageDepsLenses = extractPackageDependenciesFromJson(
       document.getText(),
-      this.config.getDependencyProperties()
+      this.config.dependencyProperties
     );
     if (packageDepsLenses.length === 0) return null;
 

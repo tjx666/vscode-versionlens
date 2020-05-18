@@ -22,13 +22,9 @@ export class ComposerVersionLensProvider extends AbstractVersionLensProvider<Com
 
   composerClient: ComposerClient;
 
-  constructor(
-    composerClient: ComposerClient,
-    config: ComposerConfig,
-    logger: ILogger
-  ) {
+  constructor(config: ComposerConfig, logger: ILogger) {
     super(config, logger);
-    this.composerClient = composerClient;
+    this.composerClient = new ComposerClient(config, logger);
   }
 
   async fetchVersionLenses(
@@ -39,7 +35,7 @@ export class ComposerVersionLensProvider extends AbstractVersionLensProvider<Com
 
     const packageDepsLenses = extractPackageDependenciesFromJson(
       document.getText(),
-      this.config.getDependencyProperties()
+      this.config.dependencyProperties
     );
     if (packageDepsLenses.length === 0) return null;
 

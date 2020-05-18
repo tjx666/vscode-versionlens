@@ -6,6 +6,7 @@ import {
 } from "presentation/providers";
 
 enum NpmContributions {
+  CacheDuration = 'npm.caching.duration',
   DependencyProperties = 'npm.dependencyProperties',
   DistTagFilter = 'npm.distTagFilter',
 }
@@ -41,19 +42,19 @@ export class NpmConfig implements IProviderConfig {
     ];
   }
 
-  getDependencyProperties() {
-    return this.extension.getOrDefault(
-      NpmContributions.DependencyProperties,
-      this.defaultDependencyProperties
-    );
+  get dependencyProperties(): Array<string> {
+    return this.extension.get(NpmContributions.DependencyProperties);
   }
 
-  getDistTagFilter() {
-    return this.extension.getOrDefault(
-      NpmContributions.DistTagFilter,
-      []
-    );
+  get distTagFilter(): Array<string> {
+    return this.extension.get(NpmContributions.DistTagFilter);
+  }
 
+  get cacheDuration(): number {
+    return this.extension.getOrDefault<number>(
+      NpmContributions.CacheDuration,
+      this.extension.caching.duration
+    );
   }
 
 }

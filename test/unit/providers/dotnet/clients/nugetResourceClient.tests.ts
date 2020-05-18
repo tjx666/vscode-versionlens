@@ -52,7 +52,7 @@ export const NuGetResourceClientTests = {
       // setup test feeds
       const config = new DotNetConfig(defaultExtensionMock)
 
-      const cut = new NuGetResourceClient(config, 0, new LoggerMock())
+      const cut = new NuGetResourceClient(config, new LoggerMock())
 
       return cut.fetchResource(testSource)
         .then(actualSources => {
@@ -85,7 +85,7 @@ export const NuGetResourceClientTests = {
         })
       )
 
-      const cut = new NuGetResourceClient(config, 0, new LoggerMock())
+      const cut = new NuGetResourceClient(config, new LoggerMock())
       return cut.fetchResource(testSource)
         .then(actualSources => {
           assert.equal(actualSources, expected)
@@ -117,7 +117,7 @@ export const NuGetResourceClientTests = {
         })
       )
 
-      const cut = new NuGetResourceClient(config, 0, new LoggerMock())
+      const cut = new NuGetResourceClient(config, new LoggerMock())
       return cut.fetchResource(testSource)
         .catch(err => {
           assert.equal(err, expected)

@@ -8,12 +8,8 @@ export class MvnClient extends ProcessClientRequest {
 
   config: MavenConfig;
 
-  constructor(
-    config: MavenConfig,
-    cacheDuration: number,
-    logger: ILogger
-  ) {
-    super(cacheDuration)
+  constructor(config: MavenConfig, logger: ILogger) {
+    super(config.cacheDuration)
     this.config = config;
   }
 

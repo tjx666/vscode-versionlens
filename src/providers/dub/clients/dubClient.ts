@@ -30,18 +30,14 @@ export class DubClient
 
   config: DubConfig;
 
-  constructor(
-    config: DubConfig,
-    cacheDuration: number,
-    logger: ILogger
-  ) {
-    super(logger, {}, cacheDuration);
+  constructor(config: DubConfig, logger: ILogger) {
+    super(logger, {}, config.cacheDuration);
     this.config = config;
   }
 
   async fetchPackage(request: PackageRequest<null>): Promise<PackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
-    const url = `${this.config.getApiUrl()}/${encodeURIComponent(request.package.name)}/info`;
+    const url = `${this.config.apiUrl}/${encodeURIComponent(request.package.name)}/info`;
 
     return createRemotePackageDocument(this, url, request, semverSpec)
       .catch((error: HttpClientResponse) => {

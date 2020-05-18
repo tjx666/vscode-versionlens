@@ -56,7 +56,6 @@ export default {
       // setup initial call
       const cut = new NpmPackageClient(
         new NpmConfig(defaultExtensionMock),
-        0,
         new LoggerMock()
       );
 
@@ -112,7 +111,6 @@ export default {
       // setup initial call
       const cut = new NpmPackageClient(
         new NpmConfig(defaultExtensionMock),
-        0,
         new LoggerMock()
       );
 
@@ -161,7 +159,6 @@ export default {
       // setup initial call
       const cut = new NpmPackageClient(
         new NpmConfig(defaultExtensionMock),
-        0,
         new LoggerMock()
       );
 

@@ -32,8 +32,8 @@ export class NuGetPackageClient
 
   config: DotNetConfig;
 
-  constructor(config: DotNetConfig, cacheDuration: number, logger: ILogger) {
-    super(logger, {}, cacheDuration)
+  constructor(config: DotNetConfig, logger: ILogger) {
+    super(logger, {}, config.cacheDuration)
     this.config = config;
   }
 

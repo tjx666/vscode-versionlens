@@ -20,16 +20,11 @@ export class MavenVersionLensProvider
   mvnClient: MvnClient;
   mavenClient: MavenClient;
 
-  constructor(
-    mvnClient: MvnClient,
-    mavenClient: MavenClient,
-    config: MavenConfig,
-    logger: ILogger
-  ) {
+  constructor(config: MavenConfig, logger: ILogger) {
     super(config, logger);
 
-    this.mvnClient = mvnClient
-    this.mavenClient = mavenClient
+    this.mvnClient = new MvnClient(config, logger);
+    this.mavenClient = new MavenClient(config, logger);
   }
 
   async fetchVersionLenses(
@@ -39,7 +34,7 @@ export class MavenVersionLensProvider
   ) {
     const packageDependencies = extractMavenLensDataFromDocument(
       document,
-      this.config.getDependencyProperties()
+      this.config.dependencyProperties
     );
     if (packageDependencies.length === 0) return null;
 

@@ -8,6 +8,7 @@ import {
 enum ComposerContributions {
   DependencyProperties = 'composer.dependencyProperties',
   ApiUrl = 'composer.apiUrl',
+  CacheDuration = 'composer.caching.duration',
 }
 
 export class ComposerConfig implements IProviderConfig {
@@ -34,26 +35,20 @@ export class ComposerConfig implements IProviderConfig {
 
   constructor(extension: VersionLensExtension) {
     this.extension = extension;
-
-    this.defaultDependencyProperties = [
-      "require",
-      "require-dev"
-    ];
-
-    this.defaultApiUrl = 'https://repo.packagist.org/p';
   }
 
-  getDependencyProperties() {
-    return this.extension.getOrDefault(
-      ComposerContributions.DependencyProperties,
-      this.defaultDependencyProperties
-    );
+  get dependencyProperties(): Array<string> {
+    return this.extension.get(ComposerContributions.DependencyProperties);
   }
 
-  getApiUrl() {
-    return this.extension.getOrDefault(
-      ComposerContributions.ApiUrl,
-      this.defaultApiUrl
+  get apiUrl(): string {
+    return this.extension.get(ComposerContributions.ApiUrl);
+  }
+
+  get cacheDuration(): number {
+    return this.extension.getOrDefault<number>(
+      ComposerContributions.CacheDuration,
+      this.extension.caching.duration
     );
   }
 
