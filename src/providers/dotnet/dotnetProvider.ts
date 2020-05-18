@@ -42,9 +42,6 @@ export class DotNetVersionLensProvider
     );
     if (packageDepsLenses.length === 0) return null;
 
-    // defrost cache settings
-    this.config.caching.defrost();
-
     // gets source feeds from the project path
     const promisedSources = this.dotnetClient.fetchSources(packagePath);
 

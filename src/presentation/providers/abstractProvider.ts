@@ -5,10 +5,7 @@ import * as VsCodeTypes from 'vscode';
 import { VersionLensExtension } from 'presentation/extension';
 import { ILogger } from 'core/logging';
 
-import {
-  PackageSourceTypes,
-  PackageResponseErrors
-} from 'core/packages';
+import { PackageSourceTypes, PackageResponseErrors } from 'core/packages';
 
 import * as CommandFactory from 'presentation/commands/factory';
 
@@ -64,6 +61,9 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
 
     // set in progress
     this.extension.state.providerBusy.value = true;
+
+    // unfreeze config per file request
+    this.config.caching.defrost();
 
     // todo clear output channel
     // if (this.logger){
