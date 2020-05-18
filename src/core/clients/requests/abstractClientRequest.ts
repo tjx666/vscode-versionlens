@@ -1,16 +1,16 @@
 import { ExpiryCacheMap } from '../caching/expiryCacheMap';
 
+import { ICachingOptions } from '../definitions/options';
 import {
   ClientResponse,
   ClientResponseSource
 } from "../definitions/clientResponses";
-import { CachingOptions } from '../options/cachingOptions';
 
 export class AbstractClientRequest<TStatus, TData> {
 
   cache: ExpiryCacheMap<ClientResponse<TStatus, TData>>;
 
-  constructor(options: CachingOptions) {
+  constructor(options: ICachingOptions) {
     this.cache = new ExpiryCacheMap(options);
   }
 

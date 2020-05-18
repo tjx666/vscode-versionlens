@@ -38,6 +38,9 @@ export class MavenVersionLensProvider
     );
     if (packageDependencies.length === 0) return null;
 
+    // defrost cache settings
+    this.config.caching.defrost();
+
     // gets source feeds from the project path
     const promisedRepos = this.mvnClient.fetchRepositories(packagePath);
 

@@ -1,7 +1,7 @@
 import { ILogger } from 'core/logging';
 import { VersionLensExtension } from 'presentation/extension';
 
-import { ComposerVersionLensProvider } from './composerVersionLensProvider';
+import { ComposerVersionLensProvider } from './composerProvider';
 import { ComposerConfig } from './composerConfig';
 
 export function activate(extension: VersionLensExtension, logger: ILogger) {

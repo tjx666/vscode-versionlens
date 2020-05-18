@@ -4,7 +4,7 @@ import {
   IProviderOptions,
   AbstractProviderConfig
 } from "presentation/providers";
-import { CachingOptions } from 'core/clients';
+import { CachingOptions, ICachingOptions } from 'core/clients';
 
 enum NpmContributions {
   Caching = 'npm.caching',
@@ -28,24 +28,24 @@ export class NpmConfig extends AbstractProviderConfig {
     }
   };
 
-  caching: CachingOptions;
+  caching: ICachingOptions;
 
   constructor(extension: VersionLensExtension) {
     super(extension);
 
     this.caching = new CachingOptions(
+      extension.config,
       NpmContributions.Caching,
-      extension,
       'caching'
     );
   }
 
   get dependencyProperties(): Array<string> {
-    return this.extension.get(NpmContributions.DependencyProperties);
+    return this.extension.config.get(NpmContributions.DependencyProperties);
   }
 
   get distTagFilter(): Array<string> {
-    return this.extension.get(NpmContributions.DistTagFilter);
+    return this.extension.config.get(NpmContributions.DistTagFilter);
   }
 
 }

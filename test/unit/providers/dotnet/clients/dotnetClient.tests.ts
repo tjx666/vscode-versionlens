@@ -10,7 +10,6 @@ import {
 import { DotNetConfig } from 'providers/dotnet/dotnetConfig';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
 import { VersionLensExtension } from '/presentation/extension';
-import { IConfig } from '/core/configuration';
 
 const assert = require('assert');
 const mock = require('mock-require');
@@ -21,9 +20,12 @@ export const DotnetClientRequestTests = {
 
   beforeEach: () => {
 
-    defaultExtensionMock = new VersionLensExtension(<IConfig>{
-      get: (k) => undefined
-    });
+    defaultExtensionMock = new VersionLensExtension(
+      {
+        get: (k) => null,
+        defrost: () => null
+      }
+    );
 
   },
 
@@ -68,9 +70,12 @@ export const DotnetClientRequestTests = {
 
       // setup test feeds
       const config = new DotNetConfig(
-        new VersionLensExtension(<IConfig>{
-          get: (k) => <any>testFeeds
-        })
+        new VersionLensExtension(
+          {
+            get: (k) => <any>testFeeds,
+            defrost: () => null
+          }
+        )
       )
 
       const cut = new DotNetClient(config, new LoggerMock());
@@ -95,9 +100,12 @@ export const DotnetClientRequestTests = {
 
       // setup test feeds
       const config = new DotNetConfig(
-        new VersionLensExtension(<IConfig>{
-          get: (k) => <any>testFeeds
-        })
+        new VersionLensExtension(
+          {
+            get: (k) => <any>testFeeds,
+            defrost: () => null
+          }
+        )
       )
 
       const cut = new DotNetClient(config, new LoggerMock());

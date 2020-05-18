@@ -1,15 +1,11 @@
-import {
-  AbstractConfig,
-  IRootConfig,
-} from "core/configuration";
-import { CachingOptions } from "core/clients";
+import { IFrozenRespository } from "core/generic/repositories";
+import { LoggingOptions } from "core/logging";
+import { CachingOptions, ICachingOptions } from "core/clients";
 
 import { VersionLensState } from "presentation/extension";
 
-import { LoggingOptions } from "../../core/logging/loggingOptions";
 import { SuggestionsOptions } from "./options/suggestionsOptions";
 import { StatusesOptions } from "./options/statusesOptions";
-
 
 export enum SuggestionIndicators {
   Update = '\u2191',
@@ -17,30 +13,32 @@ export enum SuggestionIndicators {
   OpenNewWindow = '\u29C9',
 }
 
-export class VersionLensExtension extends AbstractConfig {
+export class VersionLensExtension {
 
   extensionName: string;
 
-  state: VersionLensState;
+  config: IFrozenRespository;
 
   logging: LoggingOptions;
 
-  caching: CachingOptions;
+  caching: ICachingOptions;
 
   suggestions: SuggestionsOptions;
 
   statuses: StatusesOptions;
 
-  constructor(config: IRootConfig) {
-    super('', config);
+  state: VersionLensState;
 
+  constructor(config: IFrozenRespository) {
     this.extensionName = "versionlens";
+    this.config = config;
 
     // instantiate contrib options
-    this.logging = new LoggingOptions('logging', this);
-    this.caching = new CachingOptions('caching', this);
-    this.suggestions = new SuggestionsOptions(this);
-    this.statuses = new StatusesOptions(this);
+    this.logging = new LoggingOptions(config, 'logging');
+    this.caching = new CachingOptions(config, 'caching');
+
+    this.suggestions = new SuggestionsOptions(config);
+    this.statuses = new StatusesOptions(config);
 
     // instantiate setContext options
     this.state = new VersionLensState(this);
@@ -51,7 +49,7 @@ export class VersionLensExtension extends AbstractConfig {
 let _extensionSingleton = null;
 export default _extensionSingleton;
 
-export function registerExtension(config: IRootConfig): VersionLensExtension {
+export function registerExtension(config: IFrozenRespository): VersionLensExtension {
   _extensionSingleton = new VersionLensExtension(config);
   return _extensionSingleton;
 }

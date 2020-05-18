@@ -4,7 +4,7 @@ import {
   ProviderSupport,
   AbstractProviderConfig
 } from "presentation/providers";
-import { CachingOptions } from 'core/clients';
+import { CachingOptions, ICachingOptions } from 'core/clients';
 
 export enum DotnetContributions {
   Caching = 'dotnet.caching',
@@ -28,28 +28,28 @@ export class DotNetConfig extends AbstractProviderConfig {
     }
   };
 
-  caching: CachingOptions;
+  caching: ICachingOptions;
 
   constructor(extension: VersionLensExtension) {
     super(extension);
 
     this.caching = new CachingOptions(
-      DotnetContributions.Caching, 
-      extension, 
+      extension.config,
+      DotnetContributions.Caching,
       'caching'
     );
   }
 
   get dependencyProperties(): Array<string> {
-    return this.extension.get(DotnetContributions.DependencyProperties);
+    return this.extension.config.get(DotnetContributions.DependencyProperties);
   }
 
   get tagFilter(): Array<string> {
-    return this.extension.get(DotnetContributions.TagFilter);
+    return this.extension.config.get(DotnetContributions.TagFilter);
   }
 
   get nuGetFeeds(): Array<string> {
-    return this.extension.get(DotnetContributions.NugetFeeds);
+    return this.extension.config.get(DotnetContributions.NugetFeeds);
   }
 
 }

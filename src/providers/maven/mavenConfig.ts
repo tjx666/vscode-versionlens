@@ -4,7 +4,7 @@ import {
   IProviderOptions,
   AbstractProviderConfig
 } from "presentation/providers";
-import { CachingOptions } from 'core/clients';
+import { ICachingOptions, CachingOptions } from 'core/clients';
 
 enum MavenContributions {
   Caching = 'maven.caching',
@@ -27,29 +27,29 @@ export class MavenConfig extends AbstractProviderConfig {
       pattern: '**/pom.xml',
     }
   };
-  
-  caching: CachingOptions;
+
+  caching: ICachingOptions;
 
   constructor(extension: VersionLensExtension) {
     super(extension);
 
     this.caching = new CachingOptions(
+      extension.config,
       MavenContributions.Caching,
-      extension,
       'caching'
     );
   }
 
   get dependencyProperties(): Array<string> {
-    return this.extension.get(MavenContributions.DependencyProperties);
+    return this.extension.config.get(MavenContributions.DependencyProperties);
   }
 
   get tagFilter(): Array<string> {
-    return this.extension.get(MavenContributions.DependencyProperties);
+    return this.extension.config.get(MavenContributions.DependencyProperties);
   }
 
   get apiUrl(): string {
-    return this.extension.get(MavenContributions.ApiUrl);
+    return this.extension.config.get(MavenContributions.ApiUrl);
   }
 
 }

@@ -1,4 +1,4 @@
-import { IConfig } from 'core/configuration';
+import { IRepository } from "core/generic/repositories";
 
 enum StatusesContributions {
   AlwaysShowInstalledStatus = 'statuses.alwaysShowInstalledStatuses',
@@ -10,38 +10,26 @@ enum StatusesContributions {
 
 export class StatusesOptions {
 
-  private config: IConfig;
+  private config: IRepository;
 
-  constructor(config: IConfig) {
+  constructor(config: IRepository) {
     this.config = config;
   }
 
   get installedColour() {
-    return this.config.getOrDefault(
-      StatusesContributions.InstalledColour,
-      'green'
-    );
+    return this.config.get<string>(StatusesContributions.InstalledColour);
   }
 
   get notInstalledColour() {
-    return this.config.getOrDefault(
-      StatusesContributions.NotInstalledColour,
-      'red'
-    );
+    return this.config.get<string>(StatusesContributions.NotInstalledColour);
   }
 
   get outdatedColour() {
-    return this.config.getOrDefault(
-      StatusesContributions.OutdatedColour,
-      'orange'
-    );
+    return this.config.get<string>(StatusesContributions.OutdatedColour);
   }
 
   get prereleaseInstalledColour() {
-    return this.config.getOrDefault(
-      StatusesContributions.prereleaseInstalledColour,
-      'yellowgreen'
-    );
+    return this.config.get<string>(StatusesContributions.prereleaseInstalledColour);
   }
 
 }

@@ -1,12 +1,13 @@
+import { CachingOptions, ICachingOptions } from 'core/clients';
 import { VersionLensExtension } from 'presentation/extension';
 import {
   ProviderSupport,
   IProviderOptions,
   AbstractProviderConfig
 } from "presentation/providers";
-import { CachingOptions } from 'core/clients';
 
 enum ComposerContributions {
+  Caching = 'composer.caching',
   DependencyProperties = 'composer.dependencyProperties',
   ApiUrl = 'composer.apiUrl',
   CacheDuration = 'composer.caching.duration',
@@ -28,22 +29,25 @@ export class ComposerConfig extends AbstractProviderConfig {
     }
   }
 
-  caching: CachingOptions;
+  caching: ICachingOptions;
 
   constructor(extension: VersionLensExtension) {
     super(extension);
 
     this.caching = new CachingOptions(
-      'composer.caching', extension, 'caching'
+      extension.config,
+      ComposerContributions.Caching,
+      'caching'
     );
+
   }
 
   get dependencyProperties(): Array<string> {
-    return this.extension.get(ComposerContributions.DependencyProperties);
+    return this.extension.config.get(ComposerContributions.DependencyProperties);
   }
 
   get apiUrl(): string {
-    return this.extension.get(ComposerContributions.ApiUrl);
+    return this.extension.config.get(ComposerContributions.ApiUrl);
   }
 
 }

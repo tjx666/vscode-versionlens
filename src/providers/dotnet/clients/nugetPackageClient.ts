@@ -10,10 +10,7 @@ import {
   ResponseFactory,
 } from 'core/packages';
 
-import {
-  HttpClientResponse,
-  HttpClientRequestMethods,
-} from 'core/clients';
+import { HttpClientResponse, HttpClientRequestMethods } from 'core/clients';
 
 import {
   JsonHttpClientRequest
@@ -33,7 +30,7 @@ export class NuGetPackageClient
   config: DotNetConfig;
 
   constructor(config: DotNetConfig, logger: ILogger) {
-    super(logger, config.caching, {})
+    super(logger, config.caching, {});
     this.config = config;
   }
 

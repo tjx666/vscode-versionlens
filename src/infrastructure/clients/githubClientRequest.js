@@ -1,5 +1,5 @@
 import { ILogger } from 'core/logging';
-import { HttpClientRequestMethods, CachingOptions } from 'core/clients';
+import { HttpClientRequestMethods, ICachingOptions } from 'core/clients';
 import { JsonHttpClientRequest } from './jsonHttpClientRequest';
 
 export class GithubRequest extends JsonHttpClientRequest {

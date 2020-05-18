@@ -1,4 +1,4 @@
-import { IConfig } from 'core/configuration';
+import { IRepository } from "core/generic/repositories";
 
 enum SuggestionContributions {
   // DefaultVersionPrefix = 'versionlens.suggestions.defaultVersionPrefix',
@@ -8,23 +8,21 @@ enum SuggestionContributions {
 
 export class SuggestionsOptions {
 
-  private config: IConfig;
+  private config: IRepository;
 
-  constructor(config: IConfig) {
+  constructor(config: IRepository) {
     this.config = config;
   }
 
   get alwaysShowReleases(): boolean {
-    return this.config.getOrDefault<boolean>(
-      SuggestionContributions.AlwaysShowReleases,
-      false
+    return this.config.get<boolean>(
+      SuggestionContributions.AlwaysShowReleases
     );
   }
 
   get alwaysShowPrereleases(): boolean {
-    return this.config.getOrDefault<boolean>(
-      SuggestionContributions.AlwaysShowPrereleases,
-      false
+    return this.config.get<boolean>(
+      SuggestionContributions.AlwaysShowPrereleases
     );
   }
 

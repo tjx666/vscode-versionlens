@@ -5,7 +5,7 @@ import * as VsCodeTypes from 'vscode';
 import { VersionLensFactory } from 'presentation/lenses';
 import { VersionLensFetchResponse } from 'presentation/providers';
 
-import { NpmVersionLensProvider } from 'providers/npm/npmVersionLensProvider';
+import { NpmVersionLensProvider } from 'providers/npm/npmProvider';
 import { npmReplaceVersion } from 'providers/npm/npmVersionUtils';
 
 import { extractPackageDependenciesFromJson } from './jspmPackageParser';
@@ -31,6 +31,9 @@ export class JspmVersionLensProvider extends NpmVersionLensProvider {
     if (jspmDependencyLenses.length === 0) return null;
 
     const includePrereleases = this.extension.state.prereleasesEnabled.value;
+
+    // defrost cache settings
+    this.config.caching.defrost();
 
     const context = {
       includePrereleases,

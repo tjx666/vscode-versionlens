@@ -4,7 +4,6 @@ import { githubFixtures } from './fetchGithub.fixtures'
 import { NpmConfig } from 'providers/npm/npmConfig';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
 import { VersionLensExtension } from '/presentation/extension';
-import { IConfig } from '/core/configuration';
 import { ClientResponseSource } from '/core/clients';
 import { PackageSuggestionFlags } from '/core/packages';
 
@@ -27,8 +26,9 @@ export default {
   afterAll: () => mock.stopAll(),
 
   beforeEach: () => {
-    defaultExtensionMock = new VersionLensExtension(<IConfig>{
-      get: (k) => undefined
+    defaultExtensionMock = new VersionLensExtension({
+      get: (k) => null,
+      defrost: () => null
     });
   },
 

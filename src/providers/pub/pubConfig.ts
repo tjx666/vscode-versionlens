@@ -1,10 +1,10 @@
+import { CachingOptions, ICachingOptions } from "core/clients";
 import { VersionLensExtension } from "presentation/extension";
 import {
   ProviderSupport,
   IProviderOptions,
   AbstractProviderConfig,
 } from "presentation/providers";
-import { CachingOptions } from "core/clients";
 
 enum PubContributions {
   Caching = 'pub.caching',
@@ -27,24 +27,24 @@ export class PubConfig extends AbstractProviderConfig {
     }
   };
 
-  caching: CachingOptions;
+  caching: ICachingOptions;
 
   constructor(extension: VersionLensExtension) {
     super(extension);
 
     this.caching = new CachingOptions(
+      extension.config,
       PubContributions.Caching,
-      extension,
       'caching'
     );
   }
 
   get dependencyProperties(): Array<string> {
-    return this.extension.get(PubContributions.DependencyProperties);
+    return this.extension.config.get(PubContributions.DependencyProperties);
   }
 
   get apiUrl(): string {
-    return this.extension.get(PubContributions.ApiUrl);
+    return this.extension.config.get(PubContributions.ApiUrl);
   }
 
 }

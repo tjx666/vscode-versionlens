@@ -1,4 +1,4 @@
-import { CachingOptions } from "../options/cachingOptions";
+import { ICachingOptions } from "../definitions/options";
 
 export type CacheEntry<T> = {
   expiryTime: number,
@@ -10,10 +10,10 @@ type CacheMap<T> = {
 };
 
 export class ExpiryCacheMap<T> {
-  options: CachingOptions;
+  options: ICachingOptions;
   cacheMap: CacheMap<T>;
 
-  constructor(options: CachingOptions) {
+  constructor(options: ICachingOptions) {
     this.options = options;
     this.cacheMap = {};
   }

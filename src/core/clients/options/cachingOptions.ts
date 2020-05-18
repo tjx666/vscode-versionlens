@@ -1,13 +1,11 @@
-import { IConfig, AbstractConfig } from 'core/configuration';
+import { AbstractOptions } from 'core/configuration';
+import { CachingContributions, ICachingOptions } from '../definitions/options';
+import { IFrozenRespository } from 'core/generic/repositories';
 
-export enum CachingContributions {
-  CacheDuration = 'duration',
-}
+export class CachingOptions extends AbstractOptions implements ICachingOptions {
 
-export class CachingOptions extends AbstractConfig {
-
-  constructor(parentKey: string, config: IConfig, defaultKey?: string) {
-    super(parentKey, config, defaultKey);
+  constructor(config: IFrozenRespository, section: string, defaultSection?: string) {
+    super(config, section, defaultSection);
   }
 
   get duration(): number {

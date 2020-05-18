@@ -1,3 +1,4 @@
+import { ILogger } from 'core/logging';
 import {
   PackageRequest,
   DocumentFactory,
@@ -9,18 +10,14 @@ import {
   SemverSpec,
   IPackageClient,
 } from 'core/packages';
-
 import {
   HttpClientRequestMethods,
-  HttpClientResponse,
+  HttpClientResponse
 } from "core/clients";
 
-import {
-  JsonHttpClientRequest
-} from 'infrastructure/clients';
+import { JsonHttpClientRequest } from 'infrastructure/clients';
 
 import { PubConfig } from './pubConfig';
-import { ILogger } from 'core/logging';
 
 export class PubClient
   extends JsonHttpClientRequest

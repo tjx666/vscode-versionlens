@@ -10,22 +10,21 @@ import {
 } from 'core/packages';
 import { ILogger } from 'core/logging';
 import { ClientResponseSource } from "core/clients";
-
-import { JsonHttpClientRequest } from 'infrastructure/clients';
-
 import { NpmConfig } from '../npmConfig';
 import { NpaSpec, NpaTypes } from '../models/npaSpec';
 
-export class PacoteClient extends JsonHttpClientRequest {
+export class PacoteClient {
 
   config: NpmConfig;
 
   constructor(config: NpmConfig, logger: ILogger) {
-    super(logger, config.caching, {});
     this.config = config;
   }
 
-  async fetchPackage(request: PackageRequest<null>, npaSpec: NpaSpec): Promise<PackageDocument> {
+  async fetchPackage(
+    request: PackageRequest<null>,
+    npaSpec: NpaSpec
+  ): Promise<PackageDocument> {
     return createPacotePackageDocument(request, npaSpec)
   }
 

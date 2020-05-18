@@ -1,10 +1,11 @@
-import { AbstractConfig, IConfig, } from 'core/configuration'
+import { IFrozenRespository } from "core/generic/repositories";
+import { AbstractOptions,  } from 'core/configuration'
 
 const assert = require('assert')
 
-const TestClass = class Config extends AbstractConfig {
-  constructor(rootKey: string, config, defaultKey?: string) {
-    super(rootKey, config, defaultKey);
+const TestClass = class Config extends AbstractOptions {
+  constructor(rootKey: string, config: IFrozenRespository, defaultKey?: string) {
+    super(config, rootKey, defaultKey);
   }
 }
 
@@ -21,14 +22,15 @@ export const AbstractConfigTests = {
       const cot = new TestClass(
         rootKey,
         {
-          get: k => k === expectedKey ? <any>expectedValue : null
+          get: k => <any>(k === expectedKey ? expectedValue : null),
+          defrost: () => null
         }
       );
 
       const actual = cot.get(testKey);
       assert.equal(actual, expectedValue)
-    }
-
+    },
+    
   },
 
   "getOrDefault": {
@@ -41,7 +43,8 @@ export const AbstractConfigTests = {
       const cot = new TestClass(
         rootKey,
         {
-          get: k => k === expectedKey ? expectedValue : null
+          get: k => <any>(k === expectedKey ? expectedValue : null),
+          defrost: () => null
         }
       );
 
@@ -59,7 +62,8 @@ export const AbstractConfigTests = {
       const cot = new TestClass(
         rootKey,
         {
-          get: k => k === expectedKey ? expectedValue : null
+          get: k => <any>(k === expectedKey ? expectedValue : null),
+          defrost: () => null
         },
         defaultKey
       );
@@ -77,7 +81,8 @@ export const AbstractConfigTests = {
       const cot = new TestClass(
         rootKey,
         {
-          get: k => null
+          get: k => null,
+          defrost: () => null
         },
         defaultKey
       );

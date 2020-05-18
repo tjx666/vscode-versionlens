@@ -11,18 +11,11 @@ import {
   PackageVersionStatus,
   PackageSuggestion,
 } from "core/packages";
-
-import {
-  HttpClientResponse,
-  HttpClientRequestMethods,
-} from "core/clients";
-
-import {
-  JsonHttpClientRequest
-} from 'infrastructure/clients';
-
-import { DubConfig } from '../dubConfig';
 import { ILogger } from "core/logging";
+import { HttpClientResponse, HttpClientRequestMethods } from "core/clients";
+
+import { JsonHttpClientRequest } from 'infrastructure/clients';
+import { DubConfig } from '../dubConfig';
 
 export class DubClient
   extends JsonHttpClientRequest

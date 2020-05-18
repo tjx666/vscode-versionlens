@@ -1,18 +1,21 @@
-import { IConfig, AbstractConfig } from 'core/configuration';
+import { AbstractOptions } from 'core/configuration';
 import { LogLevelTypes } from 'core/logging';
+import { IFrozenRespository } from 'core/generic/repositories';
 
 export enum LoggingContributions {
   LoggingLevel = 'level',
 }
 
-export class LoggingOptions extends AbstractConfig {
+export class LoggingOptions extends AbstractOptions {
 
-  constructor(parentKey: string, config: IConfig) {
-    super(parentKey, config);
+  constructor(config: IFrozenRespository, section: string) {
+    super(config, section);
   }
 
   get level(): LogLevelTypes {
-    return super.get<LogLevelTypes>(LoggingContributions.LoggingLevel);
+    return super.get<LogLevelTypes>(
+      LoggingContributions.LoggingLevel
+    );
   }
 
 }

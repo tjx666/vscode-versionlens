@@ -1,7 +1,4 @@
-import {
-  HttpClientResponse,
-  HttpClientRequestMethods,
-} from 'core/clients';
+import { HttpClientResponse, HttpClientRequestMethods } from 'core/clients';
 
 import {
   JsonHttpClientRequest

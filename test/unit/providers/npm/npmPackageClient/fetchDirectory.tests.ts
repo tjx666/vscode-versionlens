@@ -1,10 +1,7 @@
-// import { testPath } from 'test/unit/utils';
 import { NpmPackageClient } from 'providers/npm/clients/npmPackageClient'
-// import Fixtures from './pacoteClient.fixtures'
 import { NpmConfig } from 'providers/npm/npmConfig';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
 import { VersionLensExtension } from '/presentation/extension';
-import { IConfig } from '/core/configuration';
 
 const assert = require('assert')
 const mock = require('mock-require')
@@ -18,8 +15,9 @@ export default {
   afterAll: () => mock.stopAll(),
 
   beforeEach: () => {
-    defaultExtensionMock = new VersionLensExtension(<IConfig>{
-      get: (k) => undefined
+    defaultExtensionMock = new VersionLensExtension({
+      get: (k) => null,
+      defrost: () => null
     });
   },
 

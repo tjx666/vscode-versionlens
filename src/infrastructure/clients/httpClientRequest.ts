@@ -7,7 +7,7 @@ import {
   IHttpClientRequest,
   HttpClientRequestMethods,
   UrlHelpers,
-  CachingOptions
+  ICachingOptions
 } from 'core/clients';
 
 type RequestLightHttpResponse = {
@@ -23,7 +23,7 @@ export class HttpClientRequest
 
   headers: KeyStringDictionary;
 
-  constructor(logger: ILogger, options: CachingOptions, headers?: KeyStringDictionary) {
+  constructor(logger: ILogger, options: ICachingOptions, headers?: KeyStringDictionary) {
     super(options);
     this.logger = logger;
     this.headers = headers || {};

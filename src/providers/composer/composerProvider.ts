@@ -46,6 +46,9 @@ export class ComposerVersionLensProvider extends AbstractVersionLensProvider<Com
       clientData: null,
     }
 
+    // unfreeze config per file request
+    this.composerClient.config.caching.defrost();
+
     return VersionLensFactory.createVersionLenses(
       this.composerClient,
       document,

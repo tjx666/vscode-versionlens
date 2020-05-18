@@ -1,17 +1,16 @@
 import {
+  AbstractClientRequest,
   ClientResponseSource,
   ProcessClientResponse,
   IProcessClientRequest,
-  CachingOptions
+  ICachingOptions
 } from "core/clients";
-
-import { AbstractClientRequest } from "../../core/clients/requests/abstractClientRequest";
 
 export class ProcessClientRequest
   extends AbstractClientRequest<string, string>
   implements IProcessClientRequest {
 
-  constructor(options: CachingOptions) {
+  constructor(options: ICachingOptions) {
     super(options);
   }
 

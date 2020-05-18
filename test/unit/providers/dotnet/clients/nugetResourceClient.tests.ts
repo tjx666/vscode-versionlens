@@ -5,7 +5,6 @@ import { UrlHelpers } from '/core/clients';
 import { DotNetConfig } from 'providers/dotnet/dotnetConfig';
 import { LoggerMock } from 'test/unit/mocks/loggerMock'
 import { VersionLensExtension } from '/presentation/extension';
-import { IConfig } from '/core/configuration';
 
 const assert = require('assert');
 const mock = require('mock-require');
@@ -16,8 +15,9 @@ export const NuGetResourceClientTests = {
 
   beforeEach: () => {
 
-    defaultExtensionMock = new VersionLensExtension(<IConfig>{
-      get: (k) => undefined
+    defaultExtensionMock = new VersionLensExtension({
+      get: (k) => null,
+      defrost: () => null
     });
 
   },
@@ -80,9 +80,12 @@ export const NuGetResourceClientTests = {
 
       // setup test feeds
       const config = new DotNetConfig(
-        new VersionLensExtension(<IConfig>{
-          get: (k) => <any>[expected]
-        })
+        new VersionLensExtension(
+          {
+            get: (k) => <any>[expected],
+            defrost: () => null
+          }
+        )
       )
 
       const cut = new NuGetResourceClient(config, new LoggerMock())
@@ -112,8 +115,9 @@ export const NuGetResourceClientTests = {
 
       // setup test feeds
       const config = new DotNetConfig(
-        new VersionLensExtension(<IConfig>{
-          get: (k) => <any>[]
+        new VersionLensExtension({
+          get: (k) => <any>[],
+          defrost: () => null
         })
       )
 

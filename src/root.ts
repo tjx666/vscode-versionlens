@@ -1,8 +1,11 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
 
-import { IRootConfig } from 'core/configuration';
+import { IFrozenRespository } from 'core/generic/repositories';
+
+import { VsCodeFrozenConfig } from 'infrastructure/configuration';
 import { createLogger } from 'infrastructure/logging';
+
 import { registerProviders } from 'presentation/providers';
 import {
   registerExtension,
@@ -12,10 +15,10 @@ import {
 } from 'presentation/extension';
 
 export async function activate(context: VsCodeTypes.ExtensionContext) {
-  const { window, workspace } = require('vscode');
+  const { window } = require('vscode');
 
   // composition
-  const configuration: IRootConfig = workspace.getConfiguration('versionlens');
+  const configuration: IFrozenRespository = new VsCodeFrozenConfig('versionlens');
 
   const extension = registerExtension(configuration);
 

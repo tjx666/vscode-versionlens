@@ -4,7 +4,7 @@ import {
   ProviderSupport,
   AbstractProviderConfig
 } from "presentation/providers";
-import { CachingOptions } from 'core/clients';
+import { CachingOptions, ICachingOptions } from 'core/clients';
 
 enum DubContributions {
   Caching = 'dub.caching',
@@ -28,24 +28,24 @@ export class DubConfig extends AbstractProviderConfig {
     }
   };
 
-  caching: CachingOptions;
+  caching: ICachingOptions;
 
   constructor(extension: VersionLensExtension) {
     super(extension);
 
     this.caching = new CachingOptions(
+      extension.config,
       DubContributions.Caching,
-      extension,
       'caching'
     );
   }
 
   get dependencyProperties(): Array<string> {
-    return this.extension.get(DubContributions.DependencyProperties);
+    return this.extension.config.get(DubContributions.DependencyProperties);
   }
 
   get apiUrl(): Array<string> {
-    return this.extension.get(DubContributions.ApiUrl);
+    return this.extension.config.get(DubContributions.ApiUrl);
   }
 
 }

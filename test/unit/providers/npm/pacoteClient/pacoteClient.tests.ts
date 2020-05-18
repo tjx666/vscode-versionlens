@@ -4,7 +4,6 @@ import Fixtures from './pacoteClient.fixtures'
 import { NpmConfig } from 'providers/npm/npmConfig';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
 import { VersionLensExtension } from '/presentation/extension';
-import { IConfig } from '/core/configuration';
 
 const assert = require('assert')
 const path = require('path')
@@ -30,9 +29,12 @@ export default {
     // mock defaults
     pacoteMock.packument = (npaResult, opts) => { }
 
-    defaultExtensionMock = new VersionLensExtension(<IConfig>{
-      get: (k) => undefined
-    });
+    defaultExtensionMock = new VersionLensExtension(
+      {
+        get: (k) => null,
+        defrost: () => null
+      }
+    );
   },
 
   'fetchPackage': {
@@ -58,6 +60,7 @@ export default {
         assert.equal(opts['//registry.npmjs.example/:_authToken'], '12345678')
         return Fixtures.packumentGit
       }
+
 
       const cut = new PacoteClient(
         new NpmConfig(defaultExtensionMock),
