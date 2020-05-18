@@ -9,7 +9,7 @@ import { NpmVersionLensProvider } from 'providers/npm/npmVersionLensProvider';
 import { npmReplaceVersion } from 'providers/npm/npmVersionUtils';
 
 import { extractPackageDependenciesFromJson } from './jspmPackageParser';
-import { JspmConfig } from './config';
+import { JspmConfig } from './jspmConfig';
 import { ILogger } from 'core/logging';
 
 export class JspmVersionLensProvider extends NpmVersionLensProvider {
