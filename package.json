@@ -224,9 +224,9 @@
         },
         "versionlens.caching.duration": {
           "type": [
-            "number, null"
+            "null",
+            "number"
           ],
-          "default": "30000",
           "description": "Sets the length of time all package managers cache their version suggestion results. Default is 5 minutes. Note: You can override each individual package manager e.g. npm.caching.duration"
         },
         "versionlens.suggestions.alwaysShowReleases": {
@@ -266,7 +266,8 @@
         },
         "versionlens.npm.caching.duration": {
           "type": [
-            "number, null"
+            "null",
+            "number"
           ],
           "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
@@ -297,7 +298,8 @@
         },
         "versionlens.pub.caching.duration": {
           "type": [
-            "number, null"
+            "null",
+            "number"
           ],
           "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
@@ -321,7 +323,8 @@
         },
         "versionlens.dotnet.caching.duration": {
           "type": [
-            "number, null"
+            "null",
+            "number"
           ],
           "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
@@ -363,7 +366,8 @@
         },
         "versionlens.dub.caching.duration": {
           "type": [
-            "number, null"
+            "null",
+            "number"
           ],
           "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
@@ -386,7 +390,10 @@
           "description": "Defines which properties in dub.json should be parsed by this extension"
         },
         "versionlens.composer.caching.duration": {
-          "type": "number",
+          "type": [
+            "null",
+            "number"
+          ],
           "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
         "versionlens.composer.apiUrl": {
@@ -409,7 +416,8 @@
         },
         "versionlens.maven.caching.duration": {
           "type": [
-            "number, null"
+            "null",
+            "number"
           ],
           "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
