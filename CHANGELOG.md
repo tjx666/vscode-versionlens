@@ -1,25 +1,24 @@
 # 1.0.0-alpha.0
 
-- All:
-  - Moved to a clean architecture.
-  - Added logging to the output channel.
+- Moved to a clean architecture.
+- Added logging to the output channel.
 
-    Logging level can be set using `versionlens.logging.level`.
-    
-    Currently defaults to 'info' level.
-  - Added cache duration option `versionlens.caching.duration`.
+  Logging level can be set using `versionlens.logging.level`.
+  
+  Currently defaults to 'info' level.
+- Added cache duration option `versionlens.caching.duration`.
 
-    Can be overridden individually for each package manager.
-    e.g. `versionlens.npm.caching.duration`
-    
-    Setting the cache to 0 will always try to fetch the package.
-  - Package managers now share the same experiance for version suggestions.
-  - Some contributions have be depricated or renamed.
-  - Versions will no longer show by default.
+  Can be overridden individually for each package manager.
+  e.g. `versionlens.npm.caching.duration`
+  
+  Setting the cache to 0 will always try to fetch the package.
+- Package managers now share the same experiance for version suggestions.
+- Some contributions have be depricated or renamed.
+- Version code lenses will no longer show by default.
 
-    You can use the **V** icon in the text editor to show versions.
+  You can use the **V** icon in the text editor to show versions; or
 
-    You can opt in to `always on at start up` using `versionlens.suggestions.showOnStartup` setting.
+  You can always show version information on start up by setting `versionlens.suggestions.showOnStartup` to `"true"`.
 
 - Dotnet: Now retrieves source feeds using `dotnet nuget list source` in the current open project cwd.
 - Npm: Replaced npm client api with [npm pacote api](https://github.com/npm/pacote)
