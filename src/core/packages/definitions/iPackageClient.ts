@@ -1,7 +1,7 @@
 import { PackageRequest } from "./packageRequest";
 import { PackageDocument } from "./packageDocument";
 import { IProviderConfig } from "presentation/providers";
-import { ILogger } from "core/logging/definitions";
+import { ILogger } from "core/logging";
 
 export interface IPackageClient<TClientData> {
 

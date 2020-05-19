@@ -7,11 +7,7 @@ export enum LogLevelTypes {
 
 export interface ILogger {
 
-  log(
-    level: LogLevelTypes,
-    message: string,
-    ...splats: any
-  ): void;
+  log(level: LogLevelTypes, message: string, ...splats: any): void;
 
   info(message: string, ...splats: any): void;
 

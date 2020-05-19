@@ -65,11 +65,6 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
     // unfreeze config per file request
     this.config.caching.defrost();
 
-    // todo clear output channel
-    // if (this.logger){
-    //    this.logger.clear()
-    // }
-
     return this.fetchVersionLenses(packagePath, document, token)
       .then(responses => {
         if (responses === null) return null;

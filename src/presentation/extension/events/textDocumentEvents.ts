@@ -1,5 +1,7 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
+
+import { ILogger } from 'core/logging';
 import { VersionLensState } from '../versionLensState';
 import * as InstalledStatusHelpers from '../helpers/installedStatusHelpers';
 
@@ -7,8 +9,11 @@ export class TextDocumentEvents {
 
   state: VersionLensState;
 
-  constructor(extensionState: VersionLensState) {
+  logger: ILogger;
+
+  constructor(extensionState: VersionLensState, logger: ILogger) {
     this.state = extensionState;
+    this.logger = logger;
 
     // register editor events
     const { workspace } = require('vscode');
@@ -17,7 +22,6 @@ export class TextDocumentEvents {
     workspace.onDidChangeTextDocument(
       this.onDidChangeTextDocument.bind(this)
     );
-
   }
 
   onDidChangeTextDocument(changeEvent: VsCodeTypes.TextDocumentChangeEvent) {
@@ -56,10 +60,10 @@ let _singleton = null;
 export default _singleton;
 
 export function registerTextDocumentEvents(
-  extensionState: VersionLensState
+  extensionState: VersionLensState, extLogger: ILogger
 ): TextDocumentEvents {
 
-  _singleton = new TextDocumentEvents(extensionState);
-  
+  _singleton = new TextDocumentEvents(extensionState, extLogger);
+
   return _singleton;
 }

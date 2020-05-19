@@ -4,7 +4,7 @@ import * as VsCodeTypes from 'vscode';
 import { IFrozenRespository } from 'core/generic/repositories';
 
 import { VsCodeFrozenConfig } from 'infrastructure/configuration';
-import { createLogger } from 'infrastructure/logging';
+import { createLoggerProvider } from 'infrastructure/logging';
 
 import { registerProviders } from 'presentation/providers';
 import {
@@ -12,25 +12,28 @@ import {
   registerCommands,
   registerTextEditorEvents,
   registerTextDocumentEvents,
+  VersionLensExtension,
 } from 'presentation/extension';
 
-export async function activate(context: VsCodeTypes.ExtensionContext) {
-  const { window } = require('vscode');
+export async function composition(context: VsCodeTypes.ExtensionContext) {
 
-  // composition
-  const configuration: IFrozenRespository = new VsCodeFrozenConfig('versionlens');
+  const configuration: IFrozenRespository = new VsCodeFrozenConfig(
+    VersionLensExtension.extensionName
+  );
 
   const extension = registerExtension(configuration);
 
-  const logger = createLogger(extension);
+  const loggerProvider = createLoggerProvider(extension.logging);
 
-  const textEditorEvents = registerTextEditorEvents(extension.state);
+  const appLogger = loggerProvider.createLogger('extension');
 
-  registerTextDocumentEvents(extension.state);
+  registerTextDocumentEvents(extension.state, appLogger);
 
-  const disposables = registerCommands(extension, logger);
+  const textEditorEvents = registerTextEditorEvents(extension.state, appLogger);
 
-  await registerProviders(extension, logger)
+  const disposables = registerCommands(extension, appLogger);
+
+  await registerProviders(extension, appLogger, loggerProvider)
     .then(disposables => {
       disposables.push(...disposables)
     });
@@ -39,6 +42,7 @@ export async function activate(context: VsCodeTypes.ExtensionContext) {
   context.subscriptions.push(<any>disposables);
 
   // show icons in active text editor if versionLens.providerActive
+  const { window } = require('vscode');
   textEditorEvents.onDidChangeActiveTextEditor(
     window.activeTextEditor
   );

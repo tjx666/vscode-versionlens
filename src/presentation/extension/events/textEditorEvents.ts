@@ -1,15 +1,20 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
+
+import { ILogger } from 'core/logging';
 import { providerRegistry } from 'presentation/providers';
+import { ProviderSupport } from 'presentation/providers';
 import { VersionLensState } from '../versionLensState';
-import { ProviderSupport } from 'presentation/providers/definitions/iProviderOptions';
 
 export class TextEditorEvents {
 
   state: VersionLensState;
 
-  constructor(extensionState: VersionLensState) {
+  logger: ILogger;
+
+  constructor(extensionState: VersionLensState, logger: ILogger) {
     this.state = extensionState;
+    this.logger = logger;
 
     // register editor events
     const { window } = require('vscode');
@@ -70,8 +75,8 @@ let _singleton = null;
 export default _singleton;
 
 export function registerTextEditorEvents(
-  extensionState: VersionLensState
+  extensionState: VersionLensState, extLogger: ILogger
 ): TextEditorEvents {
-  _singleton = new TextEditorEvents(extensionState);
+  _singleton = new TextEditorEvents(extensionState, extLogger);
   return _singleton;
 }

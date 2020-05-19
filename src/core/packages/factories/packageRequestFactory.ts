@@ -74,18 +74,13 @@ export async function executePackageRequest<TClientData>(
   replaceVersionFn: ReplaceVersionFunction,
 ): Promise<Array<PackageResponse> | PackageResponse> {
 
-  client.logger.debug(
-    `Queued %s package: %s`,
-    request.providerName,
-    request.package.name
-  );
+  client.logger.debug(`Queued package: %s`, request.package.name);
 
   return client.fetchPackage(request)
     .then(function (response) {
 
       client.logger.debug(
-        'Fetched %s package from %s: %s@%s',
-        response.providerName,
+        'Fetched package from %s: %s@%s',
         response.response.source,
         request.package.name,
         request.package.version
@@ -102,8 +97,7 @@ export async function executePackageRequest<TClientData>(
     .catch(function (error: PackageResponse) {
 
       client.logger.error(
-        `Provider: %s\tFunction: %s\tPackage: %O\t Error: %j`,
-        request.providerName,
+        `Provider: Function: %s\tPackage: %O\t Error: %j`,
         executePackageRequest.name,
         request.package,
         error

@@ -31,7 +31,7 @@
     "infrastructure/providers/**/activate.ts"
   ],
   "files": [
-    "loader.js",
+    "activate.js",
     "root.ts"
   ]
 }

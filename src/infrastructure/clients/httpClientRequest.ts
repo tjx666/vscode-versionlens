@@ -44,7 +44,7 @@ export class HttpClientRequest
       return Promise.resolve(cachedResp);
     }
 
-    this.logger.debug("HttpRequest: %s", url)
+    this.logger.debug("Requesting from %s", url)
 
     const requestLight = require('request-light');
     return requestLight.xhr({

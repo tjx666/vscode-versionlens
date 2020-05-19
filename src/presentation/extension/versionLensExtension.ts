@@ -15,7 +15,7 @@ export enum SuggestionIndicators {
 
 export class VersionLensExtension {
 
-  extensionName: string;
+  static extensionName: string = 'versionlens';
 
   config: IFrozenRespository;
 
@@ -30,7 +30,6 @@ export class VersionLensExtension {
   state: VersionLensState;
 
   constructor(config: IFrozenRespository) {
-    this.extensionName = "versionlens";
     this.config = config;
 
     // instantiate contrib options

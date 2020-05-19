@@ -2,12 +2,11 @@
 import * as VsCodeTypes from 'vscode';
 
 import { KeyDictionary } from 'core/generic/collections'
-import { ILogger } from 'core/logging';
+import { ILogger, ILoggerProvider } from 'core/logging';
 
 import { VersionLensExtension } from 'presentation/extension';
 import { AbstractVersionLensProvider } from 'presentation/providers'
 import { IProviderConfig } from './definitions/iProviderConfig';
-// import { regsiterCache } from 'core/packages';
 
 class ProviderRegistry {
 
@@ -37,8 +36,6 @@ class ProviderRegistry {
     if (this.has(key)) throw new Error('Provider already registered');
 
     this.providers[key] = provider;
-
-    // regsiterCache(key, provider.config.caching);
 
     return provider;
   }
@@ -71,28 +68,30 @@ class ProviderRegistry {
 export const providerRegistry = new ProviderRegistry();
 
 export async function registerProviders(
-  extension: VersionLensExtension, logger: ILogger
+  extension: VersionLensExtension, appLogger: ILogger, loggerProvider: ILoggerProvider
 ): Promise<Array<VsCodeTypes.Disposable>> {
 
-  const {
-    languages: { registerCodeLensProvider }
-  } = require('vscode');
+  const { languages: { registerCodeLensProvider } } = require('vscode');
 
   const providerNames = providerRegistry.providerNames;
 
-  logger.info('Registering providers %o', providerNames);
+  appLogger.debug('Registering providers %o', providerNames);
 
   const promisedActivation = providerNames.map(packageManager => {
     return import(`infrastructure/providers/${packageManager}/activate`)
       .then(module => {
-        logger.debug('Activating package manager %s', packageManager);
-        const provider = module.activate(extension, logger);
+        appLogger.debug('Activating package manager %s', packageManager);
 
-        logger.debug(
+        const providerLogger = loggerProvider.createLogger(packageManager);
+
+        const provider = module.activate(extension, providerLogger);
+
+        appLogger.debug(
           'Activated package manager %s with file filter: %O',
           provider.config.options.providerName,
           provider.config.options.selector,
         );
+
         return providerRegistry.register(provider);
       })
       .then(provider => {
@@ -102,7 +101,7 @@ export async function registerProviders(
         );
       })
       .catch(error => {
-        logger.error(
+        appLogger.error(
           'Could not register package manager %s. Reason: %O',
           packageManager,
           error,
