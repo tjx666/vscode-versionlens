@@ -14,7 +14,7 @@ import { HttpClientResponse, HttpClientRequestMethods } from "core/clients";
 
 import { HttpClientRequest } from 'infrastructure/clients';
 
-import { MavenClientData } from '../definitions';
+import { MavenClientData } from '../definitions/mavenClientData';
 import { MavenConfig } from '../mavenConfig';
 
 

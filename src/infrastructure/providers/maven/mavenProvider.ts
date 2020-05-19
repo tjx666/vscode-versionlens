@@ -8,9 +8,9 @@ import { RequestFactory } from 'core/packages';
 
 import { AbstractVersionLensProvider } from 'presentation/providers';
 
-import { extractMavenLensDataFromDocument } from './mavenPackageParser';
+import * as MavenXmlFactory from './mavenXmlParserFactory';
 import { MavenConfig } from './mavenConfig';
-import { MavenClientData } from './definitions';
+import { MavenClientData } from './definitions/mavenClientData';
 import { MvnClient } from './clients/mvnClient';
 import { MavenClient } from './clients/mavenClient';
 
@@ -32,8 +32,8 @@ export class MavenVersionLensProvider
     document: VsCodeTypes.TextDocument,
     token: VsCodeTypes.CancellationToken,
   ) {
-    const packageDependencies = extractMavenLensDataFromDocument(
-      document,
+    const packageDependencies = MavenXmlFactory.createDependenciesFromXml(
+      document.getText(),
       this.config.dependencyProperties
     );
     if (packageDependencies.length === 0) return null;
@@ -49,11 +49,9 @@ export class MavenVersionLensProvider
 
       const includePrereleases = this.extension.state.prereleasesEnabled.value;
 
-      const clientData: MavenClientData = {
-        repositories,
-      }
+      const clientData: MavenClientData = { repositories }
 
-      const context = {
+      const clientContext = {
         includePrereleases,
         clientData,
       }
@@ -62,7 +60,7 @@ export class MavenVersionLensProvider
         packagePath,
         this.mavenClient,
         packageDependencies,
-        context,
+        clientContext,
       );
     })
 

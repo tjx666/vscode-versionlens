@@ -4,7 +4,3 @@ export type MavenRepository = {
   url: string,
   protocol: RegistryProtocols
 }
-
-export type MavenClientData = {
-  repositories: Array<MavenRepository>
-}

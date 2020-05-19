@@ -1,8 +1,11 @@
 import { ILogger } from 'core/logging';
 import { UrlHelpers } from 'core/clients';
+
 import { ProcessClientRequest } from 'infrastructure/clients';
+
 import { MavenConfig } from '../mavenConfig';
-import { MavenRepository } from '../definitions';
+import { MavenRepository } from '../definitions/mavenRepository';
+import * as MavenXmlFactory from '../mavenXmlParserFactory';
 
 export class MvnClient extends ProcessClientRequest {
 
@@ -25,7 +28,7 @@ export class MvnClient extends ProcessClientRequest {
       // check we have some data
       if (data.length === 0) return [];
 
-      return parseLocalRepos(data);
+      return MavenXmlFactory.extractReposUrlsFromXml(data);
     }).catch(error => {
       return [];
     }).then((repos: Array<string>) => {
@@ -52,26 +55,4 @@ export class MvnClient extends ProcessClientRequest {
 
   }
 
-}
-
-function parseLocalRepos(stdout: string): Array<string> {
-  const xmldoc = require('xmldoc');
-  const regex = /<\?xml(.+\r?\n?)+\/settings>/gm;
-  const xmlString = regex.exec(stdout.toString())[0];
-  const xml = new xmldoc.XmlDocument(xmlString);
-
-  const localRepository = xml.descendantWithPath("localRepository");
-
-  const results = [
-    localRepository.val
-  ];
-
-  let repositoriesXml = xml.descendantWithPath("profiles.profile.repositories")
-    .childrenNamed("repository");
-
-  repositoriesXml.forEach(repositoryXml => {
-    results.push(repositoryXml.childNamed("url").val)
-  })
-
-  return results;
 }
