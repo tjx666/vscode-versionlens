@@ -1,10 +1,10 @@
+import { ICachingOptions, CachingOptions } from 'core/clients';
 import { VersionLensExtension } from 'presentation/extension';
 import {
   ProviderSupport,
   IProviderOptions,
   AbstractProviderConfig
 } from "presentation/providers";
-import { ICachingOptions, CachingOptions } from 'core/clients';
 
 enum MavenContributions {
   Caching = 'maven.caching',

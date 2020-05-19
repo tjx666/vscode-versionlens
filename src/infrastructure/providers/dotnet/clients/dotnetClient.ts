@@ -1,8 +1,9 @@
+import { ILogger } from 'core/logging';
 import { UrlHelpers } from 'core/clients';
 import { ProcessClientRequest } from 'infrastructure/clients';
 import { DotNetSource } from '../definitions/dotnet';
 import { DotNetConfig } from '../dotnetConfig';
-import { ILogger } from 'core/logging';
+
 
 export class DotNetClient extends ProcessClientRequest {
 

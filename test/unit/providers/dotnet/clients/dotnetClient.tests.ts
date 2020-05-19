@@ -1,13 +1,13 @@
 import Fixtures from './fixtures/dotnetSources'
 
-import { DotNetClient } from 'providers/dotnet/clients/dotnetClient';
+import { DotNetClient } from 'infrastructure/providers/dotnet/clients/dotnetClient';
 
 import {
   ClientResponseSource,
   UrlHelpers
 } from '/core/clients';
 
-import { DotNetConfig } from 'providers/dotnet/dotnetConfig';
+import { DotNetConfig } from 'infrastructure/providers/dotnet/dotnetConfig';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
 import { VersionLensExtension } from '/presentation/extension';
 

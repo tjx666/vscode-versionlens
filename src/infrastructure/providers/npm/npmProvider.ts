@@ -1,7 +1,12 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
 
-import { extractPackageDependenciesFromJson, IPackageClient, RequestFactory } from 'core/packages';
+import { ILogger } from 'core/logging';
+import {
+  extractPackageDependenciesFromJson,
+  IPackageClient,
+  RequestFactory
+} from 'core/packages';
 
 // imports
 import {
@@ -11,14 +16,12 @@ import {
   renderNeedsUpdateDecoration,
   renderPrereleaseInstalledDecoration
 } from 'presentation/extension';
-
 import { VersionLens } from 'presentation/lenses';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers';
 
 import { npmGetOutdated, npmPackageDirExists } from './clients/npmClient';
 import { NpmConfig } from './npmConfig';
 import { npmReplaceVersion } from './npmUtils';
-import { ILogger } from 'core/logging';
 import { NpmPackageClient } from './clients/npmPackageClient';
 
 export class NpmVersionLensProvider

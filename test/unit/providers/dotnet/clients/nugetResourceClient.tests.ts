@@ -1,8 +1,8 @@
 import Fixtures from './fixtures/nugetResources'
 
-import { NuGetResourceClient } from 'providers/dotnet/clients/nugetResourceClient';
+import { NuGetResourceClient } from 'infrastructure/providers/dotnet/clients/nugetResourceClient';
 import { UrlHelpers } from '/core/clients';
-import { DotNetConfig } from 'providers/dotnet/dotnetConfig';
+import { DotNetConfig } from 'infrastructure/providers/dotnet/dotnetConfig';
 import { LoggerMock } from 'test/unit/mocks/loggerMock'
 import { VersionLensExtension } from '/presentation/extension';
 

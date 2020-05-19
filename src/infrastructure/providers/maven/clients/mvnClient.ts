@@ -1,8 +1,8 @@
+import { ILogger } from 'core/logging';
 import { UrlHelpers } from 'core/clients';
 import { ProcessClientRequest } from 'infrastructure/clients';
 import { MavenConfig } from '../mavenConfig';
 import { MavenRepository } from '../definitions';
-import { ILogger } from 'core/logging';
 
 export class MvnClient extends ProcessClientRequest {
 

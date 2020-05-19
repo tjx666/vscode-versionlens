@@ -1,13 +1,11 @@
+import { ILogger } from 'core/logging';
 import { HttpClientResponse, HttpClientRequestMethods } from 'core/clients';
 
-import {
-  JsonHttpClientRequest
-} from 'infrastructure/clients';
+import { JsonHttpClientRequest } from 'infrastructure/clients';
 
 import { NugetServiceIndexResponse } from '../definitions/nuget';
 import { DotNetSource } from '../definitions/dotnet';
 import { DotNetConfig } from '../dotnetConfig';
-import { ILogger } from 'core/logging';
 
 export class NuGetResourceClient extends JsonHttpClientRequest {
 

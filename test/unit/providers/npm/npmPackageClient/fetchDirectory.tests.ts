@@ -1,5 +1,5 @@
-import { NpmPackageClient } from 'providers/npm/clients/npmPackageClient'
-import { NpmConfig } from 'providers/npm/npmConfig';
+import { NpmPackageClient } from 'infrastructure/providers/npm/clients/npmPackageClient'
+import { NpmConfig } from 'infrastructure/providers/npm/npmConfig';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
 import { VersionLensExtension } from '/presentation/extension';
 

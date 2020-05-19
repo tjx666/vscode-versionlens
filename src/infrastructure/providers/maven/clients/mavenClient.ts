@@ -1,3 +1,4 @@
+import { ILogger } from 'core/logging';
 import {
   DocumentFactory,
   ResponseFactory,
@@ -9,15 +10,13 @@ import {
   IPackageClient,
   SemverSpec,
 } from 'core/packages';
-
 import { HttpClientResponse, HttpClientRequestMethods } from "core/clients";
 
 import { HttpClientRequest } from 'infrastructure/clients';
 
 import { MavenClientData } from '../definitions';
-
 import { MavenConfig } from '../mavenConfig';
-import { ILogger } from 'core/logging';
+
 
 export class MavenClient
   extends HttpClientRequest

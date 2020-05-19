@@ -24,14 +24,11 @@
       ],
       "presentation/*": [
         "presentation/*"
-      ],
-      "providers/*": [
-        "providers/*"
-      ],
+      ]
     },
   },
   "include": [
-    "providers/**/activate.ts"
+    "infrastructure/providers/**/activate.ts"
   ],
   "files": [
     "loader.js",

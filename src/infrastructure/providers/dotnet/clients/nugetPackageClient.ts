@@ -1,3 +1,4 @@
+import { ILogger } from 'core/logging';
 import {
   DocumentFactory,
   SuggestionFactory,
@@ -12,16 +13,13 @@ import {
 
 import { HttpClientResponse, HttpClientRequestMethods } from 'core/clients';
 
-import {
-  JsonHttpClientRequest
-} from 'infrastructure/clients';
+import { JsonHttpClientRequest } from 'infrastructure/clients';
 
 import { NuGetClientData } from '../definitions/nuget';
 import { DotNetVersionSpec } from '../definitions/dotnet';
 
 import { parseVersionSpec } from '../dotnetUtils.js';
 import { DotNetConfig } from '../dotnetConfig';
-import { ILogger } from 'core/logging';
 
 export class NuGetPackageClient
   extends JsonHttpClientRequest

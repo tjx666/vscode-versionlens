@@ -83,7 +83,7 @@ export async function registerProviders(
   logger.info('Registering providers %o', providerNames);
 
   const promisedActivation = providerNames.map(packageManager => {
-    return import(`providers/${packageManager}/activate`)
+    return import(`infrastructure/providers/${packageManager}/activate`)
       .then(module => {
         logger.debug('Activating package manager %s', packageManager);
         const provider = module.activate(extension, logger);

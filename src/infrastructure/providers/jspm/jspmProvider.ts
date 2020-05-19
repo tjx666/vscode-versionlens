@@ -2,6 +2,9 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
+import { ILogger } from 'core/logging';
+import { RequestFactory } from 'core/packages';
+
 import { VersionLensFetchResponse } from 'presentation/providers';
 
 import { NpmVersionLensProvider } from 'providers/npm/npmProvider';
@@ -9,8 +12,6 @@ import { npmReplaceVersion } from 'providers/npm/npmUtils';
 
 import { extractPackageDependenciesFromJson } from './jspmPackageParser';
 import { JspmConfig } from './jspmConfig';
-import { ILogger } from 'core/logging';
-import { RequestFactory } from 'core/packages';
 
 export class JspmVersionLensProvider extends NpmVersionLensProvider {
 

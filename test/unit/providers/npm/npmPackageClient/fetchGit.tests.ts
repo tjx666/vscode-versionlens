@@ -1,8 +1,8 @@
-import { NpmConfig } from 'providers/npm/npmConfig';
+import { NpmConfig } from 'infrastructure/providers/npm/npmConfig';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
 import { VersionLensExtension } from '/presentation/extension';
 import { ClientResponseSource } from '/core/clients';
-import { NpmPackageClient } from '/providers/npm/clients/npmPackageClient';
+import { NpmPackageClient } from 'infrastructure/providers/npm/clients/npmPackageClient';
 import { PackageSuggestionFlags } from '/core/packages';
 
 const assert = require('assert')

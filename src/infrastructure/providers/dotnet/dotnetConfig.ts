@@ -1,10 +1,11 @@
+import { CachingOptions, ICachingOptions } from 'core/clients';
+
 import { VersionLensExtension } from 'presentation/extension';
 import {
   IProviderOptions,
   ProviderSupport,
   AbstractProviderConfig
 } from "presentation/providers";
-import { CachingOptions, ICachingOptions } from 'core/clients';
 
 export enum DotnetContributions {
   Caching = 'dotnet.caching',

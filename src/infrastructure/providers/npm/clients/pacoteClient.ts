@@ -1,3 +1,4 @@
+import { ILogger } from 'core/logging';
 import {
   DocumentFactory,
   PackageRequest,
@@ -7,8 +8,8 @@ import {
   PackageVersionTypes,
   PackageSourceTypes
 } from 'core/packages';
-import { ILogger } from 'core/logging';
 import { ClientResponseSource, AbstractClientRequest } from "core/clients";
+
 import { NpmConfig } from '../npmConfig';
 import { NpaSpec, NpaTypes } from '../models/npaSpec';
 import * as NpmUtils from '../npmUtils';
