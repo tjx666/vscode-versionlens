@@ -4,7 +4,7 @@ export enum NpaTypes {
   File = 'file',
   Directory = 'directory',
 
-  Tag = ' tag',
+  Tag = 'tag',
   Version = 'version',
   Range = 'range',
   Alias = 'alias',
