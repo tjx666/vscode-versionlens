@@ -13,6 +13,7 @@ export default {
         source: PackageSourceTypes.Github,
         nameRange: null,
         versionRange: null,
+        order: 0,
         requested: {
           path: 'packagepath',
           name: 'packagename',
