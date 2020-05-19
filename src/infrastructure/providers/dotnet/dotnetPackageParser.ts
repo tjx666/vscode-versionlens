@@ -1,23 +1,20 @@
-// vscode references
-import { TextDocument } from 'vscode';
-
-// imports
-import { IPackageDependencyLens } from "core/packages";
-
-const xmldoc = require('xmldoc');
-const { Range } = require('vscode');
+import { Nullable } from "core/generics";
+import { IPackageDependencyLens, PackageDependencyRange } from "core/packages";
 
 export function extractDotnetLensDataFromDocument(
-  document: TextDocument,
-  filterPropertyNames: Array<string>
+  xml: string, filterPropertyNames: Array<string>
 ): Array<IPackageDependencyLens> {
-  const xmlDoc = new xmldoc.XmlDocument(document.getText());
+
+  const xmldoc = require('xmldoc');
+  const xmlDoc = new xmldoc.XmlDocument(xml);
   if (!xmlDoc) return [];
 
-  return extractPackageLensDataFromNodes(xmlDoc, document, filterPropertyNames);
+  return extractPackageLensDataFromNodes(xmlDoc, xml, filterPropertyNames);
 }
 
-function extractPackageLensDataFromNodes(topLevelNodes, document, filterPropertyNames: string[]) {
+function extractPackageLensDataFromNodes(
+  topLevelNodes, xml: string, filterPropertyNames: Array<string>
+) {
   const collector = [];
 
   topLevelNodes.eachChild(
@@ -26,8 +23,8 @@ function extractPackageLensDataFromNodes(topLevelNodes, document, filterProperty
       node.eachChild(
         function (itemGroupNode) {
           if (filterPropertyNames.includes(itemGroupNode.name) == false) return;
-          const dependencyLens = createFromAttribute(itemGroupNode, document);
-          collector.push(dependencyLens);
+          const dependencyLens = createFromAttribute(itemGroupNode, xml);
+          if (dependencyLens) collector.push(dependencyLens);
         }
       )
     }
@@ -36,25 +33,15 @@ function extractPackageLensDataFromNodes(topLevelNodes, document, filterProperty
   return collector
 }
 
-function createFromAttribute(node, document): IPackageDependencyLens {
+function createFromAttribute(node, xml: string): IPackageDependencyLens {
   const nameRange = {
     start: node.startTagPosition,
     end: node.startTagPosition,
-  }
+  };
 
-  const lineText = document.getText(
-    new Range(
-      document.positionAt(node.startTagPosition),
-      document.positionAt(node.position)
-    )
-  );
-  const start = lineText.indexOf(' Version="') + 10;
-  const end = lineText.indexOf('"', start);
-
-  const versionRange = {
-    start: node.startTagPosition + start,
-    end: node.startTagPosition + end,
-  }
+  // xmldoc doesn't report attribute ranges so this gets them manually
+  const versionRange = getAttributeRange(node, ' version="', xml);
+  if (versionRange === null) return null;
 
   const packageInfo = {
     name: node.attr.Include || node.attr.Update,
@@ -64,6 +51,23 @@ function createFromAttribute(node, document): IPackageDependencyLens {
   return {
     nameRange,
     versionRange,
-    packageInfo
+    packageInfo,
   }
+}
+
+function getAttributeRange(
+  node, attributeName: string, xml: string
+): Nullable<PackageDependencyRange> {
+  const lineText = xml.substring(node.startTagPosition, node.position);
+
+  let start = lineText.toLowerCase().indexOf(attributeName);
+  if (start === -1) return null;
+  start += attributeName.length
+
+  const end = lineText.indexOf('"', start);
+
+  return {
+    start: node.startTagPosition + start,
+    end: node.startTagPosition + end,
+  };
 }

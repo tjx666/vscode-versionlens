@@ -37,7 +37,7 @@ export class DotNetVersionLensProvider
   ): VersionLensFetchResponse {
 
     const packageDependencies = extractDotnetLensDataFromDocument(
-      document,
+      document.getText(),
       this.config.dependencyProperties
     );
     if (packageDependencies.length === 0) return null;
