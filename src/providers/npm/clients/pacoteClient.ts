@@ -66,8 +66,9 @@ export class PacoteClient {
         const releases = Object.keys(packumentResponse.versions || {}).sort(compareLoose);
 
         // extract prereleases from dist tags
+        const distTags = packumentResponse['dist-tags'] || {};
         const prereleases = VersionHelpers.filterPrereleasesFromDistTags(
-          packumentResponse['dist-tags'] || {}
+          distTags
         ).sort(compareLoose)
 
         const response = {
@@ -77,18 +78,19 @@ export class PacoteClient {
 
         // check if the version requested is a tag. eg latest|next
         const requested = request.package;
-        const distTags = packumentResponse['dist-tags'] || {};
         if (npaSpec.type === NpaTypes.Tag) {
           versionRange = distTags[requested.version];
-          if (!versionRange) return DocumentFactory.createNoMatch(
-            providerName,
-            source,
-            type,
-            requested,
-            response,
-            // suggest the latest release if available
-            releases.length > 0 ? releases[releases.length - 1] : null
-          );
+          if (!versionRange) {
+            return DocumentFactory.createNoMatch(
+              providerName,
+              source,
+              type,
+              requested,
+              response,
+              // suggest the latest release if available
+              releases.length > 0 ? releases[releases.length - 1] : null
+            );
+          }
         }
 
         // analyse suggestions
