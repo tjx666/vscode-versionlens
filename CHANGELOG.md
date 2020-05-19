@@ -1,4 +1,4 @@
-# 1.0.0-alpha.0
+# 1.0.0-alpha.1
 
 - Moved to a clean architecture.
 - Added logging to the output channel.
@@ -21,6 +21,7 @@
   You can always show version information on start up by setting `versionlens.suggestions.showOnStartup` to `"true"`.
 
 - Dotnet: Now retrieves source feeds using `dotnet nuget list source` in the current open project cwd.
+- Dotnet: Fixed dotnet parser crash on missing version attrs. (reported in [#195](https://github.com/vscode-contrib/vscode-versionlens/issues/195))
 - Npm: Replaced npm client api with [npm pacote api](https://github.com/npm/pacote)
 - Npm: Added support for github semver syntax e.g. "github:repo\project#semver:x.x.x"
 - Pub: Fixed CRLF issue when parsing YAML
