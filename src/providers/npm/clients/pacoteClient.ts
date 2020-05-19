@@ -8,22 +8,32 @@ import {
   PackageSourceTypes
 } from 'core/packages';
 import { ILogger } from 'core/logging';
-import { ClientResponseSource } from "core/clients";
+import { ClientResponseSource, AbstractClientRequest } from "core/clients";
 import { NpmConfig } from '../npmConfig';
 import { NpaSpec, NpaTypes } from '../models/npaSpec';
 import * as NpmUtils from '../npmUtils';
 
-export class PacoteClient {
+export class PacoteClient extends AbstractClientRequest<number, PackageDocument> {
 
   config: NpmConfig;
 
   constructor(config: NpmConfig, logger: ILogger) {
+    super(config.caching);
     this.config = config;
   }
 
   async  fetchPackage(
     request: PackageRequest<null>, npaSpec: NpaSpec
   ): Promise<PackageDocument> {
+
+    const cacheKey = `${request.package.name}@${request.package.version}_${request.package.path}`;
+    if (this.cache.options.duration > 0 && this.cache.hasExpired(cacheKey) === false) {
+      const cachedResp = this.cache.get(cacheKey);
+      if (cachedResp.rejected) return Promise.reject(cachedResp);
+
+      cachedResp.data.response.source = ClientResponseSource.cache;
+      return Promise.resolve(cachedResp.data);
+    }
 
     const pacote = require('pacote');
     const npmConfig = require('libnpmconfig');
@@ -110,10 +120,24 @@ export class PacoteClient {
           suggestions,
         };
 
-      }).catch(error => {
+      }).then(document => {
+        this.createCachedResponse(
+          cacheKey,
+          200,
+          document,
+          false
+        );
+        return document;
+      }).catch(response => {
+        this.createCachedResponse(
+          cacheKey,
+          response.code,
+          response.message,
+          true
+        );
         return Promise.reject(
           NpmUtils.convertNpmErrorToResponse(
-            error,
+            response,
             ClientResponseSource.remote
           )
         );
