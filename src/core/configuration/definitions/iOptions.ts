@@ -1,4 +1,4 @@
-import { IRepository, IFrozenRespository } from "core/generic/repositories";
+import { IRepository, IFrozenRespository } from "core/generics";
 
 export interface IOptions extends IRepository {
 

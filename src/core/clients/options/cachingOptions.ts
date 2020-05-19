@@ -1,6 +1,6 @@
 import { AbstractOptions } from 'core/configuration';
 import { CachingContributions, ICachingOptions } from '../definitions/options';
-import { IFrozenRespository } from 'core/generic/repositories';
+import { IFrozenRespository } from 'core/generics';
 
 export class CachingOptions extends AbstractOptions implements ICachingOptions {
 

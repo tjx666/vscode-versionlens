@@ -1,6 +1,6 @@
 import { AbstractOptions } from 'core/configuration';
 import { LogLevelTypes } from 'core/logging';
-import { IFrozenRespository } from 'core/generic/repositories';
+import { IFrozenRespository } from 'core/generics';
 import { ILoggingOptions } from './definitions/iLoggingOptions';
 
 export enum LoggingContributions {

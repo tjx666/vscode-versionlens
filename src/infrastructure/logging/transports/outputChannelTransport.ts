@@ -9,10 +9,7 @@ class OutputChannelTransport extends Transport {
 
   channel: VsCodeTypes.OutputChannel;
 
-  constructor(
-    channel: VsCodeTypes.OutputChannel,
-    transportOptions
-  ) {
+  constructor(channel: VsCodeTypes.OutputChannel, transportOptions) {
     super(transportOptions);
     this.channel = channel;
   }
@@ -21,9 +18,10 @@ class OutputChannelTransport extends Transport {
 
     setImmediate(() => {
       this.channel.appendLine(`${entry[MESSAGE]}`);
+
       this.emit('logged', entry)
     });
-    
+
     callback();
   }
 

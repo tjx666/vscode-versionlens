@@ -1,4 +1,4 @@
-import { KeyStringDictionary } from 'core/generic/collections';
+import { KeyStringDictionary } from 'core/generics';
 
 import {
   HttpClientResponse,

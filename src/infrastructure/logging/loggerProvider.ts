@@ -6,7 +6,7 @@ import {
 
 import { createOutputChannelTransport } from './transports/outputChannelTransport';
 
-class LoggerProvider implements ILoggerProvider {
+class WinstonLoggerProvider implements ILoggerProvider {
 
   options: ILoggingOptions;
 
@@ -32,7 +32,7 @@ class LoggerProvider implements ILoggerProvider {
 
   createLogger(category: string): ILogger {
 
-    const { loggers, format, } = require('winston');
+    const { loggers, format } = require('winston');
 
     const logFormat = format.combine(
       // format.colorize(),
@@ -54,10 +54,10 @@ class LoggerProvider implements ILoggerProvider {
 
 }
 
-let _singleton: LoggerProvider = null;
+let _singleton: WinstonLoggerProvider = null;
 
 export function createLoggerProvider(name: string, options: ILoggingOptions): ILoggerProvider {
-  if (_singleton === null) _singleton = new LoggerProvider(name, options);
+  if (_singleton === null) _singleton = new WinstonLoggerProvider(name, options);
 
   return _singleton
 }

@@ -1,4 +1,4 @@
-import { IFrozenRespository } from "core/generic/repositories";
+import { IFrozenRespository } from "core/generics";
 import { LoggingOptions } from "core/logging";
 import { CachingOptions, ICachingOptions } from "core/clients";
 

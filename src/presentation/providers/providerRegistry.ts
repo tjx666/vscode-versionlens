@@ -1,7 +1,7 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
 
-import { KeyDictionary } from 'core/generic/collections'
+import { KeyDictionary } from 'core/generics'
 import { ILogger, ILoggerProvider } from 'core/logging';
 
 import { VersionLensExtension } from 'presentation/extension';

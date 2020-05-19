@@ -1,4 +1,4 @@
-import { KeyDictionary } from '/core/generic/collections';
+import { KeyDictionary } from '/core/generics';
 import { ILogger, LogLevelTypes } from 'core/logging';
 
 let defaultLoggerIntercepts = {

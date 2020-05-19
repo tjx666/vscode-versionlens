@@ -1,7 +1,7 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
 
-import { IFrozenRespository } from 'core/generic/repositories';
+import { IFrozenRespository } from 'core/generics';
 
 import { VsCodeFrozenConfig } from 'infrastructure/configuration';
 import { createLoggerProvider } from 'infrastructure/logging';

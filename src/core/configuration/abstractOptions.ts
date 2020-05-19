@@ -1,4 +1,4 @@
-import { IFrozenRespository } from "core/generic/repositories";
+import { IFrozenRespository } from "core/generics";
 import { IOptions } from "core/configuration";
 
 export abstract class AbstractOptions implements IOptions {

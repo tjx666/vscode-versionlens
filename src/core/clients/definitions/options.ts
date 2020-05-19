@@ -1,4 +1,4 @@
-import { IFrozenRespository } from "core/generic/repositories";
+import { IFrozenRespository } from "core/generics";
 
 export enum CachingContributions {
   CacheDuration = 'duration',

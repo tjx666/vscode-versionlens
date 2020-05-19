@@ -1,4 +1,4 @@
-import { IFrozenRespository } from "core/generic/repositories";
+import { IFrozenRespository } from "core/generics";
 import { AbstractOptions } from 'core/configuration'
 
 const assert = require('assert')

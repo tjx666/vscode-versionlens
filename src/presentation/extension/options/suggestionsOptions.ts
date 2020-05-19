@@ -1,4 +1,4 @@
-import { IRepository } from "core/generic/repositories";
+import { IRepository } from "core/generics";
 
 enum SuggestionContributions {
   // DefaultVersionPrefix = 'versionlens.suggestions.defaultVersionPrefix',
