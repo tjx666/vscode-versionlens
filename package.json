@@ -193,12 +193,12 @@
         },
         {
           "command": "versionlens.onShowInstalledStatuses",
-          "when": "versionlens.showInstalledStatuses == false && versionlens.enabled && versionlens.providerActive && versionlens.providerSupportsInstalledStatuses && textCompareEditorVisible == false",
+          "when": "versionlens.installedStatusesEnabled == false && versionlens.enabled && versionlens.providerActive && versionlens.providerSupportsInstalledStatuses && textCompareEditorVisible == false",
           "group": "navigation@3"
         },
         {
           "command": "versionlens.onHideInstalledStatuses",
-          "when": "versionlens.showInstalledStatuses && versionlens.enabled && versionlens.providerActive && && versionlens.providerSupportsInstalledStatuses && textCompareEditorVisible == false",
+          "when": "versionlens.installedStatusesEnabled && versionlens.enabled && versionlens.providerActive && versionlens.providerSupportsInstalledStatuses && textCompareEditorVisible == false",
           "group": "navigation@3"
         },
         {
@@ -211,6 +211,21 @@
     "configuration": {
       "title": "Versionlens configuration",
       "properties": {
+        "versionlens.suggestions.showOnStartup": {
+          "type": "boolean",
+          "default": false,
+          "description": "Will always show when opening a package file in the editor."
+        },
+        "versionlens.suggestions.showPrereleasesOnStartup": {
+          "type": "boolean",
+          "default": false,
+          "description": "Will always show prereleases when opening a package file in the editor."
+        },
+        "versionlens.statuses.showOnStartup": {
+          "type": "boolean",
+          "default": false,
+          "description": "Will always show prereleases when opening a package file in the editor."
+        },
         "versionlens.logging.level": {
           "type": "string",
           "enum": [
@@ -228,21 +243,6 @@
             "number"
           ],
           "description": "Sets the length of time all package managers cache their version suggestion results. Default is 5 minutes. Note: You can override each individual package manager e.g. npm.caching.duration"
-        },
-        "versionlens.suggestions.showOnStartup": {
-          "type": "boolean",
-          "default": false,
-          "description": "Will always show when opening a package file in the editor."
-        },
-        "versionlens.suggestions.showPrereleasesOnStartup": {
-          "type": "boolean",
-          "default": false,
-          "description": "Will always show prereleases when opening a package file in the editor."
-        },
-        "versionlens.statuses.alwaysShowInstalledStatuses": {
-          "type": "boolean",
-          "default": false,
-          "description": "Will always show prereleases when opening a package file in the editor."
         },
         "versionlens.statuses.notInstalledColour": {
           "type": "string",
@@ -472,7 +472,7 @@
           "deprecationMessage": "Use versionlens.suggestions.showPrereleasesOnStartup instead"
         },
         "versionlens.showDependencyStatusesAtStartup": {
-          "deprecationMessage": "Use versionlens.statuses.alwaysShowInstalledStatuses instead"
+          "deprecationMessage": "Use versionlens.statuses.showOnStartup instead"
         }
       }
     }

@@ -61,14 +61,14 @@ export class VersionLensCommands {
   }
 
   onShowInstalledStatuses(file) {
-    this.state.showInstalledStatuses.change(true)
+    this.state.installedStatusesEnabled.change(true)
       .then(_ => {
         reloadActiveProviders();
       });
   }
 
   onHideInstalledStatuses(file) {
-    this.state.showInstalledStatuses.change(false)
+    this.state.installedStatusesEnabled.change(false)
       .then(_ => {
         InstalledStatusHelpers.clearDecorations();
       });
@@ -112,8 +112,7 @@ function reloadActiveProviders() {
 }
 
 export function registerCommands(
-  extension: VersionLensExtension,
-  logger: ILogger
+  extension: VersionLensExtension, logger: ILogger
 ): Array<VsCodeTypes.Disposable> {
 
   const { commands } = require('vscode');

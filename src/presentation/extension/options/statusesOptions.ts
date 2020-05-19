@@ -1,7 +1,7 @@
 import { IRepository } from "core/generic/repositories";
 
 enum StatusesContributions {
-  AlwaysShowInstalledStatus = 'statuses.alwaysShowInstalledStatuses',
+  ShowOnStartup = 'statuses.showOnStartup',
   NotInstalledColour = 'statuses.notInstalledColour',
   InstalledColour = 'statuses.installedColour',
   OutdatedColour = 'statuses.outdatedColour',
@@ -14,6 +14,10 @@ export class StatusesOptions {
 
   constructor(config: IRepository) {
     this.config = config;
+  }
+
+  get showOnStartup() {
+    return this.config.get<boolean>(StatusesContributions.ShowOnStartup);
   }
 
   get installedColour() {

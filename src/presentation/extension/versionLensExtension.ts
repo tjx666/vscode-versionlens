@@ -15,7 +15,7 @@ export enum SuggestionIndicators {
 
 export class VersionLensExtension {
 
-  static extensionName: string = 'versionlens';
+  static extensionName: string = 'VersionLens';
 
   config: IFrozenRespository;
 

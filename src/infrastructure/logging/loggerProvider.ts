@@ -12,7 +12,7 @@ class LoggerProvider implements ILoggerProvider {
 
   transports: Array<any>;
 
-  constructor(options: ILoggingOptions) {
+  constructor(name: string, options: ILoggingOptions) {
     this.options = options;
 
     const { transports } = require('winston');
@@ -23,7 +23,7 @@ class LoggerProvider implements ILoggerProvider {
 
       // send info to output channel
       createOutputChannelTransport(
-        "VersionLens",
+        name,
         { level: options.level }
       )
     ];
@@ -56,8 +56,8 @@ class LoggerProvider implements ILoggerProvider {
 
 let _singleton: LoggerProvider = null;
 
-export function createLoggerProvider(options: ILoggingOptions): ILoggerProvider {
-  if (_singleton === null) _singleton = new LoggerProvider(options);
+export function createLoggerProvider(name: string, options: ILoggingOptions): ILoggerProvider {
+  if (_singleton === null) _singleton = new LoggerProvider(name, options);
 
   return _singleton
 }

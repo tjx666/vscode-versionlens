@@ -18,12 +18,15 @@ import {
 export async function composition(context: VsCodeTypes.ExtensionContext) {
 
   const configuration: IFrozenRespository = new VsCodeFrozenConfig(
-    VersionLensExtension.extensionName
+    VersionLensExtension.extensionName.toLowerCase()
   );
 
   const extension = registerExtension(configuration);
 
-  const loggerProvider = createLoggerProvider(extension.logging);
+  const loggerProvider = createLoggerProvider(
+    VersionLensExtension.extensionName,
+    extension.logging
+  );
 
   const appLogger = loggerProvider.createLogger('extension');
 
