@@ -57,7 +57,7 @@ export const ExpiryCacheMapTests = {
       testCacheMap = new ExpiryCacheMap(<ICachingOptions>{ duration: testDuration });
       testCacheMap.set(testKey, "should not be expired")
 
-      return delay(testDuration - 10)
+      return delay(testDuration - 100)
         .then(finished => {
           const actual = testCacheMap.hasExpired(testKey);
           assert.equal(actual, false);
