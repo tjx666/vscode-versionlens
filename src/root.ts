@@ -31,13 +31,10 @@ export async function composition(context: VsCodeTypes.ExtensionContext) {
 
   const textEditorEvents = registerTextEditorEvents(extension.state, appLogger);
 
-  const disposables = registerCommands(extension, appLogger);
-
-  await registerProviders(extension, appLogger, loggerProvider)
-    .then(disposables => {
-      disposables.push(...disposables)
-    });
-
+  const disposables = [
+    ...await registerProviders(extension, appLogger, loggerProvider),
+    ...registerCommands(extension, appLogger)
+  ]
   // subscribe command and provider disposables
   context.subscriptions.push(<any>disposables);
 
