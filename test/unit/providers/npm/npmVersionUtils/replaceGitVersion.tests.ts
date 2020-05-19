@@ -1,4 +1,4 @@
-import * as NpmUtils from 'providers/npm/npmUtils'
+import * as NpmUtils from 'infrastructure/providers/npm/npmUtils'
 import { PackageResponse, PackageSourceTypes } from '/core/packages'
 
 const assert = require('assert')

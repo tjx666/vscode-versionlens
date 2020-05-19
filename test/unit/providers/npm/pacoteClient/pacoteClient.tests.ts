@@ -1,7 +1,7 @@
 import { testPath } from 'test/unit/utils';
-import { PacoteClient } from 'providers/npm/clients/pacoteClient'
+import { PacoteClient } from 'infrastructure/providers/npm/clients/pacoteClient'
 import Fixtures from './pacoteClient.fixtures'
-import { NpmConfig } from 'providers/npm/npmConfig';
+import { NpmConfig } from 'infrastructure/providers/npm/npmConfig';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
 import { VersionLensExtension } from '/presentation/extension';
 

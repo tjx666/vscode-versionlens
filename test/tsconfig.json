@@ -23,9 +23,6 @@
       "presentation/*": [
         "../src/presentation/*"
       ],
-      "providers/*": [
-        "../src/providers/*"
-      ],
       "test/unit/*": [
         "unit/*"
       ],

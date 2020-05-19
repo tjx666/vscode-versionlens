@@ -1,5 +1,5 @@
 import { VersionLensExtension } from 'presentation/extension';
-import { NpmConfig } from 'providers/npm/npmConfig';
+import { NpmConfig } from 'infrastructure/providers/npm/npmConfig';
 
 export class JspmConfig extends NpmConfig {
 

@@ -1,11 +1,11 @@
 // import { testPath } from 'test/unit/utils';
-import { NpmPackageClient } from 'providers/npm/clients/npmPackageClient'
+import { NpmPackageClient } from 'infrastructure/providers/npm/clients/npmPackageClient'
 import { githubFixtures } from './fetchGithub.fixtures'
-import { NpmConfig } from 'providers/npm/npmConfig';
+import { NpmConfig } from 'infrastructure/providers/npm/npmConfig';
 import { LoggerMock } from 'test/unit/mocks/loggerMock';
-import { VersionLensExtension } from '/presentation/extension';
-import { ClientResponseSource } from '/core/clients';
-import { PackageSuggestionFlags } from '/core/packages';
+import { VersionLensExtension } from 'presentation/extension';
+import { ClientResponseSource } from 'core/clients';
+import { PackageSuggestionFlags } from 'core/packages';
 
 const assert = require('assert')
 const mock = require('mock-require')
