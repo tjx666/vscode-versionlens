@@ -24,7 +24,7 @@ export abstract class AbstractOptions implements IOptions {
     const sectionValue: T = this.config.get(`${this.section}${key}`);
 
     // return key value
-    if (sectionValue !== null) return sectionValue;
+    if (sectionValue !== null && sectionValue !== undefined) return sectionValue;
 
     // attempt to get default section value
     let defaultSectionValue: T;
@@ -33,7 +33,7 @@ export abstract class AbstractOptions implements IOptions {
     }
 
     // return default key value
-    if (defaultSectionValue !== null) return defaultSectionValue;
+    if (defaultSectionValue !== null && defaultSectionValue !== undefined) return defaultSectionValue;
 
     // return arg default value
     return defaultValue;

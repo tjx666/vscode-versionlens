@@ -55,6 +55,12 @@ export class NpmVersionLensProvider
       replaceVersion: npmReplaceVersion
     }
 
+    if (this.config.github.accessToken &&
+      this.config.github.accessToken.length > 0) {
+      // defrost github parameters
+      this.config.github.defrost();
+    }
+
     return RequestFactory.executeDependencyRequests(
       packagePath,
       this.packageClient,

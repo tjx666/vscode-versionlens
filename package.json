@@ -440,7 +440,10 @@
           "description": "Defines which properties in pom.xml should be parsed by this extension"
         },
         "versionlens.github.accessToken": {
-          "type": "string",
+          "type": [
+            "null",
+            "string"
+          ],
           "default": "",
           "description": "Used for making basic read only github api requests. To generate a token see https://help.github.com/articles/creating-an-access-token-for-command-line-use/#creating-a-token. When no token is provided then access to the github api is rate limited to 60 requests every 10 minutes or so."
         },

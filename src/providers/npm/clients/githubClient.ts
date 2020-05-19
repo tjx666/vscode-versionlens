@@ -62,6 +62,12 @@ export class GithubClient extends JsonHttpClientRequest {
     const { user, project } = npaSpec.hosted;
     const tagsRepoUrl = `https://api.github.com/repos/${user}/${project}/tags`;
 
+    let headers = {};
+
+    if (this.config.github.accessToken && this.config.github.accessToken.length > 0) {
+      (<any>headers).authorization = `token ${this.config.github.accessToken}`;
+    }
+
     return this.requestJson(HttpClientRequestMethods.get, tagsRepoUrl, {})
       .then(function (response: JsonClientResponse): PackageDocument {
         // extract versions
@@ -114,10 +120,7 @@ export class GithubClient extends JsonHttpClientRequest {
 
   }
 
-  fetchCommits(
-    request: PackageRequest<null>,
-    npaSpec: NpaSpec
-  ): Promise<PackageDocument> {
+  fetchCommits(request: PackageRequest<null>, npaSpec: NpaSpec): Promise<PackageDocument> {
     // todo pass in auth
     const { user, project } = npaSpec.hosted;
     const commitsRepoUrl = `https://api.github.com/repos/${user}/${project}/commits`;
