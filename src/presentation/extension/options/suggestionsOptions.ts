@@ -2,8 +2,8 @@ import { IRepository } from "core/generic/repositories";
 
 enum SuggestionContributions {
   // DefaultVersionPrefix = 'versionlens.suggestions.defaultVersionPrefix',
-  AlwaysShowReleases = 'suggestions.alwaysShowReleases',
-  AlwaysShowPrereleases = 'suggestions.alwaysShowPrereleases',
+  ShowOnStartup = 'suggestions.showOnStartup',
+  ShowPrereleasesOnStartup = 'suggestions.showPrereleasesOnStartup',
 }
 
 export class SuggestionsOptions {
@@ -14,15 +14,15 @@ export class SuggestionsOptions {
     this.config = config;
   }
 
-  get alwaysShowReleases(): boolean {
+  get showOnStartup(): boolean {
     return this.config.get<boolean>(
-      SuggestionContributions.AlwaysShowReleases
+      SuggestionContributions.ShowOnStartup
     );
   }
 
-  get alwaysShowPrereleases(): boolean {
+  get showPrereleasesOnStartup(): boolean {
     return this.config.get<boolean>(
-      SuggestionContributions.AlwaysShowPrereleases
+      SuggestionContributions.ShowPrereleasesOnStartup
     );
   }
 

@@ -27,7 +27,7 @@ export class VersionLensState {
 
     this.enabled = new ContextState(
       StateContributions.Enabled,
-      extension.suggestions.alwaysShowReleases
+      extension.suggestions.showOnStartup
     );
 
     this.providerActive = new ContextState(
@@ -52,7 +52,7 @@ export class VersionLensState {
 
     this.prereleasesEnabled = new ContextState(
       StateContributions.PrereleasesEnabled,
-      extension.suggestions.alwaysShowPrereleases
+      extension.suggestions.showPrereleasesOnStartup
     );
 
     this.showInstalledStatuses = new ContextState(

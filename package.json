@@ -229,12 +229,12 @@
           ],
           "description": "Sets the length of time all package managers cache their version suggestion results. Default is 5 minutes. Note: You can override each individual package manager e.g. npm.caching.duration"
         },
-        "versionlens.suggestions.alwaysShowReleases": {
+        "versionlens.suggestions.showOnStartup": {
           "type": "boolean",
           "default": false,
-          "description": "Will always show releases when opening a package file in the editor."
+          "description": "Will always show when opening a package file in the editor."
         },
-        "versionlens.suggestions.alwaysShowPrereleases": {
+        "versionlens.suggestions.showPrereleasesOnStartup": {
           "type": "boolean",
           "default": false,
           "description": "Will always show prereleases when opening a package file in the editor."
@@ -466,10 +466,10 @@
           "deprecationMessage": "This has been replaced with versionlens.suggestions.defaultVersionPrefix"
         },
         "versionlens.showVersionLensesAtStartup": {
-          "deprecationMessage": "Use versionlens.suggestions.alwaysShowReleases instead"
+          "deprecationMessage": "Use versionlens.suggestions.showOnStartup instead"
         },
         "versionlens.showTaggedVersionsAtStartup": {
-          "deprecationMessage": "Use versionlens.suggestions.alwaysShowPrereleases instead"
+          "deprecationMessage": "Use versionlens.suggestions.showPrereleasesOnStartup instead"
         },
         "versionlens.showDependencyStatusesAtStartup": {
           "deprecationMessage": "Use versionlens.statuses.alwaysShowInstalledStatuses instead"
