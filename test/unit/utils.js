@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Peter Flannery. All rights reserved.
- *  Licensed under the MIT License. See LICENSE in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
 const path = require('path');
 const fs = require('fs');
 
@@ -12,6 +8,19 @@ const fs = require('fs');
 // }
 
 export const testPath = path.join(__dirname, '../../test');
+
+export async function delay(delay) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      try {
+        resolve();
+      } catch (err) {
+        reject(err);
+      }
+    }, delay);
+  });
+}
+
 
 export class TestFixtureMap {
   cache;

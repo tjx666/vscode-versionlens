@@ -8,12 +8,12 @@
   },
   "author": "Peter Flannery",
   "license": "MIT",
-  "version": "0.27.0",
+  "version": "1.0.0-alpha.0",
   "publisher": "pflannery",
   "displayName": "Version Lens",
   "icon": "images/logo.png",
   "engines": {
-    "vscode": "^1.44.0"
+    "vscode": "^1.45.1"
   },
   "keywords": [
     "versions",
@@ -37,81 +37,45 @@
     "vscode:prepublish": "npm run -s compile",
     "watch": "node ./node_modules/vscode/bin/compile -watch -p ./",
     "clean": "rimraf ./out",
-    "precompile": "npm run -s clean && jshint ./src",
+    "precompile": "npm run -s clean",
     "precompile:test": "npm run -s precompile",
-    "compile": "tsc -p ./src/compiler.json",
-    "compile:test": "tsc -p ./test/compiler.test.json",
+    "compile": "tsc -p ./src/tsconfig.json",
+    "compile:test": "tsc -p ./test/tsconfig.json",
     "pretest": "npm run -s compile:test",
     "test": "node ./out/test/index.js"
   },
   "devDependencies": {
-    "@types/mocha": "^7.0.2",
+    "@types/mocha": "7.0.2",
     "@types/node": "^12",
-    "@types/vscode": "1.23.0",
-    "jshint": "2.11.0",
+    "@types/vscode": "1.45.1",
+    "@types/winston": "2.4.4",
     "mocha-ui-esm": "1.0.0-alpha.4",
     "mock-require": "3.0.3",
     "rimraf": "3.0.2",
-    "typescript": "3.8.3",
+    "typescript": "3.9.2",
     "mocha": "7.1.2",
     "source-map-support": "0.5.19",
-    "vscode-test": "^1.3.0"
+    "vscode-test": "1.3.0"
   },
   "dependencies": {
     "systemjs": "~0.21.6",
-    "npm": "6.5.0",
+    "npm": "6.14.5",
     "libnpmconfig": "1.2.1",
-    "pacote": "10.1.6",
+    "pacote": "11.1.10",
     "npm-package-arg": "8.0.1",
     "minimatch": "3.0.4",
     "opener": "1.5.1",
     "request-light": "0.3.0",
-    "semver": "7.1.3",
-    "vscode-languageclient": "6.1.3",
+    "semver": "7.3.2",
     "xmldoc": "1.1.2",
-    "yaml": "1.9.2",
-    "jsonc-parser": "2.2.1"
+    "yaml": "1.10.0",
+    "jsonc-parser": "2.2.1",
+    "@npmcli/promise-spawn": "1.2.0"
   },
   "contributes": {
     "commands": [
       {
-        "command": "versionlens.showDependencyStatuses",
-        "title": "Show dependency statuses",
-        "category": "VersionLens",
-        "icon": {
-          "dark": "images/icons/dep-status-dark.svg",
-          "light": "images/icons/dep-status-light.svg"
-        }
-      },
-      {
-        "command": "versionlens.hideDependencyStatuses",
-        "title": "Hide dependency statuses",
-        "category": "VersionLens",
-        "icon": {
-          "dark": "images/icons/dep-status-active.svg",
-          "light": "images/icons/dep-status-active.svg"
-        }
-      },
-      {
-        "command": "versionlens.showTaggedVersions",
-        "title": "Show tagged dependency versions",
-        "category": "VersionLens",
-        "icon": {
-          "dark": "images/icons/tag-dark.svg",
-          "light": "images/icons/tag-light.svg"
-        }
-      },
-      {
-        "command": "versionlens.hideTaggedVersions",
-        "title": "Hide tagged dependency versions",
-        "category": "VersionLens",
-        "icon": {
-          "dark": "images/icons/tag-active.svg",
-          "light": "images/icons/tag-active.svg"
-        }
-      },
-      {
-        "command": "versionlens.showVersionLenses",
+        "command": "versionlens.onShowVersionLenses",
         "title": "Show dependency versions",
         "category": "VersionLens",
         "icon": {
@@ -120,7 +84,7 @@
         }
       },
       {
-        "command": "versionlens.hideVersionLenses",
+        "command": "versionlens.onHideVersionLenses",
         "title": "Hide dependency versions",
         "category": "VersionLens",
         "icon": {
@@ -129,7 +93,43 @@
         }
       },
       {
-        "command": "versionlens.showingProgress",
+        "command": "versionlens.onShowInstalledStatuses",
+        "title": "Show dependency statuses",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/dep-status-dark.svg",
+          "light": "images/icons/dep-status-light.svg"
+        }
+      },
+      {
+        "command": "versionlens.onHideInstalledStatuses",
+        "title": "Hide dependency statuses",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/dep-status-active.svg",
+          "light": "images/icons/dep-status-active.svg"
+        }
+      },
+      {
+        "command": "versionlens.onShowPrereleaseVersions",
+        "title": "Show tagged dependency versions",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/tag-dark.svg",
+          "light": "images/icons/tag-light.svg"
+        }
+      },
+      {
+        "command": "versionlens.onHidePrereleaseVersions",
+        "title": "Hide tagged dependency versions",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/tag-active.svg",
+          "light": "images/icons/tag-active.svg"
+        }
+      },
+      {
+        "command": "versionlens.onShowingProgress",
         "title": "Analyzing dependencies...",
         "category": "VersionLens",
         "icon": {
@@ -141,68 +141,68 @@
     "menus": {
       "commandPalette": [
         {
-          "command": "versionlens.showingProgress",
+          "command": "versionlens.onShowingProgress",
           "when": "false"
         },
         {
-          "command": "versionlens.showDependencyStatuses",
-          "when": "versionlens.show && versionlens.isActive"
+          "command": "versionlens.onShowInstalledStatuses",
+          "when": "versionlens.enabled && versionlens.providerActive"
         },
         {
-          "command": "versionlens.hideDependencyStatuses",
-          "when": "versionlens.show && versionlens.isActive"
+          "command": "versionlens.onHideInstalledStatuses",
+          "when": "versionlens.enabled && versionlens.providerActive"
         },
         {
-          "command": "versionlens.showTaggedVersions",
-          "when": "versionlens.show && versionlens.isActive"
+          "command": "versionlens.onShowPrereleaseVersions",
+          "when": "versionlens.enabled && versionlens.providerActive"
         },
         {
-          "command": "versionlens.hideTaggedVersions",
-          "when": "versionlens.show && versionlens.isActive"
+          "command": "versionlens.onHidePrereleaseVersions",
+          "when": "versionlens.enabled && versionlens.providerActive"
         },
         {
-          "command": "versionlens.showVersionLenses",
-          "when": "versionlens.show && versionlens.isActive"
+          "command": "versionlens.onShowVersionLenses",
+          "when": "versionlens.enabled && versionlens.providerActive"
         },
         {
-          "command": "versionlens.hideVersionLenses",
-          "when": "versionlens.show && versionlens.isActive"
+          "command": "versionlens.onHideVersionLenses",
+          "when": "versionlens.enabled && versionlens.providerActive"
         }
       ],
       "editor/title": [
         {
-          "command": "versionlens.showDependencyStatuses",
-          "when": "versionlens.showDependencyStatuses == false && versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
-          "group": "navigation@3"
-        },
-        {
-          "command": "versionlens.hideDependencyStatuses",
-          "when": "versionlens.showDependencyStatuses && versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
-          "group": "navigation@3"
-        },
-        {
-          "command": "versionlens.showTaggedVersions",
-          "when": "versionlens.showTaggedVersions == false && versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
-          "group": "navigation@2"
-        },
-        {
-          "command": "versionlens.hideTaggedVersions",
-          "when": "versionlens.showTaggedVersions && versionlens.show && versionlens.isActive && textCompareEditorVisible == false",
-          "group": "navigation@2"
-        },
-        {
-          "command": "versionlens.showVersionLenses",
-          "when": "versionlens.show == false && versionlens.isActive && versionlens.inProgress == false && textCompareEditorVisible == false",
+          "command": "versionlens.onShowVersionLenses",
+          "when": "versionlens.enabled == false && versionlens.providerActive && versionlens.providerBusy == false && textCompareEditorVisible == false",
           "group": "navigation@1"
         },
         {
-          "command": "versionlens.hideVersionLenses",
-          "when": "versionlens.show && versionlens.isActive && versionlens.inProgress == false && textCompareEditorVisible == false",
+          "command": "versionlens.onHideVersionLenses",
+          "when": "versionlens.enabled && versionlens.providerActive && versionlens.providerBusy == false && textCompareEditorVisible == false",
           "group": "navigation@1"
         },
         {
-          "command": "versionlens.showingProgress",
-          "when": "versionlens.show && versionlens.isActive && versionlens.inProgress && textCompareEditorVisible == false",
+          "command": "versionlens.onShowPrereleaseVersions",
+          "when": "versionlens.prereleasesEnabled == false && versionlens.enabled && versionlens.providerActive && versionlens.providerSupportsPrereleases && textCompareEditorVisible == false",
+          "group": "navigation@2"
+        },
+        {
+          "command": "versionlens.onHidePrereleaseVersions",
+          "when": "versionlens.prereleasesEnabled && versionlens.enabled && versionlens.providerActive && versionlens.providerSupportsPrereleases && textCompareEditorVisible == false",
+          "group": "navigation@2"
+        },
+        {
+          "command": "versionlens.onShowInstalledStatuses",
+          "when": "versionlens.showInstalledStatuses == false && versionlens.enabled && versionlens.providerActive && versionlens.providerSupportsInstalledStatuses && textCompareEditorVisible == false",
+          "group": "navigation@3"
+        },
+        {
+          "command": "versionlens.onHideInstalledStatuses",
+          "when": "versionlens.showInstalledStatuses && versionlens.enabled && versionlens.providerActive && && versionlens.providerSupportsInstalledStatuses && textCompareEditorVisible == false",
+          "group": "navigation@3"
+        },
+        {
+          "command": "versionlens.onShowingProgress",
+          "when": "versionlens.enabled && versionlens.providerActive && versionlens.providerBusy && textCompareEditorVisible == false",
           "group": "navigation@1"
         }
       ]
@@ -210,25 +210,65 @@
     "configuration": {
       "title": "Versionlens configuration",
       "properties": {
-        "versionlens.versionPrefix": {
+        "versionlens.logging.level": {
           "type": "string",
-          "default": "",
-          "description": "Inserts this prefix before the version when clicking on the code lens link."
+          "enum": [
+            "error",
+            "info",
+            "debug",
+            "verbose"
+          ],
+          "default": "info",
+          "description": "Sets the level for logging written to the output channel."
         },
-        "versionlens.showVersionLensesAtStartup": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show dependency versions by default. You can use the editor toolbar to show/hide versions at any time."
+        "versionlens.caching.duration": {
+          "type": [
+            "null",
+            "number"
+          ],
+          "description": "Sets the length of time all package managers cache their version suggestion results. Default is 5 minutes. Note: You can override each individual package manager e.g. npm.caching.duration"
         },
-        "versionlens.showTaggedVersionsAtStartup": {
+        "versionlens.suggestions.showOnStartup": {
           "type": "boolean",
           "default": false,
-          "description": "Show dist tags by default when vscode starts. You can use the editor toolbar to show/hide dist tags at any time."
+          "description": "Will always show when opening a package file in the editor."
         },
-        "versionlens.showDependencyStatusesAtStartup": {
+        "versionlens.suggestions.showPrereleasesOnStartup": {
           "type": "boolean",
           "default": false,
-          "description": "Show dependency statuses default when vscode starts. You can use the editor toolbar to show/hide dependency statuses at any time."
+          "description": "Will always show prereleases when opening a package file in the editor."
+        },
+        "versionlens.statuses.alwaysShowInstalledStatuses": {
+          "type": "boolean",
+          "default": false,
+          "description": "Will always show prereleases when opening a package file in the editor."
+        },
+        "versionlens.statuses.notInstalledColour": {
+          "type": "string",
+          "default": "red",
+          "description": "The colour used to show missing dependencies. Accept's valid CSS colours"
+        },
+        "versionlens.statuses.installedColour": {
+          "type": "string",
+          "default": "green",
+          "description": "The colour used to show installed dependencies. Accept's valid CSS colours"
+        },
+        "versionlens.statuses.outdatedColour": {
+          "type": "string",
+          "default": "orange",
+          "description": "The colour used to show outdated dependencies. Accept's valid CSS colours"
+        },
+        "versionlens.statuses.prereleaseColour": {
+          "type": "string",
+          "default": "yellowgreen",
+          "description": "The colour used to show prerelease dependencies. Accept's valid CSS colours"
+        },
+        "versionlens.npm.caching.duration": {
+          "type": [
+            "null",
+            "number"
+          ],
+          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
         "versionlens.npm.dependencyProperties": {
           "type": "array",
@@ -255,6 +295,13 @@
           "default": [],
           "description": "Define which common dist tags you want to see. i.e. [alpha, beta]. If you don't specify any dist tags then all the dist-tags for a package will be shown."
         },
+        "versionlens.pub.caching.duration": {
+          "type": [
+            "null",
+            "number"
+          ],
+          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
+        },
         "versionlens.pub.dependencyProperties": {
           "type": "array",
           "items": {
@@ -272,6 +319,13 @@
           "type": "string",
           "default": "https://pub.dev/",
           "description": "Defines the pub api to use for package searching."
+        },
+        "versionlens.dotnet.caching.duration": {
+          "type": [
+            "null",
+            "number"
+          ],
+          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
         "versionlens.dotnet.dependencyProperties": {
           "type": "array",
@@ -301,15 +355,25 @@
           "items": {
             "type": "string"
           },
-          "default": [
-            "https://api-v2v3search-0.nuget.org/autocomplete"
-          ],
+          "default": [],
           "description": "Defines which NuGet feeds to use for package search. Has to be 'SearchAutocompleteService' endpoint, which can be found by navigating to feed index (e.g. https://api.nuget.org/v3/index.json) and looking for Url with that type."
         },
         "versionlens.dotnet.includePrerelease": {
           "type": "boolean",
           "default": true,
           "description": "Include NuGet pre-release packages"
+        },
+        "versionlens.dub.caching.duration": {
+          "type": [
+            "null",
+            "number"
+          ],
+          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
+        },
+        "versionlens.dub.apiUrl": {
+          "type": "string",
+          "default": "https://code.dlang.org/api/packages",
+          "description": "Defines the api to use for dub package searching."
         },
         "versionlens.dub.dependencyProperties": {
           "type": "array",
@@ -324,6 +388,18 @@
           ],
           "description": "Defines which properties in dub.json should be parsed by this extension"
         },
+        "versionlens.composer.caching.duration": {
+          "type": [
+            "null",
+            "number"
+          ],
+          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
+        },
+        "versionlens.composer.apiUrl": {
+          "type": "string",
+          "default": "https://repo.packagist.org/p",
+          "description": "Defines the api to use for composer package searching."
+        },
         "versionlens.composer.dependencyProperties": {
           "type": "array",
           "items": {
@@ -337,28 +413,17 @@
           ],
           "description": "Defines which properties in composer.json should be parsed by this extension"
         },
-        "versionlens.github.taggedCommits": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": [
-              "Release",
-              "Tag"
-            ]
-          },
-          "uniqueItems": true,
-          "minItems": 1,
-          "maxItems": 2,
-          "default": [
-            "Release",
-            "Tag"
+        "versionlens.maven.caching.duration": {
+          "type": [
+            "null",
+            "number"
           ],
-          "description": "Defines what tags to include when comparing github package versions."
+          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
         },
-        "versionlens.github.accessToken": {
+        "versionlens.maven.apiUrl": {
           "type": "string",
           "default": "",
-          "description": "Used for making basic read only github api requests. To generate a token see https://help.github.com/articles/creating-an-access-token-for-command-line-use/#creating-a-token. When no token is provided then access to the github api is rate limited to 60 requests every 10 minutes or so."
+          "description": "Defines the api to use for maven package searching."
         },
         "versionlens.maven.dependencyProperties": {
           "type": "array",
@@ -373,25 +438,40 @@
           ],
           "description": "Defines which properties in pom.xml should be parsed by this extension"
         },
+        "versionlens.github.accessToken": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "default": "",
+          "description": "Used for making basic read only github api requests. To generate a token see https://help.github.com/articles/creating-an-access-token-for-command-line-use/#creating-a-token. When no token is provided then access to the github api is rate limited to 60 requests every 10 minutes or so."
+        },
+        "versionlens.github.taggedCommits": {
+          "deprecationMessage": "This options is no longer available"
+        },
         "versionlens.missingDependencyColour": {
-          "type": "string",
-          "default": "red",
-          "description": "The colour used to show missing dependencies. Accept's valid CSS colours"
+          "deprecationMessage": "Use versionlens.statuses.notInstalledColour"
         },
         "versionlens.installedDependencyColour": {
-          "type": "string",
-          "default": "green",
-          "description": "The colour used to show installed dependencies. Accept's valid CSS colours"
+          "deprecationMessage": "Use versionlens.statuses.installedColour"
         },
         "versionlens.outdatedDependencyColour": {
-          "type": "string",
-          "default": "orange",
-          "description": "The colour used to show outdated dependencies. Accept's valid CSS colours"
+          "deprecationMessage": "Use versionlens.statuses.outdatedColour"
         },
         "versionlens.prereleaseDependencyColour": {
-          "type": "string",
-          "default": "yellowgreen",
-          "description": "The colour used to show prerelease dependencies. Accept's valid CSS colours"
+          "deprecationMessage": "Use versionlens.statuses.prereleaseInstalledColour"
+        },
+        "versionlens.versionPrefix": {
+          "deprecationMessage": "This has been replaced with versionlens.suggestions.defaultVersionPrefix"
+        },
+        "versionlens.showVersionLensesAtStartup": {
+          "deprecationMessage": "Use versionlens.suggestions.showOnStartup instead"
+        },
+        "versionlens.showTaggedVersionsAtStartup": {
+          "deprecationMessage": "Use versionlens.suggestions.showPrereleasesOnStartup instead"
+        },
+        "versionlens.showDependencyStatusesAtStartup": {
+          "deprecationMessage": "Use versionlens.statuses.alwaysShowInstalledStatuses instead"
         }
       }
     }

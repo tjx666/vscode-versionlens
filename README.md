@@ -28,6 +28,6 @@ Supports
 
 ### License
 
-Licensed under MIT
+Licensed under ISC
 
 Copyright &copy; 2016+ [contributors](https://github.com/vscode-contrib/vscode-versionlens/graphs/contributors)

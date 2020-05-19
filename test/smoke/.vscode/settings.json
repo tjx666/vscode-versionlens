@@ -1,7 +1,9 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-  "versionlens.showVersionLensesAtStartup": true,
-  "versionlens.showTaggedVersionsAtStartup": false,
+  "versionlens.logging.level":"debug" ,
+  "versionlens.caching.duration": 0 ,
+  "versionlens.suggestions.alwaysShowReleases": true,
+  "versionlens.suggestions.alwaysShowPrereleases": true,
   "versionlens.npm.dependencyProperties": [
     "dependencies",
     "devDependencies",

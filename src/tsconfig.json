@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "system",
+    "outFile": "../out/extension-bundle.js",
+    "lib": [
+      "ES2019"
+    ],
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "noUnusedLocals":true,
+    "noUnusedParameters": false,
+    "baseUrl": ".",
+    "paths": {
+      "/*": [
+        "/*"
+      ],
+      "core/*": [
+        "core/*"
+      ],
+      "infrastructure/*": [
+        "infrastructure/*"
+      ],
+      "presentation/*": [
+        "presentation/*"
+      ]
+    },
+  },
+  "include": [
+    "infrastructure/providers/**/activate.ts"
+  ],
+  "files": [
+    "loader.js",
+    "root.ts"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "system",
+    "outFile": "../out/test/index.js",
+    "lib": [
+      "ES2019"
+    ],
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "baseUrl": ".",
+    "paths": {
+      "/*": [
+        "../src/*"
+      ],
+      "core/*": [
+        "../src/core/*"
+      ],
+      "infrastructure/*": [
+        "../src/infrastructure/*"
+      ],
+      "presentation/*": [
+        "../src/presentation/*"
+      ],
+      "test/unit/*": [
+        "unit/*"
+      ],
+      "unit/mocks/*": [
+        "unit/mocks/*"
+      ]
+    }
+  },
+  "files": [
+    "loader.js",
+    "runner.js",
+  ]
+}
