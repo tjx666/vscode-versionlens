@@ -39,7 +39,7 @@ export function createInvalidVersion(
 ): PackageDocument {
   const source: PackageSourceTypes = PackageSourceTypes.Registry;
   const suggestions: Array<PackageSuggestion> = [
-    SuggestFactory.createInvalid(requested.version),
+    SuggestFactory.createInvalid(''),
     SuggestFactory.createLatest(),
   ];
 

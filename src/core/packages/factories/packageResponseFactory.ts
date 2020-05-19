@@ -21,13 +21,14 @@ export function createSuccess<TClientData>(
   replaceVersionFn: ReplaceVersionFunction
 ): Array<PackageResponse> {
   // map the documents to responses
-  return response.suggestions.map(function (suggestion: PackageSuggestion): PackageResponse {
+  return response.suggestions.map(function (suggestion: PackageSuggestion, order: number): PackageResponse {
     return {
       providerName: response.providerName,
       source: response.source,
       type: response.type,
       nameRange: request.dependency.nameRange,
       versionRange: request.dependency.versionRange,
+      order,
       requested: response.requested,
       resolved: response.resolved,
       suggestion,
@@ -41,11 +42,12 @@ export function createUnexpected<TClientData>(
   request: PackageRequest<TClientData>,
   response: HttpClientResponse
 ): PackageResponse {
-
+  const { nameRange, versionRange } = request.dependency;
   const error: PackageResponse = {
     providerName,
-    nameRange: request.dependency.nameRange,
-    versionRange: request.dependency.versionRange,
+    nameRange,
+    versionRange,
+    order: 0,
     requested: request.package,
     error: PackageResponseErrors.Unexpected,
     errorMessage: response.data,

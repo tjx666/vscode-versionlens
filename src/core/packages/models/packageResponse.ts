@@ -18,7 +18,7 @@ export class PackageResponse {
 
   nameRange: PackageDependencyRange;
   versionRange: PackageDependencyRange;
-
+  order: number;
 
   error?: PackageResponseErrors;
   errorMessage?: string;

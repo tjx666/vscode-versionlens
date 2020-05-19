@@ -10,9 +10,8 @@ export function createVersionLensesFromResponses(
 ): Array<VersionLens> {
   // multiple lens for a package (versions, tags etc...)
   return responses.map(
-    function (response, order) {
+    function (response) {
       return createVersionlensFromEntry(
-        order,
         response,
         document
       );
@@ -21,12 +20,12 @@ export function createVersionLensesFromResponses(
 }
 
 function createVersionlensFromEntry(
-  order: number, response: PackageResponse, document: VsCodeTypes.TextDocument
+  response: PackageResponse, document: VsCodeTypes.TextDocument
 ): VersionLens {
   const { Uri, Range } = require('vscode')
 
   const { nameRange, versionRange } = response;
-  const commandRangePos = nameRange.start + order;
+  const commandRangePos = nameRange.start + response.order;
   const commandRange = new Range(
     document.positionAt(commandRangePos),
     document.positionAt(commandRangePos)
