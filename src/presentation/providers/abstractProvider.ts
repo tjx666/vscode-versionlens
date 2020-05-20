@@ -3,7 +3,13 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import { ILogger } from 'core/logging';
-import { PackageSourceTypes, PackageResponseErrors, PackageResponse, ReplaceVersionFunction, VersionHelpers } from 'core/packages';
+
+import {
+  PackageSourceTypes,
+  PackageResponseErrors,
+  PackageResponse,
+  ReplaceVersionFunction
+} from 'core/packages';
 
 import {
   CommandFactory,
@@ -14,6 +20,7 @@ import {
 import { VersionLensExtension } from 'presentation/extension';
 
 import { IProviderConfig } from './definitions/iProviderConfig';
+import { defaultReplaceFn } from './providerUtils';
 
 export type VersionLensFetchResponse = Promise<Array<PackageResponse>>;
 
@@ -123,12 +130,4 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
     return CommandFactory.createSuggestedVersionCommand(codeLens)
   }
 
-}
-
-
-function defaultReplaceFn(response: PackageResponse, newVersion: string): string {
-  return VersionHelpers.formatWithExistingLeading(
-    this.package.requested.version,
-    newVersion
-  );
 }

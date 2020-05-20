@@ -125,10 +125,12 @@ export function createDependencyLensFromPlainType(pair, opts: YamlOptions): IPac
     valueRange.end,
     pair.value.type
   );
+
   const packageInfo = {
     name: pair.key.value,
     version: pair.value.value
-  }
+  };
+
   return {
     nameRange,
     versionRange,

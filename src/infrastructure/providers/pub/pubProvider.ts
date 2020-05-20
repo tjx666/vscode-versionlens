@@ -9,6 +9,7 @@ import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentat
 
 import { PubConfig } from './pubConfig';
 import { PubClient } from './pubClient';
+import { pubReplaceVersion } from './pubUtils';
 
 export class PubVersionLensProvider
   extends AbstractVersionLensProvider<PubConfig> {
@@ -29,8 +30,10 @@ export class PubVersionLensProvider
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
 
+    const yamlText = document.getText();
+
     const packageDependencies = extractPackageDependenciesFromYaml(
-      document.getText(),
+      yamlText,
       this.config.dependencyProperties
     );
     if (packageDependencies.length === 0) return null;
@@ -41,6 +44,8 @@ export class PubVersionLensProvider
       includePrereleases,
       clientData: null,
     };
+
+    this.customReplaceFn = pubReplaceVersion.bind(yamlText);
 
     return RequestFactory.executeDependencyRequests(
       packagePath,
