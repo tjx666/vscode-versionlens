@@ -34,6 +34,7 @@
 - Npm: Replaced npm client api with [npm pacote api](https://github.com/npm/pacote)
 - Npm: Added support for github semver syntax e.g. "github:repo\project#semver:x.x.x"
 - Pub: Fixed CRLF issue when parsing YAML
+- Pub: Fixed a bug where the wrong latest version would appear (reported in [#198](https://github.com/vscode-contrib/vscode-versionlens/issues/198))
 
 # 0.27.0
 
