@@ -40,7 +40,7 @@ export function extractDependenciesFromNodes(topLevelNodes, opts: YamlOptions): 
   return collector
 }
 
-function collectDependencyNodes(nodes, opts: YamlOptions, collector = []) {
+function collectDependencyNodes(nodes, opts: YamlOptions, collector: Array<IPackageDependencyLens>) {
   nodes.forEach(
     function (pair) {
       // node may be in the form "no_version_dep:", which we will indicate as the latest
@@ -66,7 +66,9 @@ function collectDependencyNodes(nodes, opts: YamlOptions, collector = []) {
   )
 }
 
-export function createDependencyLensFromMapType(nodes, parentKey, opts: YamlOptions, collector) {
+export function createDependencyLensFromMapType(
+  nodes, parentKey, opts: YamlOptions, collector: Array<IPackageDependencyLens>
+) {
   nodes.forEach(
     function (pair) {
       // ignore empty entries
@@ -79,7 +81,7 @@ export function createDependencyLensFromMapType(nodes, parentKey, opts: YamlOpti
           keyRange.start,
           null
         );
-        const valueRange = getRangeFromCstNode(parentKey.cstNode, opts);
+        const valueRange = getRangeFromCstNode(pair.value.cstNode, opts);
         const versionRange = createRange(
           valueRange.start,
           valueRange.end,
@@ -133,7 +135,7 @@ export function createDependencyLensFromPlainType(pair, opts: YamlOptions): IPac
   }
 }
 
-function createRange(start, end, valueType) {
+function createRange(start, end, valueType: string) {
   // +1 and -1 to be inside quotes
   const quoted = valueType === "QUOTE_SINGLE" || valueType === "QUOTE_DOUBLE";
   return {
