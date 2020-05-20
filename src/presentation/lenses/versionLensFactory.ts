@@ -5,13 +5,13 @@ import * as VsCodeTypes from 'vscode';
 import { PackageResponse } from 'core/packages';
 import { VersionLens } from './versionLens';
 
-export function createVersionLensesFromResponses(
+export function createFromPackageResponses(
   document: VsCodeTypes.TextDocument, responses: Array<PackageResponse>
 ): Array<VersionLens> {
   // multiple lens for a package (versions, tags etc...)
   return responses.map(
     function (response) {
-      return createVersionlensFromEntry(
+      return createFromPackageResponse(
         response,
         document
       );
@@ -19,7 +19,7 @@ export function createVersionLensesFromResponses(
   );
 }
 
-function createVersionlensFromEntry(
+function createFromPackageResponse(
   response: PackageResponse, document: VsCodeTypes.TextDocument
 ): VersionLens {
   const { Uri, Range } = require('vscode')

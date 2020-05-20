@@ -14,7 +14,7 @@ import { IProviderConfig } from './definitions/iProviderConfig';
 
 export type VersionLensFetchResponse = Promise<Array<PackageResponse>>;
 
-export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfig>  {
+export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfig> {
 
   _onChangeCodeLensesEmitter: VsCodeTypes.EventEmitter<void>;
 
@@ -62,6 +62,8 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
     // set in progress
     this.extension.state.providerBusy.value++;
 
+    this.logger.debug("Analysing dependencies for %s", document.uri.fsPath)
+
     // unfreeze config per file request
     this.config.caching.defrost();
 
@@ -70,7 +72,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
         this.extension.state.providerBusy.value--;
         if (responses === null) return null;
 
-        return VersionLensFactory.createVersionLensesFromResponses(
+        return VersionLensFactory.createFromPackageResponses(
           document,
           responses
         );

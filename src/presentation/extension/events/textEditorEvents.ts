@@ -44,29 +44,27 @@ export class TextEditorEvents {
       textEditor.document.fileName
     );
 
-    if (providersMatchingFilename.length > 0) {
-
-      // determine prerelease support
-      const providerSupportsPrereleases = providersMatchingFilename.reduce(
-        (v, p) => p.config.options.supports.includes(ProviderSupport.Prereleases)
-        , false
-      );
-
-      // determine installed statuses support
-      const providerSupportsInstalledStatuses = providersMatchingFilename.reduce(
-        (v, p) => p.config.options.supports.includes(ProviderSupport.InstalledStatuses)
-        , false
-      );
-
-      this.state.providerSupportsPrereleases.value = providerSupportsPrereleases;
-      this.state.providerSupportsInstalledStatuses.value = providerSupportsInstalledStatuses;
-      this.state.providerActive.value = true;
-
+    if (providersMatchingFilename.length === 0) {
+      // disable icons if no match found
+      this.state.providerActive.value = false;
       return;
     }
 
-    // disable icons if no match found
-    this.state.providerActive.value = false;
+    // determine prerelease support
+    const providerSupportsPrereleases = providersMatchingFilename.reduce(
+      (v, p) => p.config.options.supports.includes(ProviderSupport.Prereleases)
+      , false
+    );
+
+    // determine installed statuses support
+    const providerSupportsInstalledStatuses = providersMatchingFilename.reduce(
+      (v, p) => p.config.options.supports.includes(ProviderSupport.InstalledStatuses)
+      , false
+    );
+
+    this.state.providerSupportsPrereleases.value = providerSupportsPrereleases;
+    this.state.providerSupportsInstalledStatuses.value = providerSupportsInstalledStatuses;
+    this.state.providerActive.value = true;
   }
 
 }
