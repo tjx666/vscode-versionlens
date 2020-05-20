@@ -2,8 +2,7 @@
 import { IPackageDependency } from "../definitions/iPackageDependency";
 
 export function extractPackageDependenciesFromJson(
-  json: string,
-  filterPropertyNames: Array<string>
+  json: string, filterPropertyNames: Array<string>
 ): Array<IPackageDependency> {
   const jsonErrors = [];
   const jsonParser = require("jsonc-parser");
@@ -12,13 +11,13 @@ export function extractPackageDependenciesFromJson(
   return extractFromNodes(jsonTree.children, filterPropertyNames);
 }
 
-export function extractFromNodes(topLevelNodes, filterPropertyNames: string[]): IPackageDependency[] {
+export function extractFromNodes(topLevelNodes, includePropertyNames: string[]): IPackageDependency[] {
   const collector = [];
 
   topLevelNodes.forEach(
     function (node) {
       const [keyEntry, valueEntry] = node.children;
-      if (filterPropertyNames.includes(keyEntry.value) === false) return;
+      if (includePropertyNames.includes(keyEntry.value) === false) return;
       collectDependencyNodes(valueEntry.children, null, '', collector);
     }
   )

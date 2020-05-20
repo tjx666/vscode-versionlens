@@ -1,3 +1,5 @@
+
+// VersionHelperTests
 import extractTaggedVersions from './helpers/versionHelpers/extractTaggedVersions.tests';
 import rollupPrereleases from './helpers/versionHelpers/filterPrereleasesWithinRange.tests';
 import splitReleasesFromArray from './helpers/versionHelpers/splitReleasesFromArray.tests';
@@ -16,8 +18,17 @@ export const VersionHelperTests = {
   isFixedVersion,
 }
 
+// PackageSuggestionFactoryTests
 import createSuggestionTags from './factories/packageSuggestionFactory/createSuggestionTags.tests';
 
 export const PackageSuggestionFactoryTests = {
   createSuggestionTags
+}
+
+
+// Package Parser Tests
+import extractPackageDependenciesFromJson from './parsers/jsonPackageParser/extractPackageDependenciesFromJson.tests';
+
+export const PackageParserTests = {
+  extractPackageDependenciesFromJson
 }
