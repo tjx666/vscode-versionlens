@@ -179,7 +179,7 @@
         },
         {
           "command": "versionlens.onShowingProgress",
-          "when": "versionlens.providerBusy && textCompareEditorVisible == false",
+          "when": "versionlens.providerBusy && versionlens.providerActive && textCompareEditorVisible == false",
           "group": "navigation@1"
         },
         {

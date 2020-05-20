@@ -1,9 +1,9 @@
-import { IRepository, IFrozenRespository } from "core/generics";
+import { IRepository, IFrozenRepository } from "core/generics";
 
 // allows vscode configuration to be defrosted
 // Useful for accessing hot changing values from settings.json
 // Stays frozen until defrost() is called and then refrosts
-export class VsCodeFrozenConfig implements IFrozenRespository {
+export class VsCodeFrozenConfig implements IFrozenRepository {
 
   protected frozen: IRepository;
 

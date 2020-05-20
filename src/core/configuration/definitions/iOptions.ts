@@ -1,9 +1,9 @@
-import { IRepository, IFrozenRespository } from "core/generics";
+import { IFrozenRepository } from "core/generics";
 
-export interface IOptions extends IRepository {
+export interface IOptions extends IFrozenRepository { }
+
+export interface IOptionsWithDefaults extends IOptions {
 
   getOrDefault<T>(key: string, defaultValue: T): T;
 
 }
-
-export interface IFrozenOptions extends IFrozenRespository { }

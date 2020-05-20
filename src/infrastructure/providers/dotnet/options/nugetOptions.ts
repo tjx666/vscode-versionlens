@@ -1,14 +1,14 @@
-import { IFrozenRespository } from 'core/generics';
-import { AbstractOptions } from 'core/configuration';
+import { IFrozenRepository } from 'core/generics';
+import { Options } from 'core/configuration';
 
 enum NugetContributions {
   Sources = 'sources',
 }
 
-export class NugetOptions extends AbstractOptions {
+export class NugetOptions extends Options {
 
-  constructor(config: IFrozenRespository, section: string, defaultSection?: string) {
-    super(config, section, defaultSection);
+  constructor(config: IFrozenRepository, section: string) {
+    super(config, section);
   }
 
   get sources(): Array<string> {

@@ -1,15 +1,20 @@
-import { AbstractOptions } from 'core/configuration';
+import { OptionsWithFallback } from 'core/configuration';
+import { IFrozenRepository, Nullable } from 'core/generics';
+
 import { CachingContributions, ICachingOptions } from '../definitions/options';
-import { IFrozenRespository } from 'core/generics';
 
-export class CachingOptions extends AbstractOptions implements ICachingOptions {
+export class CachingOptions extends OptionsWithFallback implements ICachingOptions {
 
-  constructor(config: IFrozenRespository, section: string, defaultSection?: string) {
-    super(config, section, defaultSection);
+  constructor(
+    config: IFrozenRepository,
+    section: string,
+    fallbackSection: Nullable<string> = null
+  ) {
+    super(config, section, fallbackSection);
   }
 
   get duration(): number {
-    return super.getOrDefault<number>(
+    return this.getOrDefault<number>(
       CachingContributions.CacheDuration,
       0
     );

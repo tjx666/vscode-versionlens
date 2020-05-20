@@ -44,11 +44,7 @@ export class DotNetConfig extends AbstractProviderConfig {
       'caching'
     );
 
-    this.nuget = new NugetOptions(
-      extension.config,
-      DotnetContributions.Nuget,
-      null
-    );
+    this.nuget = new NugetOptions(extension.config, DotnetContributions.Nuget);
   }
 
   get dependencyProperties(): Array<string> {

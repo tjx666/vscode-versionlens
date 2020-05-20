@@ -1,13 +1,13 @@
-import { IFrozenRespository } from "core/generics";
+import { IFrozenRepository } from "core/generics";
 
 export enum CachingContributions {
   CacheDuration = 'duration',
 }
 
-export interface ICachingOptions extends IFrozenRespository {
+export interface ICachingOptions extends IFrozenRepository {
 
-  config: IFrozenRespository;
+  config: IFrozenRepository;
 
   duration: number;
-  
+
 }

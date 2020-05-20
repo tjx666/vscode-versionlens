@@ -44,11 +44,7 @@ export class NpmConfig extends AbstractProviderConfig {
       'caching'
     );
 
-    this.github = new GitHubOptions(
-      extension.config,
-      NpmContributions.Github,
-      'github'
-    );
+    this.github = new GitHubOptions(extension.config, NpmContributions.Github);
   }
 
   get dependencyProperties(): Array<string> {

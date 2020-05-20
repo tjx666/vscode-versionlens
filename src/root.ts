@@ -1,7 +1,7 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
 
-import { IFrozenRespository } from 'core/generics';
+import { IFrozenRepository } from 'core/generics';
 
 import { VsCodeFrozenConfig } from 'infrastructure/configuration';
 import { createWinstonLogger } from 'infrastructure/logging';
@@ -17,7 +17,7 @@ import {
 
 export async function composition(context: VsCodeTypes.ExtensionContext) {
 
-  const configuration: IFrozenRespository = new VsCodeFrozenConfig(
+  const configuration: IFrozenRepository = new VsCodeFrozenConfig(
     VersionLensExtension.extensionName.toLowerCase()
   );
 

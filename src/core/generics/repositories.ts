@@ -10,7 +10,7 @@ export interface IConfigRepository extends IRepository {
 
 }
 
-export interface IFrozenRespository extends IRepository {
+export interface IFrozenRepository extends IRepository {
 
   defrost(): void;
 

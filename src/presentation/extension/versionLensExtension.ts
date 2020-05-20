@@ -1,4 +1,4 @@
-import { IFrozenRespository } from "core/generics";
+import { IFrozenRepository } from "core/generics";
 import { LoggingOptions } from "core/logging";
 import { CachingOptions, ICachingOptions } from "core/clients";
 
@@ -17,7 +17,7 @@ export class VersionLensExtension {
 
   static extensionName: string = 'VersionLens';
 
-  config: IFrozenRespository;
+  config: IFrozenRepository;
 
   logging: LoggingOptions;
 
@@ -29,7 +29,7 @@ export class VersionLensExtension {
 
   state: VersionLensState;
 
-  constructor(config: IFrozenRespository) {
+  constructor(config: IFrozenRepository) {
     this.config = config;
 
     // instantiate contrib options
@@ -48,7 +48,7 @@ export class VersionLensExtension {
 let _extensionSingleton = null;
 export default _extensionSingleton;
 
-export function registerExtension(config: IFrozenRespository): VersionLensExtension {
+export function registerExtension(config: IFrozenRepository): VersionLensExtension {
   _extensionSingleton = new VersionLensExtension(config);
   return _extensionSingleton;
 }
