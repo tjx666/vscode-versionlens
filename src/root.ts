@@ -48,7 +48,5 @@ export async function composition(context: VsCodeTypes.ExtensionContext) {
 
   // show icons in active text editor if versionLens.providerActive
   const { window } = require('vscode');
-  textEditorEvents.onDidChangeActiveTextEditor(
-    window.activeTextEditor
-  );
+  textEditorEvents.onDidChangeActiveTextEditor(window.activeTextEditor);
 }

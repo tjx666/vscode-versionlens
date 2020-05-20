@@ -2,14 +2,17 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { VersionLensExtension } from 'presentation/extension';
 import { ILogger } from 'core/logging';
-
 import { PackageSourceTypes, PackageResponseErrors, PackageResponse } from 'core/packages';
 
-import * as CommandFactory from 'presentation/commands/factory';
+import {
+  CommandFactory,
+  IVersionCodeLens,
+  VersionLens,
+  VersionLensFactory
+} from "presentation/lenses";
+import { VersionLensExtension } from 'presentation/extension';
 
-import { IVersionCodeLens, VersionLens, VersionLensFactory } from "presentation/lenses";
 import { IProviderConfig } from './definitions/iProviderConfig';
 
 export type VersionLensFetchResponse = Promise<Array<PackageResponse>>;
@@ -45,13 +48,12 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
     this.extension = config.extension;
   }
 
-  reload() {
+  refreshCodeLenses() {
     this._onChangeCodeLensesEmitter.fire();
   }
 
   async provideCodeLenses(
-    document: VsCodeTypes.TextDocument,
-    token: VsCodeTypes.CancellationToken
+    document: VsCodeTypes.TextDocument, token: VsCodeTypes.CancellationToken
   ): Promise<VersionLens[] | null> {
     if (this.extension.state.enabled.value === false) return null;
 

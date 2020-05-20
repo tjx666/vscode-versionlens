@@ -63,6 +63,17 @@ class ProviderRegistry {
     return filtered;
   }
 
+  refreshActiveCodeLenses() {
+    const { window } = require('vscode');
+    const fileName = window.activeTextEditor.document.fileName;
+    const providers = this.getByFileName(fileName);
+    if (!providers) return false;
+
+    providers.forEach(provider => provider.refreshCodeLenses());
+
+    return true;
+  }
+
 }
 
 export const providerRegistry = new ProviderRegistry();

@@ -34,35 +34,35 @@ export class VersionLensCommands {
   onShowVersionLenses(file) {
     this.state.enabled.change(true)
       .then(_ => {
-        reloadActiveProviders();
+        providerRegistry.refreshActiveCodeLenses();
       });
   }
 
   onHideVersionLenses(file) {
     this.state.enabled.change(false)
       .then(_ => {
-        reloadActiveProviders();
+        providerRegistry.refreshActiveCodeLenses();
       });
   }
 
   onShowPrereleaseVersions() {
     this.state.prereleasesEnabled.change(true)
       .then(_ => {
-        reloadActiveProviders();
+        providerRegistry.refreshActiveCodeLenses();
       });
   }
 
   onHidePrereleaseVersions(file) {
     this.state.prereleasesEnabled.change(false)
       .then(_ => {
-        reloadActiveProviders();
+        providerRegistry.refreshActiveCodeLenses();
       });
   }
 
   onShowInstalledStatuses(file) {
     this.state.installedStatusesEnabled.change(true)
       .then(_ => {
-        reloadActiveProviders();
+        providerRegistry.refreshActiveCodeLenses();
       });
   }
 
@@ -96,16 +96,6 @@ export class VersionLensCommands {
     opener(codeLens.package.meta.remoteUrl);
   }
 
-}
-
-function reloadActiveProviders() {
-  const { window } = require('vscode');
-  const fileName = window.activeTextEditor.document.fileName;
-  const providers = providerRegistry.getByFileName(fileName);
-  if (!providers) return false;
-
-  providers.forEach(provider => provider.reload());
-  return true;
 }
 
 export function registerCommands(
