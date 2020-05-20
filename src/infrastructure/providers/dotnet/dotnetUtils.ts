@@ -114,7 +114,7 @@ export function buildVersionSpec(value): NugetVersionSpec {
     versionSpec.isMaxInclusive = false;
 
   // remove any [] or ()
-  formattedValue = formattedValue.substring(1, formattedValue.length - 1);
+  formattedValue = formattedValue.substr(1, formattedValue.length - 2);
 
   // split by comma
   const parts = formattedValue.split(',');

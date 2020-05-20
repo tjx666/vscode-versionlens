@@ -156,7 +156,7 @@ export class GithubClient extends JsonHttpClientRequest {
           commit => commit.indexOf(versionRange) > -1
         );
 
-        const latestCommit = commits[commits.length - 1].substring(0, 8);
+        const latestCommit = commits[commits.length - 1].substr(0, 8);
 
         const noMatch = commitIndex === -1;
 
