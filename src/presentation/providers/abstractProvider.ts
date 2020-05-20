@@ -72,7 +72,10 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
     return this.fetchVersionLenses(packagePath, document, token)
       .then(responses => {
         this.extension.state.providerBusy.value--;
-        if (responses === null) return null;
+        if (responses === null) {
+          this.logger.debug("No dependencies found in %s", document.uri.fsPath)
+          return null;
+        }
 
         return VersionLensFactory.createFromPackageResponses(
           document,

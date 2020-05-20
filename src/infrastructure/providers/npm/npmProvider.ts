@@ -37,7 +37,7 @@ export class NpmVersionLensProvider
 
     this.packageClient = new NpmPackageClient(
       config,
-      logger.child({ namespace: 'maven pkg client' })
+      logger.child({ namespace: 'npm pkg client' })
     );
   }
 
