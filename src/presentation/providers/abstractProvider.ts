@@ -64,10 +64,12 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
     // set in progress
     this.extension.state.providerBusy.value++;
 
-    this.logger.debug("Analysing dependencies for %s", document.uri.fsPath)
+    this.logger.debug("Analysing dependencies for %s", document.uri.fsPath);
 
     // unfreeze config per file request
     this.config.caching.defrost();
+
+    this.logger.debug("Caching duration is set to %s ms", this.config.caching.duration)
 
     return this.fetchVersionLenses(packagePath, document, token)
       .then(responses => {

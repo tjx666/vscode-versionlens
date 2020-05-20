@@ -238,6 +238,7 @@
             "null",
             "number"
           ],
+          "default": 120000,
           "description": "Sets the length of time all package managers cache their version suggestion results. Default is 5 minutes. Note: You can override each individual package manager e.g. npm.caching.duration"
         },
         "versionlens.statuses.notInstalledColour": {
