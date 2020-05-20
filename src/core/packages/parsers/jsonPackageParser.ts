@@ -19,23 +19,24 @@ export function extractFromNodes(topLevelNodes, filterPropertyNames: string[]): 
     function (node) {
       const [keyEntry, valueEntry] = node.children;
       if (filterPropertyNames.includes(keyEntry.value) === false) return;
-      collectDependencyNodes(valueEntry.children, collector);
+      collectDependencyNodes(valueEntry.children, null, '', collector);
     }
   )
 
   return collector
 }
 
-function collectDependencyNodes(nodes, collector = []) {
+function collectDependencyNodes(nodes, parentKey, filterName: string, collector = []) {
   nodes.forEach(
     function (node) {
       const [keyEntry, valueEntry] = node.children;
 
-      if (valueEntry.type == "string") {
-        const dependencyLens = createFromProperty(keyEntry, valueEntry);
+      if (valueEntry.type == "string" &&
+        (filterName.length === 0 || keyEntry.value === filterName)) {
+        const dependencyLens = createFromProperty(parentKey || keyEntry, valueEntry);
         collector.push(dependencyLens);
       } else if (valueEntry.type == "object") {
-        collectDependencyNodes(valueEntry.children, collector)
+        collectDependencyNodes(valueEntry.children, keyEntry, 'version', collector)
       }
     }
   )

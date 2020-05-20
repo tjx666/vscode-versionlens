@@ -16,7 +16,7 @@
     "derelict-sdl2": "~>1.9.7",
     "luad": "~master",
     "painlessjson": {
-      "compile": ""
+      "version": ""
     },
     "eventsystem": "~>1.0.0",
     "i18n": "~>0.1.0",
