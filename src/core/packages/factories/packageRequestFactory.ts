@@ -41,7 +41,8 @@ export async function executeDependencyRequests<TClientData>(
           name,
           version,
           path: packagePath,
-        }
+        },
+        attempt: 0
       };
 
       // execute request

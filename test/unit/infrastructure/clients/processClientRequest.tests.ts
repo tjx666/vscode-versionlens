@@ -1,5 +1,6 @@
 import { ClientResponseSource, CachingOptions } from 'core/clients'
 import { ProcessClientRequest } from 'infrastructure/clients'
+import { LoggerMock } from 'test/unit/mocks/loggerMock';
 
 const assert = require('assert')
 const mock = require('mock-require')
@@ -25,9 +26,12 @@ export const ProcessClientRequestTests = {
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
-      const rut = new ProcessClientRequest(<CachingOptions>{
-        duration: 30000
-      });
+      const rut = new ProcessClientRequest(
+        <CachingOptions>{
+          duration: 30000
+        },
+        new LoggerMock()
+      );
       return await rut.request(
         'missing',
         ['--ooppss'],
@@ -62,9 +66,12 @@ export const ProcessClientRequestTests = {
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
-      const rut = new ProcessClientRequest(<CachingOptions>{
-        duration: 30000
-      })
+      const rut = new ProcessClientRequest(
+        <CachingOptions>{
+          duration: 30000
+        },
+        new LoggerMock()
+      )
 
       await rut.request(
         'echo',
@@ -101,9 +108,13 @@ export const ProcessClientRequestTests = {
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
-      const rut = new ProcessClientRequest(<CachingOptions>{
-        duration: 0
-      })
+      const rut = new ProcessClientRequest(
+        <CachingOptions>{
+          duration: 0
+        },
+        new LoggerMock()
+      )
+
       await rut.request(
         'echo',
         ['123'],

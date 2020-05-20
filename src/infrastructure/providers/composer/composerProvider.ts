@@ -24,7 +24,10 @@ export class ComposerVersionLensProvider extends AbstractVersionLensProvider<Com
 
   constructor(config: ComposerConfig, logger: ILogger) {
     super(config, logger);
-    this.composerClient = new ComposerClient(config, logger);
+    this.composerClient = new ComposerClient(
+      config,
+      logger.child({ namespace: 'composer pkg client' })
+    );
   }
 
   async fetchVersionLenses(

@@ -35,7 +35,10 @@ export class NpmVersionLensProvider
     super(config, logger);
     this._outdatedCache = [];
 
-    this.packageClient = new NpmPackageClient(config, logger);
+    this.packageClient = new NpmPackageClient(
+      config,
+      logger.child({ namespace: 'maven pkg client' })
+    );
   }
 
   async fetchVersionLenses(

@@ -10,26 +10,40 @@ import { DotNetConfig } from '../dotnetConfig';
 export class NuGetResourceClient extends JsonHttpClientRequest {
 
   config: DotNetConfig;
-  logger: ILogger;
 
   constructor(config: DotNetConfig, logger: ILogger) {
     super(logger, config.caching, {})
     this.config = config;
-    this.logger = logger;
   }
 
   async fetchResource(source: DotNetSource): Promise<string> {
 
-    return this.requestJson(HttpClientRequestMethods.get, source.url)
+    this.logger.debug("Requesting PackageBaseAddressService from %s", source.url)
+
+    return await this.requestJson(HttpClientRequestMethods.get, source.url)
       .then((response: NugetServiceIndexResponse) => {
-        const autocompleteServices = response.data.resources
-          .filter(res => res["@type"] === 'SearchAutocompleteService');
-        return autocompleteServices[0]["@id"];
-      }).catch((error: HttpClientResponse) => {
-        const feeds = this.config.nuGetFeeds;
-        return feeds.length > 0 ?
-          feeds[0] :
-          Promise.reject("Could not obtain a nuget resource")
+
+        const packageBaseAddressServices = response.data.resources
+          .filter(res => res["@type"].indexOf('PackageBaseAddress') > -1);
+
+        // just take one service for now
+        const foundPackageBaseAddressServices = packageBaseAddressServices[0]["@id"];
+
+        this.logger.debug(
+          "Resolved PackageBaseAddressService endpoint: %O",
+          foundPackageBaseAddressServices
+        );
+
+        return foundPackageBaseAddressServices;
+      })
+      .catch((error: HttpClientResponse) => {
+
+        this.logger.error(
+          "Could not resolve nuget service index. %s",
+          error.data
+        )
+
+        return Promise.reject(error)
       });
 
   }

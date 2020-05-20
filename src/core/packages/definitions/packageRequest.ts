@@ -24,5 +24,9 @@ export type PackageRequest<TClientData> = {
   // package to fetch
   package: PackageIdentifier;
 
+  // 
   includePrereleases: boolean;
+
+  // number of fallback attempts
+  attempt: number;
 };

@@ -1,4 +1,4 @@
-# 1.0.0-alpha.1
+# 1.0.0-alpha.2
 
 - Moved to a clean architecture.
 - Added logging to the output channel.
@@ -20,7 +20,16 @@
 
   You can always show version information on start up by setting `versionlens.suggestions.showOnStartup` to `"true"`.
 
-- Dotnet: Now retrieves source feeds using `dotnet nuget list source` in the current open project cwd.
+- Dotnet: Now automatically retrieves nuget source feeds using the output of `dotnet nuget list source` under the cwd of the open project file.
+
+  You can add new sources using the dotnet cli. 
+
+  Alternatively you can add sources using the `versionlens.dotnet.nuget.sources` setting.
+
+  If specified, the `versionlens.dotnet.nuget.sources` takes priority for resolution of packages. Each source has to be a v3 compatible 'service index' endpoint e.g. https://api.nuget.org/v3/index.json which contains a PackageBaseAddressService entry.
+
+  In the event a package cannot be found (404) then it will retry the next source in the list.
+
 - Dotnet: Fixed dotnet parser crash on missing version attrs. (reported in [#195](https://github.com/vscode-contrib/vscode-versionlens/issues/195))
 - Npm: Replaced npm client api with [npm pacote api](https://github.com/npm/pacote)
 - Npm: Added support for github semver syntax e.g. "github:repo\project#semver:x.x.x"

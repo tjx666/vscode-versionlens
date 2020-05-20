@@ -23,8 +23,15 @@ export class MavenVersionLensProvider
   constructor(config: MavenConfig, logger: ILogger) {
     super(config, logger);
 
-    this.mvnClient = new MvnClient(config, logger);
-    this.mavenClient = new MavenClient(config, logger);
+    this.mvnClient = new MvnClient(
+      config,
+      logger.child({ namespace: 'maven cli' })
+    );
+
+    this.mavenClient = new MavenClient(
+      config,
+      logger.child({ namespace: 'maven pkg client' })
+    );
   }
 
   async fetchVersionLenses(

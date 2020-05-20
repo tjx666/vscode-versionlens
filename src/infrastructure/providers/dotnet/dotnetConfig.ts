@@ -7,10 +7,12 @@ import {
   AbstractProviderConfig
 } from "presentation/providers";
 
+import { NugetOptions } from './options/nugetOptions';
+
 export enum DotnetContributions {
   Caching = 'dotnet.caching',
+  Nuget = 'dotnet.nuget',
   DependencyProperties = 'dotnet.dependencyProperties',
-  NugetFeeds = 'dotnet.nugetFeeds',
   TagFilter = 'dotnet.tagFilter',
 }
 
@@ -31,6 +33,8 @@ export class DotNetConfig extends AbstractProviderConfig {
 
   caching: ICachingOptions;
 
+  nuget: NugetOptions;
+
   constructor(extension: VersionLensExtension) {
     super(extension);
 
@@ -38,6 +42,12 @@ export class DotNetConfig extends AbstractProviderConfig {
       extension.config,
       DotnetContributions.Caching,
       'caching'
+    );
+
+    this.nuget = new NugetOptions(
+      extension.config,
+      DotnetContributions.Nuget,
+      null
     );
   }
 
@@ -47,10 +57,6 @@ export class DotNetConfig extends AbstractProviderConfig {
 
   get tagFilter(): Array<string> {
     return this.extension.config.get(DotnetContributions.TagFilter);
-  }
-
-  get nuGetFeeds(): Array<string> {
-    return this.extension.config.get(DotnetContributions.NugetFeeds);
   }
 
 }

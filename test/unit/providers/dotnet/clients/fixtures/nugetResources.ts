@@ -7,12 +7,12 @@ export default {
         "@type": "SearchQueryService",
       },
       {
-        "@id": "https://unit-test-usnc.nuget.org/autocomplete",
-        "@type": "SearchAutocompleteService",
+        "@id": "https://api.nuget.org/v3-flatcontainer1/",
+        "@type": "PackageBaseAddress",
       },
       {
-        "@id": "https://unit-test-ussc.nuget.org/autocomplete1",
-        "@type": "SearchAutocompleteService",
+        "@id": "https://api.nuget.org/v3-flatcontainer2/",
+        "@type": "PackageBaseAddress/3.0.0",
       },
       {
         "@id": "https://unit-test-usnc.nuget.org/",

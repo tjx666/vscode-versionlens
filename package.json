@@ -8,7 +8,7 @@
   },
   "author": "Peter Flannery",
   "license": "MIT",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.1",
   "publisher": "pflannery",
   "displayName": "Version Lens",
   "icon": "images/logo.png",
@@ -351,13 +351,13 @@
           "default": [],
           "description": "Define which common tagged versions you want to see. i.e. [alpha, beta]. If you don't specify any dist tags then all the dist-tags for a package will be shown."
         },
-        "versionlens.dotnet.nugetFeeds": {
+        "versionlens.dotnet.nuget.sources": {
           "type": "array",
           "items": {
             "type": "string"
           },
           "default": [],
-          "description": "Defines which NuGet feeds to use for package search. Has to be 'SearchAutocompleteService' endpoint, which can be found by navigating to feed index (e.g. https://api.nuget.org/v3/index.json) and looking for Url with that type."
+          "description": "Defines which nuget source to use for package searching. Has to be a v3 'service index' endpoint. e.g. https://api.nuget.org/v3/index.json. Defaults to the sources output by `dotnet nuget list source`"
         },
         "versionlens.dotnet.includePrerelease": {
           "type": "boolean",

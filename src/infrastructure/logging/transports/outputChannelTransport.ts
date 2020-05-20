@@ -17,17 +17,13 @@ class OutputChannelTransport extends Transport {
   log(entry, callback) {
 
     setImmediate(() => {
-      this.channel.appendLine(`${entry[MESSAGE]}`);
-
       this.emit('logged', entry)
+
+      this.channel.appendLine(`${entry[MESSAGE]}`);
     });
 
     callback();
   }
-
-  // clear() {
-  //   this.channel.clear();
-  // }
 
 }
 

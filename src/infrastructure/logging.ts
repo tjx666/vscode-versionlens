@@ -1,1 +1,1 @@
-export * from './logging/loggerProvider';
+export * from './logging/loggerFactory';

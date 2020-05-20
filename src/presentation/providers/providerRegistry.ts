@@ -2,7 +2,7 @@
 import * as VsCodeTypes from 'vscode';
 
 import { KeyDictionary } from 'core/generics'
-import { ILogger, ILoggerProvider } from 'core/logging';
+import { ILogger } from 'core/logging';
 
 import { VersionLensExtension } from 'presentation/extension';
 import { AbstractVersionLensProvider } from 'presentation/providers'
@@ -68,28 +68,29 @@ class ProviderRegistry {
 export const providerRegistry = new ProviderRegistry();
 
 export async function registerProviders(
-  extension: VersionLensExtension, appLogger: ILogger, loggerProvider: ILoggerProvider
+  extension: VersionLensExtension, appLogger: ILogger
 ): Promise<Array<VsCodeTypes.Disposable>> {
 
   const { languages: { registerCodeLensProvider } } = require('vscode');
 
   const providerNames = providerRegistry.providerNames;
 
-  appLogger.debug('Registering providers %o', providerNames);
+  appLogger.debug('Registering providers %o', providerNames.join(', '));
 
   const promisedActivation = providerNames.map(packageManager => {
     return import(`infrastructure/providers/${packageManager}/activate`)
       .then(module => {
         appLogger.debug('Activating package manager %s', packageManager);
 
-        const providerLogger = loggerProvider.createLogger(packageManager);
-
-        const provider = module.activate(extension, providerLogger);
+        const provider = module.activate(
+          extension,
+          appLogger.child({ namespace: packageManager })
+        );
 
         appLogger.debug(
           'Activated package manager %s with file filter: %O',
           provider.config.options.providerName,
-          provider.config.options.selector,
+          provider.config.options.selector.pattern,
         );
 
         return providerRegistry.register(provider);

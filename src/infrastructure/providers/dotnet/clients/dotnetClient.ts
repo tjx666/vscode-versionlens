@@ -10,7 +10,7 @@ export class DotNetClient extends ProcessClientRequest {
   config: DotNetConfig;
 
   constructor(config: DotNetConfig, logger: ILogger) {
-    super(config.caching)
+    super(config.caching, logger)
     this.config = config;
   }
 
@@ -22,7 +22,7 @@ export class DotNetClient extends ProcessClientRequest {
       cwd
     );
 
-    return promisedCli.then(result => {
+    return await promisedCli.then(result => {
       const { data } = result;
 
       // reject when data contains "error"
@@ -44,7 +44,7 @@ export class DotNetClient extends ProcessClientRequest {
       return parseSourcesArray(lines);
     }).then(sources => {
       // combine the sources where feed take precedent
-      const feedSources = convertFeedsToSources(this.config.nuGetFeeds);
+      const feedSources = convertFeedsToSources(this.config.nuget.sources);
       return [
         ...feedSources,
         ...sources

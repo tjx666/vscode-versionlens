@@ -4,7 +4,7 @@ import * as VsCodeTypes from 'vscode';
 import { IFrozenRespository } from 'core/generics';
 
 import { VsCodeFrozenConfig } from 'infrastructure/configuration';
-import { createLoggerProvider } from 'infrastructure/logging';
+import { createWinstonLogger } from 'infrastructure/logging';
 
 import { registerProviders } from 'presentation/providers';
 import {
@@ -23,19 +23,19 @@ export async function composition(context: VsCodeTypes.ExtensionContext) {
 
   const extension = registerExtension(configuration);
 
-  const loggerProvider = createLoggerProvider(
+  const logger = createWinstonLogger(
     VersionLensExtension.extensionName,
     extension.logging
   );
 
-  const appLogger = loggerProvider.createLogger('extension');
+  const appLogger = logger.child({ namespace: 'extension' });
 
   registerTextDocumentEvents(extension.state, appLogger);
 
   const textEditorEvents = registerTextEditorEvents(extension.state, appLogger);
 
   const disposables = [
-    ...await registerProviders(extension, appLogger, loggerProvider),
+    ...await registerProviders(extension, appLogger),
     ...registerCommands(extension, appLogger)
   ]
   // subscribe command and provider disposables

@@ -1,6 +1,5 @@
 import { KeyStringDictionary } from 'core/generics';
 import { ILogger } from 'core/logging';
-
 import {
   AbstractClientRequest,
   HttpClientResponse,
@@ -10,10 +9,7 @@ import {
   ICachingOptions
 } from 'core/clients';
 
-type RequestLightHttpResponse = {
-  status: number;
-  responseText: string;
-}
+import { RequestLightHttpResponse } from 'definitions/requestLightHttpResponse';
 
 export class HttpClientRequest
   extends AbstractClientRequest<number, string>
@@ -43,8 +39,6 @@ export class HttpClientRequest
       if (cachedResp.rejected) return Promise.reject(cachedResp);
       return Promise.resolve(cachedResp);
     }
-
-    this.logger.debug("Requesting from %s", url)
 
     const requestLight = require('request-light');
     return requestLight.xhr({

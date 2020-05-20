@@ -5,6 +5,12 @@ export enum LogLevelTypes {
   Debug = "debug",
 }
 
+export type LoggerOptions = {
+
+  namespace: string;
+
+}
+
 export interface ILogger {
 
   log(level: LogLevelTypes, message: string, ...splats: any): void;
@@ -17,4 +23,5 @@ export interface ILogger {
 
   verbose(message: string, ...splats: any): void;
 
+  child(options: LoggerOptions): ILogger;
 }

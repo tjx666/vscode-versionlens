@@ -1,4 +1,4 @@
-import { ILogger } from 'core/logging';
+import { ILogger} from 'core/logging';
 import {
   DocumentFactory,
   SuggestionFactory,
@@ -34,19 +34,35 @@ export class NuGetPackageClient
 
   async fetchPackage(request: PackageRequest<NuGetClientData>): Promise<PackageDocument> {
     const dotnetSpec = parseVersionSpec(request.package.version);
+    return this.fetchPackageRetry(request, dotnetSpec);
+  }
 
-    const { autoCompleteUrl } = request.clientData;
+  async fetchPackageRetry(request: PackageRequest<NuGetClientData>, dotnetSpec: DotNetVersionSpec): Promise<PackageDocument> {
+    const urls = request.clientData.serviceUrls;
+    const autoCompleteUrl = urls[request.attempt];
 
     return createRemotePackageDocument(this, autoCompleteUrl, request, dotnetSpec)
       .catch((error: HttpClientResponse) => {
+
+        // increase the attempt number
+        request.attempt++;
+
+        // only retry if 404 and we have more urls to try
+        if (error.status === 404 && request.attempt < urls.length) {
+          // retry
+          return this.fetchPackageRetry(request, dotnetSpec)
+        }
+
         if (error.status === 404) {
           return DocumentFactory.createNotFound(
             request.providerName,
             request.package,
-            null,
-            { status: error.status, source: error.source }
+            PackageVersionTypes.Version,
+            ResponseFactory.createResponseStatus(error.source, 404)
           );
         }
+
+        // unexpected
         return Promise.reject(error);
       });
 
@@ -61,15 +77,10 @@ async function createRemotePackageDocument(
   dotnetSpec: DotNetVersionSpec
 ): Promise<PackageDocument> {
 
-  const queryParams = {
-    id: request.package.name,
-    prerelease: 'true',
-    semVerLevel: '2.0.0',
-    take: '1'
-  };
+  const packageUrl = url + `${request.package.name}/index.json`;
 
-  return client.requestJson(HttpClientRequestMethods.get, url, queryParams)
-    .then(function (httpResponse): PackageDocument {
+  return client.requestJson(HttpClientRequestMethods.get, packageUrl)
+    .then(function (httpResponse) {
 
       const { data } = httpResponse;
 
@@ -79,15 +90,6 @@ async function createRemotePackageDocument(
 
       const requested = request.package;
 
-      if (data.totalHits === 0) {
-        return DocumentFactory.createNotFound(
-          providerName,
-          requested,
-          PackageVersionTypes.Version,
-          ResponseFactory.createResponseStatus(httpResponse.source, 404)
-        )
-      }
-
       const packageInfo = data;
 
       const response = {
@@ -96,7 +98,7 @@ async function createRemotePackageDocument(
       };
 
       // sanitize to semver only versions
-      const rawVersions = VersionHelpers.filterSemverVersions(packageInfo.data);
+      const rawVersions = VersionHelpers.filterSemverVersions(packageInfo.versions);
 
       // seperate versions to releases and prereleases
       const { releases, prereleases } = VersionHelpers.splitReleasesFromArray(rawVersions)
@@ -149,3 +151,4 @@ async function createRemotePackageDocument(
       };
     });
 }
+

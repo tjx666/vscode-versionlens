@@ -5,13 +5,17 @@ import {
   IProcessClientRequest,
   ICachingOptions
 } from "core/clients";
+import { ILogger } from "core/logging";
 
 export class ProcessClientRequest
   extends AbstractClientRequest<string, string>
   implements IProcessClientRequest {
 
-  constructor(options: ICachingOptions) {
+  logger: ILogger;
+
+  constructor(options: ICachingOptions, logger: ILogger) {
     super(options);
+    this.logger = logger;
   }
 
   async request(
@@ -23,15 +27,17 @@ export class ProcessClientRequest
     const cacheKey = `${cmd} ${args.join(' ')}`;
 
     if (this.cache.options.duration > 0 && this.cache.hasExpired(cacheKey) === false) {
+      this.logger.debug('cached - %s', cacheKey);
+
       const cachedResp = this.cache.get(cacheKey);
       if (cachedResp.rejected) return Promise.reject(cachedResp);
       return Promise.resolve(cachedResp);
     }
 
+    this.logger.debug('executing - %s', cacheKey);
     const ps = require('@npmcli/promise-spawn');
     return ps(cmd, args, { cwd, stdioString: true })
       .then(result => {
-        // {code === 0, signal === null, stdout, stderr, and all the extras}
         return this.createCachedResponse(
           cacheKey,
           result.code,

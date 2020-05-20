@@ -25,9 +25,20 @@ export class DotNetVersionLensProvider
   constructor(config: DotNetConfig, logger: ILogger) {
     super(config, logger);
 
-    this.dotnetClient = new DotNetClient(config, logger);
-    this.nugetPackageClient = new NuGetPackageClient(config, logger);
-    this.nugetResourceClient = new NuGetResourceClient(config, logger);
+    this.dotnetClient = new DotNetClient(
+      config,
+      logger.child({ namespace: 'dotnet cli' })
+    );
+
+    this.nugetResourceClient = new NuGetResourceClient(
+      config,
+      logger.child({ namespace: 'dotnet nuget client' })
+    );
+
+    this.nugetPackageClient = new NuGetPackageClient(
+      config,
+      logger.child({ namespace: 'dotnet pkg client' })
+    );
   }
 
   async fetchVersionLenses(
@@ -42,42 +53,42 @@ export class DotNetVersionLensProvider
     );
     if (packageDependencies.length === 0) return null;
 
-    // gets source feeds from the project path
-    const promisedSources = this.dotnetClient.fetchSources(packagePath);
+    // ensure latest nuget sources from settings
+    this.config.nuget.defrost();
 
-    return promisedSources.then(sources => {
+    // get each service index source from the dotnet cli
+    const sources = await this.dotnetClient.fetchSources(packagePath)
 
-      const remoteSources = sources.filter(
-        s => s.protocol === RegistryProtocols.https
-      );
+    // https sources only
+    const remoteSources = sources.filter(
+      s => s.protocol === RegistryProtocols.https
+    );
 
-      const promisedResource = this.nugetResourceClient.fetchResource(
-        remoteSources[0]
-      );
+    // resolve each auto complete service url
+    const promised = remoteSources.map(
+      async (remoteSource) => {
+        return await this.nugetResourceClient.fetchResource(remoteSource);
+      }
+    );
 
-      return promisedResource.then((autoCompleteUrl: string) => {
+    const autoCompleteUrls = await Promise.all(promised);
+    if (autoCompleteUrls.length === 0) return null;
 
-        const clientData: NuGetClientData = {
-          autoCompleteUrl,
-        }
+    const clientData: NuGetClientData = { serviceUrls: autoCompleteUrls }
 
-        const includePrereleases = this.extension.state.prereleasesEnabled.value;
+    const includePrereleases = this.extension.state.prereleasesEnabled.value;
 
-        const context = {
-          includePrereleases,
-          clientData,
-        }
+    const context = {
+      includePrereleases,
+      clientData,
+    }
 
-        return RequestFactory.executeDependencyRequests(
-          packagePath,
-          this.nugetPackageClient,
-          packageDependencies,
-          context,
-        );
-
-      });
-
-    });
+    return RequestFactory.executeDependencyRequests(
+      packagePath,
+      this.nugetPackageClient,
+      packageDependencies,
+      context,
+    );
 
   }
 

@@ -27,7 +27,7 @@ export const NuGetResourceClientTests = {
 
   "fetchResource": {
 
-    "returns the autocomplete resource from a list of resources": async () => {
+    "returns the package resource from a list of resources": async () => {
       const testSource = {
         enabled: true,
         machineWide: false,
@@ -40,7 +40,7 @@ export const NuGetResourceClientTests = {
         responseText: JSON.stringify(Fixtures.success),
       };
 
-      const expected = 'https://unit-test-usnc.nuget.org/autocomplete';
+      const expected = 'https://api.nuget.org/v3-flatcontainer1/';
 
       mock('request-light', {
         xhr: options => {
@@ -54,41 +54,6 @@ export const NuGetResourceClientTests = {
 
       const cut = new NuGetResourceClient(config, new LoggerMock())
 
-      return cut.fetchResource(testSource)
-        .then(actualSources => {
-          assert.equal(actualSources, expected)
-        });
-    },
-
-    "returns first feed entry from config when fails to obtain a resource": async () => {
-
-      const testSource = {
-        enabled: true,
-        machineWide: false,
-        url: 'https://test',
-        protocol: UrlHelpers.RegistryProtocols.https
-      };
-
-      const mockResponse = {
-        status: 404,
-        responseText: 'an error occurred',
-      };
-
-      const expected = 'https://unit-test-fallback.nuget.org/autocomplete';
-
-      mock('request-light', { xhr: () => Promise.reject(mockResponse) })
-
-      // setup test feeds
-      const config = new DotNetConfig(
-        new VersionLensExtension(
-          {
-            get: (k) => <any>[expected],
-            defrost: () => null
-          }
-        )
-      )
-
-      const cut = new NuGetResourceClient(config, new LoggerMock())
       return cut.fetchResource(testSource)
         .then(actualSources => {
           assert.equal(actualSources, expected)
@@ -109,7 +74,12 @@ export const NuGetResourceClientTests = {
         responseText: 'an error occurred',
       };
 
-      const expected = "Could not obtain a nuget resource";
+      const expectedResponse = {
+        source: 'remote',
+        status: 404,
+        data: 'an error occurred',
+        rejected: true
+      };
 
       mock('request-light', { xhr: () => Promise.reject(mockResponse) })
 
@@ -122,9 +92,9 @@ export const NuGetResourceClientTests = {
       )
 
       const cut = new NuGetResourceClient(config, new LoggerMock())
-      return cut.fetchResource(testSource)
+      await cut.fetchResource(testSource)
         .catch(err => {
-          assert.equal(err, expected)
+          assert.deepEqual(err, expectedResponse)
         });
     },
 

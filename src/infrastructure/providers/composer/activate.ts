@@ -1,4 +1,5 @@
 import { ILogger } from 'core/logging';
+
 import { VersionLensExtension } from 'presentation/extension';
 
 import { ComposerVersionLensProvider } from './composerProvider';

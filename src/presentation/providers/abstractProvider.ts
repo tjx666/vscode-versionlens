@@ -67,6 +67,9 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
 
     return this.fetchVersionLenses(packagePath, document, token)
       .then(responses => {
+
+        this.extension.state.providerBusy.value = false;
+        
         if (responses === null) return null;
 
         return VersionLensFactory.createVersionLensesFromResponses(

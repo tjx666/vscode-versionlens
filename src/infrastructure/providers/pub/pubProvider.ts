@@ -17,7 +17,10 @@ export class PubVersionLensProvider
 
   constructor(config: PubConfig, logger: ILogger) {
     super(config, logger);
-    this.pubClient = new PubClient(config, logger);
+    this.pubClient = new PubClient(
+      config,
+      logger.child({ namespace: 'pub pkg client' })
+    );
   }
 
   async fetchVersionLenses(
