@@ -51,7 +51,7 @@ function collectDependencyNodes(nodes, opts: YamlOptions, collector = []) {
             keyRange.end + 2,
             keyRange.end + 2,
           ],
-          value: 'latest',
+          value: '',
           type: null
         }
       }
@@ -108,7 +108,15 @@ export function createDependencyLensFromPlainType(pair, opts: YamlOptions): IPac
     null
   );
 
-  const valueRange = getRangeFromCstNode(pair.key.cstNode, opts);
+  let valueRange
+  if (pair.value.cstNode) {
+    valueRange = getRangeFromCstNode(pair.value.cstNode, opts);
+  } else {
+    // handle blank values
+    const start = pair.value.range[0];
+    valueRange = { start, end: start }
+  }
+
   const versionRange = createRange(
     valueRange.start,
     valueRange.end,
