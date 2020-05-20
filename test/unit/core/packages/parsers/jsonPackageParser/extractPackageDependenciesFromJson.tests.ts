@@ -7,22 +7,25 @@ const assert = require('assert');
 export default {
 
   "returns empty when no matches found": () => {
-    const filterNames = []
-    const results = extractPackageDependenciesFromJson('', filterNames);
+    const includeNames = []
+    const results = extractPackageDependenciesFromJson('', includeNames);
     assert.equal(results.length, 0);
   },
 
   "returns empty when no dependency entry names match": () => {
-    const filterNames = ["non-dependencies"]
-    const results = extractPackageDependenciesFromJson('', filterNames);
+    const includeNames = ["non-dependencies"]
+    const results = extractPackageDependenciesFromJson(
+      JSON.stringify(Fixtures.extractDependencyEntries.test),
+      includeNames
+    );
     assert.equal(results.length, 0);
   },
 
   "extracts dependency entries from json": () => {
-    const filterNames = ["dependencies"]
+    const includeNames = ["dependencies"]
     const results = extractPackageDependenciesFromJson(
       JSON.stringify(Fixtures.extractDependencyEntries.test),
-      filterNames
+      includeNames
     );
     assert.deepEqual(results, Fixtures.extractDependencyEntries.expected);
   }
