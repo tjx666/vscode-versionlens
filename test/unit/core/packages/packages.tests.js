@@ -28,7 +28,9 @@ export const PackageSuggestionFactoryTests = {
 
 // Package Parser Tests
 import extractPackageDependenciesFromJson from './parsers/jsonPackageParser/extractPackageDependenciesFromJson.tests';
+import extractPackageDependenciesFromYaml from './parsers/yamlPackageParser/extractPackageDependenciesFromYaml.tests';
 
 export const PackageParserTests = {
-  extractPackageDependenciesFromJson
+  extractPackageDependenciesFromJson,
+  extractPackageDependenciesFromYaml,
 }
