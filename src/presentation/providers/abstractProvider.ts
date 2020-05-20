@@ -60,16 +60,14 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
     const packagePath = dirname(document.uri.fsPath);
 
     // set in progress
-    this.extension.state.providerBusy.value = true;
+    this.extension.state.providerBusy.value++;
 
     // unfreeze config per file request
     this.config.caching.defrost();
 
     return this.fetchVersionLenses(packagePath, document, token)
       .then(responses => {
-
-        this.extension.state.providerBusy.value = false;
-        
+        this.extension.state.providerBusy.value--;
         if (responses === null) return null;
 
         return VersionLensFactory.createVersionLensesFromResponses(
@@ -84,18 +82,11 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
     token: VsCodeTypes.CancellationToken
   ): Promise<VersionLens> {
     if (codeLens instanceof VersionLens) {
-      // set in progress
-      this.extension.state.providerBusy.value = true;
-
       // evaluate the code lens
       const evaluated = this.evaluateCodeLens(codeLens, token);
 
       // update the progress
-      return Promise.resolve(evaluated)
-        .then(result => {
-          this.extension.state.providerBusy.value = false;
-          return result;
-        })
+      return Promise.resolve(evaluated);
     }
   }
 

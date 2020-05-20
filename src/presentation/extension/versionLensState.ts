@@ -19,7 +19,7 @@ export class VersionLensState {
   installedStatusesEnabled: ContextState<boolean>;
 
   providerActive: ContextState<boolean>;
-  providerBusy: ContextState<boolean>;
+  providerBusy: ContextState<number>;
   providerSupportsPrereleases: ContextState<boolean>;
   providerSupportsInstalledStatuses: ContextState<boolean>;
 
@@ -47,7 +47,7 @@ export class VersionLensState {
 
     this.providerBusy = new ContextState(
       StateContributions.ProviderBusy,
-      false
+      0
     );
 
     this.providerSupportsPrereleases = new ContextState(
@@ -59,7 +59,6 @@ export class VersionLensState {
       StateContributions.ProviderSupportsInstalledStatuses,
       false
     );
-
 
   }
 

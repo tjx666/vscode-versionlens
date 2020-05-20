@@ -58,7 +58,7 @@ class ProviderRegistry {
         provider.config.options.selector.pattern
       ));
 
-    if (filtered.length === 0) return null;
+    if (filtered.length === 0) return [];
 
     return filtered;
   }

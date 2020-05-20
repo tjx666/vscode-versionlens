@@ -16,7 +16,6 @@ export enum CommandContributions {
   HidePrereleaseVersions = 'versionlens.onHidePrereleaseVersions',
   ShowVersionLenses = 'versionlens.onShowVersionLenses',
   HideVersionLenses = 'versionlens.onHideVersionLenses',
-  ShowingProgress = 'versionlens.onShowingProgress',
   UpdateDependencyCommand = 'versionlens.onUpdateDependencyCommand',
   LinkCommand = "versionlens.onLinkCommand"
 }
@@ -73,8 +72,6 @@ export class VersionLensCommands {
         InstalledStatusHelpers.clearDecorations();
       });
   }
-
-  onShowingProgress(file) { }
 
   onUpdateDependencyCommand(codeLens, packageVersion) {
     if (codeLens.__replaced) return Promise.resolve();

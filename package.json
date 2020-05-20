@@ -142,10 +142,6 @@
     "menus": {
       "commandPalette": [
         {
-          "command": "versionlens.onShowingProgress",
-          "when": "false"
-        },
-        {
           "command": "versionlens.onShowInstalledStatuses",
           "when": "versionlens.enabled && versionlens.providerActive"
         },
@@ -182,6 +178,11 @@
           "group": "navigation@1"
         },
         {
+          "command": "versionlens.onShowingProgress",
+          "when": "versionlens.providerBusy && textCompareEditorVisible == false",
+          "group": "navigation@1"
+        },
+        {
           "command": "versionlens.onShowPrereleaseVersions",
           "when": "versionlens.prereleasesEnabled == false && versionlens.enabled && versionlens.providerActive && versionlens.providerSupportsPrereleases && textCompareEditorVisible == false",
           "group": "navigation@2"
@@ -200,11 +201,6 @@
           "command": "versionlens.onHideInstalledStatuses",
           "when": "versionlens.installedStatusesEnabled && versionlens.enabled && versionlens.providerActive && versionlens.providerSupportsInstalledStatuses && textCompareEditorVisible == false",
           "group": "navigation@3"
-        },
-        {
-          "command": "versionlens.onShowingProgress",
-          "when": "versionlens.enabled && versionlens.providerActive && versionlens.providerBusy && textCompareEditorVisible == false",
-          "group": "navigation@1"
         }
       ]
     },
