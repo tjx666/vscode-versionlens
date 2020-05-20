@@ -8,7 +8,6 @@ import { RequestFactory } from 'core/packages';
 import { VersionLensFetchResponse } from 'presentation/providers';
 
 import { NpmVersionLensProvider } from 'providers/npm/npmProvider';
-import { npmReplaceVersion } from 'providers/npm/npmUtils';
 
 import { extractPackageDependenciesFromJson } from './jspmPackageParser';
 import { JspmConfig } from './jspmConfig';
@@ -36,7 +35,6 @@ export class JspmVersionLensProvider extends NpmVersionLensProvider {
     const context = {
       includePrereleases,
       clientData: null,
-      replaceVersion: npmReplaceVersion,
     }
 
     return RequestFactory.executeDependencyRequests(

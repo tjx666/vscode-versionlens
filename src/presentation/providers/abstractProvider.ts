@@ -3,7 +3,7 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import { ILogger } from 'core/logging';
-import { PackageSourceTypes, PackageResponseErrors, PackageResponse } from 'core/packages';
+import { PackageSourceTypes, PackageResponseErrors, PackageResponse, ReplaceVersionFunction, VersionHelpers } from 'core/packages';
 
 import {
   CommandFactory,
@@ -28,6 +28,8 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
   logger: ILogger;
 
   extension: VersionLensExtension;
+
+  customReplaceFn: ReplaceVersionFunction;
 
   // abstract updateOutdated(packagePath: string): Promise<any>;
 
@@ -81,7 +83,8 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
 
         return VersionLensFactory.createFromPackageResponses(
           document,
-          responses
+          responses,
+          this.customReplaceFn || defaultReplaceFn
         );
       })
   }
@@ -100,8 +103,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
   }
 
   evaluateCodeLens(
-    codeLens: IVersionCodeLens,
-    token: VsCodeTypes.CancellationToken
+    codeLens: IVersionCodeLens, token: VsCodeTypes.CancellationToken
   ) {
     if (codeLens.hasPackageError(PackageResponseErrors.Unexpected))
       return CommandFactory.createPackageUnexpectedError(codeLens);
@@ -121,4 +123,12 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
     return CommandFactory.createSuggestedVersionCommand(codeLens)
   }
 
+}
+
+
+function defaultReplaceFn(response: PackageResponse, newVersion: string): string {
+  return VersionHelpers.formatWithExistingLeading(
+    this.package.requested.version,
+    newVersion
+  );
 }

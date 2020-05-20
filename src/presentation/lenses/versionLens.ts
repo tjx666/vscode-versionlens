@@ -3,10 +3,10 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import {
-  VersionHelpers,
   PackageResponse,
   PackageResponseErrors,
   PackageSourceTypes,
+  ReplaceVersionFunction,
 } from 'core/packages';
 
 import { IVersionCodeLens } from "./definitions/iVersionCodeLens";
@@ -22,34 +22,23 @@ export class VersionLens extends CodeLens implements IVersionCodeLens {
 
   documentUrl: VsCodeTypes.Uri;
 
+  replaceVersionFn: ReplaceVersionFunction;
+
   command: any;
 
   constructor(
     commandRange: VsCodeTypes.Range,
     replaceRange: VsCodeTypes.Range,
-    response: PackageResponse,
-    documentUrl: VsCodeTypes.Uri
+    packageResponse: PackageResponse,
+    documentUrl: VsCodeTypes.Uri,
+    replaceVersionFn: ReplaceVersionFunction
   ) {
     super(commandRange);
     this.replaceRange = replaceRange || commandRange;
-    this.package = response;
+    this.package = packageResponse;
     this.documentUrl = documentUrl;
     this.command = null;
-  }
-
-  replaceVersionFn(newVersion: string) {
-    if (!this.package.replaceVersionFn) {
-      return VersionHelpers.formatWithExistingLeading(
-        this.package.requested.version,
-        newVersion
-      );
-    }
-
-    return this.package.replaceVersionFn.call(
-      this,
-      this.package,
-      newVersion
-    );
+    this.replaceVersionFn = replaceVersionFn;
   }
 
   hasPackageSource(source: PackageSourceTypes): boolean {

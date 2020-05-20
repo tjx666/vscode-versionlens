@@ -39,6 +39,8 @@ export class NpmVersionLensProvider
       config,
       logger.child({ namespace: 'npm pkg client' })
     );
+
+    this.customReplaceFn = npmReplaceVersion;
   }
 
   async fetchVersionLenses(
@@ -58,7 +60,6 @@ export class NpmVersionLensProvider
     const context = {
       includePrereleases,
       clientData: null,
-      replaceVersion: npmReplaceVersion
     }
 
     if (this.config.github.accessToken &&

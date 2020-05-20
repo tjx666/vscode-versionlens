@@ -1,9 +1,5 @@
 import { ClientResponseSource, HttpClientResponse } from "core/clients";
-import {
-  PackageResponseErrors,
-  ReplaceVersionFunction,
-  PackageResponseStatus,
-} from "../definitions/packageResponse";
+import { PackageResponseErrors, PackageResponseStatus } from "../definitions/packageResponse";
 import { PackageRequest } from "../definitions/packageRequest";
 import { PackageDocument, PackageSuggestion } from "../definitions/packageDocument";
 import { PackageResponse } from "../models/packageResponse";
@@ -17,8 +13,7 @@ export function createResponseStatus(source: ClientResponseSource, status: numbe
 
 export function createSuccess<TClientData>(
   request: PackageRequest<TClientData>,
-  response: PackageDocument,
-  replaceVersionFn: ReplaceVersionFunction
+  response: PackageDocument
 ): Array<PackageResponse> {
   // map the documents to responses
   return response.suggestions.map(function (suggestion: PackageSuggestion, order: number): PackageResponse {
@@ -32,7 +27,6 @@ export function createSuccess<TClientData>(
       requested: response.requested,
       resolved: response.resolved,
       suggestion,
-      replaceVersionFn
     };
   });
 }

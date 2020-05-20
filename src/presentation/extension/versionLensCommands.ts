@@ -8,6 +8,7 @@ import { providerRegistry } from 'presentation/providers';
 import { VersionLensExtension } from "./versionLensExtension";
 import * as InstalledStatusHelpers from './helpers/installedStatusHelpers';
 import { VersionLensState } from './versionLensState';
+import { VersionLens } from 'presentation/lenses/versionLens';
 
 export enum CommandContributions {
   ShowInstalledStatuses = 'versionlens.onShowInstalledStatuses',
@@ -31,60 +32,63 @@ export class VersionLensCommands {
     this.state = extensionState;
   }
 
-  onShowVersionLenses(file) {
+  onShowVersionLenses(resourceUri: VsCodeTypes.Uri) {
     this.state.enabled.change(true)
       .then(_ => {
         providerRegistry.refreshActiveCodeLenses();
       });
   }
 
-  onHideVersionLenses(file) {
+  onHideVersionLenses(resourceUri: VsCodeTypes.Uri) {
     this.state.enabled.change(false)
       .then(_ => {
         providerRegistry.refreshActiveCodeLenses();
       });
   }
 
-  onShowPrereleaseVersions() {
+  onShowPrereleaseVersions(resourceUri: VsCodeTypes.Uri) {
     this.state.prereleasesEnabled.change(true)
       .then(_ => {
         providerRegistry.refreshActiveCodeLenses();
       });
   }
 
-  onHidePrereleaseVersions(file) {
+  onHidePrereleaseVersions(resourceUri: VsCodeTypes.Uri) {
     this.state.prereleasesEnabled.change(false)
       .then(_ => {
         providerRegistry.refreshActiveCodeLenses();
       });
   }
 
-  onShowInstalledStatuses(file) {
+  onShowInstalledStatuses(resourceUri: VsCodeTypes.Uri) {
     this.state.installedStatusesEnabled.change(true)
       .then(_ => {
         providerRegistry.refreshActiveCodeLenses();
       });
   }
 
-  onHideInstalledStatuses(file) {
+  onHideInstalledStatuses(resourceUri: VsCodeTypes.Uri) {
     this.state.installedStatusesEnabled.change(false)
       .then(_ => {
         InstalledStatusHelpers.clearDecorations();
       });
   }
 
-  onUpdateDependencyCommand(codeLens, packageVersion) {
-    if (codeLens.__replaced) return Promise.resolve();
+  onUpdateDependencyCommand(codeLens: VersionLens, packageVersion: string) {
+    if ((<any>codeLens).__replaced) return Promise.resolve();
+
     const { workspace, WorkspaceEdit } = require('vscode');
     const edit = new WorkspaceEdit();
     edit.replace(codeLens.documentUrl, codeLens.replaceRange, packageVersion);
+
     return workspace.applyEdit(edit)
-      .then(done => codeLens.__replaced = true);
+      .then(done => (<any>codeLens).__replaced = true);
   }
 
-  onLinkCommand(codeLens) {
+  onLinkCommand(codeLens: VersionLens) {
     const path = require('path');
     const opener = require('opener');
+
     if (codeLens.package.source === PackageSourceTypes.Directory) {
       const filePathToOpen = path.resolve(
         path.dirname(codeLens.documentUrl.fsPath),
@@ -93,7 +97,8 @@ export class VersionLensCommands {
       opener(filePathToOpen);
       return;
     }
-    opener(codeLens.package.meta.remoteUrl);
+
+    // opener(codeLens.package.remoteUrl);
   }
 
 }

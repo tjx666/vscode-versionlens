@@ -7,8 +7,7 @@ import {
 import { PackageIdentifier } from "../definitions/packageRequest";
 import {
   PackageResponseErrors,
-  PackageResponseStatus,
-  ReplaceVersionFunction
+  PackageResponseStatus
 } from "../definitions/packageResponse";
 import { PackageDependencyRange } from "../definitions/iPackageDependencyLens";
 
@@ -27,5 +26,4 @@ export class PackageResponse {
   type?: PackageVersionTypes;
   resolved?: PackageNameVersion;
   suggestion?: PackageSuggestion;
-  replaceVersionFn?: ReplaceVersionFunction;
 }

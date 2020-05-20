@@ -4,12 +4,10 @@ import {
   IPackageDependencyLens,
   PackageClientContext,
   PackageRequest,
-  ReplaceVersionFunction,
   IPackageClient,
   PackageSuggestionFlags,
   PackageResponse,
 } from 'core/packages';
-
 
 export async function executeDependencyRequests<TClientData>(
   packagePath: string,
@@ -23,7 +21,6 @@ export async function executeDependencyRequests<TClientData>(
   const {
     includePrereleases,
     clientData,
-    replaceVersion,
   } = context;
 
   const results = [];
@@ -48,8 +45,7 @@ export async function executeDependencyRequests<TClientData>(
       // execute request
       const promisedDependency = RequestFactory.executePackageRequest(
         client,
-        clientRequest,
-        replaceVersion
+        clientRequest
       );
 
       // flatten responses
@@ -72,7 +68,6 @@ export async function executeDependencyRequests<TClientData>(
 export async function executePackageRequest<TClientData>(
   client: IPackageClient<TClientData>,
   request: PackageRequest<TClientData>,
-  replaceVersionFn: ReplaceVersionFunction,
 ): Promise<Array<PackageResponse> | PackageResponse> {
 
   client.logger.debug(`Queued package: %s`, request.package.name);
@@ -93,7 +88,7 @@ export async function executePackageRequest<TClientData>(
         )
       }
 
-      return ResponseFactory.createSuccess(request, response, replaceVersionFn);
+      return ResponseFactory.createSuccess(request, response);
     })
     .catch(function (error: PackageResponse) {
 

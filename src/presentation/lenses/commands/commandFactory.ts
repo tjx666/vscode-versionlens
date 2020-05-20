@@ -38,7 +38,7 @@ export function createSuggestedVersionCommand(codeLens: VersionLens) {
   if (!isStatus) {
     const replaceWithVersion: string = isPrerelease || isTag ?
       version :
-      codeLens.replaceVersionFn(version);
+      codeLens.replaceVersionFn(codeLens.package, version);
 
     const prefix = isTag ? '' : name + ': ';
     return codeLens.setCommand(

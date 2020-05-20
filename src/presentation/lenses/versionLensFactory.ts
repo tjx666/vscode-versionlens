@@ -2,30 +2,34 @@
 import * as VsCodeTypes from 'vscode';
 
 // imports
-import { PackageResponse } from 'core/packages';
+import { PackageResponse, ReplaceVersionFunction } from 'core/packages';
 import { VersionLens } from './versionLens';
 
 export function createFromPackageResponses(
-  document: VsCodeTypes.TextDocument, responses: Array<PackageResponse>
+  document: VsCodeTypes.TextDocument,
+  responses: Array<PackageResponse>,
+  replaceVersionFn: ReplaceVersionFunction,
 ): Array<VersionLens> {
-  // multiple lens for a package (versions, tags etc...)
   return responses.map(
     function (response) {
       return createFromPackageResponse(
         response,
-        document
+        document,
+        replaceVersionFn
       );
     }
   );
 }
 
 function createFromPackageResponse(
-  response: PackageResponse, document: VsCodeTypes.TextDocument
+  packageResponse: PackageResponse,
+  document: VsCodeTypes.TextDocument,
+  replaceVersionFn: ReplaceVersionFunction,
 ): VersionLens {
   const { Uri, Range } = require('vscode')
 
-  const { nameRange, versionRange } = response;
-  const commandRangePos = nameRange.start + response.order;
+  const { nameRange, versionRange } = packageResponse;
+  const commandRangePos = nameRange.start + packageResponse.order;
   const commandRange = new Range(
     document.positionAt(commandRangePos),
     document.positionAt(commandRangePos)
@@ -37,7 +41,8 @@ function createFromPackageResponse(
   return new VersionLens(
     commandRange,
     replaceRange,
-    response,
-    Uri.file(document.fileName)
+    packageResponse,
+    Uri.file(document.fileName),
+    replaceVersionFn
   );
 }
