@@ -30,6 +30,11 @@ export async function composition(context: VsCodeTypes.ExtensionContext) {
 
   const appLogger = logger.child({ namespace: 'extension' });
 
+  appLogger.debug('path: %s', context.extensionPath);
+  appLogger.debug('log path: %s', context.logPath);
+  appLogger.debug('global storage path: %s', context.globalStoragePath);
+  appLogger.debug('local storage path: %s', context.storagePath);
+
   registerTextDocumentEvents(extension.state, appLogger);
 
   const textEditorEvents = registerTextEditorEvents(extension.state, appLogger);
