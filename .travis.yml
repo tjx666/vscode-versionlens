@@ -20,7 +20,7 @@ before_install:
     fi
 
 install:
-  - npm install
+  - npm ci
 
 script:
   - npm test
