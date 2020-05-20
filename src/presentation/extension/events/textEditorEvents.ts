@@ -26,19 +26,14 @@ export class TextEditorEvents {
   onDidChangeActiveTextEditor(textEditor: VsCodeTypes.TextEditor) {
     // maintain versionLens.providerActive state
     // each time the active editor changes
+
     if (!textEditor) {
       // disable icons when no editor
       this.state.providerActive.value = false;
       return;
     }
 
-    // clearDecorations();
-
-    if (!textEditor.document) {
-      // disable icons when no document
-      this.state.providerActive.value = false;
-      return;
-    }
+    if (textEditor.document.uri.scheme !== 'file') return;
 
     const providersMatchingFilename = providerRegistry.getByFileName(
       textEditor.document.fileName
