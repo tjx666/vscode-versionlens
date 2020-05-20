@@ -1,6 +1,6 @@
 export * from './packages/definitions/semverSpec';
 export * from './packages/definitions/iPackageClient';
-export * from './packages/definitions/iPackageDependencyLens';
+export * from './packages/definitions/iPackageDependency';
 export * from './packages/definitions/packageDocument';
 export * from "./packages/definitions/packageRequest";
 export * from "./packages/definitions/packageResponse";

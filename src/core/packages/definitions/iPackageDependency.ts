@@ -3,7 +3,7 @@ export type PackageDependencyRange = {
   end: number;
 }
 
-export interface IPackageDependencyLens {
+export interface IPackageDependency {
 
   nameRange: PackageDependencyRange;
 

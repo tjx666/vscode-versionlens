@@ -1,4 +1,4 @@
-import { IPackageDependencyLens } from "../definitions/iPackageDependencyLens";
+import { IPackageDependency } from "../definitions/iPackageDependency";
 
 type YamlOptions = {
   hasCrLf: boolean,
@@ -8,7 +8,7 @@ type YamlOptions = {
 export function extractPackageDependenciesFromYaml(
   yaml: string,
   filterPropertyNames: Array<string>
-): Array<IPackageDependencyLens> {
+): Array<IPackageDependency> {
   const { Document, parseCST } = require('yaml');
 
   // verbose parsing to handle CRLF scenarios
@@ -21,12 +21,13 @@ export function extractPackageDependenciesFromYaml(
   const opts = {
     hasCrLf: yaml.indexOf('\r\n') > 0,
     filterPropertyNames,
+    yaml,
   };
 
   return extractDependenciesFromNodes(yamlDoc.contents.items, opts);
 }
 
-export function extractDependenciesFromNodes(topLevelNodes, opts: YamlOptions): IPackageDependencyLens[] {
+export function extractDependenciesFromNodes(topLevelNodes, opts: YamlOptions): IPackageDependency[] {
   const collector = [];
 
   topLevelNodes.forEach(
@@ -40,7 +41,7 @@ export function extractDependenciesFromNodes(topLevelNodes, opts: YamlOptions): 
   return collector
 }
 
-function collectDependencyNodes(nodes, opts: YamlOptions, collector: Array<IPackageDependencyLens>) {
+function collectDependencyNodes(nodes, opts: YamlOptions, collector: Array<IPackageDependency>) {
   nodes.forEach(
     function (pair) {
       // node may be in the form "no_version_dep:", which we will indicate as the latest
@@ -67,7 +68,7 @@ function collectDependencyNodes(nodes, opts: YamlOptions, collector: Array<IPack
 }
 
 export function createDependencyLensFromMapType(
-  nodes, parentKey, opts: YamlOptions, collector: Array<IPackageDependencyLens>
+  nodes, parentKey, opts: YamlOptions, collector: Array<IPackageDependency>
 ) {
   nodes.forEach(
     function (pair) {
@@ -102,7 +103,7 @@ export function createDependencyLensFromMapType(
 
 }
 
-export function createDependencyLensFromPlainType(pair, opts: YamlOptions): IPackageDependencyLens {
+export function createDependencyLensFromPlainType(pair, opts: YamlOptions): IPackageDependency {
   const keyRange = getRangeFromCstNode(pair.key.cstNode, opts);
   const nameRange = createRange(
     keyRange.start,

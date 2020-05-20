@@ -1,5 +1,5 @@
 import { PackageDocument } from './packageDocument';
-import { IPackageDependencyLens } from './iPackageDependencyLens';
+import { IPackageDependency } from './iPackageDependency';
 
 export type PackageIdentifier = {
   path: string;
@@ -19,7 +19,7 @@ export type PackageRequest<TClientData> = {
   clientData: TClientData,
 
   // dependency ranges
-  dependency: IPackageDependencyLens;
+  dependency: IPackageDependency;
 
   // package to fetch
   package: PackageIdentifier;

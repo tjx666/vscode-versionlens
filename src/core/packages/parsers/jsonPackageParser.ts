@@ -1,10 +1,10 @@
 // vscode references
-import { IPackageDependencyLens } from "../definitions/iPackageDependencyLens";
+import { IPackageDependency } from "../definitions/iPackageDependency";
 
 export function extractPackageDependenciesFromJson(
   json: string,
   filterPropertyNames: Array<string>
-): Array<IPackageDependencyLens> {
+): Array<IPackageDependency> {
   const jsonErrors = [];
   const jsonParser = require("jsonc-parser");
   const jsonTree = jsonParser.parseTree(json, jsonErrors);
@@ -12,7 +12,7 @@ export function extractPackageDependenciesFromJson(
   return extractFromNodes(jsonTree.children, filterPropertyNames);
 }
 
-export function extractFromNodes(topLevelNodes, filterPropertyNames: string[]): IPackageDependencyLens[] {
+export function extractFromNodes(topLevelNodes, filterPropertyNames: string[]): IPackageDependency[] {
   const collector = [];
 
   topLevelNodes.forEach(
@@ -42,7 +42,7 @@ function collectDependencyNodes(nodes, parentKey, filterName: string, collector 
   )
 }
 
-function createFromProperty(keyEntry, valueEntry): IPackageDependencyLens {
+function createFromProperty(keyEntry, valueEntry): IPackageDependency {
   const nameRange = {
     start: keyEntry.offset,
     end: keyEntry.offset,

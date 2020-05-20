@@ -1,9 +1,9 @@
 import { Nullable } from "core/generics";
-import { IPackageDependencyLens, PackageDependencyRange } from "core/packages";
+import { IPackageDependency, PackageDependencyRange } from "core/packages";
 
 export function extractDotnetLensDataFromDocument(
   xml: string, filterPropertyNames: Array<string>
-): Array<IPackageDependencyLens> {
+): Array<IPackageDependency> {
 
   const xmldoc = require('xmldoc');
   const xmlDoc = new xmldoc.XmlDocument(xml);
@@ -33,7 +33,7 @@ function extractPackageLensDataFromNodes(
   return collector
 }
 
-function createFromAttribute(node, xml: string): IPackageDependencyLens {
+function createFromAttribute(node, xml: string): IPackageDependency {
   const nameRange = {
     start: node.startTagPosition,
     end: node.startTagPosition,

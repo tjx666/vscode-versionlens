@@ -1,7 +1,7 @@
 import {
   RequestFactory,
   ResponseFactory,
-  IPackageDependencyLens,
+  IPackageDependency,
   PackageClientContext,
   PackageRequest,
   IPackageClient,
@@ -12,7 +12,7 @@ import {
 export async function executeDependencyRequests<TClientData>(
   packagePath: string,
   client: IPackageClient<TClientData>,
-  dependencies: Array<IPackageDependencyLens>,
+  dependencies: Array<IPackageDependency>,
   context: PackageClientContext<TClientData>
 ): Promise<Array<PackageResponse>> {
 

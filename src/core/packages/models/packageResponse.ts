@@ -9,7 +9,7 @@ import {
   PackageResponseErrors,
   PackageResponseStatus
 } from "../definitions/packageResponse";
-import { PackageDependencyRange } from "../definitions/iPackageDependencyLens";
+import { PackageDependencyRange } from "../definitions/iPackageDependency";
 
 export class PackageResponse {
   providerName: string;
