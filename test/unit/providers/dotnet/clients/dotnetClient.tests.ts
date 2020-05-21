@@ -55,7 +55,7 @@ export const DotnetClientRequestTests = {
         {
           enabled: true,
           machineWide: false,
-          url: 'http://selfsigned/v3/index.json',
+          url: 'http://non-ssl/v3/index.json',
           protocol: UrlHelpers.RegistryProtocols.http
         },
         {
