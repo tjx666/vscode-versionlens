@@ -2,15 +2,18 @@ import { KeyStringDictionary } from 'core/generics';
 
 export enum RegistryProtocols {
   file = 'file:',
+  http = 'http:',
   https = 'https:',
 }
 
 export function getProtocolFromUrl(url: string): RegistryProtocols {
   const { parse } = require('url');
   const sourceUrl = parse(url);
-  return (sourceUrl.protocol !== RegistryProtocols.https) ?
+  const registryProtocol = sourceUrl.protocol === null ?
     RegistryProtocols.file :
-    RegistryProtocols.https;
+    RegistryProtocols[sourceUrl.protocol.substr(0, sourceUrl.protocol.length - 1)];
+
+  return registryProtocol || RegistryProtocols.file;
 }
 
 export function createUrl(baseUrl: string, queryParams: KeyStringDictionary): string {

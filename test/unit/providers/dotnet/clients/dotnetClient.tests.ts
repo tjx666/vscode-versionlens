@@ -36,7 +36,7 @@ export const DotnetClientRequestTests = {
 
     "returns an Array<DotNetSource> of enabled sources": async () => {
       const testFeeds = [
-        'https://test.feed/v3/index.json'
+        'https://test.feed/v3/index.json',
       ];
 
       const expected = [
@@ -51,6 +51,12 @@ export const DotnetClientRequestTests = {
           machineWide: false,
           url: 'https://api.nuget.org/v3/index.json',
           protocol: UrlHelpers.RegistryProtocols.https
+        },
+        {
+          enabled: true,
+          machineWide: false,
+          url: 'http://selfsigned/v3/index.json',
+          protocol: UrlHelpers.RegistryProtocols.http
         },
         {
           enabled: true,
@@ -85,7 +91,6 @@ export const DotnetClientRequestTests = {
         });
 
     },
-
 
     "return 0 items when no sources are enabled": async () => {
       const testFeeds = [];
