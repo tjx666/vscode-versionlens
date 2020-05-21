@@ -6,6 +6,7 @@ enum StateContributions {
   PrereleasesEnabled = 'versionlens.prereleasesEnabled',
   ProviderActive = 'versionlens.providerActive',
   ProviderBusy = 'versionlens.providerBusy',
+  ProviderError = 'versionlens.providerError',
   ProviderSupportsPrereleases = 'versionlens.providerSupportsPrereleases',
   ProviderSupportsInstalledStatuses = 'versionlens.providerSupportsInstalledStatuses',
   InstalledStatusesEnabled = 'versionlens.installedStatusesEnabled',
@@ -20,6 +21,8 @@ export class VersionLensState {
 
   providerActive: ContextState<boolean>;
   providerBusy: ContextState<number>;
+  providerError: ContextState<boolean>;
+
   providerSupportsPrereleases: ContextState<boolean>;
   providerSupportsInstalledStatuses: ContextState<boolean>;
 
@@ -48,6 +51,11 @@ export class VersionLensState {
     this.providerBusy = new ContextState(
       StateContributions.ProviderBusy,
       0
+    );
+
+    this.providerError = new ContextState(
+      StateContributions.ProviderError,
+      false
     );
 
     this.providerSupportsPrereleases = new ContextState(

@@ -11,6 +11,7 @@ import { VersionLensState } from './versionLensState';
 import { VersionLens } from 'presentation/lenses/versionLens';
 
 export enum CommandContributions {
+  ShowError = 'versionlens.onShowError',
   ShowInstalledStatuses = 'versionlens.onShowInstalledStatuses',
   HideInstalledStatuses = 'versionlens.onHideInstalledStatuses',
   ShowPrereleaseVersions = 'versionlens.onShowPrereleaseVersions',
@@ -30,6 +31,10 @@ export class VersionLensCommands {
   constructor(extensionState: VersionLensState, logger: ILogger) {
     this.logger = logger;
     this.state = extensionState;
+  }
+
+  onShowError(resourceUri: VsCodeTypes.Uri) {
+    // todo focus the ouput channel to show the error
   }
 
   onShowVersionLenses(resourceUri: VsCodeTypes.Uri) {

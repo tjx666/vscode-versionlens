@@ -76,6 +76,15 @@
   "contributes": {
     "commands": [
       {
+        "command": "versionlens.onShowError",
+        "title": "An error has occurred. See log for details.",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/toggle-death.svg",
+          "light": "images/icons/toggle-death.svg"
+        }
+      },
+      {
         "command": "versionlens.onShowVersionLenses",
         "title": "Show dependency versions",
         "category": "VersionLens",
@@ -168,18 +177,23 @@
       ],
       "editor/title": [
         {
+          "command": "versionlens.onShowError",
+          "when": "versionlens.providerError && versionlens.providerActive && textCompareEditorVisible == false",
+          "group": "navigation@1"
+        },
+        {
           "command": "versionlens.onShowVersionLenses",
-          "when": "versionlens.enabled == false && versionlens.providerActive && versionlens.providerBusy == false && textCompareEditorVisible == false",
+          "when": "versionlens.enabled == false && versionlens.providerActive && versionlens.providerBusy == false && versionlens.providerError == false && textCompareEditorVisible == false",
           "group": "navigation@1"
         },
         {
           "command": "versionlens.onHideVersionLenses",
-          "when": "versionlens.enabled && versionlens.providerActive && versionlens.providerBusy == false && textCompareEditorVisible == false",
+          "when": "versionlens.enabled && versionlens.providerActive && versionlens.providerBusy == false && versionlens.providerError == false  && textCompareEditorVisible == false",
           "group": "navigation@1"
         },
         {
           "command": "versionlens.onShowingProgress",
-          "when": "versionlens.providerBusy && versionlens.providerActive && textCompareEditorVisible == false",
+          "when": "versionlens.providerBusy && versionlens.providerActive && versionlens.providerError == false && textCompareEditorVisible == false",
           "group": "navigation@1"
         },
         {
