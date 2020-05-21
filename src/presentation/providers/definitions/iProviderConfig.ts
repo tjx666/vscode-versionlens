@@ -1,4 +1,4 @@
-import { ICachingOptions } from "core/clients";
+import { ICachingOptions, IHttpOptions } from "core/clients";
 
 import { VersionLensExtension } from "presentation/extension";
 import { IProviderOptions } from "./iProviderOptions";
@@ -10,5 +10,7 @@ export interface IProviderConfig {
   options: IProviderOptions;
 
   caching: ICachingOptions;
+
+  http: IHttpOptions;
 
 }
