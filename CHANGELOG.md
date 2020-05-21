@@ -38,7 +38,7 @@
 - **Pub**: Fixed CRLF issue when parsing YAML (reported in [#193](https://github.com/vscode-contrib/vscode-versionlens/issues/193))
 - **Pub**: Fixed a bug where the wrong latest version would appear (reported in [#198](https://github.com/vscode-contrib/vscode-versionlens/issues/198))
 
-- Some contributions have been depricated or renamed. See contributions tab in the [marketplace](https://marketplace.visualstudio.com/items?itemName=pflannery.vscode-versionlens) or any squiggled options in your settings.json will give you more information.
+- Some contributions have been deprecated or renamed. See contributions tab in the [marketplace](https://marketplace.visualstudio.com/items?itemName=pflannery.vscode-versionlens) or any squiggled options in your settings.json will give you more information.
 
 - Note: Outdated information is not in this release. It shall be re-introduced in a future release if still applicable.
 
