@@ -15,6 +15,7 @@ import {
   HttpClientResponse,
   HttpClientRequestMethods,
   HttpRequestOptions,
+  UrlHelpers,
 } from 'core/clients';
 
 import { JsonHttpClientRequest } from 'infrastructure/clients';
@@ -80,7 +81,7 @@ async function createRemotePackageDocument(
   dotnetSpec: DotNetVersionSpec
 ): Promise<PackageDocument> {
 
-  const packageUrl = url + `${request.package.name}/index.json`;
+  const packageUrl = UrlHelpers.ensureEndSlash(url) + `${request.package.name}/index.json`;
 
   return client.requestJson(HttpClientRequestMethods.get, packageUrl)
     .then(function (httpResponse) {

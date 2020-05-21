@@ -40,3 +40,7 @@ function buildQueryParams(queryParams: KeyStringDictionary): string {
 function stripEndSlash(url: string): string {
   return url.endsWith('/') ? url.substr(url.length - 1) : url;
 }
+
+export function ensureEndSlash(url: string): string {
+  return url.endsWith('/') ? url : url + '/';
+}
