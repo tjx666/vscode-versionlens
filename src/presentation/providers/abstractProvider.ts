@@ -73,20 +73,25 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
     // set in progress
     this.extension.state.providerBusy.value++;
 
-    this.logger.debug("Analysing dependencies for %s", document.uri.fsPath);
+    this.logger.info("Analysing dependencies for %s", document.uri.fsPath);
 
     // unfreeze config per file request
     this.config.caching.defrost();
 
-    this.logger.debug("Caching duration is set to %s ms", this.config.caching.duration)
+    this.logger.debug(
+      "Caching duration is set to %s milliseconds",
+      this.config.caching.duration
+    );
 
     return this.fetchVersionLenses(packagePath, document, token)
       .then(responses => {
         this.extension.state.providerBusy.value--;
         if (responses === null) {
-          this.logger.debug("No dependencies found in %s", document.uri.fsPath)
+          this.logger.info("No dependencies found in %s", document.uri.fsPath)
           return null;
         }
+
+        this.logger.info("Resolved %s dependencies", responses.length)
 
         return VersionLensFactory.createFromPackageResponses(
           document,

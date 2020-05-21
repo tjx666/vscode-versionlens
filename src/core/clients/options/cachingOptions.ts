@@ -14,10 +14,12 @@ export class CachingOptions extends OptionsWithFallback implements ICachingOptio
   }
 
   get duration(): number {
-    return this.getOrDefault<number>(
+    const durationMin = this.getOrDefault<number>(
       CachingContributions.CacheDuration,
       0
     );
+    // convert to milliseconds
+    return durationMin * 60000;
   }
 
 }

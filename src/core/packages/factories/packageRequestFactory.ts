@@ -75,7 +75,7 @@ export async function executePackageRequest<TClientData>(
   return client.fetchPackage(request)
     .then(function (response) {
 
-      client.logger.debug(
+      client.logger.info(
         'Fetched package from %s: %s@%s',
         response.response.source,
         request.package.name,
@@ -93,7 +93,7 @@ export async function executePackageRequest<TClientData>(
     .catch(function (error: PackageResponse) {
 
       client.logger.error(
-        `Provider: Function: %s\tPackage: %O\t Error: %j`,
+        `%s caught an exception.\n Package: %j\n Error: %j`,
         executePackageRequest.name,
         request.package,
         error

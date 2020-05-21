@@ -29,11 +29,9 @@ export async function composition(context: VsCodeTypes.ExtensionContext) {
   );
 
   const appLogger = logger.child({ namespace: 'extension' });
-
-  appLogger.debug('path: %s', context.extensionPath);
-  appLogger.debug('log path: %s', context.logPath);
-  appLogger.debug('global storage path: %s', context.globalStoragePath);
-  appLogger.debug('local storage path: %s', context.storagePath);
+  
+  appLogger.info('log level: %s', extension.logging.level);
+  appLogger.info('log path: %s', context.logPath);
 
   registerTextDocumentEvents(extension.state, appLogger);
 

@@ -99,7 +99,7 @@ export async function registerProviders(
         );
 
         appLogger.debug(
-          'Activated package manager %s with file filter: %O',
+          'Activated package provider for %s with file filter: %O',
           provider.config.options.providerName,
           provider.config.options.selector.pattern,
         );
