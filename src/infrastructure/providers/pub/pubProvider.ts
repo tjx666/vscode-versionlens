@@ -18,8 +18,15 @@ export class PubVersionLensProvider
 
   constructor(config: PubConfig, logger: ILogger) {
     super(config, logger);
+
+    const requestOptions = {
+      caching: config.caching,
+      http: config.http
+    };
+
     this.pubClient = new PubClient(
       config,
+      requestOptions,
       logger.child({ namespace: 'pub pkg client' })
     );
   }

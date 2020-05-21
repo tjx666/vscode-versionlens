@@ -1,5 +1,9 @@
 import { ILogger } from "core/logging";
-import { HttpClientRequestMethods, JsonClientResponse } from "core/clients";
+import {
+  HttpClientRequestMethods,
+  JsonClientResponse,
+  HttpRequestOptions
+} from "core/clients";
 import {
   PackageRequest,
   PackageSourceTypes,
@@ -16,26 +20,22 @@ import { JsonHttpClientRequest } from "infrastructure/clients";
 import { NpmConfig } from "../npmConfig";
 import { NpaSpec } from "../models/npaSpec";
 
+const defaultHeaders = {
+  accept: 'application\/vnd.github.v3+json',
+  'user-agent': 'vscode-contrib/vscode-versionlens'
+};
+
 export class GithubClient extends JsonHttpClientRequest {
 
   config: NpmConfig;
 
-  constructor(config: NpmConfig, logger: ILogger) {
-    super(
-      logger,
-      config.caching,
-      {
-        accept: 'application\/vnd.github.v3+json',
-        'user-agent': 'vscode-contrib/vscode-versionlens'
-      },
-    );
-
+  constructor(config: NpmConfig, options: HttpRequestOptions, logger: ILogger) {
+    super(logger, options, defaultHeaders);
     this.config = config;
   }
 
   fetchGithub(
-    request: PackageRequest<null>,
-    npaSpec: NpaSpec
+    request: PackageRequest<null>, npaSpec: NpaSpec
   ): Promise<PackageDocument> {
     const { validRange } = require('semver');
 

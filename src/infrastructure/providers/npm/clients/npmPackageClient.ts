@@ -30,8 +30,22 @@ export class NpmPackageClient implements IPackageClient<null> {
   constructor(config: NpmConfig, logger: ILogger) {
     this.config = config;
     this.logger = logger;
-    this.pacoteClient = new PacoteClient(config, logger);
-    this.githubClient = new GithubClient(config, logger);
+
+    this.pacoteClient = new PacoteClient(
+      config,
+      logger.child({ namespace: 'npm pacote' })
+    );
+
+    const requestOptions = {
+      caching: config.caching,
+      http: config.http
+    };
+
+    this.githubClient = new GithubClient(
+      config,
+      requestOptions,
+      logger.child({ namespace: 'npm github' })
+    );
   }
 
   async fetchPackage(request: PackageRequest<null>): Promise<PackageDocument> {

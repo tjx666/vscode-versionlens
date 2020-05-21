@@ -1,5 +1,9 @@
 import { ILogger } from "core/logging";
-import { HttpClientResponse, HttpClientRequestMethods } from "core/clients";
+import {
+  HttpClientResponse,
+  HttpClientRequestMethods,
+  HttpRequestOptions
+} from "core/clients";
 import {
   DocumentFactory,
   ResponseFactory,
@@ -14,7 +18,7 @@ import {
   PackageSuggestion,
 } from "core/packages";
 
-import { JsonHttpClientRequest } from 'infrastructure/clients';
+import { JsonHttpClientRequest, } from 'infrastructure/clients';
 import { DubConfig } from '../dubConfig';
 
 export class DubClient
@@ -23,8 +27,8 @@ export class DubClient
 
   config: DubConfig;
 
-  constructor(config: DubConfig, logger: ILogger) {
-    super(logger, config.caching, {});
+  constructor(config: DubConfig, options: HttpRequestOptions, logger: ILogger) {
+    super(logger, options, {});
     this.config = config;
   }
 

@@ -1,4 +1,9 @@
-import { ICachingOptions, CachingOptions } from 'core/clients';
+import {
+  ICachingOptions,
+  CachingOptions,
+  IHttpOptions,
+  HttpOptions
+} from 'core/clients';
 import { VersionLensExtension } from 'presentation/extension';
 import {
   ProviderSupport,
@@ -8,6 +13,8 @@ import {
 
 enum MavenContributions {
   Caching = 'maven.caching',
+  Http = 'maven.http',
+
   DependencyProperties = 'maven.dependencyProperties',
   TagFilter = 'maven.tagFilter',
   ApiUrl = 'maven.apiUrl',
@@ -30,6 +37,8 @@ export class MavenConfig extends AbstractProviderConfig {
 
   caching: ICachingOptions;
 
+  http: IHttpOptions;
+
   constructor(extension: VersionLensExtension) {
     super(extension);
 
@@ -37,6 +46,12 @@ export class MavenConfig extends AbstractProviderConfig {
       extension.config,
       MavenContributions.Caching,
       'caching'
+    );
+
+    this.http = new HttpOptions(
+      extension.config,
+      MavenContributions.Http,
+      'http'
     );
   }
 

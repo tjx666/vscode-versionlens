@@ -1,4 +1,4 @@
-import { VsCodeFrozenConfig } from 'infrastructure/configuration/frozenConfig'
+import { VsCodeConfig } from 'infrastructure/configuration'
 
 const assert = require('assert')
 const mock = require('mock-require')
@@ -33,7 +33,7 @@ export const VsCodeFrozenConfigTests = {
       }
 
       // get hot value
-      const cut = new VsCodeFrozenConfig('testsection');
+      const cut = new VsCodeConfig('testsection');
       const first = cut.get(testKey);
       assert.equal(first, expectedFrozenValue)
 
@@ -58,7 +58,7 @@ export const VsCodeFrozenConfigTests = {
       }
 
       // get hot value
-      const cut = new VsCodeFrozenConfig('testsection');
+      const cut = new VsCodeConfig('testsection');
       const first = cut.get(testKey);
       assert.equal(first, initialValue)
 

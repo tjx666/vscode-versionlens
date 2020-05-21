@@ -5,9 +5,12 @@ import {
   ProviderSupport,
   AbstractProviderConfig
 } from "presentation/providers";
+import { HttpOptions } from 'infrastructure/clients';
 
 enum DubContributions {
   Caching = 'dub.caching',
+  Http = 'dub.http',
+
   DependencyProperties = 'dub.dependencyProperties',
   ApiUrl = 'dub.apiUrl',
 }
@@ -30,6 +33,8 @@ export class DubConfig extends AbstractProviderConfig {
 
   caching: ICachingOptions;
 
+  http: HttpOptions;
+
   constructor(extension: VersionLensExtension) {
     super(extension);
 
@@ -37,6 +42,12 @@ export class DubConfig extends AbstractProviderConfig {
       extension.config,
       DubContributions.Caching,
       'caching'
+    );
+
+    this.http = new HttpOptions(
+      extension.config,
+      DubContributions.Http,
+      'http'
     );
   }
 

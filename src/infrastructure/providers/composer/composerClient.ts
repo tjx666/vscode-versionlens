@@ -14,6 +14,7 @@ import {
   HttpClientRequestMethods,
   HttpClientResponse,
   JsonClientResponse,
+  HttpRequestOptions,
 } from "core/clients";
 
 import { JsonHttpClientRequest } from 'infrastructure/clients';
@@ -21,14 +22,13 @@ import { JsonHttpClientRequest } from 'infrastructure/clients';
 import { ComposerConfig } from './composerConfig';
 import { ILogger } from "core/logging";
 
-export class ComposerClient
-  extends JsonHttpClientRequest
+export class ComposerClient extends JsonHttpClientRequest
   implements IPackageClient<null> {
 
   config: ComposerConfig;
 
-  constructor(config: ComposerConfig, logger: ILogger) {
-    super(logger, config.caching, {})
+  constructor(config: ComposerConfig, options: HttpRequestOptions, logger: ILogger) {
+    super(logger, options, {})
     this.config = config;
   }
 

@@ -1,6 +1,11 @@
 import { IFrozenRepository } from "core/generics";
-import { LoggingOptions } from "core/logging";
-import { CachingOptions, ICachingOptions } from "core/clients";
+import { LoggingOptions, ILoggingOptions } from "core/logging";
+import {
+  CachingOptions,
+  ICachingOptions,
+  HttpOptions,
+  IHttpOptions
+} from "core/clients";
 
 import { VersionLensState } from "presentation/extension";
 
@@ -19,9 +24,11 @@ export class VersionLensExtension {
 
   config: IFrozenRepository;
 
-  logging: LoggingOptions;
+  logging: ILoggingOptions;
 
   caching: ICachingOptions;
+
+  http: IHttpOptions;
 
   suggestions: SuggestionsOptions;
 
@@ -35,6 +42,7 @@ export class VersionLensExtension {
     // instantiate contrib options
     this.logging = new LoggingOptions(config, 'logging');
     this.caching = new CachingOptions(config, 'caching');
+    this.http = new HttpOptions(config, 'http');
 
     this.suggestions = new SuggestionsOptions(config);
     this.statuses = new StatusesOptions(config);

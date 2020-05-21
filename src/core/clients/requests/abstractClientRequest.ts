@@ -1,12 +1,12 @@
 import { ExpiryCacheMap } from '../caching/expiryCacheMap';
 
-import { ICachingOptions } from '../definitions/options';
+import { ICachingOptions } from '../definitions/iOptions';
 import {
   ClientResponse,
   ClientResponseSource
 } from "../definitions/clientResponses";
 
-export class AbstractClientRequest<TStatus, TData> {
+export abstract class AbstractClientRequest<TStatus, TData> {
 
   cache: ExpiryCacheMap<ClientResponse<TStatus, TData>>;
 

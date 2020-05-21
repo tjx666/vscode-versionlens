@@ -23,6 +23,11 @@ export class MavenVersionLensProvider
   constructor(config: MavenConfig, logger: ILogger) {
     super(config, logger);
 
+    const requestOptions = {
+      caching: config.caching,
+      http: config.http
+    };
+
     this.mvnClient = new MvnClient(
       config,
       logger.child({ namespace: 'maven cli' })
@@ -30,6 +35,7 @@ export class MavenVersionLensProvider
 
     this.mavenClient = new MavenClient(
       config,
+      requestOptions,
       logger.child({ namespace: 'maven pkg client' })
     );
   }

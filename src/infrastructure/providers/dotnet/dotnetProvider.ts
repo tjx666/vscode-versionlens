@@ -30,13 +30,19 @@ export class DotNetVersionLensProvider
       logger.child({ namespace: 'dotnet cli' })
     );
 
+    const requestOptions = {
+      caching: config.caching,
+      http: config.http
+    };
+
     this.nugetResourceClient = new NuGetResourceClient(
-      config,
+      requestOptions,
       logger.child({ namespace: 'dotnet nuget client' })
     );
 
     this.nugetPackageClient = new NuGetPackageClient(
       config,
+      requestOptions,
       logger.child({ namespace: 'dotnet pkg client' })
     );
   }

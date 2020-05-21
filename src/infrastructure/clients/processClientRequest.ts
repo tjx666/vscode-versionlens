@@ -19,9 +19,7 @@ export class ProcessClientRequest
   }
 
   async request(
-    cmd: string,
-    args: Array<string>,
-    cwd: string,
+    cmd: string, args: Array<string>, cwd: string
   ): Promise<ProcessClientResponse> {
 
     const cacheKey = `${cmd} ${args.join(' ')}`;

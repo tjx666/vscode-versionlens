@@ -3,7 +3,7 @@ import { IRepository, IFrozenRepository } from "core/generics";
 // allows vscode configuration to be defrosted
 // Useful for accessing hot changing values from settings.json
 // Stays frozen until defrost() is called and then refrosts
-export class VsCodeFrozenConfig implements IFrozenRepository {
+export class VsCodeConfig implements IFrozenRepository {
 
   protected frozen: IRepository;
 
@@ -14,7 +14,7 @@ export class VsCodeFrozenConfig implements IFrozenRepository {
     this.frozen = null;
   }
 
-  get repo(): IRepository {
+  protected get repo(): IRepository {
     const { workspace } = require('vscode');
     return workspace.getConfiguration(this.section);
   }

@@ -241,6 +241,13 @@
           "default": 3,
           "description": "Specifies how long (in minutes) version suggestions will be cached. Setting the duration to 0 will disable caching."
         },
+        "versionlens.http.strictSSL": {
+          "type": [
+            "boolean"
+          ],
+          "default": true,
+          "description": "When set to 'true' the server will reject any connection which is not authorized within the list of supplied CAs. Set to false for unsigned."
+        },
         "versionlens.statuses.notInstalledColour": {
           "type": "string",
           "default": "red",
@@ -267,6 +274,13 @@
             "number"
           ],
           "description": "Specifies how long (in minutes) version suggestions will be cached."
+        },
+        "versionlens.npm.http.strictSSL": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "When set to 'true' the server will reject any connection which is not authorized within the list of supplied CAs. Set to false for unsigned. Overrides 'versionlens.http.strictSSL'"
         },
         "versionlens.npm.dependencyProperties": {
           "type": "array",
@@ -300,6 +314,13 @@
           ],
           "description": "Specifies how long (in minutes) version suggestions will be cached."
         },
+        "versionlens.pub.http.strictSSL": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "When set to 'true' the server will reject any connection which is not authorized within the list of supplied CAs. Set to false for unsigned. Overrides 'versionlens.http.strictSSL'"
+        },
         "versionlens.pub.dependencyProperties": {
           "type": "array",
           "items": {
@@ -324,6 +345,13 @@
             "number"
           ],
           "description": "Specifies how long (in minutes) version suggestions will be cached."
+        },
+        "versionlens.dotnet.http.strictSSL": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "When set to 'true' the server will reject any connection which is not authorized within the list of supplied CAs. Set to false for unsigned. Overrides 'versionlens.http.strictSSL'"
         },
         "versionlens.dotnet.dependencyProperties": {
           "type": "array",
@@ -368,6 +396,13 @@
           ],
           "description": "Specifies how long (in minutes) version suggestions will be cached."
         },
+        "versionlens.dub.http.strictSSL": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "When set to 'true' the server will reject any connection which is not authorized within the list of supplied CAs. Set to false for unsigned. Overrides 'versionlens.http.strictSSL'"
+        },
         "versionlens.dub.apiUrl": {
           "type": "string",
           "default": "https://code.dlang.org/api/packages",
@@ -393,6 +428,13 @@
           ],
           "description": "Specifies how long (in minutes) version suggestions will be cached."
         },
+        "versionlens.composer.http.strictSSL": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "When set to 'true' the server will reject any connection which is not authorized within the list of supplied CAs. Set to false for unsigned. Overrides 'versionlens.http.strictSSL'"
+        },
         "versionlens.composer.apiUrl": {
           "type": "string",
           "default": "https://repo.packagist.org/p",
@@ -417,6 +459,13 @@
             "number"
           ],
           "description": "Specifies how long (in minutes) version suggestions will be cached."
+        },
+        "versionlens.maven.http.strictSSL": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "When set to 'true' the server will reject any connection which is not authorized within the list of supplied CAs. Set to false for unsigned. Overrides 'versionlens.http.strictSSL'"
         },
         "versionlens.maven.apiUrl": {
           "type": "string",

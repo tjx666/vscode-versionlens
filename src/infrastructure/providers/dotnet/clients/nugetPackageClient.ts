@@ -1,4 +1,4 @@
-import { ILogger} from 'core/logging';
+import { ILogger } from 'core/logging';
 import {
   DocumentFactory,
   SuggestionFactory,
@@ -11,13 +11,16 @@ import {
   ResponseFactory,
 } from 'core/packages';
 
-import { HttpClientResponse, HttpClientRequestMethods } from 'core/clients';
+import {
+  HttpClientResponse,
+  HttpClientRequestMethods,
+  HttpRequestOptions,
+} from 'core/clients';
 
 import { JsonHttpClientRequest } from 'infrastructure/clients';
 
 import { NuGetClientData } from '../definitions/nuget';
 import { DotNetVersionSpec } from '../definitions/dotnet';
-
 import { parseVersionSpec } from '../dotnetUtils.js';
 import { DotNetConfig } from '../dotnetConfig';
 
@@ -27,8 +30,8 @@ export class NuGetPackageClient
 
   config: DotNetConfig;
 
-  constructor(config: DotNetConfig, logger: ILogger) {
-    super(logger, config.caching, {});
+  constructor(config: DotNetConfig, options: HttpRequestOptions, logger: ILogger) {
+    super(logger, options, {});
     this.config = config;
   }
 

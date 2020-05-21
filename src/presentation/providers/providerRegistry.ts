@@ -99,9 +99,11 @@ export async function registerProviders(
         );
 
         appLogger.debug(
-          'Activated package provider for %s with file filter: %O',
-          provider.config.options.providerName,
+          'Activated package provider for %s:\n file pattern: %s\n caching: %s minutes\n strict ssl: %s\n',
+          packageManager,
           provider.config.options.selector.pattern,
+          provider.config.caching.duration,
+          provider.config.http.strictSSL,
         );
 
         return providerRegistry.register(provider);
