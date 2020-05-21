@@ -15,6 +15,8 @@ import {
   VersionLensExtension,
 } from 'presentation/extension';
 
+const { version } = require('../package.json');
+
 export async function composition(context: VsCodeTypes.ExtensionContext) {
 
   const configuration: IFrozenRepository = new VsCodeFrozenConfig(
@@ -29,7 +31,8 @@ export async function composition(context: VsCodeTypes.ExtensionContext) {
   );
 
   const appLogger = logger.child({ namespace: 'extension' });
-  
+
+  appLogger.info('version: %s', version);
   appLogger.info('log level: %s', extension.logging.level);
   appLogger.info('log path: %s', context.logPath);
 
