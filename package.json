@@ -8,7 +8,7 @@
   },
   "author": "Peter Flannery",
   "license": "MIT",
-  "version": "1.0.0-alpha.2",
+  "version": "1.0.0-preview.1",
   "publisher": "pflannery",
   "displayName": "Version Lens",
   "icon": "images/logo.png",
@@ -230,16 +230,16 @@
             "debug",
             "verbose"
           ],
-          "default": "info",
-          "description": "Sets the level for logging written to the output channel."
+          "default": "error",
+          "description": "Sets the level of logs to be written to the VersionLens output channel."
         },
         "versionlens.caching.duration": {
           "type": [
             "null",
             "number"
           ],
-          "default": 120000,
-          "description": "Sets the length of time all package managers cache their version suggestion results. Default is 5 minutes. Note: You can override each individual package manager e.g. npm.caching.duration"
+          "default": 3,
+          "description": "Specifies how long (in minutes) version suggestions will be cached. Setting the duration to 0 will disable caching."
         },
         "versionlens.statuses.notInstalledColour": {
           "type": "string",
@@ -266,7 +266,7 @@
             "null",
             "number"
           ],
-          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
+          "description": "Specifies how long (in minutes) version suggestions will be cached."
         },
         "versionlens.npm.dependencyProperties": {
           "type": "array",
@@ -298,7 +298,7 @@
             "null",
             "number"
           ],
-          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
+          "description": "Specifies how long (in minutes) version suggestions will be cached."
         },
         "versionlens.pub.dependencyProperties": {
           "type": "array",
@@ -323,7 +323,7 @@
             "null",
             "number"
           ],
-          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
+          "description": "Specifies how long (in minutes) version suggestions will be cached."
         },
         "versionlens.dotnet.dependencyProperties": {
           "type": "array",
@@ -366,7 +366,7 @@
             "null",
             "number"
           ],
-          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
+          "description": "Specifies how long (in minutes) version suggestions will be cached."
         },
         "versionlens.dub.apiUrl": {
           "type": "string",
@@ -391,7 +391,7 @@
             "null",
             "number"
           ],
-          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
+          "description": "Specifies how long (in minutes) version suggestions will be cached."
         },
         "versionlens.composer.apiUrl": {
           "type": "string",
@@ -416,7 +416,7 @@
             "null",
             "number"
           ],
-          "description": "Sets the length of time versionlens caches the suggestion results for this package manager. Note: This falls back to versionlens.caching.duration if not specified."
+          "description": "Specifies how long (in minutes) version suggestions will be cached."
         },
         "versionlens.maven.apiUrl": {
           "type": "string",

@@ -1,40 +1,46 @@
-# 1.0.0-alpha.2
+# 1.0.0-preview.1
 
-- Moved to a clean architecture.
 - Added logging to the output channel.
 
   Logging level can be set using `versionlens.logging.level`.
-  
-  Currently defaults to 'info' level.
+
+  Currently defaults to `error` level.
+
 - Added cache duration option `versionlens.caching.duration`.
 
-  Can be overridden individually for each package manager.
-  e.g. `versionlens.npm.caching.duration`
-  
-  Setting the cache to 0 will always try to fetch the package.
-- Package managers now share the same experiance for version suggestions.
-- Some contributions have be depricated or renamed.
-- Version code lenses will no longer show by default.
+  Specifies how long (in minutes) version suggestions will be cached.
 
-  You can use the **V** icon in the text editor to show versions; or
+  Default duration is 3 minutes.
 
-  You can always show version information on start up by setting `versionlens.suggestions.showOnStartup` to `"true"`.
+  Setting the duration to 0 will disable caching.
 
-- Dotnet: Now automatically retrieves nuget source feeds using the output of `dotnet nuget list source` under the cwd of the open project file.
+- Version code lenses will no longer show by default on start up.
+
+  You can use the **V** icon in the text editor toolbar to show\hide versions on demand.
+
+  You can customize this by setting `versionlens.suggestions.showOnStartup` to `"true"`.
+
+- **Dotnet**: Now automatically retrieves nuget source feeds using the output of `dotnet nuget list source` under the cwd of the open project file.
 
   You can add new sources using the dotnet cli. 
 
-  Alternatively you can add sources using the `versionlens.dotnet.nuget.sources` setting.
+  Alternatively you can add sources using the `versionlens.dotnet.nuget.sources` setting. The default is an empty list.
 
   If specified, the `versionlens.dotnet.nuget.sources` takes priority for resolution of packages. Each source has to be a v3 compatible 'service index' endpoint e.g. https://api.nuget.org/v3/index.json which contains a PackageBaseAddressService entry.
 
   In the event a package cannot be found (404) then it will retry the next source in the list.
 
-- Dotnet: Fixed dotnet parser crash on missing version attrs. (reported in [#195](https://github.com/vscode-contrib/vscode-versionlens/issues/195))
-- Npm: Replaced npm client api with [npm pacote api](https://github.com/npm/pacote)
-- Npm: Added support for github semver syntax e.g. "github:repo\project#semver:x.x.x"
-- Pub: Fixed CRLF issue when parsing YAML
-- Pub: Fixed a bug where the wrong latest version would appear (reported in [#198](https://github.com/vscode-contrib/vscode-versionlens/issues/198))
+  Requested in [#75](https://github.com/vscode-contrib/vscode-versionlens/issues/75), [#171](https://github.com/vscode-contrib/vscode-versionlens/issues/171), [#170](https://github.com/vscode-contrib/vscode-versionlens/issues/170)
+
+- **Dotnet**: Fixed dotnet parser crash when a PackageReference is missing a version attribute. (reported in [#195](https://github.com/vscode-contrib/vscode-versionlens/issues/195))
+- **Npm**: Replaced the old npm cli api with [npm pacote api](https://github.com/npm/pacote)
+- **Npm**: Added support for github semver syntax e.g. "github:repo\project#semver:x.x.x" (requested in [#156](https://github.com/vscode-contrib/vscode-versionlens/issues/156))
+- **Pub**: Fixed CRLF issue when parsing YAML (reported in [#193](https://github.com/vscode-contrib/vscode-versionlens/issues/193))
+- **Pub**: Fixed a bug where the wrong latest version would appear (reported in [#198](https://github.com/vscode-contrib/vscode-versionlens/issues/198))
+
+- Some contributions have been depricated or renamed. See contributions tab in the [marketplace](https://marketplace.visualstudio.com/items?itemName=pflannery.vscode-versionlens) or any squiggled options in your settings.json will give you more information.
+
+- Note: Outdated information is not in this release. It shall be re-introduced in a future release if still applicable.
 
 # 0.27.0
 
