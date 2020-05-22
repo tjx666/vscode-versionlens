@@ -6,11 +6,19 @@
 
 - **Dotnet**: Added a fallback url if the cli causes an error when getting sources. (reported in [#195](https://github.com/vscode-contrib/vscode-versionlens/issues/195))
 
-- **Npm**: Fixed 'unauthorized' and 'connection refused' scenarios crashing all suggestions in a package file. (reported in [#205](https://github.com/vscode-contrib/vscode-versionlens/issues/205))
+- **Npm**: Gracefully handles 'unauthorized' and 'connection refused' scenarios. (reported in [#205](https://github.com/vscode-contrib/vscode-versionlens/issues/205))
 
-- **All**: Added an option to set strictSSL to `false` to allow unsigned private registries (reported in [#201](https://github.com/vscode-contrib/vscode-versionlens/issues/201))
+  ![image](https://user-images.githubusercontent.com/1727302/82630330-488bde80-9bea-11ea-8e08-ed7ff7f83324.png) 
+  
+  ![image](https://user-images.githubusercontent.com/1727302/82630439-956fb500-9bea-11ea-88d2-d155e2f8b02e.png)
+
+
+- **All**: Added an option to set strictSSL to `false` to allow unsigned private registries (reported in [#201](https://github.com/vscode-contrib/vscode-versionlens/issues/201)) 
 
   `versionlens.http.strictSSL` or `versionlens.{provider}.http.strictSSL`.
+
+- **All**: Added an error icon that you can click to focus on the output channel to read the error.
+![image](https://user-images.githubusercontent.com/1727302/82630121-b2f04f00-9be9-11ea-8bf1-dc2fb955df75.png)
 
 # 1.0.0
 
