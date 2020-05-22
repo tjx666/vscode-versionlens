@@ -1,3 +1,11 @@
+# 1.0.1-preview.1
+
+- **Dotnet**: Fixed private 'http' nuget feed urls not being resolved. (reported in [#200](https://github.com/vscode-contrib/vscode-versionlens/issues/200))
+
+- **All**: Added contribution options to set strictSSL to false to allow unsigned private registries (reported in [#201](https://github.com/vscode-contrib/vscode-versionlens/issues/201))
+
+  `versionlens.http.strictSSL` or individually `versionlens.{provider}.http.strictSSL`.
+
 # 1.0.0
 
 - Added logging to the output channel.
