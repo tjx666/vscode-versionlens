@@ -7,10 +7,11 @@ import { createWinstonLogger } from 'infrastructure/logging';
 import { registerProviders } from 'presentation/providers';
 import {
   registerExtension,
-  registerCommands,
   registerTextEditorEvents,
   registerTextDocumentEvents,
   VersionLensExtension,
+  registerIconCommands,
+  registerSuggestionCommands,
 } from 'presentation/extension';
 
 const { version } = require('../package.json');
@@ -37,11 +38,12 @@ export async function composition(context: VsCodeTypes.ExtensionContext) {
 
   const textEditorEvents = registerTextEditorEvents(extension.state, appLogger);
 
+  // subscribe command and providers
   const disposables = [
     ...await registerProviders(extension, appLogger),
-    ...registerCommands(extension, appLogger)
-  ]
-  // subscribe command and provider disposables
+    ...registerIconCommands(extension, appLogger),
+    ...registerSuggestionCommands(extension, appLogger)
+  ];
   context.subscriptions.push(<any>disposables);
 
   // show icons in active text editor if versionLens.providerActive

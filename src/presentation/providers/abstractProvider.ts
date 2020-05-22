@@ -104,6 +104,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
       })
       .catch(error => {
         this.extension.state.providerError.value = true;
+        this.extension.state.providerBusy.change(0)
         return Promise.reject(error);
       })
   }
