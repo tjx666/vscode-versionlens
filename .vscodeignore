@@ -9,6 +9,7 @@ node_modules/**/*.md
 node_modules/**/*.html
 node_modules/**/*.css
 node_modules/**/*.svg
+node_modules/**/test*/
 gruntfile.js
 .travis*
 **/*.map
