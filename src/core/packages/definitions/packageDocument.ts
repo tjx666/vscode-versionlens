@@ -19,7 +19,9 @@ export enum PackageVersionTypes {
 
 export enum PackageVersionStatus {
   NotFound = 'package not found',
+  NotAuthorized = 'not authorized',
   NotSupported = 'not supported',
+  ConnectionRefused = 'connection refused',
   Invalid = 'invalid entry',
   NoMatch = 'no match',
   Satisfies = 'satisfies',

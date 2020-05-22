@@ -107,6 +107,22 @@ export function createNotFound(): PackageSuggestion {
   };
 }
 
+export function createConnectionRefused(): PackageSuggestion {
+  return {
+    name: PackageVersionStatus.ConnectionRefused,
+    version: '',
+    flags: PackageSuggestionFlags.status
+  };
+}
+
+export function createNotAuthorized(): PackageSuggestion {
+  return {
+    name: PackageVersionStatus.NotAuthorized,
+    version: '',
+    flags: PackageSuggestionFlags.status
+  };
+}
+
 export function createInvalid(requestedVersion: string): PackageSuggestion {
   return {
     name: PackageVersionStatus.Invalid,

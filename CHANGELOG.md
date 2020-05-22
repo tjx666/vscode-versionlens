@@ -1,10 +1,12 @@
-# 1.0.1-preview.1
+# 1.1.0-preview.1
 
-- **Dotnet**: Fixed private 'http' nuget feed urls not being resolved. (reported in [#200](https://github.com/vscode-contrib/vscode-versionlens/issues/200))
+- **Dotnet**: Fixed unsecure 'http' nuget sources not being resolved. (reported in [#200](https://github.com/vscode-contrib/vscode-versionlens/issues/200))
 
-- **All**: Added contribution options to set strictSSL to false to allow unsigned private registries (reported in [#201](https://github.com/vscode-contrib/vscode-versionlens/issues/201))
+- **Npm**: Fixed 'unauthorized' and 'connection refused' scenarios crashing all suggestions in a package. (reported in [#205](https://github.com/vscode-contrib/vscode-versionlens/issues/205))
 
-  `versionlens.http.strictSSL` or individually `versionlens.{provider}.http.strictSSL`.
+- **All**: Added an option to set strictSSL to `false` to allow unsigned private registries (reported in [#201](https://github.com/vscode-contrib/vscode-versionlens/issues/201))
+
+  `versionlens.http.strictSSL` or `versionlens.{provider}.http.strictSSL`.
 
 # 1.0.0
 
