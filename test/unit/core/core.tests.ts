@@ -1,5 +1,6 @@
 export * from './clients/caching/expiryCacheMap.tests';
 export * from './clients/requests/abstractClientRequest.tests';
+export * from './clients/helpers/urlHelpers.tests';
 
 export * from './configuration/optionsWithFallback.tests';
 

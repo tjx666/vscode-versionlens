@@ -5,11 +5,11 @@ import {
   HttpClientResponse,
   IHttpClientRequest,
   HttpClientRequestMethods,
+  HttpRequestOptions,
   UrlHelpers,
-  ICachingOptions
 } from 'core/clients';
 
-import { RequestLightHttpResponse } from 'definitions/requestLightHttpResponse';
+import { RequestLightHttpResponse } from 'infrastructure/clients/definitions/responses';
 
 export class HttpClientRequest
   extends AbstractClientRequest<number, string>
@@ -19,9 +19,12 @@ export class HttpClientRequest
 
   headers: KeyStringDictionary;
 
-  constructor(logger: ILogger, options: ICachingOptions, headers?: KeyStringDictionary) {
-    super(options);
+  options: HttpRequestOptions;
+
+  constructor(logger: ILogger, options: HttpRequestOptions, headers?: KeyStringDictionary) {
+    super(options.caching);
     this.logger = logger;
+    this.options = options;
     this.headers = headers || {};
   }
 
@@ -44,7 +47,8 @@ export class HttpClientRequest
     return requestLight.xhr({
       url,
       type: method,
-      headers: this.headers
+      headers: this.headers,
+      strictSSL: this.options.http.strictSSL
     })
       .then((response: RequestLightHttpResponse) => {
         return this.createCachedResponse(

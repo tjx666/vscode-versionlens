@@ -17,7 +17,10 @@ import {
   renderPrereleaseInstalledDecoration
 } from 'presentation/extension';
 import { VersionLens } from 'presentation/lenses';
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers';
+import {
+  AbstractVersionLensProvider,
+  VersionLensFetchResponse
+} from 'presentation/providers';
 
 import { npmGetOutdated, npmPackageDirExists } from './clients/npmClient';
 import { NpmConfig } from './npmConfig';
@@ -35,10 +38,7 @@ export class NpmVersionLensProvider
     super(config, logger);
     this._outdatedCache = [];
 
-    this.packageClient = new NpmPackageClient(
-      config,
-      logger.child({ namespace: 'npm pkg client' })
-    );
+    this.packageClient = new NpmPackageClient(config, logger);
 
     this.customReplaceFn = npmReplaceVersion;
   }

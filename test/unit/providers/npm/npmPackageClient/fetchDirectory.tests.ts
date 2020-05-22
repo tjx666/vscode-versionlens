@@ -15,10 +15,13 @@ export default {
   afterAll: () => mock.stopAll(),
 
   beforeEach: () => {
-    defaultExtensionMock = new VersionLensExtension({
-      get: (k) => null,
-      defrost: () => null
-    });
+    defaultExtensionMock = new VersionLensExtension(
+      {
+        get: (k) => null,
+        defrost: () => null
+      },
+      null
+    );
   },
 
   'fetchPackage': {

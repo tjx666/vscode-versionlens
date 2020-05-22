@@ -1,4 +1,4 @@
-import { ICachingOptions } from "../definitions/options";
+import { ICachingOptions } from "../definitions/iOptions";
 
 export type CacheEntry<T> = {
   expiryTime: number,

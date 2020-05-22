@@ -1,1 +1,1 @@
-export * from './configuration/frozenConfig';
+export * from './configuration/vscodeConfig';

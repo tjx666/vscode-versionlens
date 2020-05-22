@@ -1,10 +1,8 @@
-import {
-  CommandContributions,
-  SuggestionIndicators
-} from 'presentation/extension';
-
 import { PackageSuggestionFlags } from 'core/packages';
+
+import { SuggestionIndicators } from 'presentation/extension';
 import { VersionLens } from 'presentation/lenses';
+import { SuggestionCommandContributions } from 'presentation/extension';
 
 export function createErrorCommand(errorMsg, codeLens) {
   return codeLens.setCommand(`${errorMsg}`);
@@ -16,7 +14,7 @@ export function createTagCommand(tag, codeLens) {
 
 export function createDirectoryLinkCommand(codeLens) {
   let title;
-  let cmd = CommandContributions.LinkCommand;
+  let cmd = SuggestionCommandContributions.LinkCommand;
   const path = require('path');
   const fs = require('fs');
   const filePath = path.resolve(path.dirname(codeLens.documentUrl.fsPath), codeLens.package.suggestion.version);
@@ -44,7 +42,7 @@ export function createSuggestedVersionCommand(codeLens: VersionLens) {
     return codeLens.setCommand(
 
       `${prefix}${SuggestionIndicators.Update} ${version}`,
-      CommandContributions.UpdateDependencyCommand,
+      SuggestionCommandContributions.UpdateDependencyCommand,
       [codeLens, `${replaceWithVersion}`]
     );
   }

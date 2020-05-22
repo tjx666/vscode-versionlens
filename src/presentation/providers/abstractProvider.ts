@@ -70,6 +70,9 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
     const { dirname } = require('path');
     const packagePath = dirname(document.uri.fsPath);
 
+    // clear any errors
+    this.extension.state.providerError.value = false;
+
     // set in progress
     this.extension.state.providerBusy.value++;
 
@@ -98,6 +101,11 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
           responses,
           this.customReplaceFn || defaultReplaceFn
         );
+      })
+      .catch(error => {
+        this.extension.state.providerError.value = true;
+        this.extension.state.providerBusy.change(0)
+        return Promise.reject(error);
       })
   }
 

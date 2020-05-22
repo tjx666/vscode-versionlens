@@ -1,4 +1,9 @@
-import { CachingOptions, ICachingOptions } from "core/clients";
+import {
+  CachingOptions,
+  ICachingOptions,
+  HttpOptions,
+  IHttpOptions,
+} from "core/clients";
 
 import { VersionLensExtension } from "presentation/extension";
 import {
@@ -9,6 +14,8 @@ import {
 
 enum PubContributions {
   Caching = 'pub.caching',
+  Http = 'pub.http',
+
   DependencyProperties = 'pub.dependencyProperties',
   ApiUrl = 'pub.apiUrl',
 }
@@ -30,6 +37,8 @@ export class PubConfig extends AbstractProviderConfig {
 
   caching: ICachingOptions;
 
+  http: IHttpOptions;
+
   constructor(extension: VersionLensExtension) {
     super(extension);
 
@@ -37,6 +46,12 @@ export class PubConfig extends AbstractProviderConfig {
       extension.config,
       PubContributions.Caching,
       'caching'
+    );
+
+    this.http = new HttpOptions(
+      extension.config,
+      PubContributions.Http,
+      'http'
     );
   }
 

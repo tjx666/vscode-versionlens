@@ -76,6 +76,15 @@
   "contributes": {
     "commands": [
       {
+        "command": "versionlens.onShowError",
+        "title": "An error has occurred. See log for details.",
+        "category": "VersionLens",
+        "icon": {
+          "dark": "images/icons/toggle-death.svg",
+          "light": "images/icons/toggle-death.svg"
+        }
+      },
+      {
         "command": "versionlens.onShowVersionLenses",
         "title": "Show dependency versions",
         "category": "VersionLens",
@@ -168,18 +177,23 @@
       ],
       "editor/title": [
         {
+          "command": "versionlens.onShowError",
+          "when": "versionlens.providerError && versionlens.providerActive && textCompareEditorVisible == false",
+          "group": "navigation@1"
+        },
+        {
           "command": "versionlens.onShowVersionLenses",
-          "when": "versionlens.enabled == false && versionlens.providerActive && versionlens.providerBusy == false && textCompareEditorVisible == false",
+          "when": "versionlens.enabled == false && versionlens.providerActive && versionlens.providerBusy == false && versionlens.providerError == false && textCompareEditorVisible == false",
           "group": "navigation@1"
         },
         {
           "command": "versionlens.onHideVersionLenses",
-          "when": "versionlens.enabled && versionlens.providerActive && versionlens.providerBusy == false && textCompareEditorVisible == false",
+          "when": "versionlens.enabled && versionlens.providerActive && versionlens.providerBusy == false && versionlens.providerError == false  && textCompareEditorVisible == false",
           "group": "navigation@1"
         },
         {
           "command": "versionlens.onShowingProgress",
-          "when": "versionlens.providerBusy && versionlens.providerActive && textCompareEditorVisible == false",
+          "when": "versionlens.providerBusy && versionlens.providerActive && versionlens.providerError == false && textCompareEditorVisible == false",
           "group": "navigation@1"
         },
         {
@@ -241,6 +255,13 @@
           "default": 3,
           "description": "Specifies how long (in minutes) version suggestions will be cached. Setting the duration to 0 will disable caching."
         },
+        "versionlens.http.strictSSL": {
+          "type": [
+            "boolean"
+          ],
+          "default": true,
+          "description": "When set to 'true' the server will reject any connection which is not authorized within the list of supplied CAs. Set to false for unsigned."
+        },
         "versionlens.statuses.notInstalledColour": {
           "type": "string",
           "default": "red",
@@ -267,6 +288,13 @@
             "number"
           ],
           "description": "Specifies how long (in minutes) version suggestions will be cached."
+        },
+        "versionlens.npm.http.strictSSL": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "When set to 'true' the server will reject any connection which is not authorized within the list of supplied CAs. Set to false for unsigned. Overrides 'versionlens.http.strictSSL'"
         },
         "versionlens.npm.dependencyProperties": {
           "type": "array",
@@ -300,6 +328,13 @@
           ],
           "description": "Specifies how long (in minutes) version suggestions will be cached."
         },
+        "versionlens.pub.http.strictSSL": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "When set to 'true' the server will reject any connection which is not authorized within the list of supplied CAs. Set to false for unsigned. Overrides 'versionlens.http.strictSSL'"
+        },
         "versionlens.pub.dependencyProperties": {
           "type": "array",
           "items": {
@@ -324,6 +359,13 @@
             "number"
           ],
           "description": "Specifies how long (in minutes) version suggestions will be cached."
+        },
+        "versionlens.dotnet.http.strictSSL": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "When set to 'true' the server will reject any connection which is not authorized within the list of supplied CAs. Set to false for unsigned. Overrides 'versionlens.http.strictSSL'"
         },
         "versionlens.dotnet.dependencyProperties": {
           "type": "array",
@@ -368,6 +410,13 @@
           ],
           "description": "Specifies how long (in minutes) version suggestions will be cached."
         },
+        "versionlens.dub.http.strictSSL": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "When set to 'true' the server will reject any connection which is not authorized within the list of supplied CAs. Set to false for unsigned. Overrides 'versionlens.http.strictSSL'"
+        },
         "versionlens.dub.apiUrl": {
           "type": "string",
           "default": "https://code.dlang.org/api/packages",
@@ -393,6 +442,13 @@
           ],
           "description": "Specifies how long (in minutes) version suggestions will be cached."
         },
+        "versionlens.composer.http.strictSSL": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "When set to 'true' the server will reject any connection which is not authorized within the list of supplied CAs. Set to false for unsigned. Overrides 'versionlens.http.strictSSL'"
+        },
         "versionlens.composer.apiUrl": {
           "type": "string",
           "default": "https://repo.packagist.org/p",
@@ -417,6 +473,13 @@
             "number"
           ],
           "description": "Specifies how long (in minutes) version suggestions will be cached."
+        },
+        "versionlens.maven.http.strictSSL": {
+          "type": [
+            "null",
+            "boolean"
+          ],
+          "description": "When set to 'true' the server will reject any connection which is not authorized within the list of supplied CAs. Set to false for unsigned. Overrides 'versionlens.http.strictSSL'"
         },
         "versionlens.maven.apiUrl": {
           "type": "string",

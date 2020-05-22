@@ -12,7 +12,8 @@ import {
 } from 'core/packages';
 import {
   HttpClientRequestMethods,
-  HttpClientResponse
+  HttpClientResponse,
+  HttpRequestOptions,
 } from "core/clients";
 
 import { JsonHttpClientRequest } from 'infrastructure/clients';
@@ -25,8 +26,8 @@ export class PubClient
 
   config: PubConfig;
 
-  constructor(config: PubConfig, logger: ILogger) {
-    super(logger, config.caching, {})
+  constructor(config: PubConfig, options: HttpRequestOptions, logger: ILogger) {
+    super(logger, options, {})
     this.config = config;
   }
 

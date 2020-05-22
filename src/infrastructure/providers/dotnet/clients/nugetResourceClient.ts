@@ -1,19 +1,19 @@
 import { ILogger } from 'core/logging';
-import { HttpClientResponse, HttpClientRequestMethods } from 'core/clients';
+import {
+  HttpClientResponse,
+  HttpRequestOptions,
+  HttpClientRequestMethods
+} from 'core/clients';
 
 import { JsonHttpClientRequest } from 'infrastructure/clients';
 
 import { NugetServiceIndexResponse } from '../definitions/nuget';
 import { DotNetSource } from '../definitions/dotnet';
-import { DotNetConfig } from '../dotnetConfig';
 
 export class NuGetResourceClient extends JsonHttpClientRequest {
 
-  config: DotNetConfig;
-
-  constructor(config: DotNetConfig, logger: ILogger) {
-    super(logger, config.caching, {})
-    this.config = config;
+  constructor(options: HttpRequestOptions, logger: ILogger) {
+    super(logger, options, {})
   }
 
   async fetchResource(source: DotNetSource): Promise<string> {

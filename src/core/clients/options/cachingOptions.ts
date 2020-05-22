@@ -1,7 +1,7 @@
 import { OptionsWithFallback } from 'core/configuration';
 import { IFrozenRepository, Nullable } from 'core/generics';
 
-import { CachingContributions, ICachingOptions } from '../definitions/options';
+import { CachingContributions, ICachingOptions } from '../definitions/iOptions';
 
 export class CachingOptions extends OptionsWithFallback implements ICachingOptions {
 

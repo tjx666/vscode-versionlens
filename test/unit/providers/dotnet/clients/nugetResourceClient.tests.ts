@@ -15,10 +15,13 @@ export const NuGetResourceClientTests = {
 
   beforeEach: () => {
 
-    defaultExtensionMock = new VersionLensExtension({
-      get: (k) => null,
-      defrost: () => null
-    });
+    defaultExtensionMock = new VersionLensExtension(
+      {
+        get: (k) => null,
+        defrost: () => null
+      },
+      null
+    );
 
   },
 
@@ -85,10 +88,13 @@ export const NuGetResourceClientTests = {
 
       // setup test feeds
       const config = new DotNetConfig(
-        new VersionLensExtension({
-          get: (k) => <any>[],
-          defrost: () => null
-        })
+        new VersionLensExtension(
+          {
+            get: (k) => <any>[],
+            defrost: () => null
+          },
+          null
+        )
       )
 
       const cut = new NuGetResourceClient(config, new LoggerMock())

@@ -1,7 +1,7 @@
 import {
   ClientResponseSource,
   HttpClientRequestMethods,
-  CachingOptions,
+  HttpRequestOptions,
 } from 'core/clients'
 
 import {
@@ -51,8 +51,9 @@ export const JsonClientRequestTests = {
 
       const rut = new JsonHttpClientRequest(
         new LoggerMock(),
-        <CachingOptions>{
-          duration: 30000
+        <HttpRequestOptions>{
+          caching: { duration: 30000 },
+          http: { strictSSL: true }
         }
       );
 

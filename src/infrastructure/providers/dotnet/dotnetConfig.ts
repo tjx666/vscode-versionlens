@@ -1,4 +1,9 @@
-import { CachingOptions, ICachingOptions } from 'core/clients';
+import {
+  CachingOptions,
+  ICachingOptions,
+  IHttpOptions,
+  HttpOptions
+} from 'core/clients';
 
 import { VersionLensExtension } from 'presentation/extension';
 import {
@@ -11,6 +16,7 @@ import { NugetOptions } from './options/nugetOptions';
 
 export enum DotnetContributions {
   Caching = 'dotnet.caching',
+  Http = 'dotnet.http',
   Nuget = 'dotnet.nuget',
   DependencyProperties = 'dotnet.dependencyProperties',
   TagFilter = 'dotnet.tagFilter',
@@ -33,6 +39,8 @@ export class DotNetConfig extends AbstractProviderConfig {
 
   caching: ICachingOptions;
 
+  http: IHttpOptions;
+
   nuget: NugetOptions;
 
   constructor(extension: VersionLensExtension) {
@@ -42,6 +50,12 @@ export class DotNetConfig extends AbstractProviderConfig {
       extension.config,
       DotnetContributions.Caching,
       'caching'
+    );
+
+    this.http = new HttpOptions(
+      extension.config,
+      DotnetContributions.Http,
+      'http'
     );
 
     this.nuget = new NugetOptions(extension.config, DotnetContributions.Nuget);

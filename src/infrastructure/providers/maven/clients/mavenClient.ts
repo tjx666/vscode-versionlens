@@ -10,7 +10,11 @@ import {
   IPackageClient,
   SemverSpec,
 } from 'core/packages';
-import { HttpClientResponse, HttpClientRequestMethods } from "core/clients";
+import {
+  HttpClientResponse,
+  HttpClientRequestMethods,
+  HttpRequestOptions
+} from "core/clients";
 
 import { HttpClientRequest } from 'infrastructure/clients';
 
@@ -24,8 +28,9 @@ export class MavenClient
 
   config: MavenConfig;
 
-  constructor(config: MavenConfig, logger: ILogger) {
-    super(logger, config.caching, {})
+  constructor(config: MavenConfig, options: HttpRequestOptions, logger: ILogger) {
+    super(logger, options, {})
+
     this.config = config;
   }
 

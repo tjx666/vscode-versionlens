@@ -33,7 +33,8 @@ export default {
       {
         get: (k) => null,
         defrost: () => null
-      }
+      },
+      null
     );
   },
 

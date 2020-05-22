@@ -4,7 +4,7 @@ import {
   ClientResponseSource,
   UrlHelpers,
   HttpClientRequestMethods,
-  CachingOptions,
+  HttpRequestOptions,
 } from 'core/clients'
 
 import {
@@ -33,8 +33,9 @@ export const HttpRequestTests = {
   beforeEach: () => {
     testContext.rut = new HttpClientRequest(
       new LoggerMock(),
-      <CachingOptions>{
-        duration: 30000
+      <HttpRequestOptions>{
+        caching: { duration: 30000 },
+        http: { strictSSL: true }
       }
     );
 
@@ -42,6 +43,38 @@ export const HttpRequestTests = {
   },
 
   "request": {
+
+    "passes options to xhr": async () => {
+
+      const testFlags = [
+        { testStrictSSL: true, testDuration: 3000 },
+        { testStrictSSL: false, testDuration: 0 },
+      ];
+
+      testFlags.forEach(async (test) => {
+
+        requestLightMock.xhr = options => {
+          assert.equal(options.strictSSL, test.testStrictSSL)
+          assert.equal(options.strictSSL, test.testDuration)
+        };
+
+        const rut = new HttpClientRequest(
+          new LoggerMock(),
+          <HttpRequestOptions>{
+            caching: { duration: test.testDuration },
+            http: { strictSSL: test.testStrictSSL }
+          }
+        );
+
+        await rut.request(
+          HttpClientRequestMethods.get,
+          'anywhere',
+          {}
+        )
+
+      })
+
+    },
 
     "generates the expected url with query params": async () => {
       const testUrl = 'https://test.url.example/path';
@@ -146,7 +179,7 @@ export const HttpRequestTests = {
 
     },
 
-    "does not cache when cache duration is 0": async () => {
+    "does not cache when duration is 0": async () => {
       const testUrl = 'https://test.url.example/path';
       const testQueryParams = {}
       const expectedCacheData = undefined;
@@ -159,8 +192,9 @@ export const HttpRequestTests = {
 
       testContext.rut = new HttpClientRequest(
         new LoggerMock(),
-        <CachingOptions>{
-          duration: 0
+        <HttpRequestOptions>{
+          caching: { duration: 0 },
+          http: { strictSSL: true }
         },
         {}
       );

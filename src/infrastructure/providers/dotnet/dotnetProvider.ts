@@ -30,13 +30,19 @@ export class DotNetVersionLensProvider
       logger.child({ namespace: 'dotnet cli' })
     );
 
+    const requestOptions = {
+      caching: config.caching,
+      http: config.http
+    };
+
     this.nugetResourceClient = new NuGetResourceClient(
-      config,
+      requestOptions,
       logger.child({ namespace: 'dotnet nuget client' })
     );
 
     this.nugetPackageClient = new NuGetPackageClient(
       config,
+      requestOptions,
       logger.child({ namespace: 'dotnet pkg client' })
     );
   }
@@ -59,9 +65,10 @@ export class DotNetVersionLensProvider
     // get each service index source from the dotnet cli
     const sources = await this.dotnetClient.fetchSources(packagePath)
 
-    // https sources only
+    // remote sources only
     const remoteSources = sources.filter(
-      s => s.protocol === RegistryProtocols.https
+      s => s.protocol === RegistryProtocols.https ||
+        s.protocol === RegistryProtocols.http
     );
 
     // resolve each auto complete service url

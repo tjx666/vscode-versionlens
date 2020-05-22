@@ -1,4 +1,10 @@
-import { CachingOptions, ICachingOptions } from 'core/clients';
+import {
+  CachingOptions,
+  ICachingOptions,
+  HttpOptions,
+  IHttpOptions
+} from 'core/clients';
+
 import { VersionLensExtension } from 'presentation/extension';
 import {
   ProviderSupport,
@@ -8,9 +14,10 @@ import {
 
 enum ComposerContributions {
   Caching = 'composer.caching',
+  Http = 'composer.http',
+
   DependencyProperties = 'composer.dependencyProperties',
   ApiUrl = 'composer.apiUrl',
-  CacheDuration = 'composer.caching.duration',
 }
 
 export class ComposerConfig extends AbstractProviderConfig {
@@ -29,6 +36,8 @@ export class ComposerConfig extends AbstractProviderConfig {
     }
   }
 
+  http: IHttpOptions;
+
   caching: ICachingOptions;
 
   constructor(extension: VersionLensExtension) {
@@ -40,6 +49,11 @@ export class ComposerConfig extends AbstractProviderConfig {
       'caching'
     );
 
+    this.http = new HttpOptions(
+      extension.config,
+      ComposerContributions.Http,
+      'http'
+    );
   }
 
   get dependencyProperties(): Array<string> {
