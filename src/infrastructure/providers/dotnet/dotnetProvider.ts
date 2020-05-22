@@ -7,7 +7,7 @@ import { ILogger } from 'core/logging';
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation/providers';
 
 import { DotNetConfig } from './dotnetConfig';
-import { extractDotnetLensDataFromDocument } from './dotnetPackageParser'
+import { createDependenciesFromXml } from './dotnetXmlParserFactory'
 import { DotNetClient } from './clients/dotnetClient';
 import { NuGetPackageClient } from './clients/nugetPackageClient';
 import { NuGetResourceClient } from './clients/nugetResourceClient';
@@ -53,7 +53,7 @@ export class DotNetVersionLensProvider
     token: VsCodeTypes.CancellationToken
   ): VersionLensFetchResponse {
 
-    const packageDependencies = extractDotnetLensDataFromDocument(
+    const packageDependencies = createDependenciesFromXml(
       document.getText(),
       this.config.dependencyProperties
     );
