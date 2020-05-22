@@ -85,5 +85,6 @@ export default {
     "versions": {
       "11.1.9": {}
     }
-  }
+  },
+  ".npmrc": "//registry.npmjs.example/:_authToken=12345678"
 }
