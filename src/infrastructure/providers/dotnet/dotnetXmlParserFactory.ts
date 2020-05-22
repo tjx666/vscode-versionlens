@@ -1,19 +1,25 @@
 import { Nullable } from "core/generics";
 import { IPackageDependency, PackageDependencyRange } from "core/packages";
 
-export function extractDotnetLensDataFromDocument(
-  xml: string, filterPropertyNames: Array<string>
+export function createDependenciesFromXml(
+  xml: string, includePropertyNames: Array<string>
 ): Array<IPackageDependency> {
 
   const xmldoc = require('xmldoc');
-  const xmlDoc = new xmldoc.XmlDocument(xml);
-  if (!xmlDoc) return [];
+  let document = null
 
-  return extractPackageLensDataFromNodes(xmlDoc, xml, filterPropertyNames);
+  try {
+    document = new xmldoc.XmlDocument(xml);
+  } catch {
+    document = null;
+  }
+
+  if (!document) return [];
+  return extractPackageLensDataFromNodes(document, xml, includePropertyNames);
 }
 
 function extractPackageLensDataFromNodes(
-  topLevelNodes, xml: string, filterPropertyNames: Array<string>
+  topLevelNodes, xml: string, includePropertyNames: Array<string>
 ) {
   const collector = [];
 
@@ -22,7 +28,7 @@ function extractPackageLensDataFromNodes(
       if (node.name !== "ItemGroup") return;
       node.eachChild(
         function (itemGroupNode) {
-          if (filterPropertyNames.includes(itemGroupNode.name) == false) return;
+          if (includePropertyNames.includes(itemGroupNode.name) == false) return;
           const dependencyLens = createFromAttribute(itemGroupNode, xml);
           if (dependencyLens) collector.push(dependencyLens);
         }

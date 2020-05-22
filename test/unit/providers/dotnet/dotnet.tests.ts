@@ -4,4 +4,14 @@ export const DotNetUtils = {
 }
 
 export * from './clients/dotnetClient.tests';
+
 export * from './clients/nugetResourceClient.tests';
+export * from './clients/nugetResourceClient.tests';
+
+
+// Package Parser Tests
+import createDependenciesFromXml from './dotnetXmlParserFactory/createDependenciesFromXml.tests';
+
+export const DotnetParserTests = {
+  createDependenciesFromXml,
+}

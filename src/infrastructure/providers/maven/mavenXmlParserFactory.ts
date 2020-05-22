@@ -3,20 +3,27 @@ import { IPackageDependency } from "core/packages";
 import { MavenProjectProperty } from "./definitions/mavenProjectProperty";
 
 export function createDependenciesFromXml(
-  xml: string, filterPropertyNames: Array<string>
+  xml: string, includePropertyNames: Array<string>
 ): Array<IPackageDependency> {
 
   const xmldoc = require('xmldoc');
-  const xmlDoc = new xmldoc.XmlDocument(xml);
-  if (!xmlDoc) return [];
+  let document = null
 
-  const properties = extractPropertiesFromDocument(xmlDoc);
+  try {
+    document = new xmldoc.XmlDocument(xml);
+  } catch {
+    document = null;
+  }
 
-  return extractPackageLensDataFromNodes(xmlDoc, properties, filterPropertyNames);
+  if (!document) return [];
+
+  const properties = extractPropertiesFromDocument(document);
+
+  return extractPackageLensDataFromNodes(document, properties, includePropertyNames);
 }
 
 function extractPackageLensDataFromNodes(
-  xmlDoc, properties: Array<MavenProjectProperty>, filterPropertyNames: Array<string>
+  xmlDoc, properties: Array<MavenProjectProperty>, includePropertyNames: Array<string>
 ) {
   const collector: Array<IPackageDependency> = [];
 
@@ -25,13 +32,13 @@ function extractPackageLensDataFromNodes(
     switch (group.name) {
       case "dependencies":
         group.eachChild(childNode => {
-          if (!filterPropertyNames.includes(childNode.name)) return;
+          if (!includePropertyNames.includes(childNode.name)) return;
           collectFromChildVersionTag(childNode, properties, collector)
         });
         break;
 
       case "parent":
-        if (!filterPropertyNames.includes(group.name)) return;
+        if (!includePropertyNames.includes(group.name)) return;
         collectFromChildVersionTag(group, properties, collector)
         break;
 

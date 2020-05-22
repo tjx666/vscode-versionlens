@@ -51,11 +51,11 @@ export const HttpRequestTests = {
         { testStrictSSL: false, testDuration: 0 },
       ];
 
-      testFlags.forEach(async (test) => {
+      return testFlags.forEach(async (test) => {
 
         requestLightMock.xhr = options => {
           assert.equal(options.strictSSL, test.testStrictSSL)
-          assert.equal(options.strictSSL, test.testDuration)
+          return Promise.resolve({})
         };
 
         const rut = new HttpClientRequest(
