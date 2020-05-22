@@ -8,7 +8,7 @@
   },
   "author": "Peter Flannery",
   "license": "MIT",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "pflannery",
   "displayName": "Version Lens",
   "icon": "images/logo.png",
@@ -393,7 +393,10 @@
         "versionlens.dotnet.nuget.sources": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "default": [],
           "description": "Defines which nuget source to use for package searching. Has to be a v3 'service index' endpoint. e.g. https://api.nuget.org/v3/index.json. Defaults to the sources output by `dotnet nuget list source`"

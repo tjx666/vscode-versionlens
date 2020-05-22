@@ -1,10 +1,12 @@
-# 1.1.0-preview.1
+# 1.0.1
 
 - **Dotnet**: Fixed unsecure 'http' nuget sources not being resolved. (reported in [#200](https://github.com/vscode-contrib/vscode-versionlens/issues/200))
 
 - **Dotnet**: Fixed suggestions breaking in a project file when the xml became invalid. (reported in [#204](https://github.com/vscode-contrib/vscode-versionlens/issues/204))
 
-- **Npm**: Fixed 'unauthorized' and 'connection refused' scenarios crashing all suggestions in a package. (reported in [#205](https://github.com/vscode-contrib/vscode-versionlens/issues/205))
+- **Dotnet**: Added a fallback url if the cli causes an error when getting sources. (reported in [#195](https://github.com/vscode-contrib/vscode-versionlens/issues/195))
+
+- **Npm**: Fixed 'unauthorized' and 'connection refused' scenarios crashing all suggestions in a package file. (reported in [#205](https://github.com/vscode-contrib/vscode-versionlens/issues/205))
 
 - **All**: Added an option to set strictSSL to `false` to allow unsigned private registries (reported in [#201](https://github.com/vscode-contrib/vscode-versionlens/issues/201))
 
