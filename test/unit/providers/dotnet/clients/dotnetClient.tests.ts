@@ -123,31 +123,32 @@ export const DotnetClientRequestTests = {
         });
     },
 
-    "rejects on error output": async () => {
-
-      const expectedErrorResp = {
-        source: ClientResponseSource.local,
-        status: '0',
-        data: Fixtures.invalidSources,
-        rejected: false,
-      }
+    "returns fallback url on error": async () => {
 
       let promiseSpawnMock = (cmd, args, opts) => {
-        return Promise.resolve({
-          code: expectedErrorResp.status,
+        return Promise.reject({
+          code: '0',
           stdout: Fixtures.invalidSources
         });
       };
       mock('@npmcli/promise-spawn', promiseSpawnMock);
 
+      const config = new DotNetConfig(defaultExtensionMock);
       const cut = new DotNetClient(
-        new DotNetConfig(defaultExtensionMock),
+        config,
         new LoggerMock()
       );
 
+      const expectedErrorResp = {
+        enabled: true,
+        machineWide: false,
+        protocol: 'https:',
+        url: config.fallbackNugetSource,
+      }
+
       return cut.fetchSources('.')
-        .catch(actualError => {
-          assert.deepEqual(actualError, expectedErrorResp);
+        .then(actual => {
+          assert.deepEqual(actual, [expectedErrorResp]);
         });
     },
 

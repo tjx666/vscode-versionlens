@@ -69,4 +69,8 @@ export class DotNetConfig extends AbstractProviderConfig {
     return this.extension.config.get(DotnetContributions.TagFilter);
   }
 
+  get fallbackNugetSource(): string {
+    return 'https://api.nuget.org/v3/index.json';
+  }
+
 }

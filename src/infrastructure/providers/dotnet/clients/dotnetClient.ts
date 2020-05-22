@@ -4,7 +4,6 @@ import { ProcessClientRequest } from 'infrastructure/clients';
 import { DotNetSource } from '../definitions/dotnet';
 import { DotNetConfig } from '../dotnetConfig';
 
-
 export class DotNetClient extends ProcessClientRequest {
 
   config: DotNetConfig;
@@ -48,6 +47,16 @@ export class DotNetClient extends ProcessClientRequest {
       return [
         ...feedSources,
         ...sources
+      ]
+    }).catch(error => {
+      // return the fallback source for dotnet clients < 5.5
+      return [
+        <DotNetSource>{
+          enabled: true,
+          machineWide: false,
+          protocol: UrlHelpers.RegistryProtocols.https,
+          url: this.config.fallbackNugetSource,
+        }
       ]
     })
   }
