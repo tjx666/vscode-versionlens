@@ -24,7 +24,8 @@ export const DotnetClientRequestTests = {
       {
         get: (k) => null,
         defrost: () => null
-      }
+      },
+      null
     );
 
   },
@@ -80,7 +81,8 @@ export const DotnetClientRequestTests = {
           {
             get: (k) => <any>testFeeds,
             defrost: () => null
-          }
+          },
+          null
         )
       )
 
@@ -109,7 +111,8 @@ export const DotnetClientRequestTests = {
           {
             get: (k) => <any>testFeeds,
             defrost: () => null
-          }
+          },
+          null
         )
       )
 

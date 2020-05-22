@@ -28,13 +28,24 @@ export class VersionLensCommands {
 
   state: VersionLensState;
 
-  constructor(extensionState: VersionLensState, logger: ILogger) {
-    this.logger = logger;
+  extension: VersionLensExtension;
+
+  constructor(
+    extension: VersionLensExtension, extensionState: VersionLensState, logger: ILogger
+  ) {
+    this.extension = extension
     this.state = extensionState;
+    this.logger = logger;
   }
 
   onShowError(resourceUri: VsCodeTypes.Uri) {
-    // todo focus the ouput channel to show the error
+    return Promise.all([
+      this.state.providerError.change(false),
+      this.state.providerBusy.change(Math.max(0, this.state.providerBusy.value - 1))
+    ])
+      .then(_ => {
+        this.extension.outputChannel.show();
+      });
   }
 
   onShowVersionLenses(resourceUri: VsCodeTypes.Uri) {
@@ -117,6 +128,7 @@ export function registerCommands(
   const disposables = [];
 
   const extensionCommands = new VersionLensCommands(
+    extension,
     extension.state,
     logger
   );

@@ -1,3 +1,6 @@
+// vscode references
+import * as VsCodeTypes from 'vscode';
+
 import { IFrozenRepository } from "core/generics";
 import { LoggingOptions, ILoggingOptions } from "core/logging";
 import {
@@ -36,7 +39,9 @@ export class VersionLensExtension {
 
   state: VersionLensState;
 
-  constructor(config: IFrozenRepository) {
+  outputChannel: VsCodeTypes.OutputChannel;
+
+  constructor(config: IFrozenRepository, outputChannel: VsCodeTypes.OutputChannel) {
     this.config = config;
 
     // instantiate contrib options
@@ -49,6 +54,8 @@ export class VersionLensExtension {
 
     // instantiate setContext options
     this.state = new VersionLensState(this);
+
+    this.outputChannel = outputChannel;
   }
 
 }
@@ -56,7 +63,9 @@ export class VersionLensExtension {
 let _extensionSingleton = null;
 export default _extensionSingleton;
 
-export function registerExtension(config: IFrozenRepository): VersionLensExtension {
-  _extensionSingleton = new VersionLensExtension(config);
+export function registerExtension(
+  config: IFrozenRepository, outputChannel: VsCodeTypes.OutputChannel
+): VersionLensExtension {
+  _extensionSingleton = new VersionLensExtension(config, outputChannel);
   return _extensionSingleton;
 }

@@ -27,11 +27,9 @@ class OutputChannelTransport extends Transport {
 
 }
 
-export function createOutputChannelTransport(channelName, transportOptions) {
-  const { window } = require('vscode');
-  const channel = window.createOutputChannel(
-    channelName
-  );
-
+export function createOutputChannelTransport(
+  channel: VsCodeTypes.OutputChannel,
+  transportOptions
+) {
   return new OutputChannelTransport(channel, transportOptions);
 }

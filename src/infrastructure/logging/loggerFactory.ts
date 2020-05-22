@@ -1,3 +1,6 @@
+// vscode references
+import * as VsCodeTypes from 'vscode';
+
 import {
   ILogger,
   ILoggingOptions
@@ -5,7 +8,9 @@ import {
 
 import { createOutputChannelTransport } from './transports/outputChannelTransport';
 
-export function createWinstonLogger(name: string, options: ILoggingOptions): ILogger {
+export function createWinstonLogger(
+  channel: VsCodeTypes.OutputChannel, options: ILoggingOptions
+): ILogger {
   const { loggers, format, transports } = require('winston');
 
   const logTransports = [
@@ -13,10 +18,7 @@ export function createWinstonLogger(name: string, options: ILoggingOptions): ILo
     new transports.Console({ level: 'error' }),
 
     // send info to output channel
-    createOutputChannelTransport(
-      name,
-      { level: options.level }
-    )
+    createOutputChannelTransport(channel, { level: options.level })
   ];
 
   const logFormat = format.combine(
@@ -26,7 +28,7 @@ export function createWinstonLogger(name: string, options: ILoggingOptions): ILo
     format.printf(loggerFormatter)
   );
 
-  return loggers.add(name, {
+  return loggers.add(channel.name, {
     format: logFormat,
     transports: logTransports,
   });

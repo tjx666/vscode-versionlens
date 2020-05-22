@@ -17,19 +17,18 @@ const { version } = require('../package.json');
 
 export async function composition(context: VsCodeTypes.ExtensionContext) {
 
-  const configuration = new VsCodeConfig(
-    VersionLensExtension.extensionName.toLowerCase()
-  );
+  const configuration = new VsCodeConfig(VersionLensExtension.extensionName.toLowerCase());
 
-  const extension = registerExtension(configuration);
+  // create the output channel
+  const { window } = require('vscode');
 
-  const logger = createWinstonLogger(
-    VersionLensExtension.extensionName,
-    extension.logging
-  );
+  const channel = window.createOutputChannel(VersionLensExtension.extensionName);
 
+  const extension = registerExtension(configuration, channel);
+
+  // Setup the logger
+  const logger = createWinstonLogger(channel, extension.logging);
   const appLogger = logger.child({ namespace: 'extension' });
-
   appLogger.info('version: %s', version);
   appLogger.info('log level: %s', extension.logging.level);
   appLogger.info('log path: %s', context.logPath);
@@ -46,6 +45,5 @@ export async function composition(context: VsCodeTypes.ExtensionContext) {
   context.subscriptions.push(<any>disposables);
 
   // show icons in active text editor if versionLens.providerActive
-  const { window } = require('vscode');
   textEditorEvents.onDidChangeActiveTextEditor(window.activeTextEditor);
 }
