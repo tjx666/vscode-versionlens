@@ -103,24 +103,6 @@
         }
       },
       {
-        "command": "versionlens.onShowInstalledStatuses",
-        "title": "Show dependency statuses",
-        "category": "VersionLens",
-        "icon": {
-          "dark": "images/icons/dep-status-dark.svg",
-          "light": "images/icons/dep-status-light.svg"
-        }
-      },
-      {
-        "command": "versionlens.onHideInstalledStatuses",
-        "title": "Hide dependency statuses",
-        "category": "VersionLens",
-        "icon": {
-          "dark": "images/icons/dep-status-active.svg",
-          "light": "images/icons/dep-status-active.svg"
-        }
-      },
-      {
         "command": "versionlens.onShowPrereleaseVersions",
         "title": "Show tagged dependency versions",
         "category": "VersionLens",
@@ -150,14 +132,6 @@
     ],
     "menus": {
       "commandPalette": [
-        {
-          "command": "versionlens.onShowInstalledStatuses",
-          "when": "versionlens.enabled && versionlens.providerActive"
-        },
-        {
-          "command": "versionlens.onHideInstalledStatuses",
-          "when": "versionlens.enabled && versionlens.providerActive"
-        },
         {
           "command": "versionlens.onShowPrereleaseVersions",
           "when": "versionlens.enabled && versionlens.providerActive"
@@ -205,36 +179,21 @@
           "command": "versionlens.onHidePrereleaseVersions",
           "when": "versionlens.prereleasesEnabled && versionlens.enabled && versionlens.providerActive && versionlens.providerSupportsPrereleases && textCompareEditorVisible == false",
           "group": "navigation@2"
-        },
-        {
-          "command": "versionlens.onShowInstalledStatuses",
-          "when": "versionlens.installedStatusesEnabled == false && versionlens.enabled && versionlens.providerActive && versionlens.providerSupportsInstalledStatuses && textCompareEditorVisible == false",
-          "group": "navigation@3"
-        },
-        {
-          "command": "versionlens.onHideInstalledStatuses",
-          "when": "versionlens.installedStatusesEnabled && versionlens.enabled && versionlens.providerActive && versionlens.providerSupportsInstalledStatuses && textCompareEditorVisible == false",
-          "group": "navigation@3"
         }
       ]
     },
     "configuration": {
-      "title": "Versionlens configuration",
+      "title": "VersionLens",
       "properties": {
         "versionlens.suggestions.showOnStartup": {
           "type": "boolean",
           "default": false,
-          "description": "Will always show when opening a package file in the editor."
+          "description": "Show version suggestions by default on vscode start up."
         },
         "versionlens.suggestions.showPrereleasesOnStartup": {
           "type": "boolean",
           "default": false,
-          "description": "Will always show prereleases when opening a package file in the editor."
-        },
-        "versionlens.statuses.showOnStartup": {
-          "type": "boolean",
-          "default": false,
-          "description": "Will always show prereleases when opening a package file in the editor."
+          "description": "Show version prerelease suggestions by default on vscode start up."
         },
         "versionlens.logging.level": {
           "type": "string",
@@ -245,7 +204,7 @@
             "verbose"
           ],
           "default": "error",
-          "description": "Sets the level of logs to be written to the VersionLens output channel."
+          "description": "Sets the level of logs to be written to the VersionLens output channel. Vscode needs to be restarted for this to take effect."
         },
         "versionlens.caching.duration": {
           "type": [
@@ -261,26 +220,6 @@
           ],
           "default": true,
           "description": "When set to 'true' the server will reject any connection which is not authorized within the list of supplied CAs. Set to false for unsigned."
-        },
-        "versionlens.statuses.notInstalledColour": {
-          "type": "string",
-          "default": "red",
-          "description": "The colour used to show missing dependencies. Accept's valid CSS colours"
-        },
-        "versionlens.statuses.installedColour": {
-          "type": "string",
-          "default": "green",
-          "description": "The colour used to show installed dependencies. Accept's valid CSS colours"
-        },
-        "versionlens.statuses.outdatedColour": {
-          "type": "string",
-          "default": "orange",
-          "description": "The colour used to show outdated dependencies. Accept's valid CSS colours"
-        },
-        "versionlens.statuses.prereleaseColour": {
-          "type": "string",
-          "default": "yellowgreen",
-          "description": "The colour used to show prerelease dependencies. Accept's valid CSS colours"
         },
         "versionlens.npm.caching.duration": {
           "type": [
@@ -401,11 +340,6 @@
           "default": [],
           "description": "Defines which nuget source to use for package searching. Has to be a v3 'service index' endpoint. e.g. https://api.nuget.org/v3/index.json. Defaults to the sources output by `dotnet nuget list source`"
         },
-        "versionlens.dotnet.includePrerelease": {
-          "type": "boolean",
-          "default": true,
-          "description": "Include NuGet pre-release packages"
-        },
         "versionlens.dub.caching.duration": {
           "type": [
             "null",
@@ -509,33 +443,6 @@
           ],
           "default": "",
           "description": "Used for making basic read only github api requests. To generate a token see https://help.github.com/articles/creating-an-access-token-for-command-line-use/#creating-a-token. When no token is provided then access to the github api is rate limited to 60 requests every 10 minutes or so."
-        },
-        "versionlens.github.taggedCommits": {
-          "deprecationMessage": "This options is no longer available"
-        },
-        "versionlens.missingDependencyColour": {
-          "deprecationMessage": "Use versionlens.statuses.notInstalledColour"
-        },
-        "versionlens.installedDependencyColour": {
-          "deprecationMessage": "Use versionlens.statuses.installedColour"
-        },
-        "versionlens.outdatedDependencyColour": {
-          "deprecationMessage": "Use versionlens.statuses.outdatedColour"
-        },
-        "versionlens.prereleaseDependencyColour": {
-          "deprecationMessage": "Use versionlens.statuses.prereleaseInstalledColour"
-        },
-        "versionlens.versionPrefix": {
-          "deprecationMessage": "This has been replaced with versionlens.suggestions.defaultVersionPrefix"
-        },
-        "versionlens.showVersionLensesAtStartup": {
-          "deprecationMessage": "Use versionlens.suggestions.showOnStartup instead"
-        },
-        "versionlens.showTaggedVersionsAtStartup": {
-          "deprecationMessage": "Use versionlens.suggestions.showPrereleasesOnStartup instead"
-        },
-        "versionlens.showDependencyStatusesAtStartup": {
-          "deprecationMessage": "Use versionlens.statuses.showOnStartup instead"
         }
       }
     }
