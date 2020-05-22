@@ -31,6 +31,53 @@ export function createNotFound(
   };
 }
 
+export function createConnectionRefused(
+  providerName: string,
+  requested: PackageIdentifier,
+  type: PackageVersionTypes,
+  response: PackageResponseStatus
+): PackageDocument {
+  const source: PackageSourceTypes = PackageSourceTypes.Registry;
+
+  const suggestions: Array<PackageSuggestion> = [
+    SuggestFactory.createConnectionRefused()
+  ];
+
+  return {
+    providerName,
+    source,
+    type,
+    requested,
+    resolved: null,
+    suggestions,
+    response
+  };
+}
+
+
+export function createNotAuthorized(
+  providerName: string,
+  requested: PackageIdentifier,
+  type: PackageVersionTypes,
+  response: PackageResponseStatus
+): PackageDocument {
+  const source: PackageSourceTypes = PackageSourceTypes.Registry;
+
+  const suggestions: Array<PackageSuggestion> = [
+    SuggestFactory.createNotAuthorized()
+  ];
+
+  return {
+    providerName,
+    source,
+    type,
+    requested,
+    resolved: null,
+    suggestions,
+    response
+  };
+}
+
 export function createInvalidVersion(
   providerName: string,
   requested: PackageIdentifier,

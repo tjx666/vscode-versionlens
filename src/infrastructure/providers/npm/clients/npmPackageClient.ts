@@ -130,6 +130,24 @@ export class NpmPackageClient implements IPackageClient<null> {
         );
       }
 
+      if (response.status === 401 || response.status === 'E401') {
+        return DocumentFactory.createNotAuthorized(
+          request.providerName,
+          request.package,
+          null,
+          ResponseFactory.createResponseStatus(response.source, 401)
+        );
+      }
+
+      if (response.status === 'ECONNREFUSED') {
+        return DocumentFactory.createConnectionRefused(
+          request.providerName,
+          request.package,
+          null,
+          ResponseFactory.createResponseStatus(response.source, -1)
+        );
+      }
+
       if (response.status === 'EINVALIDTAGNAME' || response.data.includes('Invalid comparator:')) {
         return DocumentFactory.createInvalidVersion(
           request.providerName,
