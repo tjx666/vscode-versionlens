@@ -20,9 +20,12 @@ export class SuggestionCommands {
 
   extension: VersionLensExtension;
 
-  constructor(extension: VersionLensExtension) {
+  logger: ILogger;
+
+  constructor(extension: VersionLensExtension, logger: ILogger) {
     this.extension = extension
     this.state = extension.state;
+    this.logger = logger;
   }
 
   onUpdateDependencyCommand(codeLens: VersionLens, packageVersion: string) {
@@ -38,17 +41,23 @@ export class SuggestionCommands {
 
   onLinkCommand(codeLens: VersionLens) {
     const path = require('path');
-    const opener = require('opener');
 
-    if (codeLens.package.source === PackageSourceTypes.Directory) {
-      const filePathToOpen = path.resolve(
-        path.dirname(codeLens.documentUrl.fsPath),
-        codeLens.package.resolved.version
+    if (codeLens.package.source !== PackageSourceTypes.Directory) {
+      this.logger.error(
+        "onLinkCommand can only open local directories.\nPackage: %o",
+        codeLens.package
       );
-      opener(filePathToOpen);
       return;
     }
-    // opener(codeLens.package.remoteUrl);
+
+    const { env } = require('vscode');
+
+    const filePathToOpen = path.resolve(
+      path.dirname(codeLens.documentUrl.fsPath),
+      codeLens.package.resolved.version
+    );
+
+    env.openExternal('file:///' + filePathToOpen);
   }
 
 }
@@ -57,12 +66,12 @@ export function registerSuggestionCommands(
   extension: VersionLensExtension, logger: ILogger
 ): Array<VsCodeTypes.Disposable> {
 
-  const suggestionCommands = new SuggestionCommands(extension);
+  const suggestionCommands = new SuggestionCommands(extension, logger);
 
   return CommandHelpers.registerCommands(
     SuggestionCommandContributions,
     <any>suggestionCommands,
     logger
-  )
+  );
 
 }
