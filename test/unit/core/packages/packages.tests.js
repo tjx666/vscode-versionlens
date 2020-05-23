@@ -7,6 +7,7 @@ import removeFourSegmentVersionsFromArray from './helpers/versionHelpers/removeF
 import friendlifyPrereleaseName from './helpers/versionHelpers/friendlifyPrereleaseName.tests';
 import filterSemverVersions from './helpers/versionHelpers/filterSemverVersions.tests';
 import isFixedVersion from './helpers/versionHelpers/isFixedVersion.tests';
+import lteFromArray from './helpers/versionHelpers/lteFromArray.tests'
 
 export const VersionHelperTests = {
   extractTaggedVersions,
@@ -16,6 +17,7 @@ export const VersionHelperTests = {
   friendlifyPrereleaseName,
   filterSemverVersions,
   isFixedVersion,
+  lteFromArray,
 }
 
 // PackageSuggestionFactoryTests
@@ -24,7 +26,6 @@ import createSuggestionTags from './factories/packageSuggestionFactory/createSug
 export const PackageSuggestionFactoryTests = {
   createSuggestionTags
 }
-
 
 // Package Parser Tests
 import extractPackageDependenciesFromJson from './parsers/jsonPackageParser/extractPackageDependenciesFromJson.tests';

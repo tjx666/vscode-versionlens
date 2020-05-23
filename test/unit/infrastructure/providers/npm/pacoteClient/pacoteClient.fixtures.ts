@@ -86,5 +86,19 @@ export default {
       "11.1.9": {}
     }
   },
-  ".npmrc": "//registry.npmjs.example/:_authToken=12345678"
+  ".npmrc": "//registry.npmjs.example/:_authToken=12345678",
+  "packumentCappedToLatestTaggedVersion": {
+    "name": "npm-package-arg",
+    "dist-tags": {
+      "latest": "7.0.0"
+    },
+    "versions": {
+      "6.0.0": {},
+      "6.1.0": {},
+      "6.1.1": {},
+      "7.0.0": {},
+      "8.0.0": {},
+      "8.0.1": {}
+    }
+  },
 }
