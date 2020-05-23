@@ -3,8 +3,7 @@
 [![Badge for version for Visual Studio Code extension](https://vsmarketplacebadge.apphb.com/version-short/pflannery.vscode-versionlens.svg?color=blue&style=?style=for-the-badge&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=pflannery.vscode-versionlens&wt.mc_id=vscode-versionlens-github-vscode-contrib) [![Installs](https://vsmarketplacebadge.apphb.com/installs-short/pflannery.vscode-versionlens.svg?color=blue&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=pflannery.vscode-versionlens)
 [![Rating](https://vsmarketplacebadge.apphb.com/rating-short/pflannery.vscode-versionlens.svg?color=blue&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=pflannery.vscode-versionlens) [![The MIT License](https://img.shields.io/badge/license-MIT-orange.svg?color=blue&style=flat-square)](http://opensource.org/licenses/MIT)
 
-![](https://github.com/vscode-contrib/vscode-versionlens/workflows/Visual%20Studio%20Code%20Tests%20(Mac%20and%20Windows)/badge.svg?branch=master)
-![](https://github.com/vscode-contrib/vscode-versionlens/workflows/Visual%20Studio%20Code%20Tests%20(Linux)/badge.svg?branch=master)
+![Visual Studio Code Tests](https://github.com/vscode-contrib/vscode-versionlens/workflows/Visual%20Studio%20Code%20Tests/badge.svg)
 
 Shows package version information for npm, jspm, dub and dotnet core in the [Visual Studio Code](https://github.com/microsoft/vscode) editor.
 
