@@ -70,6 +70,11 @@ export default {
           name: PackageVersionStatus.Latest,
           version: '',
           flags: PackageSuggestionFlags.status
+        },
+        {
+          name: 'next',
+          version: '4.0.0-next',
+          flags: PackageSuggestionFlags.prerelease
         }
       ]
 
@@ -123,6 +128,7 @@ export default {
         testReleases,
         testPrereleases
       );
+
       assert.deepEqual(results, expected);
     },
 
@@ -138,6 +144,11 @@ export default {
           name: PackageVersionStatus.Latest,
           version: '3.0.0',
           flags: PackageSuggestionFlags.release
+        },
+        {
+          name: 'next',
+          version: '4.0.0-next',
+          flags: PackageSuggestionFlags.prerelease
         }
       ]
 

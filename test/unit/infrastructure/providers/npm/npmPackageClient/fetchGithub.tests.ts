@@ -135,6 +135,14 @@ export default {
               name: 'latest',
               version: 'v2.5.0',
               flags: PackageSuggestionFlags.release
+            }, {
+              name: 'rc',
+              version: 'v2.6.0-rc.1',
+              flags: PackageSuggestionFlags.prerelease
+            }, {
+              name: 'preview',
+              version: 'v2.5.0-preview.1',
+              flags: PackageSuggestionFlags.prerelease
             }]
           )
         })

@@ -68,9 +68,9 @@ export function removeFourSegmentVersionsFromArray(versions: Array<string>): Arr
 }
 
 export function isFixedVersion(versionToCheck: string): boolean {
-  const { Range } = require('semver');
+  const { Range, valid } = require('semver');
   const testRange = new Range(versionToCheck, loosePrereleases);
-  return testRange.set[0][0].operator === "";
+  return valid(versionToCheck) !== null && testRange.set[0][0].operator === "";
 }
 
 const isfourSegmentVersionRegex = /^(\d+\.)(\d+\.)(\d+\.)(\*|\d+)$/g;
@@ -122,8 +122,8 @@ export function parseSemver(packageVersion: string): SemverSpec {
   };
 }
 
-export function filterPrereleasesWithinRange(versionRange: string, prereleases: Array<string>): Array<string> {
-  const { SemVer, maxSatisfying } = require('semver');
+export function filterPrereleasesGtMinRange(versionRange: string, prereleases: Array<string>): Array<string> {
+  const { SemVer, gt, maxSatisfying, minVersion, validRange } = require('semver');
   const prereleaseGroupMap: KeyStringArrayDictionary = {};
 
   // for each prerelease version;
@@ -136,14 +136,23 @@ export function filterPrereleasesWithinRange(versionRange: string, prereleases: 
     prereleaseGroupMap[prereleaseKey].push(prereleaseVersion);
   });
 
+  // check we have a valid range (handles non-semver errors)
+  const isValidRange = validRange(versionRange, loosePrereleases) !== null;
+  const minVersionFromRange = isValidRange ?
+    minVersion(versionRange, loosePrereleases) :
+    versionRange;
+
+  const gtfn = isValidRange ? gt : maxSatisfying;
+
   // for each group;
-  // extract maxSatisfying from version array;
+  // extract versions that are greater than the min-range (one from each group)
   const filterPrereleases = [];
   Object.keys(prereleaseGroupMap)
     .forEach(function (prereleaseKey) {
       const versions = prereleaseGroupMap[prereleaseKey];
-      const satisfiesVersion = maxSatisfying(versions, versionRange, loosePrereleases);
-      if (satisfiesVersion) filterPrereleases.push(satisfiesVersion)
+      const testMaxVersion = versions[versions.length - 1];
+      const isPrereleaseGt = gtfn(testMaxVersion, minVersionFromRange, loosePrereleases);
+      if (isPrereleaseGt) filterPrereleases.push(testMaxVersion)
     });
 
   return filterPrereleases;

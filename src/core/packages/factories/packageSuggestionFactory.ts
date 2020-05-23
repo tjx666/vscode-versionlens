@@ -5,7 +5,7 @@ import {
 } from "../definitions/packageDocument";
 
 import {
-  filterPrereleasesWithinRange,
+  filterPrereleasesGtMinRange,
   extractTaggedVersions,
   isFixedVersion,
   loosePrereleases
@@ -80,7 +80,7 @@ export function createSuggestionTags(
   }
 
   // roll up prereleases
-  const maxSatisfyingPrereleases = filterPrereleasesWithinRange(versionRange, prereleases);
+  const maxSatisfyingPrereleases = filterPrereleasesGtMinRange(versionRange, prereleases);
 
   // group prereleases
   const taggedVersions = extractTaggedVersions(maxSatisfyingPrereleases);
@@ -153,7 +153,9 @@ export function createLatest(requestedVersion?: string): PackageSuggestion {
   return {
     name: PackageVersionStatus.Latest,
     version: requestedVersion || 'latest',
-    flags: requestedVersion ? PackageSuggestionFlags.release : PackageSuggestionFlags.tag
+    flags: requestedVersion ?
+      PackageSuggestionFlags.release :
+      PackageSuggestionFlags.tag
   };
 }
 
@@ -181,7 +183,9 @@ export function createFixedStatus(version: string): PackageSuggestion {
   );
 }
 
-export function createSuggestion(name: string, version: string, flags: PackageSuggestionFlags): PackageSuggestion {
+export function createSuggestion(
+  name: string, version: string, flags: PackageSuggestionFlags
+): PackageSuggestion {
   return { name, version, flags };
 }
 

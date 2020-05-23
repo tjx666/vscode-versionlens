@@ -1,3 +1,7 @@
+# 1.0.3
+
+- **Npm**: Fixes a case where prereleases were not being suggested (related to [#216](https://github.com/vscode-contrib/vscode-versionlens/issues/216))
+
 # 1.0.1
 
 - **Dotnet**: Fixed unsecure 'http' nuget sources not being resolved. (reported in [#200](https://github.com/vscode-contrib/vscode-versionlens/issues/200))
@@ -12,12 +16,12 @@
   
   ![image](https://user-images.githubusercontent.com/1727302/82630439-956fb500-9bea-11ea-88d2-d155e2f8b02e.png)
 
-
 - **All**: Added an option to set strictSSL to `false` to allow unsigned private registries (reported in [#201](https://github.com/vscode-contrib/vscode-versionlens/issues/201)) 
 
   `versionlens.http.strictSSL` or `versionlens.{provider}.http.strictSSL`.
 
 - **All**: Added an error icon that you can click to focus on the output channel to read the error.
+
 ![image](https://user-images.githubusercontent.com/1727302/82630121-b2f04f00-9be9-11ea-8bf1-dc2fb955df75.png)
 
 # 1.0.0

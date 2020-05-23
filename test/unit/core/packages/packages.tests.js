@@ -1,7 +1,7 @@
 
 // VersionHelperTests
 import extractTaggedVersions from './helpers/versionHelpers/extractTaggedVersions.tests';
-import rollupPrereleases from './helpers/versionHelpers/filterPrereleasesWithinRange.tests';
+import rollupPrereleases from './helpers/versionHelpers/filterPrereleasesGtMinRange.tests';
 import splitReleasesFromArray from './helpers/versionHelpers/splitReleasesFromArray.tests';
 import removeFourSegmentVersionsFromArray from './helpers/versionHelpers/removeFourSegmentVersionsFromArray.tests';
 import friendlifyPrereleaseName from './helpers/versionHelpers/friendlifyPrereleaseName.tests';
