@@ -59,10 +59,10 @@
   },
   "dependencies": {
     "systemjs": "~0.21.6",
-    "npm": "6.14.5",
+    "@npmcli/promise-spawn": "1.2.0",
+    "npm-package-arg": "8.0.1",
     "libnpmconfig": "1.2.1",
     "pacote": "11.1.10",
-    "npm-package-arg": "8.0.1",
     "minimatch": "3.0.4",
     "opener": "1.5.1",
     "request-light": "0.3.0",
@@ -70,8 +70,7 @@
     "xmldoc": "1.1.2",
     "yaml": "1.10.0",
     "jsonc-parser": "2.2.1",
-    "winston": "3.2.1",
-    "@npmcli/promise-spawn": "1.2.0"
+    "winston": "3.2.1"
   },
   "contributes": {
     "commands": [
