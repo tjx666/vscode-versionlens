@@ -61,6 +61,15 @@ export function splitReleasesFromArray(versions: Array<string>): { releases: Arr
   return { releases, prereleases };
 }
 
+export function lteFromArray(versions: Array<string>, version: string) {
+  const { lte } = require('semver');
+  return versions.filter(
+    function (testVersion: string) {
+     return lte(testVersion, version);
+    }
+  );
+}
+
 export function removeFourSegmentVersionsFromArray(versions: Array<string>): Array<string> {
   return versions.filter(function (version: string) {
     return isFourSegmentedVersion(version) === false;

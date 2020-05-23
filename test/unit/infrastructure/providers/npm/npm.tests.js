@@ -1,7 +1,9 @@
 // pacoteClientApi tests
-import * as PacoteApiClient from './pacoteClient/pacoteClient.tests.js';
+import * as PacoteApiClient from './pacoteClient/pacoteClient.tests';
+import * as PacoteNpmRc from './pacoteClient/npmrc.tests';
 export const PacoteApiClientTests = {
-  PacoteApiClient
+  PacoteApiClient,
+  PacoteNpmRc,
 }
 
 import * as fetchRegistry from './npmPackageClient/fetchRegistry.tests';

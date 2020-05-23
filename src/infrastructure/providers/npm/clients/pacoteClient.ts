@@ -73,14 +73,23 @@ export class PacoteClient extends AbstractClientRequest<number, PackageDocument>
           version: versionRange,
         };
 
-        // extract releases
-        const releases = Object.keys(packumentResponse.versions || {}).sort(compareLoose);
-
         // extract prereleases from dist tags
         const distTags = packumentResponse['dist-tags'] || {};
         const prereleases = VersionHelpers.filterPrereleasesFromDistTags(
           distTags
         ).sort(compareLoose)
+
+        const latestTaggedVersion = distTags['latest'];
+
+        // extract releases
+        let releases = Object.keys(packumentResponse.versions || {}).sort(compareLoose);
+        if (latestTaggedVersion) {
+          // cap the releases to the latest tagged version
+          releases = VersionHelpers.lteFromArray(
+            releases,
+            latestTaggedVersion
+          );
+        }
 
         const response = {
           source: ClientResponseSource.remote,
