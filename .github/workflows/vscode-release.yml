@@ -44,8 +44,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ PKG_VERSION }}
-          release_name: ${{ PKG_VERSION }}
+          tag_name: ${{ env.PKG_VERSION }}
+          release_name: ${{ env.PKG_VERSION }}
           draft: true
           prerelease: false
 
