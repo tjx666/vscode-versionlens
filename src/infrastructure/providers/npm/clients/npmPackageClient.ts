@@ -80,19 +80,15 @@ export class NpmPackageClient implements IPackageClient<null> {
 
       if (npaSpec.type === NpaTypes.Git) {
 
-        if (!npaSpec.gitCommittish && !npaSpec.hosted) {
+        if (!npaSpec.hosted ) {
           // could not resolve
-          return resolve(
-            DocumentFactory.createInvalidVersion(
-              request.providerName,
-              request.package,
-              ResponseFactory.createResponseStatus(ClientResponseSource.local, 0),
-              PackageVersionTypes.Committish
-            )
-          );
+          return reject({
+            status: 'EUNSUPPORTEDPROTOCOL',
+            data: 'Git url could not be resolved',
+            source: ClientResponseSource.local
+          });
         }
 
-        // only support shortcuts
         if (!npaSpec.gitCommittish && npaSpec.hosted.default !== 'shortcut') {
           return resolve(
             DocumentFactory.createFixed(

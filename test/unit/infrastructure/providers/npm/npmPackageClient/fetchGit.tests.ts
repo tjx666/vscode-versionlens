@@ -81,8 +81,42 @@ export default {
 
         })
 
-    }
+    },
 
+    'returns unsupported suggestion when not github': async () => {
+
+      const testRequest: any = {
+        clientData: {
+          providerName: 'testnpmprovider',
+        },
+        package: {
+          path: 'packagepath',
+          name: 'core.js',
+          version: 'git+https://git@not-gihub.com/testuser/test.git',
+        }
+      };
+
+      // setup initial call
+      const cut = new NpmPackageClient(
+        new NpmConfig(defaultExtensionMock),
+        new LoggerMock()
+      );
+
+      return cut.fetchPackage(testRequest)
+        .then((actual) => {
+          assert.deepEqual(
+            actual.suggestions,
+            [
+              {
+                name: 'not supported',
+                version: '',
+                flags: PackageSuggestionFlags.status
+              }
+            ]
+          )
+        })
+
+    }
 
   }
 

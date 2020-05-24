@@ -34,9 +34,7 @@ export class GithubClient extends JsonHttpClientRequest {
     this.config = config;
   }
 
-  fetchGithub(
-    request: PackageRequest<null>, npaSpec: NpaSpec
-  ): Promise<PackageDocument> {
+  fetchGithub(request: PackageRequest<null>, npaSpec: NpaSpec): Promise<PackageDocument> {
     const { validRange } = require('semver');
 
     if (npaSpec.gitRange) {
@@ -54,10 +52,7 @@ export class GithubClient extends JsonHttpClientRequest {
     return this.fetchCommits(request, npaSpec);
   }
 
-  fetchTags(
-    request: PackageRequest<null>,
-    npaSpec: NpaSpec
-  ): Promise<PackageDocument> {
+  fetchTags(request: PackageRequest<null>, npaSpec: NpaSpec): Promise<PackageDocument> {
     // todo pass in auth
     const { user, project } = npaSpec.hosted;
     const tagsRepoUrl = `https://api.github.com/repos/${user}/${project}/tags`;

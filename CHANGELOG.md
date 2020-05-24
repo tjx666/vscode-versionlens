@@ -2,6 +2,8 @@
 
 - **Npm**: Fixes a case where prereleases were not being suggested (related to [#216](https://github.com/vscode-contrib/vscode-versionlens/issues/216))
 
+- **Npm**: Ensures unsupported git urls get an unsupported status (reported in [#215](https://github.com/vscode-contrib/vscode-versionlens/issues/215))
+
 # 1.0.1
 
 - **Dotnet**: Fixed unsecure 'http' nuget sources not being resolved. (reported in [#200](https://github.com/vscode-contrib/vscode-versionlens/issues/200))

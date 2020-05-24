@@ -110,7 +110,6 @@ export function createNotSupported(
   const source: PackageSourceTypes = PackageSourceTypes.Registry;
   const suggestions: Array<PackageSuggestion> = [
     SuggestFactory.createNotSupported(),
-    SuggestFactory.createLatest(),
   ];
 
   return {
