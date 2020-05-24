@@ -3,6 +3,9 @@ name: Visual Studio Code Tests
 on:
   pull_request:
     branches: [ master ]
+    paths-ignore:
+      - '.github/**'
+      - '.vscode/**'
 
 jobs:
   test:
@@ -39,7 +42,7 @@ jobs:
       run: xvfb-run --auto-servernum npm test
       if: matrix.os == 'ubuntu-latest'
 
-  package:
+  vsix-artifact:
     needs: test
     strategy:
       matrix:
@@ -49,7 +52,7 @@ jobs:
 
     steps:
       - run: echo "::set-env name=PKG_VERSION::$( date +%Y.%-m.%-d-build.%-H%-M )"
-      - run: echo "::set-env name=PKG_NAME::versionlens-${{ env.PKG_VERSION }}.vsix"
+      - run: echo "::set-env name=VSIX_FILENAME::versionlens-${{ env.PKG_VERSION }}.vsix"
 
       # checkout master
       - uses: actions/checkout@v2
@@ -64,19 +67,19 @@ jobs:
           npm ci
           npm i vsce -g
 
-      # replace package.json version with x.x.x.build
-      - name: replace package.json
+      # replace package.json version with x.x.x-build.*
+      - name: Set package version for vsix
         run: |
-          node -p "JSON.stringify({...require('./package.json'), 'version': '${{ env.PKG_VERSION }}'}, null, '\t')" > new-package.json
-          mv new-package.json package.json
+          echo ${{ env.PKG_VERSION }}
+          npm version --no-git-tag-version ${{ env.PKG_VERSION }}
 
       # package
       - name: package extension
-        run: vsce package --out ${{ env.PKG_NAME }}
+        run: vsce package --out ${{ env.VSIX_FILENAME }}
 
       # save to build artifacts
       - name: Create package artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.PKG_NAME }}
-          path: ${{ env.PKG_NAME }}
+          name: ${{ env.VSIX_FILENAME }}
+          path: ${{ env.VSIX_FILENAME }}
