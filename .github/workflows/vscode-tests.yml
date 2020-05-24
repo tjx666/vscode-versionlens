@@ -78,5 +78,5 @@ jobs:
       - name: Create package artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.PKG_VERSION }}
+          name: ${{ env.PKG_NAME }}
           path: ${{ env.PKG_NAME }}

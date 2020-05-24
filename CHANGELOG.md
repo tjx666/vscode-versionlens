@@ -1,8 +1,14 @@
+# 1.0.4
+
+- **Npm**: Ensures unsupported git urls get an unsupported status (reported in [#215](https://github.com/vscode-contrib/vscode-versionlens/issues/215))
+
+- **Npm**: Fixed an issue where orphan versions higher than the latest version would appear as a latest suggestion (reported in [#219](https://github.com/vscode-contrib/vscode-versionlens/issues/219)
+
+- **Dotnet**: Ensures disabled sources retrieved from the dotnet cli are't used [#222](https://github.com/vscode-contrib/vscode-versionlens/pull/222)
+
 # 1.0.3
 
 - **Npm**: Fixes a case where prereleases were not being suggested (related to [#216](https://github.com/vscode-contrib/vscode-versionlens/issues/216))
-
-- **Npm**: Ensures unsupported git urls get an unsupported status (reported in [#215](https://github.com/vscode-contrib/vscode-versionlens/issues/215))
 
 # 1.0.1
 
