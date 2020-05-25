@@ -22,9 +22,11 @@ export const VersionHelperTests = {
 
 // PackageSuggestionFactoryTests
 import createSuggestionTags from './factories/packageSuggestionFactory/createSuggestionTags.tests';
+import createLatest from './factories/packageSuggestionFactory/createLatest.tests';
 
 export const PackageSuggestionFactoryTests = {
-  createSuggestionTags
+  createSuggestionTags,
+  createLatest
 }
 
 // Package Parser Tests

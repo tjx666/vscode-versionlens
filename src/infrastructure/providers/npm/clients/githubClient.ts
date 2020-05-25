@@ -173,7 +173,7 @@ export class GithubClient extends JsonHttpClientRequest {
           );
         } else if (isLatest) {
           suggestions.push(
-            SuggestionFactory.createMatchesLatest()
+            SuggestionFactory.createMatchesLatest(versionRange)
           );
         } else if (commitIndex > 0) {
           suggestions.push(

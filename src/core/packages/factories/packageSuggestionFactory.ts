@@ -46,7 +46,7 @@ export function createSuggestionTags(
     )
   else if (isLatest && noSuggestionNeeded)
     // latest
-    suggestions.push(createMatchesLatest());
+    suggestions.push(createMatchesLatest(versionRange));
   else if (isLatest)
     suggestions.push(
       // satisfies latest
@@ -169,12 +169,20 @@ export function createLatest(requestedVersion?: string): PackageSuggestion {
   };
 }
 
-export function createMatchesLatest(): PackageSuggestion {
+export function createMatchesLatest(latestVersion: string): PackageSuggestion {
+  const isPrerelease = latestVersion && latestVersion.indexOf('-') !== -1;
+
+  const name = isPrerelease ?
+    PackageVersionStatus.LatestIsPrerelease :
+    PackageVersionStatus.Latest;
+
   return {
-    name: PackageVersionStatus.Latest,
-    version: '',
+    name,
+    version: isPrerelease ? latestVersion : '',
     flags: PackageSuggestionFlags.status
   };
+
+
 }
 
 export function createSatisifiesLatest(): PackageSuggestion {
@@ -198,4 +206,3 @@ export function createSuggestion(
 ): PackageSuggestion {
   return { name, version, flags };
 }
-

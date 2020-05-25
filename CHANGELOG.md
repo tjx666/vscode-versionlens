@@ -1,10 +1,14 @@
-# 1.0.5-wip.1
+# 1.0.5-wip.2
 
 - Fixed case where prerelease suggestions weren't being ordered in semver order 
+
+  ![image](https://user-images.githubusercontent.com/1727302/82839431-4023f400-9ec7-11ea-9e58-b1cde7980302.png)
 
 - **Npm**: Indicates cases when a prerelease has been published as the latest tag in contradiction to npm documentation guidelines. (reported in [#219](https://github.com/vscode-contrib/vscode-versionlens/issues/219))
 
   ![image](https://user-images.githubusercontent.com/1727302/82831912-9a19bf00-9eb1-11ea-83f9-755488d26921.png)
+
+  ![image](https://user-images.githubusercontent.com/1727302/82839527-94c76f00-9ec7-11ea-8250-96ddc3724403.png)
 
 # 1.0.4
 

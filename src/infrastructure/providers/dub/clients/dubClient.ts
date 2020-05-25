@@ -129,7 +129,7 @@ export function createSuggestionTags(
     const latestRelease = releases[releases.length - 1];
 
     if (latestRelease === versionRange) {
-      suggestions[0] = SuggestionFactory.createMatchesLatest();
+      suggestions[0] = SuggestionFactory.createMatchesLatest(versionRange);
       suggestions.pop();
     } else {
       // suggest
