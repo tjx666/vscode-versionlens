@@ -7,6 +7,7 @@ import {
   IPackageClient,
   PackageSuggestionFlags,
   PackageResponse,
+  PackageVersionStatus,
 } from 'core/packages';
 
 export async function executeDependencyRequests<TClientData>(
@@ -84,7 +85,10 @@ export async function executePackageRequest<TClientData>(
 
       if (request.includePrereleases === false) {
         response.suggestions = response.suggestions.filter(
-          suggestion => !(suggestion.flags & PackageSuggestionFlags.prerelease)
+          function (suggestion) {
+            return (suggestion.flags & PackageSuggestionFlags.prerelease) === 0 ||
+              suggestion.name.includes(PackageVersionStatus.LatestIsPrerelease)
+          }
         )
       }
 

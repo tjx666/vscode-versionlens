@@ -59,9 +59,35 @@ export default {
       assert.deepEqual(results, expected);
     },
 
+    "when using a release range": () => {
+      const expected = [
+        {
+          name: PackageVersionStatus.NoMatch,
+          version: '',
+          flags: PackageSuggestionFlags.status
+        },
+        {
+          name: PackageVersionStatus.Latest,
+          version: '1.0.3-1.2.3',
+          flags: PackageSuggestionFlags.release
+        }
+      ]
+
+      const testRange = '^1.0.0'
+      const testReleases = ['0.0.6']
+      const testPrereleases = ['1.0.1-1.2.3', '1.0.2-1.2.3', '1.0.3-1.2.3']
+      const results = SuggestionFactory.createSuggestionTags(
+        testRange,
+        testReleases,
+        testPrereleases,
+        '1.0.3-1.2.3'
+      );
+      assert.equal(results.length, expected.length);
+    },
+
   },
 
-  "returns PackageVersionStatus.latest": {
+  "returns PackageVersionStatus.Latest": {
 
     "when versionRange matches the latest release": () => {
 
@@ -94,6 +120,63 @@ export default {
         assert.deepEqual(results, expected);
       })
 
+    },
+
+    "when suggestedVersion is the latest release": () => {
+      const testSuggestedVersion = '5.0.0';
+
+      const expected = [
+        {
+          name: PackageVersionStatus.Latest,
+          version: '',
+          flags: PackageSuggestionFlags.status
+        }
+      ]
+
+      const testReleases = ['0.0.5', '2.0.0', '5.0.0']
+      const testPrereleases = ['1.1.0-alpha.1', '4.0.0-next']
+      const testRange = testSuggestedVersion
+
+      const results = SuggestionFactory.createSuggestionTags(
+        testRange,
+        testReleases,
+        testPrereleases,
+        testSuggestedVersion
+      );
+      assert.deepEqual(results, expected);
+    },
+
+  },
+
+  "returns PackageVersionStatus.LatestIsPrerelease": {
+
+    "when suggestedVersion is not the latest release": () => {
+      const testDistTagLatest = '4.0.0-next';
+
+      const expected = [
+        {
+          name: PackageVersionStatus.NoMatch,
+          version: '',
+          flags: PackageSuggestionFlags.status
+        },
+        {
+          name: PackageVersionStatus.LatestIsPrerelease,
+          version: '4.0.0-next',
+          flags: PackageSuggestionFlags.prerelease
+        }
+      ]
+
+      const testReleases = ['0.0.5', '0.0.6']
+      const testPrereleases = ['1.1.0-alpha.1', '4.0.0-next']
+      const testRange = '4.0.0'
+
+      const results = SuggestionFactory.createSuggestionTags(
+        testRange,
+        testReleases,
+        testPrereleases,
+        testDistTagLatest
+      );
+      assert.deepEqual(results, expected);
     },
 
   },
@@ -170,6 +253,5 @@ export default {
     },
 
   },
-
 
 }

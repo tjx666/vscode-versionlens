@@ -26,6 +26,7 @@ export enum PackageVersionStatus {
   NoMatch = 'no match',
   Satisfies = 'satisfies',
   Latest = 'latest',
+  LatestIsPrerelease = 'latest prerelease',
   Fixed = 'fixed',
 }
 

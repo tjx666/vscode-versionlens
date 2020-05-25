@@ -65,12 +65,14 @@ export class GithubClient extends JsonHttpClientRequest {
 
     return this.requestJson(HttpClientRequestMethods.get, tagsRepoUrl, {})
       .then(function (response: JsonClientResponse): PackageDocument {
+        const { compareLoose } = require("semver");
+
         // extract versions
         const tags = <[]>response.data;
 
         const rawVersions = tags.map((tag: any) => tag.name);
 
-        const allVersions = VersionHelpers.filterSemverVersions(rawVersions);
+        const allVersions = VersionHelpers.filterSemverVersions(rawVersions).sort(compareLoose);
 
         const source: PackageSourceTypes = PackageSourceTypes.Github;
 

@@ -1,3 +1,11 @@
+# 1.0.5-wip.1
+
+- Fixed case where prerelease suggestions weren't being ordered in semver order 
+
+- **Npm**: Indicates cases when a prerelease has been published as the latest tag in contradiction to npm documentation guidelines. (reported in [#219](https://github.com/vscode-contrib/vscode-versionlens/issues/219))
+
+  ![image](https://user-images.githubusercontent.com/1727302/82831912-9a19bf00-9eb1-11ea-83f9-755488d26921.png)
+
 # 1.0.4
 
 - **Npm**: Ensures unsupported git urls get an unsupported status (reported in [#215](https://github.com/vscode-contrib/vscode-versionlens/issues/215))

@@ -34,7 +34,11 @@ export function extractTaggedVersions(versions: Array<string>): Array<PackageNam
     const isPrerelease = !!prereleaseComponents && prereleaseComponents.length > 0;
     if (isPrerelease) {
       const regexResult = formatTagNameRegex.exec(prereleaseComponents[0]);
-      const name = regexResult[0].toLowerCase();
+
+      let name = regexResult[0].toLowerCase();
+
+      // capture cases like x.x.x-x.x.x
+      if(!name) name = prereleaseComponents.join('.');
 
       results.push({
         name,
@@ -65,7 +69,7 @@ export function lteFromArray(versions: Array<string>, version: string) {
   const { lte } = require('semver');
   return versions.filter(
     function (testVersion: string) {
-     return lte(testVersion, version);
+      return lte(testVersion, version);
     }
   );
 }
@@ -132,14 +136,22 @@ export function parseSemver(packageVersion: string): SemverSpec {
 }
 
 export function filterPrereleasesGtMinRange(versionRange: string, prereleases: Array<string>): Array<string> {
-  const { SemVer, gt, maxSatisfying, minVersion, validRange } = require('semver');
+  const {
+    SemVer,
+    gt,
+    maxSatisfying,
+    minVersion,
+    validRange,
+  } = require('semver');
+
   const prereleaseGroupMap: KeyStringArrayDictionary = {};
 
   // for each prerelease version;
   // group prereleases by x.x.x-{name}*.x
   prereleases.forEach(function (prereleaseVersion) {
     const spec = new SemVer(prereleaseVersion, loosePrereleases)
-    const prereleaseKey = friendlifyPrereleaseName(prereleaseVersion) || spec.prerelease[0];
+    const prereleaseKey = friendlifyPrereleaseName(prereleaseVersion) ||
+      spec.prerelease[0];
 
     prereleaseGroupMap[prereleaseKey] = prereleaseGroupMap[prereleaseKey] || [];
     prereleaseGroupMap[prereleaseKey].push(prereleaseVersion);

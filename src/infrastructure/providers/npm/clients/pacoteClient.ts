@@ -23,7 +23,7 @@ export class PacoteClient extends AbstractClientRequest<number, PackageDocument>
     this.config = config;
   }
 
-  async  fetchPackage(
+  async fetchPackage(
     request: PackageRequest<null>, npaSpec: NpaSpec
   ): Promise<PackageDocument> {
 
@@ -73,16 +73,19 @@ export class PacoteClient extends AbstractClientRequest<number, PackageDocument>
           version: versionRange,
         };
 
+        // extract raw versions and sort
+        const rawVersions = Object.keys(packumentResponse.versions || {}).sort(compareLoose);
+
+        // seperate versions to releases and prereleases
+        let { releases, prereleases } = VersionHelpers.splitReleasesFromArray(
+          rawVersions
+        );
+
         // extract prereleases from dist tags
         const distTags = packumentResponse['dist-tags'] || {};
-        const prereleases = VersionHelpers.filterPrereleasesFromDistTags(
-          distTags
-        ).sort(compareLoose)
-
         const latestTaggedVersion = distTags['latest'];
 
         // extract releases
-        let releases = Object.keys(packumentResponse.versions || {}).sort(compareLoose);
         if (latestTaggedVersion) {
           // cap the releases to the latest tagged version
           releases = VersionHelpers.lteFromArray(
@@ -96,28 +99,42 @@ export class PacoteClient extends AbstractClientRequest<number, PackageDocument>
           status: 200,
         };
 
-        // check if the version requested is a tag. eg latest|next
+        // use 'latest' tagged version from author?
+        const suggestLatestVersion = latestTaggedVersion || (
+          releases.length > 0 ?
+            // suggest latest release?
+            releases[releases.length - 1] :
+            // no suggestion
+            null
+        );
+
         const requested = request.package;
         if (npaSpec.type === NpaTypes.Tag) {
+
+          // get the tagged version. eg latest|next
           versionRange = distTags[requested.version];
           if (!versionRange) {
+
+            // No match
             return DocumentFactory.createNoMatch(
               providerName,
               source,
               type,
               requested,
               response,
-              // suggest the latest release if available
-              releases.length > 0 ? releases[releases.length - 1] : null
+              suggestLatestVersion
             );
+
           }
+
         }
 
         // analyse suggestions
         const suggestions = SuggestionFactory.createSuggestionTags(
           versionRange,
           releases,
-          prereleases
+          prereleases,
+          suggestLatestVersion
         );
 
         return {

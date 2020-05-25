@@ -14,22 +14,25 @@ import {
 export function createSuggestionTags(
   versionRange: string,
   releases: string[],
-  prereleases: string[]
+  prereleases: string[],
+  suggestedLatestVersion: string = null
 ): Array<PackageSuggestion> {
-  const { maxSatisfying } = require("semver");
+  const { maxSatisfying, compareLoose } = require("semver");
   const suggestions: Array<PackageSuggestion> = [];
 
   // check for a release
   let satisfiesVersion = maxSatisfying(releases, versionRange, loosePrereleases);
-  if (!satisfiesVersion) {
+  if (!satisfiesVersion && versionRange.indexOf('-') > -1) {
     // lookup prereleases
     satisfiesVersion = maxSatisfying(prereleases, versionRange, loosePrereleases);
   }
 
   // get the latest release
-  const latestVersion = maxSatisfying(releases, "*");
+  const latestVersion = suggestedLatestVersion || releases[releases.length - 1];
   const isLatest = latestVersion === satisfiesVersion;
-  const noSuggestionNeeded = versionRange.includes(satisfiesVersion);
+
+  const noSuggestionNeeded = versionRange.includes(satisfiesVersion) ||
+    satisfiesVersion == suggestedLatestVersion;
 
   if (releases.length === 0 && prereleases.length === 0)
     // no match
@@ -51,50 +54,48 @@ export function createSuggestionTags(
       // suggest latestVersion
       createLatest(latestVersion),
     );
-  else if (satisfiesVersion) {
-
-    if (isFixedVersion(versionRange)) {
-      suggestions.push(
-        // fixed
-        createFixedStatus(versionRange),
-        // suggest latestVersion
-        createLatest(latestVersion),
-      );
-    } else {
-
-      suggestions.push(
-        // satisfies >x.y.z <x.y.z
-        createSuggestion(
-          PackageVersionStatus.Satisfies,
-          satisfiesVersion,
-          noSuggestionNeeded ?
-            PackageSuggestionFlags.status :
-            PackageSuggestionFlags.release
-        ),
-        // suggest latestVersion
-        createLatest(latestVersion),
-      );
-
-    }
-
-  }
+  else if (satisfiesVersion && isFixedVersion(versionRange))
+    suggestions.push(
+      // fixed
+      createFixedStatus(versionRange),
+      // suggest latestVersion
+      createLatest(latestVersion),
+    );
+  else if (satisfiesVersion)
+    suggestions.push(
+      // satisfies >x.y.z <x.y.z
+      createSuggestion(
+        PackageVersionStatus.Satisfies,
+        satisfiesVersion,
+        noSuggestionNeeded ?
+          PackageSuggestionFlags.status :
+          PackageSuggestionFlags.release
+      ),
+      // suggest latestVersion
+      createLatest(latestVersion),
+    );
 
   // roll up prereleases
-  const maxSatisfyingPrereleases = filterPrereleasesGtMinRange(versionRange, prereleases);
+  const maxSatisfyingPrereleases = filterPrereleasesGtMinRange(
+    versionRange,
+    prereleases
+  ).sort(compareLoose);
 
-  // group prereleases
+  // group prereleases (latest first)
   const taggedVersions = extractTaggedVersions(maxSatisfyingPrereleases);
-  taggedVersions.forEach((pvn) => {
-    if (pvn.name === 'latest') return;
-    if (pvn.version === satisfiesVersion) return;
-    if (versionRange.includes(pvn.version)) return;
+  for (let index = taggedVersions.length - 1; index > -1; index--) {
+    const pvn = taggedVersions[index];
+    if (pvn.name === 'latest') break;
+    if (pvn.version === satisfiesVersion) break;
+    if (pvn.version === latestVersion) break;
+    if (versionRange.includes(pvn.version)) break;
 
     suggestions.push({
       name: pvn.name,
       version: pvn.version,
       flags: PackageSuggestionFlags.prerelease
     });
-  });
+  }
 
   return suggestions;
 }
@@ -148,14 +149,23 @@ export function createNoMatch(): PackageSuggestion {
 }
 
 export function createLatest(requestedVersion?: string): PackageSuggestion {
+  const isPrerelease = requestedVersion && requestedVersion.indexOf('-') !== -1;
+
+  const name = isPrerelease ?
+    PackageVersionStatus.LatestIsPrerelease :
+    PackageVersionStatus.Latest;
+
   // treats requestedVersion as latest version
   // if no requestedVersion then uses the 'latest' tag instead
   return {
-    name: PackageVersionStatus.Latest,
+    name,
     version: requestedVersion || 'latest',
-    flags: requestedVersion ?
-      PackageSuggestionFlags.release :
-      PackageSuggestionFlags.tag
+    flags:
+      isPrerelease ?
+        PackageSuggestionFlags.prerelease :
+        requestedVersion ?
+          PackageSuggestionFlags.release :
+          PackageSuggestionFlags.tag
   };
 }
 
