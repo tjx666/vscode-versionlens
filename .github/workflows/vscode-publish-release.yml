@@ -46,4 +46,4 @@ jobs:
 
       # publish the release
       - name: Publish package
-        run: vsce publish --packagePath=${{ env.PKG_NAME }} --pat=${{ secrets.VSCE_TOKEN }}
+        run: vsce publish --packagePath=${{ env.PKG_NAME }} --pat ${{ secrets.VSCE_TOKEN }}
