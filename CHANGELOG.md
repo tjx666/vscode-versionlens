@@ -1,4 +1,8 @@
-# 1.0.5-wip.2
+# 1.0.6
+
+- The vscode bug installing this plugin is now resolved [#98366](https://github.com/microsoft/vscode/issues/98366)
+
+# 1.0.5
 
 - Fixed case where prerelease suggestions weren't being ordered in semver order 
 
