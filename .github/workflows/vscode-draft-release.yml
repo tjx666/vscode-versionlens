@@ -1,17 +1,26 @@
-name: Package Release
+name: Draft Release
+
+# this workflow creates a draft release.
+# it is executed by running the following cmds (usually locally)
+# > npm version x.x.x -m "bumped to %s"
+# > git push --tags
 
 on:
   push:
     branches:
+      # limit to master branch only
       - master
     tags:
-       # fire on tag that start with x.x.x
-      - '^[0-9]+.[0-9]+.[0-9]+'
+      # fire for tags with x.x.x
+      - '[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
-  package:
+  draft-release:
 
     runs-on: ubuntu-latest
+    
+    # ensure job runs against 'refs/tags' only
+    if: contains(github.ref, 'refs/tags')
 
     steps:
       # checkout master
@@ -22,20 +31,19 @@ jobs:
         with:
           node-version: 12.x
 
-      # set the package version
+      # extract the package version (so you can check the draft for tag mismatch)
       - run: echo "::set-env name=PKG_VERSION::$( node -pe "require('./package.json').version" )"
 
-      # set the package name
-      - run: echo "::set-env name=PKG_NAME::versionlens-${{ env.PKG_VERSION }}.vsix"
+      # generate the package name
+      - run: echo "::set-env name=PKG_NAME::vscode-versionlens-${{ env.PKG_VERSION }}.vsix"
 
-      # install
-      - name: Install npm dependencies
+      - name: Install dependencies
         run: |
           npm ci
           npm i vsce -g
 
       # package vsce
-      - name: Package vscode extension
+      - name: Package vsix extension
         run: vsce package --out ${{ env.PKG_NAME }}
 
       - name: Create draft release
@@ -49,7 +57,7 @@ jobs:
           draft: true
           prerelease: false
 
-      - name: Attach vsix package to the new release
+      - name: Attach vsix package to the draft
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1
         env:
