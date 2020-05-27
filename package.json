@@ -62,7 +62,7 @@
     "@npmcli/promise-spawn": "1.2.0",
     "npm-package-arg": "8.0.1",
     "libnpmconfig": "1.2.1",
-    "pacote": "11.1.10",
+    "pacote": "9.5.12",
     "minimatch": "3.0.4",
     "request-light": "0.3.0",
     "semver": "7.3.2",
@@ -446,4 +446,3 @@
     }
   }
 }
-
