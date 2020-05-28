@@ -126,6 +126,15 @@ export class NpmPackageClient implements IPackageClient<null> {
         );
       }
 
+      if (response.status === 403 || response.status === 'E403') {
+        return DocumentFactory.createForbidden(
+          request.providerName,
+          request.package,
+          null,
+          ResponseFactory.createResponseStatus(response.source, 403)
+        );
+      }
+
       if (response.status === 401 || response.status === 'E401') {
         return DocumentFactory.createNotAuthorized(
           request.providerName,

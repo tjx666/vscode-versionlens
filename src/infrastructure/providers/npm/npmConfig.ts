@@ -59,7 +59,11 @@ export class NpmConfig extends AbstractProviderConfig {
       'http'
     );
 
-    this.github = new GitHubOptions(extension.config, NpmContributions.Github);
+    this.github = new GitHubOptions(
+      extension.config,
+      NpmContributions.Github,
+      'github'
+    );
   }
 
   get dependencyProperties(): Array<string> {

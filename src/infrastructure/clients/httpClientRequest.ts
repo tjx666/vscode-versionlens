@@ -21,17 +21,17 @@ export class HttpClientRequest
 
   options: HttpRequestOptions;
 
-  constructor(logger: ILogger, options: HttpRequestOptions, headers?: KeyStringDictionary) {
+  constructor(logger: ILogger, options: HttpRequestOptions) {
     super(options.caching);
     this.logger = logger;
     this.options = options;
-    this.headers = headers || {};
   }
 
   async request(
     method: HttpClientRequestMethods,
     baseUrl: string,
-    query: KeyStringDictionary = {}
+    query: KeyStringDictionary = {},
+    headers: KeyStringDictionary = {}
   ): Promise<HttpClientResponse> {
 
     const url = UrlHelpers.createUrl(baseUrl, query);
@@ -47,7 +47,7 @@ export class HttpClientRequest
     return requestLight.xhr({
       url,
       type: method,
-      headers: this.headers,
+      headers,
       strictSSL: this.options.http.strictSSL
     })
       .then((response: RequestLightHttpResponse) => {

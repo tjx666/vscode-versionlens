@@ -11,6 +11,7 @@ const assert = require('assert')
 const mock = require('mock-require')
 
 let defaultExtensionMock: VersionLensExtension;
+let configMock = null;
 let requestLightMock = null
 let testContext = null
 
@@ -26,13 +27,13 @@ export default {
   afterAll: () => mock.stopAll(),
 
   beforeEach: () => {
-    defaultExtensionMock = new VersionLensExtension(
-      {
-        get: (k) => null,
-        defrost: () => null
-      },
-      null
-    );
+
+    configMock = {
+      get: (k) => null,
+      defrost: () => null
+    }
+
+    defaultExtensionMock = new VersionLensExtension(configMock, null);
   },
 
   'fetchGithubPackage': {
@@ -194,6 +195,43 @@ export default {
             }]
           )
         })
+    },
+
+    'sets auth token in headers': async () => {
+
+      const testRequest: any = {
+        providerName: 'testnpmprovider',
+        package: {
+          path: 'packagepath',
+          name: 'core.js',
+          version: 'github:octokit/core.js#166c3497',
+        }
+      };
+
+      const testToken = 'testToken';
+
+      configMock.get = k =>
+        k === 'npm.github.accessToken' ? testToken : null
+
+      requestLightMock.xhr = options => {
+        const actual = options.headers['authorization'];
+        assert.equal(actual, 'token ' + testToken)
+
+        return Promise.resolve({
+          status: 200,
+          responseText: JSON.stringify(githubFixtures.commits),
+          source: ClientResponseSource.remote
+        })
+      };
+
+      // setup initial call
+      const cut = new NpmPackageClient(
+        new NpmConfig(defaultExtensionMock),
+        new LoggerMock()
+      );
+
+      return cut.fetchPackage(testRequest);
+
     }
 
   }

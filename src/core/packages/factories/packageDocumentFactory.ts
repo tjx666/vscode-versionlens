@@ -31,6 +31,29 @@ export function createNotFound(
   };
 }
 
+export function createForbidden(
+  providerName: string,
+  requested: PackageIdentifier,
+  type: PackageVersionTypes,
+  response: PackageResponseStatus
+): PackageDocument {
+  const source: PackageSourceTypes = PackageSourceTypes.Registry;
+
+  const suggestions: Array<PackageSuggestion> = [
+    SuggestFactory.createForbidden()
+  ];
+
+  return {
+    providerName,
+    source,
+    type,
+    requested,
+    resolved: null,
+    suggestions,
+    response
+  };
+}
+
 export function createConnectionRefused(
   providerName: string,
   requested: PackageIdentifier,
@@ -53,7 +76,6 @@ export function createConnectionRefused(
     response
   };
 }
-
 
 export function createNotAuthorized(
   providerName: string,

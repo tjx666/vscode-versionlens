@@ -15,16 +15,17 @@ export class JsonHttpClientRequest
   extends HttpClientRequest
   implements IJsonHttpClientRequest {
 
-  constructor(logger: ILogger, options: HttpRequestOptions, headers?: KeyStringDictionary) {
-    super(logger, options, headers);
+  constructor(logger: ILogger, options: HttpRequestOptions) {
+    super(logger, options);
   }
 
   async requestJson(
     method: HttpClientRequestMethods,
     url: string,
-    query: KeyStringDictionary = {}
+    query: KeyStringDictionary = {},
+    headers: KeyStringDictionary = {}
   ): Promise<JsonClientResponse> {
-    return super.request(method, url, query)
+    return super.request(method, url, query, headers)
       .then(function (response: HttpClientResponse) {
         return {
           source: response.source,

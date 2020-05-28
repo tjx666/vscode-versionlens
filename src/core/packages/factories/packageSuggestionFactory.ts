@@ -116,6 +116,14 @@ export function createConnectionRefused(): PackageSuggestion {
   };
 }
 
+export function createForbidden(): PackageSuggestion {
+  return {
+    name: PackageVersionStatus.Forbidden,
+    version: '',
+    flags: PackageSuggestionFlags.status
+  };
+}
+
 export function createNotAuthorized(): PackageSuggestion {
   return {
     name: PackageVersionStatus.NotAuthorized,

@@ -195,8 +195,7 @@ export const HttpRequestTests = {
         <HttpRequestOptions>{
           caching: { duration: 0 },
           http: { strictSSL: true }
-        },
-        {}
+        }
       );
 
       await testContext.rut.request(
