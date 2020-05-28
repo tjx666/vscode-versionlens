@@ -30,7 +30,7 @@ jobs:
 
       # generate the vsix file name
       - name: Generate vsix filename
-        run: echo "::set-env name=PKG_NAME::vscode-versionlens-${{ github.event.release.tag_name }}.vsix"
+        run: echo "::set-env name=VSIX_FILENAME::vscode-versionlens-${{ github.event.release.tag_name }}.vsix"
 
       # install dependencies
       - name: Install dependencies
@@ -42,8 +42,15 @@ jobs:
 
       # compile and package to vsix
       - name: Build vsix package
-        run: vsce package --out ${{ env.PKG_NAME }}
+        run: vsce package --out ${{ env.VSIX_FILENAME }}
+
+      # save to build artifacts
+      - name: Create package artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.VSIX_FILENAME }}
+          path: ${{ env.VSIX_FILENAME }}
 
       # publish the release
       - name: Publish package
-        run: vsce publish --packagePath=${{ env.PKG_NAME }} -p ${{ secrets.VSCE_TOKEN }}
+        run: vsce publish --packagePath=${{ env.VSIX_FILENAME }} -p ${{ secrets.VSCE_TOKEN }}
