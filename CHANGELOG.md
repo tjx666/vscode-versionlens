@@ -1,3 +1,13 @@
+# 1.0.7-preview.2
+
+- Npm: fixed github auth not being passed to request client
+
+- Npm: reverted pacote to 9.5.12 for private registry auth fix (#245)
+
+  reported in [#243](https://github.com/vscode-contrib/vscode-versionlens/issues/243)
+
+  reported in [#244](https://github.com/vscode-contrib/vscode-versionlens/issues/244)
+
 # 1.0.6
 
 - The vscode bug installing this plugin is now resolved [#98366](https://github.com/microsoft/vscode/issues/98366)
