@@ -215,6 +215,39 @@ export default {
       assert.deepEqual(results, expected);
     },
 
+    "when versionRange satisfies the latest tagged release": () => {
+      const testLatest = '7.10.1'
+
+      const expected = [
+        {
+          name: PackageVersionStatus.Satisfies,
+          version: 'latest',
+          flags: PackageSuggestionFlags.status
+        },
+        {
+          name: PackageVersionStatus.Latest,
+          version: testLatest,
+          flags: PackageSuggestionFlags.release
+        },
+        {
+          name: 'next',
+          version: '8.0.0-next',
+          flags: PackageSuggestionFlags.prerelease
+        }
+      ]
+
+      const testReleases = ['1.0.0', '2.0.0', '2.1.0', '7.9.6', '7.9.7', testLatest]
+      const testPrereleases = ['1.1.0-alpha.1', '8.0.0-next']
+
+      const results = SuggestionFactory.createSuggestionTags(
+        '^7.9.1',
+        testReleases,
+        testPrereleases,
+        testLatest
+      );
+
+      assert.deepEqual(results, expected);
+    },
     "when versionRange satisfies a range in the releases": () => {
 
       const expected = [

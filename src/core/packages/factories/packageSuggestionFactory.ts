@@ -32,7 +32,7 @@ export function createSuggestionTags(
   const isLatest = latestVersion === satisfiesVersion;
 
   const noSuggestionNeeded = versionRange.includes(satisfiesVersion) ||
-    satisfiesVersion == suggestedLatestVersion;
+    versionRange.includes(suggestedLatestVersion);
 
   if (releases.length === 0 && prereleases.length === 0)
     // no match

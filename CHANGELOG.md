@@ -1,16 +1,20 @@
-# 1.0.7-preview.2
+# 1.0.7-preview.3
 
 - Added a troubleshooting section to the [README](https://github.com/vscode-contrib/vscode-versionlens/blob/master/README.md)
 
-- Npm: fixed github auth not being passed to request client
+- **Npm:** fixed github auth token not being passed to request client
 
   reported in [#210](https://github.com/vscode-contrib/vscode-versionlens/issues/210)
 
-- Npm: reverted pacote to 9.5.12 for private registry auth fix (#245)
+- **Npm:** reverted pacote to 9.5.12 for private registry auth fix (#245)
 
   reported in [#243](https://github.com/vscode-contrib/vscode-versionlens/issues/243)
 
   reported in [#244](https://github.com/vscode-contrib/vscode-versionlens/issues/244)
+
+- **Npm:** fixes a range condition where "latest" instead of "satisfies latest | latest x.x.x" was appearing
+
+  reported in [#248](https://github.com/vscode-contrib/vscode-versionlens/issues/248)
 
 # 1.0.6
 
