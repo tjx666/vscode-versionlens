@@ -34,7 +34,7 @@ jobs:
       - name: Set package.json to preview
         run: | 
           mv package.json edit.json
-          node -pe "JSON.stringify({...require('./edit.json'), 'version': '${{ github.event.release.tag_name }}', 'preview': 'true'}, null, '\t')" > ./package.json
+          node -pe "JSON.stringify({...require('./edit.json'), 'version': '${{ github.event.release.tag_name }}', 'preview': true}, null, '\t')" > ./package.json
 
       # install dependencies
       - name: Install dependencies

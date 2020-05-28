@@ -1,5 +1,6 @@
 {
   "name": "vscode-versionlens",
+  "preview": false,
   "private": true,
   "description": "Shows the latest version for each package using code lens",
   "repository": {

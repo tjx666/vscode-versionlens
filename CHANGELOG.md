@@ -2,6 +2,8 @@
 
 - Npm: fixed github auth not being passed to request client
 
+  reported in [#210](https://github.com/vscode-contrib/vscode-versionlens/issues/210)
+
 - Npm: reverted pacote to 9.5.12 for private registry auth fix (#245)
 
   reported in [#243](https://github.com/vscode-contrib/vscode-versionlens/issues/243)
