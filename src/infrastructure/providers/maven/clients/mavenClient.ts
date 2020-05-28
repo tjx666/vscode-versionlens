@@ -29,7 +29,7 @@ export class MavenClient
   config: MavenConfig;
 
   constructor(config: MavenConfig, options: HttpRequestOptions, logger: ILogger) {
-    super(logger, options, {})
+    super(logger, options)
 
     this.config = config;
   }

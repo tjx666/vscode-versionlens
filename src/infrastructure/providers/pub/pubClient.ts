@@ -27,7 +27,7 @@ export class PubClient
   config: PubConfig;
 
   constructor(config: PubConfig, options: HttpRequestOptions, logger: ILogger) {
-    super(logger, options, {})
+    super(logger, options)
     this.config = config;
   }
 

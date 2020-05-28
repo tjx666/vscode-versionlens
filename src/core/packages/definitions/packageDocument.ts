@@ -22,6 +22,7 @@ export enum PackageVersionStatus {
   NotAuthorized = 'not authorized',
   NotSupported = 'not supported',
   ConnectionRefused = 'connection refused',
+  Forbidden = '403 forbidden',
   Invalid = 'invalid entry',
   NoMatch = 'no match',
   Satisfies = 'satisfies',

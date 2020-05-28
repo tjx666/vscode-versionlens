@@ -32,7 +32,7 @@ export class NuGetPackageClient
   config: DotNetConfig;
 
   constructor(config: DotNetConfig, options: HttpRequestOptions, logger: ILogger) {
-    super(logger, options, {});
+    super(logger, options);
     this.config = config;
   }
 
@@ -41,7 +41,10 @@ export class NuGetPackageClient
     return this.fetchPackageRetry(request, dotnetSpec);
   }
 
-  async fetchPackageRetry(request: PackageRequest<NuGetClientData>, dotnetSpec: DotNetVersionSpec): Promise<PackageDocument> {
+  async fetchPackageRetry(
+    request: PackageRequest<NuGetClientData>,
+    dotnetSpec: DotNetVersionSpec
+  ): Promise<PackageDocument> {
     const urls = request.clientData.serviceUrls;
     const autoCompleteUrl = urls[request.attempt];
 

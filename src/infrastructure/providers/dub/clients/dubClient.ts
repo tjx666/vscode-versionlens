@@ -21,17 +21,14 @@ import {
 import { JsonHttpClientRequest, } from 'infrastructure/clients';
 import { DubConfig } from '../dubConfig';
 
-export class DubClient
-  extends JsonHttpClientRequest
-  implements IPackageClient<null> {
+export class DubClient extends JsonHttpClientRequest implements IPackageClient<null> {
 
   config: DubConfig;
 
   constructor(config: DubConfig, options: HttpRequestOptions, logger: ILogger) {
-    super(logger, options, {});
+    super(logger, options);
     this.config = config;
   }
-
   async fetchPackage(request: PackageRequest<null>): Promise<PackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
     const url = `${this.config.apiUrl}/${encodeURIComponent(request.package.name)}/info`;

@@ -13,7 +13,7 @@ import { DotNetSource } from '../definitions/dotnet';
 export class NuGetResourceClient extends JsonHttpClientRequest {
 
   constructor(options: HttpRequestOptions, logger: ILogger) {
-    super(logger, options, {})
+    super(logger, options)
   }
 
   async fetchResource(source: DotNetSource): Promise<string> {

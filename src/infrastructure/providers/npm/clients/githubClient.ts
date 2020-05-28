@@ -30,7 +30,7 @@ export class GithubClient extends JsonHttpClientRequest {
   config: NpmConfig;
 
   constructor(config: NpmConfig, options: HttpRequestOptions, logger: ILogger) {
-    super(logger, options, defaultHeaders);
+    super(logger, options);
     this.config = config;
   }
 
@@ -56,14 +56,10 @@ export class GithubClient extends JsonHttpClientRequest {
     // todo pass in auth
     const { user, project } = npaSpec.hosted;
     const tagsRepoUrl = `https://api.github.com/repos/${user}/${project}/tags`;
+    const query = {};
+    const headers = this.getHeaders();
 
-    let headers = {};
-
-    if (this.config.github.accessToken && this.config.github.accessToken.length > 0) {
-      (<any>headers).authorization = `token ${this.config.github.accessToken}`;
-    }
-
-    return this.requestJson(HttpClientRequestMethods.get, tagsRepoUrl, {})
+    return this.requestJson(HttpClientRequestMethods.get, tagsRepoUrl, query, headers)
       .then(function (response: JsonClientResponse): PackageDocument {
         const { compareLoose } = require("semver");
 
@@ -121,8 +117,10 @@ export class GithubClient extends JsonHttpClientRequest {
     // todo pass in auth
     const { user, project } = npaSpec.hosted;
     const commitsRepoUrl = `https://api.github.com/repos/${user}/${project}/commits`;
+    const query = {};
+    const headers = this.getHeaders();
 
-    return this.requestJson(HttpClientRequestMethods.get, commitsRepoUrl, {})
+    return this.requestJson(HttpClientRequestMethods.get, commitsRepoUrl, query, headers)
       .then((response: JsonClientResponse) => {
 
         const commitInfos = <[]>response.data
@@ -195,6 +193,14 @@ export class GithubClient extends JsonHttpClientRequest {
 
       });
 
+  }
+
+  getHeaders() {
+    const userHeaders = {};
+    if (this.config.github.accessToken && this.config.github.accessToken.length > 0) {
+      (<any>userHeaders).authorization = `token ${this.config.github.accessToken}`;
+    }
+    return Object.assign({}, userHeaders, defaultHeaders);
   }
 
 }
