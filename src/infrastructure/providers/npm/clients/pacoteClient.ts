@@ -44,7 +44,9 @@ export class PacoteClient extends AbstractClientRequest<number, PackageDocument>
       {
         where: request.package.path,
         fullMetadata: false,
-        // 'prefer-online': true,
+        retry: {
+          retries: 0
+        }
       },
       {
         cwd: request.package.path,
