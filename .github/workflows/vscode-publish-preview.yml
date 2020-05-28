@@ -1,20 +1,19 @@
-name: Publish Release
+name: Publish Preview
 
-# triggers when a release is "published" via github ui or api
-# skips prereleases
+# triggers when a preview build is "prereleased" via github ui or api
 
 on:
   release:
-    types: [published]
+    types: [prereleased]
 
 jobs:
 
-  publish-release:
+  publish-preview:
 
     runs-on: ubuntu-latest
 
-    # skip prereleases
-    if: contains(github.event.release.tag_name, '-') == false
+    # only -preview versions
+    if: contains(github.event.release.tag_name, '-preview')
 
     steps:
       # checkout release tag commit
@@ -31,6 +30,11 @@ jobs:
       # generate the vsix file name
       - name: Generate vsix filename
         run: echo "::set-env name=VSIX_FILENAME::vscode-versionlens-${{ github.event.release.tag_name }}.vsix"
+
+      - name: Set package.json to preview
+        run: | 
+          mv package.json edit.json
+          node -pe "JSON.stringify({...require('./edit.json'), 'version': '${{ github.event.release.tag_name }}', 'preview': 'true'}, null, '\t')" > ./package.json
 
       # install dependencies
       - name: Install dependencies
@@ -51,6 +55,6 @@ jobs:
           name: ${{ env.VSIX_FILENAME }}
           path: ${{ env.VSIX_FILENAME }}
 
-      # publish the release
+      # publish the preview
       - name: Publish package
         run: vsce publish --packagePath=${{ env.VSIX_FILENAME }} -p ${{ secrets.VSCE_TOKEN }}
