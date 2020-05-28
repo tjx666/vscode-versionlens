@@ -1,5 +1,7 @@
 # 1.0.7-preview.2
 
+- Added a troubleshooting section to the [README](https://github.com/vscode-contrib/vscode-versionlens/blob/master/README.md)
+
 - Npm: fixed github auth not being passed to request client
 
   reported in [#210](https://github.com/vscode-contrib/vscode-versionlens/issues/210)
