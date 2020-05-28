@@ -8,7 +8,7 @@
     "url": "https://github.com/vscode-contrib/vscode-versionlens.git"
   },
   "author": "Peter Flannery",
-  "license": "MIT",
+  "license": "ISC",
   "version": "1.0.7",
   "publisher": "pflannery",
   "displayName": "Version Lens",
@@ -40,8 +40,8 @@
     "clean": "rimraf ./out",
     "precompile": "npm run -s clean",
     "precompile:test": "npm run -s precompile",
-    "compile": "tsc -p ./src/tsconfig.json",
-    "compile:test": "tsc -p ./test/tsconfig.json",
+    "compile": "tsc -p ./src/tsconfig.src.json",
+    "compile:test": "tsc -p ./test/tsconfig.test.json",
     "pretest": "npm run -s compile:test",
     "test": "node ./out/test/index.js"
   },
@@ -59,8 +59,8 @@
     "vscode-test": "1.3.0"
   },
   "dependencies": {
-    "systemjs": "~0.21.6",
     "@npmcli/promise-spawn": "1.2.0",
+    "systemjs": "0.21.6",
     "npm-package-arg": "8.0.1",
     "libnpmconfig": "1.2.1",
     "pacote": "9.5.12",

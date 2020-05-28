@@ -5,3 +5,4 @@ npm-debug.log
 test/smoke/dotnet/obj/
 test/smoke/dotnet/bin/
 **/.npmrc
+dist/
