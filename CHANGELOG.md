@@ -1,4 +1,4 @@
-# 1.0.7-preview.3
+# 1.0.7
 
 - Added a troubleshooting section to the [README](https://github.com/vscode-contrib/vscode-versionlens/blob/master/README.md)
 
