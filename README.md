@@ -43,7 +43,7 @@ Yes goto the [release page for instructions](https://github.com/vscode-contrib/v
 
 Try a clean install:
 
-- Showdown vscode
+- Shut down vscode
 - Delete the extension folder `{home}/.vscode/extensions/pflannery.vscode-versionlens*`
 - Open vscode and try reinstalling the extension again
 
