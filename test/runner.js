@@ -1,8 +1,9 @@
-import * as TestModules from './unit/extension.test.js'
+import * as Tests from './all.tests'
 
 const tty = require('tty');
 const Mocha = require("mocha");
-const esmui = require('mocha-ui-esm');
+
+require('mocha-ui-esm');
 
 // Linux: prevent a weird NPE when mocha on Linux requires the window size from the TTY
 // Since we are not running in a tty environment, we just implementt he method statically
@@ -18,7 +19,7 @@ const runner = new Mocha({
 runner.color(true);
 runner.suite.emit('global-mocha-context', runner);
 runner.suite.emit('support-only', runner.options);
-runner.suite.emit('modules', TestModules);
+runner.suite.emit('modules', Tests);
 require('source-map-support').install();
 
 export function run() {

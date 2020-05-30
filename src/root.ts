@@ -1,10 +1,10 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
 
-import { VsCodeConfig } from 'infrastructure/configuration';
-import { createWinstonLogger } from 'infrastructure/logging';
+import { VsCodeConfig } from 'infrastructure.configuration';
+import { createWinstonLogger } from 'infrastructure.logging';
 
-import { registerProviders } from 'presentation/providers';
+import { registerProviders } from 'presentation.providers';
 import {
   registerExtension,
   registerTextEditorEvents,
@@ -12,9 +12,7 @@ import {
   VersionLensExtension,
   registerIconCommands,
   registerSuggestionCommands,
-} from 'presentation/extension';
-
-const { version } = require('../package.json');
+} from 'presentation.extension';
 
 export async function composition(context: VsCodeTypes.ExtensionContext) {
 
@@ -22,6 +20,8 @@ export async function composition(context: VsCodeTypes.ExtensionContext) {
 
   // create the output channel
   const { window } = require('vscode');
+  
+  const { version } = require('../package.json');
 
   const channel = window.createOutputChannel(VersionLensExtension.extensionName);
 
