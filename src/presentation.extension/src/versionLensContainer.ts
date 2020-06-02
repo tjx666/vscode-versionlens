@@ -37,13 +37,9 @@ export async function configureContainer(
 
     extensionName: asValue(VersionLensExtension.extensionName),
 
-    // vscode abstractions
-    vscodeWorkspace: asValue(workspace),
-
     // maps to the vscode configuration
     rootConfig: asFunction(
-      (vscodeWorkspace, extensionName) =>
-        new VsCodeConfig(vscodeWorkspace, extensionName.toLowerCase())
+      extensionName => new VsCodeConfig(workspace, extensionName.toLowerCase())
     ).singleton(),
 
     // logging options

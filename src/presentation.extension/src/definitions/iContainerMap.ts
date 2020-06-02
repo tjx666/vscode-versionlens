@@ -4,7 +4,6 @@ import { ILogger, LoggingOptions } from 'core.logging';
 import { HttpOptions, CachingOptions } from 'core.clients';
 
 import { VsCodeConfig } from 'infrastructure.configuration';
-import { IVsCodeWorkspace } from 'infrastructure.configuration';
 
 import {
   VersionLensExtension,
@@ -16,9 +15,6 @@ import {
 import { ProviderRegistry } from 'presentation.providers';
 
 export interface IContainerMap {
-
-  // vscode abstractions
-  vscodeWorkspace: IVsCodeWorkspace,
 
   // configuration
   rootConfig: VsCodeConfig,
