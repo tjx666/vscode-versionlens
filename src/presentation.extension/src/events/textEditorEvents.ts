@@ -2,8 +2,7 @@
 import * as VsCodeTypes from 'vscode';
 
 import { ILogger } from 'core.logging';
-import { providerRegistry } from 'presentation.providers';
-import { ProviderSupport } from 'presentation.providers';
+import { ProviderSupport, ProviderRegistry } from 'presentation.providers';
 import { VersionLensState } from '../versionLensState';
 
 export class TextEditorEvents {
@@ -12,9 +11,16 @@ export class TextEditorEvents {
 
   logger: ILogger;
 
-  constructor(extensionState: VersionLensState, logger: ILogger) {
-    this.state = extensionState;
+  providerRegistry: ProviderRegistry;
+
+  constructor(
+    state: VersionLensState,
+    registry: ProviderRegistry,
+    logger: ILogger
+  ) {
+    this.state = state;
     this.logger = logger;
+    this.providerRegistry = registry;
 
     // register editor events
     const { window } = require('vscode');
@@ -35,7 +41,7 @@ export class TextEditorEvents {
 
     if (textEditor.document.uri.scheme !== 'file') return;
 
-    const providersMatchingFilename = providerRegistry.getByFileName(
+    const providersMatchingFilename = this.providerRegistry.getByFileName(
       textEditor.document.fileName
     );
 
@@ -62,14 +68,4 @@ export class TextEditorEvents {
     this.state.providerActive.value = true;
   }
 
-}
-
-let _singleton = null;
-export default _singleton;
-
-export function registerTextEditorEvents(
-  extensionState: VersionLensState, extLogger: ILogger
-): TextEditorEvents {
-  _singleton = new TextEditorEvents(extensionState, extLogger);
-  return _singleton;
 }

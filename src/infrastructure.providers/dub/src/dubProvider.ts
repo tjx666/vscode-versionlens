@@ -3,39 +3,24 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import { ILogger } from 'core.logging';
-import { extractPackageDependenciesFromJson, VersionHelpers, RequestFactory } from 'core.packages';
+import { extractPackageDependenciesFromJson, RequestFactory } from 'core.packages';
 
-import { VersionLens } from 'presentation.lenses';
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation.providers';
 import {
-  renderMissingDecoration,
-  renderInstalledDecoration,
-  renderOutdatedDecoration
-} from 'presentation.extension';
+  AbstractVersionLensProvider,
+  VersionLensFetchResponse
+} from 'presentation.providers';
 
 import { DubConfig } from './dubConfig';
-import { readDubSelections, DubClient } from './clients/dubClient';
+import { DubClient } from './dubClient';
 
 export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfig> {
 
-  _outdatedCache: any;
+  client: DubClient;
 
-  dubClient: DubClient;
-
-  constructor(config: DubConfig, logger: ILogger) {
+  constructor(config: DubConfig, client: DubClient, logger: ILogger) {
     super(config, logger);
-    this._outdatedCache = {};
-
-    const requestOptions = {
-      caching: config.caching,
-      http: config.http
-    };
-
-    this.dubClient = new DubClient(
-      config,
-      requestOptions,
-      logger.child({ namespace: 'dub pkg client' })
-    );
+    this.client = client;
+    this.logger = logger;
   }
 
   async fetchVersionLenses(
@@ -58,63 +43,14 @@ export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfi
 
     return RequestFactory.executeDependencyRequests(
       packagePath,
-      this.dubClient,
+      this.client,
       packageDependencies,
       context,
     );
   }
 
   async updateOutdated(packagePath: string): Promise<any> {
-    const path = require('path');
-    const selectionsFilePath = path.join(packagePath, 'dub.selections.json');
-    return readDubSelections(selectionsFilePath)
-      .then(selectionsJson => {
-        this._outdatedCache = selectionsJson;
-      })
-      .catch(err => {
-        if (err)
-          console.warn(err);
-      })
-  }
-
-  generateDecorations(versionLens: VersionLens): void {
-    const currentPackageName = versionLens.package.requested.name;
-    const currentPackageVersion = versionLens.package.requested.version;
-
-    if (!versionLens.replaceRange) return;
-
-    if (!this._outdatedCache) {
-      renderMissingDecoration(
-        versionLens.replaceRange,
-        this.config.extension.statuses.notInstalledColour
-      );
-      return;
-    }
-
-    const currentVersion = this._outdatedCache.versions[currentPackageName];
-    if (!currentVersion) {
-      renderMissingDecoration(
-        versionLens.replaceRange,
-        this.config.extension.statuses.notInstalledColour
-      );
-      return;
-    }
-
-    if (VersionHelpers.formatWithExistingLeading(currentPackageVersion, currentVersion) == currentPackageVersion) {
-      renderInstalledDecoration(
-        versionLens.replaceRange,
-        currentPackageVersion,
-        this.config.extension.statuses.installedColour
-      );
-      return;
-    }
-
-    renderOutdatedDecoration(
-      versionLens.replaceRange,
-      currentVersion,
-      this.config.extension.statuses.outdatedColour
-    );
-
+    return Promise.resolve();
   }
 
 }

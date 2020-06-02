@@ -1,12 +1,12 @@
 import {
   ClientResponseSource,
-  AbstractClientRequest,
+  AbstractCachedRequest,
   ICachingOptions
 } from 'core.clients'
 
 const assert = require('assert')
 
-class TestClientRequest extends AbstractClientRequest<number, string> { }
+class TestClientRequest extends AbstractCachedRequest<number, string> { }
 
 export const AbstractClientRequestTests = {
 

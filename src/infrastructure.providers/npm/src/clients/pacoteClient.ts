@@ -8,19 +8,29 @@ import {
   PackageVersionTypes,
   PackageSourceTypes
 } from 'core.packages';
-import { ClientResponseSource, AbstractClientRequest } from 'core.clients';
+import { ClientResponseSource, AbstractCachedRequest } from 'core.clients';
 
 import { NpmConfig } from '../npmConfig';
 import { NpaSpec, NpaTypes } from '../models/npaSpec';
 import * as NpmUtils from '../npmUtils';
 
-export class PacoteClient extends AbstractClientRequest<number, PackageDocument> {
+export class PacoteClient extends AbstractCachedRequest<number, PackageDocument> {
 
   config: NpmConfig;
+
+  logger: ILogger;
+
+  pacote: any;
+
+  libnpmconfig: any;
 
   constructor(config: NpmConfig, logger: ILogger) {
     super(config.caching);
     this.config = config;
+    this.logger = logger;
+
+    this.pacote = require('pacote');
+    this.libnpmconfig = require('libnpmconfig');
   }
 
   async fetchPackage(
@@ -28,7 +38,8 @@ export class PacoteClient extends AbstractClientRequest<number, PackageDocument>
   ): Promise<PackageDocument> {
 
     const cacheKey = `${request.package.name}@${request.package.version}_${request.package.path}`;
-    if (this.cache.options.duration > 0 && this.cache.hasExpired(cacheKey) === false) {
+    if (this.cache.cachingOpts.duration > 0 && this.cache.hasExpired(cacheKey) === false) {
+      this.logger.debug("Fetching from cache using key: %s", cacheKey);
       const cachedResp = this.cache.get(cacheKey);
       if (cachedResp.rejected) return Promise.reject(cachedResp);
 
@@ -36,11 +47,8 @@ export class PacoteClient extends AbstractClientRequest<number, PackageDocument>
       return Promise.resolve(cachedResp.data);
     }
 
-    const pacote = require('pacote');
-    const npmConfig = require('libnpmconfig');
-
     // get npm config
-    const npmOpts = npmConfig.read(
+    const npmOpts = this.libnpmconfig.read(
       {
         where: request.package.path,
         fullMetadata: false,
@@ -53,7 +61,7 @@ export class PacoteClient extends AbstractClientRequest<number, PackageDocument>
       }
     );
 
-    return pacote.packument(npaSpec, npmOpts)
+    return this.pacote.packument(npaSpec, npmOpts)
       .then(function (packumentResponse): PackageDocument {
 
         const { compareLoose } = require("semver");

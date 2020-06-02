@@ -1,9 +1,4 @@
-import {
-  CachingOptions,
-  ICachingOptions,
-  HttpOptions,
-  IHttpOptions,
-} from 'core.clients';
+import { ICachingOptions, IHttpOptions } from 'core.clients';
 
 import { VersionLensExtension } from "presentation.extension";
 import {
@@ -12,13 +7,7 @@ import {
   AbstractProviderConfig,
 } from 'presentation.providers';
 
-enum PubContributions {
-  Caching = 'pub.caching',
-  Http = 'pub.http',
-
-  DependencyProperties = 'pub.dependencyProperties',
-  ApiUrl = 'pub.apiUrl',
-}
+import { PubContributions } from './definitions/ePubContributions';
 
 export class PubConfig extends AbstractProviderConfig {
 
@@ -39,20 +28,15 @@ export class PubConfig extends AbstractProviderConfig {
 
   http: IHttpOptions;
 
-  constructor(extension: VersionLensExtension) {
+  constructor(
+    extension: VersionLensExtension,
+    caching: ICachingOptions,
+    http: IHttpOptions
+  ) {
     super(extension);
 
-    this.caching = new CachingOptions(
-      extension.config,
-      PubContributions.Caching,
-      'caching'
-    );
-
-    this.http = new HttpOptions(
-      extension.config,
-      PubContributions.Http,
-      'http'
-    );
+    this.caching = caching;
+    this.http = http;
   }
 
   get dependencyProperties(): Array<string> {

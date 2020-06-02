@@ -16,25 +16,16 @@ import { VersionLensFetchResponse, AbstractVersionLensProvider } from 'presentat
 import { ComposerConfig } from './composerConfig';
 import { readComposerSelections, ComposerClient } from './composerClient';
 
-export class ComposerVersionLensProvider extends AbstractVersionLensProvider<ComposerConfig> {
+export class ComposerVersionLensProvider
+  extends AbstractVersionLensProvider<ComposerConfig> {
 
   _outdatedCache: {};
 
-  composerClient: ComposerClient;
+  client: ComposerClient;
 
-  constructor(config: ComposerConfig, logger: ILogger) {
+  constructor(config: ComposerConfig, client: ComposerClient, logger: ILogger) {
     super(config, logger);
-
-    const requestOptions = {
-      caching: config.caching,
-      http: config.http
-    };
-
-    this.composerClient = new ComposerClient(
-      config,
-      requestOptions,
-      logger.child({ namespace: 'composer pkg client' })
-    );
+    this.client = client;
   }
 
   async fetchVersionLenses(
@@ -58,7 +49,7 @@ export class ComposerVersionLensProvider extends AbstractVersionLensProvider<Com
 
     return RequestFactory.executeDependencyRequests(
       packagePath,
-      this.composerClient,
+      this.client,
       packageDependencies,
       context,
     );

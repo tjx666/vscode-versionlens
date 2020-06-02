@@ -2,7 +2,7 @@ import { ILogger } from 'core.logging';
 import {
   HttpClientRequestMethods,
   JsonClientResponse,
-  HttpRequestOptions
+  IJsonHttpClient
 } from 'core.clients';
 import {
   PackageRequest,
@@ -15,8 +15,6 @@ import {
   ResponseFactory
 } from 'core.packages';
 
-import { JsonHttpClientRequest } from "infrastructure.clients";
-
 import { NpmConfig } from "../npmConfig";
 import { NpaSpec } from "../models/npaSpec";
 
@@ -25,13 +23,18 @@ const defaultHeaders = {
   'user-agent': 'vscode-contrib/vscode-versionlens'
 };
 
-export class GithubClient extends JsonHttpClientRequest {
+export class GitHubClient {
 
   config: NpmConfig;
 
-  constructor(config: NpmConfig, options: HttpRequestOptions, logger: ILogger) {
-    super(logger, options);
+  logger: ILogger;
+
+  client: IJsonHttpClient;
+
+  constructor(config: NpmConfig, client: IJsonHttpClient, logger: ILogger) {
     this.config = config;
+    this.client = client;
+    this.logger = logger;
   }
 
   fetchGithub(request: PackageRequest<null>, npaSpec: NpaSpec): Promise<PackageDocument> {
@@ -59,7 +62,12 @@ export class GithubClient extends JsonHttpClientRequest {
     const query = {};
     const headers = this.getHeaders();
 
-    return this.requestJson(HttpClientRequestMethods.get, tagsRepoUrl, query, headers)
+    return this.client.request(
+      HttpClientRequestMethods.get,
+      tagsRepoUrl,
+      query,
+      headers
+    )
       .then(function (response: JsonClientResponse): PackageDocument {
         const { compareLoose } = require("semver");
 
@@ -120,7 +128,12 @@ export class GithubClient extends JsonHttpClientRequest {
     const query = {};
     const headers = this.getHeaders();
 
-    return this.requestJson(HttpClientRequestMethods.get, commitsRepoUrl, query, headers)
+    return this.client.request(
+      HttpClientRequestMethods.get,
+      commitsRepoUrl,
+      query,
+      headers
+    )
       .then((response: JsonClientResponse) => {
 
         const commitInfos = <[]>response.data

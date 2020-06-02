@@ -1,20 +1,24 @@
-// vscode references
-import * as VsCodeTypes from 'vscode';
+import { languages, Disposable } from 'vscode';
 
 import { KeyDictionary } from 'core.generics'
 import { ILogger } from 'core.logging';
 
-import { VersionLensExtension } from 'presentation.extension';
 import { AbstractVersionLensProvider } from 'presentation.providers'
 import { IProviderConfig } from './definitions/iProviderConfig';
+import { AwilixContainer } from 'awilix';
+import { IContainerMap } from 'presentation.extension';
 
-class ProviderRegistry {
+export class ProviderRegistry {
 
   providers: KeyDictionary<AbstractVersionLensProvider<IProviderConfig>>;
 
   providerNames: Array<string>;
 
-  constructor() {
+  logger: ILogger;
+
+  constructor(logger: ILogger) {
+    this.logger = logger;
+
     this.providers = {};
 
     this.providerNames = [
@@ -33,9 +37,21 @@ class ProviderRegistry {
   ): AbstractVersionLensProvider<IProviderConfig> {
 
     const key = provider.config.options.providerName;
-    if (this.has(key)) throw new Error('Provider already registered');
+    if (this.has(key)) {
+      const msg = "Provider already registered: " + key;
+      this.logger.error(msg);
+      throw new Error(msg);
+    }
 
     this.providers[key] = provider;
+
+    this.logger.debug(
+      "Registered provider for %s:\t file pattern: %s\t caching: %s minutes\t strict ssl: %s",
+      key,
+      provider.config.options.selector.pattern,
+      provider.config.caching.duration,
+      provider.config.http.strictSSL,
+    );
 
     return provider;
   }
@@ -51,13 +67,16 @@ class ProviderRegistry {
   getByFileName(fileName: string): Array<AbstractVersionLensProvider<IProviderConfig>> {
     const path = require('path');
     const filename = path.basename(fileName);
-    const filtered = this.providerNames
-      .map(name => this.providers[name])
-      .filter(provider => matchesFilename(
-        filename,
-        provider.config.options.selector.pattern
-      ));
 
+    const providers = this.providerNames
+      .map(name => this.providers[name])
+      .filter(provider => provider !== undefined);
+
+    if (providers.length === 0) return [];
+
+    const filtered = providers.filter(
+      provider => matchesFilename(filename, provider.config.options.selector.pattern)
+    );
     if (filtered.length === 0) return [];
 
     return filtered;
@@ -76,57 +95,57 @@ class ProviderRegistry {
 
 }
 
-export const providerRegistry = new ProviderRegistry();
-
-export async function registerProviders(
-  extension: VersionLensExtension, appLogger: ILogger
-): Promise<Array<VsCodeTypes.Disposable>> {
-
-  const { languages: { registerCodeLensProvider } } = require('vscode');
-
-  const providerNames = providerRegistry.providerNames;
-
-  appLogger.debug('Registering providers %o', providerNames.join(', '));
-
-  const promisedActivation = providerNames.map(packageManager => {
-    return import(`infrastructure.providers/${packageManager}/index`)
-      .then(module => {
-        appLogger.debug('Activating package manager %s', packageManager);
-
-        const provider = module.activate(
-          extension,
-          appLogger.child({ namespace: packageManager })
-        );
-
-        appLogger.debug(
-          'Activated package provider for %s:\n file pattern: %s\n caching: %s minutes\n strict ssl: %s\n',
-          packageManager,
-          provider.config.options.selector.pattern,
-          provider.config.caching.duration,
-          provider.config.http.strictSSL,
-        );
-
-        return providerRegistry.register(provider);
-      })
-      .then(provider => {
-        return registerCodeLensProvider(
-          provider.config.options.selector,
-          provider
-        );
-      })
-      .catch(error => {
-        appLogger.error(
-          'Could not register package manager %s. Reason: %O',
-          packageManager,
-          error,
-        );
-      });
-  });
-
-  return Promise.all(promisedActivation);
-}
-
 function matchesFilename(filename: string, pattern: string): boolean {
   const minimatch = require('minimatch');
   return minimatch(filename, pattern);
+}
+
+export async function createProviderRegistry(
+  container: AwilixContainer<IContainerMap>,
+  subscriptions: Array<Disposable>,
+  logger: ILogger
+): Promise<ProviderRegistry> {
+
+  const registry = new ProviderRegistry(logger);
+
+  const providerNames = registry.providerNames;
+
+  logger.debug('Registering providers %o', providerNames.join(', '));
+
+  const promised = providerNames.map(
+    providerName => {
+      return import(`infrastructure.providers/${providerName}/index`)
+        .then(module => {
+
+          logger.debug('Activating container scope for %s', providerName);
+
+          // create a container scope for the provider
+          const scopeContainer = container.createScope();
+          const provider = module.configureContainer(scopeContainer);
+
+          // register the provider
+          registry.register(provider);
+
+          // register the command with vscode
+          const sub = languages.registerCodeLensProvider(
+            provider.config.options.selector,
+            provider
+          );
+
+          // give vscode the command disposable
+          subscriptions.push(sub);
+        })
+        .catch(error => {
+          logger.error(
+            'Could not register provider %s. Reason: %O',
+            providerName,
+            error,
+          );
+        });
+    }
+  );
+
+  await Promise.all(promised);
+
+  return registry;
 }

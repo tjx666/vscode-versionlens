@@ -1,50 +1,43 @@
-import { testPath, LoggerMock } from 'infrastructure.testing';
+import { sourcePath } from 'infrastructure.testing';
+import { LoggerStub } from 'test.core.logging';
 
-import { VersionLensExtension } from 'presentation.extension';
+import { ILogger } from 'core.logging';
 
-import { NpmConfig, PacoteClient } from 'infrastructure.providers/npm'
+import { NpmConfig, IPacote, PacoteClient } from 'infrastructure.providers.npm'
+
 import Fixtures from './pacoteClient.fixtures'
+import { PacoteStub } from '../stubs/pacoteStub';
+import { CachingOptions, ICachingOptions } from 'core.clients';
+
+const { mock, instance, when, anything, capture } = require('ts-mockito');
 
 const assert = require('assert')
 const path = require('path')
-const mock = require('mock-require')
 const npa = require('npm-package-arg');
 const fs = require('fs');
 
-let pacoteMock = null
-let defaultExtensionMock: VersionLensExtension;
+let cachingOptsMock: ICachingOptions;
+let loggerMock: ILogger;
+let configMock: NpmConfig;
+let pacoteMock: IPacote;
 
 export default {
 
-  beforeAll: () => {
-    pacoteMock = {
-      packument: {}
-    }
-
-    mock('pacote', pacoteMock)
-  },
-
-  afterAll: () => mock.stopAll(),
-
   beforeEach: () => {
-    // mock defaults
-    pacoteMock.packument = (npaResult, opts) => { }
+    cachingOptsMock = mock(CachingOptions)
+    configMock = mock(NpmConfig)
+    loggerMock = mock(LoggerStub)
+    pacoteMock = mock(PacoteStub)
 
-    defaultExtensionMock = new VersionLensExtension(
-      {
-        get: (k) => null,
-        defrost: () => null
-      },
-      null
-    );
+    when(configMock.caching).thenReturn(instance(cachingOptsMock))
   },
 
   'fetchPackage': {
 
     'uses npmrc registry': async () => {
       const packagePath = path.join(
-        testPath,
-        './src/infrastructure.providers/npm/test/fixtures/config'
+        sourcePath,
+        'infrastructure.providers/npm/test/fixtures/config'
       );
 
       const testRequest: any = {
@@ -64,29 +57,35 @@ export default {
       fs.writeFileSync(npmrcPath, Fixtures[".npmrc"])
       assert.ok(require('fs').existsSync(testRequest.package.path), 'test .npmrc doesnt exist?')
 
-      // setup initial call
-      pacoteMock.packument = async (npaResult, opts) => {
-        assert.equal(opts.cwd, testRequest.package.path)
-        assert.equal(opts['//registry.npmjs.example/:_authToken'], '12345678')
-        return Fixtures.packumentGit
-      }
+      when(pacoteMock.packument(anything(), anything()))
+        .thenResolve(Fixtures.packumentGit)
 
       const cut = new PacoteClient(
-        new NpmConfig(defaultExtensionMock),
-        new LoggerMock()
-      );
+        instance(configMock),
+        instance(loggerMock)
+      )
+
+      cut.pacote = instance(pacoteMock)
 
       const npaSpec = npa.resolve(
         testRequest.package.name,
         testRequest.package.version,
         testRequest.package.path
-      );
+      )
 
       return cut.fetchPackage(testRequest, npaSpec)
         .then(_ => {
+
+          const [, actualOpts] = capture(pacoteMock.packument).first()
+          assert.equal(actualOpts.cwd, testRequest.package.path)
+          assert.equal(
+            actualOpts['//registry.npmjs.example/:_authToken'],
+            '12345678'
+          )
+
           // delete the npmrc file
           fs.unlinkSync(npmrcPath)
-        });
+        })
     },
 
   }

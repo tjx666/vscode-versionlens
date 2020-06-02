@@ -1,51 +1,38 @@
 import { VsCodeConfig } from 'infrastructure.configuration'
+import { IVsCodeWorkspace } from 'infrastructure.configuration';
+
+import { VsCodeWorkspaceStub } from './stubs/vsCodeWorkspaceStub';
 
 const assert = require('assert')
-const mock = require('mock-require')
+const { mock, instance, when } = require('ts-mockito');
 
-let vsCodeMock = {
-  workspace: {}
-};
+let workspaceMock: IVsCodeWorkspace;
 
 export const VsCodeFrozenConfigTests = {
 
   beforeAll: () => {
-    // mock require modules
-    vsCodeMock = {
-      workspace: {
-        getConfiguration: (section) => null
-      }
-    }
-
-    mock('vscode', vsCodeMock)
+    workspaceMock = mock(VsCodeWorkspaceStub);
   },
-
-  afterAll: () => mock.stopAll(),
 
   "get": {
 
     "accesses frozen repo after first call": () => {
+      const testSection = 'testsection'
       const testKey = 'some_property';
       let expectedFrozenValue = 'test value';
 
-      vsCodeMock.workspace = {
-        getConfiguration: section => ({
-          get: (k) => {
-            return expectedFrozenValue
-          }
-        }),
-      }
+      when(workspaceMock.getConfiguration(testSection))
+        .thenReturn({
+          get: section => expectedFrozenValue
+        })
 
       // get hot value
-      const cut = new VsCodeConfig('testsection');
+      const cut = new VsCodeConfig(instance(workspaceMock), testSection);
       const first = cut.get(testKey);
       assert.equal(first, expectedFrozenValue)
 
-      // change expected hot value
-      const hotValue = 'hot value';
-      vsCodeMock.workspace = {
-        getConfiguration: section => ({ get: k => hotValue }),
-      }
+      // change value
+      when(workspaceMock.getConfiguration(testSection)).thenReturn('hot value')
 
       // should still return frozen value
       const actualFrozen = cut.get(testKey);
@@ -54,24 +41,28 @@ export const VsCodeFrozenConfigTests = {
     },
 
     "returns hot value after defrost is called": () => {
+      const testSection = 'testsection'
       const testKey = 'some_property';
       let initialValue = 'test value';
 
-      vsCodeMock.workspace = {
-        getConfiguration: section => ({ get: k => initialValue }),
-      }
+      when(workspaceMock.getConfiguration(testSection))
+        .thenReturn({
+          get: section => initialValue
+        })
 
       // get hot value
-      const cut = new VsCodeConfig('testsection');
+      const cut = new VsCodeConfig(instance(workspaceMock), testSection);
       const first = cut.get(testKey);
       assert.equal(first, initialValue)
 
       // change expected hot value
       const expectedHotValue = 'hot value';
-      vsCodeMock.workspace = {
-        getConfiguration: section => ({ get: k => expectedHotValue }),
-      }
-      // should still return frozen value
+      when(workspaceMock.getConfiguration(testSection))
+        .thenReturn({
+          get: section => expectedHotValue
+        })
+
+      // should return hot value
       cut.defrost();
       const actualFrozen = cut.get(testKey);
 

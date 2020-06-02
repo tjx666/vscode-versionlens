@@ -1,6 +1,5 @@
-import { IFrozenRepository } from 'core.generics';
 import { LogLevelTypes } from 'core.logging';
-import { Options } from 'core.configuration';
+import { IFrozenOptions, Options } from 'core.configuration';
 
 import { ILoggingOptions } from './definitions/iLoggingOptions';
 
@@ -10,7 +9,7 @@ export enum LoggingContributions {
 
 export class LoggingOptions extends Options implements ILoggingOptions {
 
-  constructor(config: IFrozenRepository, section: string) {
+  constructor(config: IFrozenOptions, section: string) {
     super(config, section);
   }
 

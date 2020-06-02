@@ -1,11 +1,11 @@
-import { OptionsWithFallback } from 'core.configuration';
-import { IFrozenRepository, Nullable } from 'core.generics';
+import { IFrozenOptions, OptionsWithFallback } from 'core.configuration';
 import { IHttpOptions, HttpContributions } from 'core.clients';
+import { Nullable } from 'core.generics';
 
 export class HttpOptions extends OptionsWithFallback implements IHttpOptions {
 
   constructor(
-    config: IFrozenRepository,
+    config: IFrozenOptions,
     section: string,
     fallbackSection: Nullable<string> = null
   ) {

@@ -30,10 +30,7 @@ export function registerCommands(
 
       // collect disposables
       disposables.push(
-        commands.registerCommand(
-          command,
-          handler.bind(handlers)
-        )
+        commands.registerCommand(command, handler.bind(handlers))
       )
     });
 

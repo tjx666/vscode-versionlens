@@ -1,4 +1,4 @@
-import { ICachingOptions } from "../definitions/iOptions";
+import { ICachingOptions } from "../definitions/iCachingOptions";
 
 export type CacheEntry<T> = {
   expiryTime: number,
@@ -10,11 +10,13 @@ type CacheMap<T> = {
 };
 
 export class ExpiryCacheMap<T> {
-  options: ICachingOptions;
+
+  cachingOpts: ICachingOptions;
+
   cacheMap: CacheMap<T>;
 
-  constructor(options: ICachingOptions) {
-    this.options = options;
+  constructor(cachingOpts: ICachingOptions) {
+    this.cachingOpts = cachingOpts;
     this.cacheMap = {};
   }
 
@@ -41,7 +43,7 @@ export class ExpiryCacheMap<T> {
   }
 
   set(key: string, data: T): T {
-    const expiryTime = Date.now() + this.options.duration;
+    const expiryTime = Date.now() + this.cachingOpts.duration;
     const newEntry = {
       expiryTime,
       data

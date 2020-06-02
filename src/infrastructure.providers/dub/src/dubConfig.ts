@@ -1,18 +1,13 @@
-import { CachingOptions, ICachingOptions, HttpOptions } from 'core.clients';
-import { VersionLensExtension } from 'presentation.extension';
+import { ICachingOptions, IHttpOptions } from 'core.clients';
+
 import {
   IProviderOptions,
   ProviderSupport,
   AbstractProviderConfig
 } from 'presentation.providers';
+import { VersionLensExtension } from 'presentation.extension';
 
-enum DubContributions {
-  Caching = 'dub.caching',
-  Http = 'dub.http',
-
-  DependencyProperties = 'dub.dependencyProperties',
-  ApiUrl = 'dub.apiUrl',
-}
+import { DubContributions } from './definitions/eDubContributions';
 
 export class DubConfig extends AbstractProviderConfig {
 
@@ -32,22 +27,17 @@ export class DubConfig extends AbstractProviderConfig {
 
   caching: ICachingOptions;
 
-  http: HttpOptions;
+  http: IHttpOptions;
 
-  constructor(extension: VersionLensExtension) {
+  constructor(
+    extension: VersionLensExtension,
+    caching: ICachingOptions,
+    http: IHttpOptions,
+  ) {
     super(extension);
 
-    this.caching = new CachingOptions(
-      extension.config,
-      DubContributions.Caching,
-      'caching'
-    );
-
-    this.http = new HttpOptions(
-      extension.config,
-      DubContributions.Http,
-      'http'
-    );
+    this.caching = caching;
+    this.http = http;
   }
 
   get dependencyProperties(): Array<string> {

@@ -14,26 +14,27 @@ import {
 import {
   HttpClientResponse,
   HttpClientRequestMethods,
-  HttpRequestOptions,
   UrlHelpers,
+  IJsonHttpClient,
 } from 'core.clients';
-
-import { JsonHttpClientRequest } from 'infrastructure.clients';
 
 import { NuGetClientData } from '../definitions/nuget';
 import { DotNetVersionSpec } from '../definitions/dotnet';
 import { parseVersionSpec } from '../dotnetUtils';
 import { DotNetConfig } from '../dotnetConfig';
 
-export class NuGetPackageClient
-  extends JsonHttpClientRequest
-  implements IPackageClient<NuGetClientData> {
+export class NuGetPackageClient implements IPackageClient<NuGetClientData> {
 
   config: DotNetConfig;
 
-  constructor(config: DotNetConfig, options: HttpRequestOptions, logger: ILogger) {
-    super(logger, options);
+  client: IJsonHttpClient;
+
+  logger: ILogger;
+
+  constructor(config: DotNetConfig, client: IJsonHttpClient, logger: ILogger) {
     this.config = config;
+    this.client = client;
+    this.logger = logger;
   }
 
   async fetchPackage(request: PackageRequest<NuGetClientData>): Promise<PackageDocument> {
@@ -48,7 +49,7 @@ export class NuGetPackageClient
     const urls = request.clientData.serviceUrls;
     const autoCompleteUrl = urls[request.attempt];
 
-    return createRemotePackageDocument(this, autoCompleteUrl, request, dotnetSpec)
+    return this.createRemotePackageDocument(autoCompleteUrl, request, dotnetSpec)
       .catch((error: HttpClientResponse) => {
 
         // increase the attempt number
@@ -75,87 +76,92 @@ export class NuGetPackageClient
 
   }
 
-}
+  async createRemotePackageDocument(
+    url: string,
+    request: PackageRequest<NuGetClientData>,
+    dotnetSpec: DotNetVersionSpec
+  ): Promise<PackageDocument> {
 
-async function createRemotePackageDocument(
-  client: JsonHttpClientRequest,
-  url: string,
-  request: PackageRequest<NuGetClientData>,
-  dotnetSpec: DotNetVersionSpec
-): Promise<PackageDocument> {
+    const query = {};
+    const headers = {};
+    const packageUrl = UrlHelpers.ensureEndSlash(url) + `${request.package.name}/index.json`;
 
-  const packageUrl = UrlHelpers.ensureEndSlash(url) + `${request.package.name}/index.json`;
+    return this.client.request(
+      HttpClientRequestMethods.get,
+      packageUrl,
+      query,
+      headers
+    )
+      .then(function (httpResponse) {
 
-  return client.requestJson(HttpClientRequestMethods.get, packageUrl)
-    .then(function (httpResponse) {
+        const { data } = httpResponse;
 
-      const { data } = httpResponse;
+        const source = PackageSourceTypes.Registry;
 
-      const source = PackageSourceTypes.Registry;
+        const { providerName } = request;
 
-      const { providerName } = request;
+        const requested = request.package;
 
-      const requested = request.package;
+        const packageInfo = data;
 
-      const packageInfo = data;
+        const response = {
+          source: httpResponse.source,
+          status: httpResponse.status,
+        };
 
-      const response = {
-        source: httpResponse.source,
-        status: httpResponse.status,
-      };
+        // sanitize to semver only versions
+        const rawVersions = VersionHelpers.filterSemverVersions(packageInfo.versions);
 
-      // sanitize to semver only versions
-      const rawVersions = VersionHelpers.filterSemverVersions(packageInfo.versions);
+        // seperate versions to releases and prereleases
+        const { releases, prereleases } = VersionHelpers.splitReleasesFromArray(rawVersions)
 
-      // seperate versions to releases and prereleases
-      const { releases, prereleases } = VersionHelpers.splitReleasesFromArray(rawVersions)
+        // four segment is not supported
+        if (dotnetSpec.spec && dotnetSpec.spec.hasFourSegments) {
+          return DocumentFactory.createFourSegment(
+            providerName,
+            requested,
+            ResponseFactory.createResponseStatus(httpResponse.source, 404),
+            <any>dotnetSpec.type,
+          )
+        }
 
-      // four segment is not supported
-      if (dotnetSpec.spec && dotnetSpec.spec.hasFourSegments) {
-        return DocumentFactory.createFourSegment(
-          providerName,
-          requested,
-          ResponseFactory.createResponseStatus(httpResponse.source, 404),
-          <any>dotnetSpec.type,
-        )
-      }
+        // no match if null type
+        if (dotnetSpec.type === null) {
+          return DocumentFactory.createNoMatch(
+            providerName,
+            source,
+            PackageVersionTypes.Version,
+            requested,
+            ResponseFactory.createResponseStatus(httpResponse.source, 404),
+            // suggest the latest release if available
+            releases.length > 0 ? releases[releases.length - 1] : null,
+          )
+        }
 
-      // no match if null type
-      if (dotnetSpec.type === null) {
-        return DocumentFactory.createNoMatch(
+        const versionRange = dotnetSpec.resolvedVersion;
+
+        const resolved = {
+          name: requested.name,
+          version: versionRange,
+        };
+
+        // analyse suggestions
+        const suggestions = SuggestionFactory.createSuggestionTags(
+          versionRange,
+          releases,
+          prereleases
+        );
+
+        return {
           providerName,
           source,
-          PackageVersionTypes.Version,
+          response,
+          type: dotnetSpec.type,
           requested,
-          ResponseFactory.createResponseStatus(httpResponse.source, 404),
-          // suggest the latest release if available
-          releases.length > 0 ? releases[releases.length - 1] : null,
-        )
-      }
+          resolved,
+          suggestions,
+        };
+      });
+  }
 
-      const versionRange = dotnetSpec.resolvedVersion;
-
-      const resolved = {
-        name: requested.name,
-        version: versionRange,
-      };
-
-      // analyse suggestions
-      const suggestions = SuggestionFactory.createSuggestionTags(
-        versionRange,
-        releases,
-        prereleases
-      );
-
-      return {
-        providerName,
-        source,
-        response,
-        type: dotnetSpec.type,
-        requested,
-        resolved,
-        suggestions,
-      };
-    });
 }
-

@@ -1,13 +1,12 @@
-import { IFrozenRepository } from 'core.generics';
-import { IOptions } from 'core.configuration';
+import { IFrozenOptions, IOptions } from 'core.configuration';
 
 export abstract class Options implements IOptions {
 
   protected section: string;
 
-  config: IFrozenRepository;
+  config: IFrozenOptions;
 
-  constructor(config: IFrozenRepository, section: string) {
+  constructor(config: IFrozenOptions, section: string) {
     this.config = config;
     this.section = (section.length > 0) ? section + '.' : '';
   }

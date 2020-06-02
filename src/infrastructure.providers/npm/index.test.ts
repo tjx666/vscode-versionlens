@@ -6,15 +6,18 @@ export const PacoteApiClientTests = {
   PacoteNpmRc,
 }
 
+import * as fetchGitHub from './test/githubClient/fetchGitHub.tests';
+export const GitHubClientTests = {
+  fetchGitHub,
+}
+
 import * as fetchRegistry from './test/npmPackageClient/fetchRegistry.tests';
 import * as fetchDirectory from './test/npmPackageClient/fetchDirectory.tests';
-import * as fetchGithub from './test/npmPackageClient/fetchGithub.tests';
 import * as fetchGit from './test/npmPackageClient/fetchGit.tests';
 
 export const NpmPackageClientTests = {
   fetchRegistry,
   fetchDirectory,
-  fetchGithub,
   fetchGit
 }
 

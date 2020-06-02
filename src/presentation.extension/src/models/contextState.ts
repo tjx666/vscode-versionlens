@@ -3,10 +3,7 @@ export class ContextState<T> {
   private key: string;
   private _value: T;
 
-  constructor(
-    key: string,
-    defaultValue: T
-  ) {
+  constructor(key: string, defaultValue: T) {
     this.key = key;
     this.change(defaultValue);
   }

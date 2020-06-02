@@ -3,48 +3,39 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import { ILogger } from 'core.logging';
+import { UrlHelpers } from 'core.clients';
+import { RequestFactory } from 'core.packages';
 
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation.providers';
 
+import { NuGetClientData } from './definitions/nuget';
 import { DotNetConfig } from './dotnetConfig';
 import { createDependenciesFromXml } from './dotnetXmlParserFactory'
-import { DotNetClient } from './clients/dotnetClient';
+import { DotNetCli } from './clients/dotnetCli';
 import { NuGetPackageClient } from './clients/nugetPackageClient';
 import { NuGetResourceClient } from './clients/nugetResourceClient';
-import { NuGetClientData } from './definitions/nuget';
-import { UrlHelpers } from 'core.clients';
-import { RequestFactory } from 'core.packages';
 
 export class DotNetVersionLensProvider
   extends AbstractVersionLensProvider<DotNetConfig> {
 
-  dotnetClient: DotNetClient;
+  dotnetClient: DotNetCli;
+
   nugetPackageClient: NuGetPackageClient;
-  nugetResourceClient: NuGetResourceClient;
 
-  constructor(config: DotNetConfig, logger: ILogger) {
-    super(config, logger);
+  nugetResClient: NuGetResourceClient;
 
-    this.dotnetClient = new DotNetClient(
-      config,
-      logger.child({ namespace: 'dotnet cli' })
-    );
+  constructor(
+    dotnetConfig: DotNetConfig,
+    dotnetCli: DotNetCli,
+    nugetClient: NuGetPackageClient,
+    nugetResClient: NuGetResourceClient,
+    dotnetLogger: ILogger
+  ) {
+    super(dotnetConfig, dotnetLogger);
 
-    const requestOptions = {
-      caching: config.caching,
-      http: config.http
-    };
-
-    this.nugetResourceClient = new NuGetResourceClient(
-      requestOptions,
-      logger.child({ namespace: 'dotnet nuget client' })
-    );
-
-    this.nugetPackageClient = new NuGetPackageClient(
-      config,
-      requestOptions,
-      logger.child({ namespace: 'dotnet pkg client' })
-    );
+    this.dotnetClient = dotnetCli;
+    this.nugetPackageClient = nugetClient;
+    this.nugetResClient = nugetResClient;
   }
 
   async fetchVersionLenses(
@@ -67,14 +58,14 @@ export class DotNetVersionLensProvider
 
     // remote sources only
     const remoteSources = sources.filter(
-      s => s.protocol ===  UrlHelpers.RegistryProtocols.https ||
+      s => s.protocol === UrlHelpers.RegistryProtocols.https ||
         s.protocol === UrlHelpers.RegistryProtocols.http
     );
 
-    // resolve each auto complete service url
+    // resolve each service url
     const promised = remoteSources.map(
       async (remoteSource) => {
-        return await this.nugetResourceClient.fetchResource(remoteSource);
+        return await this.nugetResClient.fetchResource(remoteSource);
       }
     );
 

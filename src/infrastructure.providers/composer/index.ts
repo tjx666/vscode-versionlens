@@ -1,4 +1,4 @@
 export * from './src/composerProvider';
 export * from './src/composerConfig';
 export * from './src/composerClient';
-export * from './src/activate';
+export * from './src/composerContainer';

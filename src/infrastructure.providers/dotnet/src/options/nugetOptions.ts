@@ -1,13 +1,10 @@
-import { IFrozenRepository } from 'core.generics';
-import { Options } from 'core.configuration';
+import { IFrozenOptions, Options } from 'core.configuration';
+import { NugetContributions } from '../definitions/eNugetContributions';
+import { INugetOptions } from '../definitions/iNugetOptions';
 
-enum NugetContributions {
-  Sources = 'sources',
-}
+export class NugetOptions extends Options implements INugetOptions {
 
-export class NugetOptions extends Options {
-
-  constructor(config: IFrozenRepository, section: string) {
+  constructor(config: IFrozenOptions, section: string) {
     super(config, section);
   }
 

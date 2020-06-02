@@ -1,26 +1,29 @@
-import { NpmConfig, NpmPackageClient } from 'infrastructure.providers/npm'
-import { LoggerMock } from 'infrastructure.testing';
-import { VersionLensExtension } from 'presentation.extension';
+import { LoggerStub } from 'test.core.logging';
+
+import {
+  NpmConfig,
+  NpmPackageClient,
+  GitHubClient
+} from 'infrastructure.providers.npm'
+
+import { PacoteClient } from 'infrastructure.providers.npm';
+
+const { mock, instance } = require('ts-mockito');
 
 const assert = require('assert')
-const mock = require('mock-require')
 
-let defaultExtensionMock: VersionLensExtension;
+let configMock: NpmConfig;
+let pacoteMock: PacoteClient;
+let githubClientMock: GitHubClient;
+let loggerMock: LoggerStub;
 
 export default {
 
-  beforeAll: () => { },
-
-  afterAll: () => mock.stopAll(),
-
   beforeEach: () => {
-    defaultExtensionMock = new VersionLensExtension(
-      {
-        get: (k) => null,
-        defrost: () => null
-      },
-      null
-    );
+    configMock = mock(NpmConfig);
+    pacoteMock = mock(PacoteClient);
+    githubClientMock = mock(GitHubClient);
+    loggerMock = mock(LoggerStub);
   },
 
   'fetchPackage': {
@@ -41,8 +44,10 @@ export default {
       }
 
       const cut = new NpmPackageClient(
-        new NpmConfig(defaultExtensionMock),
-        new LoggerMock()
+        instance(configMock),
+        instance(pacoteMock),
+        instance(githubClientMock),
+        instance(loggerMock)
       );
 
       return cut.fetchPackage(testRequest)

@@ -1,9 +1,4 @@
-import {
-  CachingOptions,
-  ICachingOptions,
-  IHttpOptions,
-  HttpOptions
-} from 'core.clients';
+import { ICachingOptions, IHttpOptions } from 'core.clients';
 
 import { VersionLensExtension } from 'presentation.extension';
 import {
@@ -12,15 +7,8 @@ import {
   AbstractProviderConfig
 } from 'presentation.providers';
 
-import { NugetOptions } from './options/nugetOptions';
-
-export enum DotnetContributions {
-  Caching = 'dotnet.caching',
-  Http = 'dotnet.http',
-  Nuget = 'dotnet.nuget',
-  DependencyProperties = 'dotnet.dependencyProperties',
-  TagFilter = 'dotnet.tagFilter',
-}
+import { INugetOptions } from "./definitions/iNugetOptions";
+import { DotNetContributions } from './definitions/eDotNetContributions';
 
 export class DotNetConfig extends AbstractProviderConfig {
 
@@ -41,32 +29,27 @@ export class DotNetConfig extends AbstractProviderConfig {
 
   http: IHttpOptions;
 
-  nuget: NugetOptions;
+  nuget: INugetOptions;
 
-  constructor(extension: VersionLensExtension) {
+  constructor(
+    extension: VersionLensExtension,
+    dotnetCachingOpts: ICachingOptions,
+    dotnetHttpOpts: IHttpOptions,
+    nugetOpts: INugetOptions,
+  ) {
     super(extension);
 
-    this.caching = new CachingOptions(
-      extension.config,
-      DotnetContributions.Caching,
-      'caching'
-    );
-
-    this.http = new HttpOptions(
-      extension.config,
-      DotnetContributions.Http,
-      'http'
-    );
-
-    this.nuget = new NugetOptions(extension.config, DotnetContributions.Nuget);
+    this.caching = dotnetCachingOpts;
+    this.http = dotnetHttpOpts;
+    this.nuget = nugetOpts;
   }
 
   get dependencyProperties(): Array<string> {
-    return this.extension.config.get(DotnetContributions.DependencyProperties);
+    return this.extension.config.get(DotNetContributions.DependencyProperties);
   }
 
   get tagFilter(): Array<string> {
-    return this.extension.config.get(DotnetContributions.TagFilter);
+    return this.extension.config.get(DotNetContributions.TagFilter);
   }
 
   get fallbackNugetSource(): string {

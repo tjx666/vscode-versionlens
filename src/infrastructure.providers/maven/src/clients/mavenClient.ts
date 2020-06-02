@@ -13,27 +13,25 @@ import {
 import {
   HttpClientResponse,
   HttpClientRequestMethods,
-  HttpRequestOptions
+  IHttpClient
 } from 'core.clients';
-
-import { HttpClientRequest } from 'infrastructure.clients';
 
 import { MavenClientData } from '../definitions/mavenClientData';
 import { MavenConfig } from '../mavenConfig';
 
-
-export class MavenClient
-  extends HttpClientRequest
-  implements IPackageClient<MavenClientData> {
+export class MavenClient implements IPackageClient<MavenClientData> {
 
   config: MavenConfig;
 
-  constructor(config: MavenConfig, options: HttpRequestOptions, logger: ILogger) {
-    super(logger, options)
+  httpClient: IHttpClient;
 
+  logger: ILogger;
+
+  constructor(config: MavenConfig, httpClient: IHttpClient, logger: ILogger) {
     this.config = config;
+    this.httpClient = httpClient;
+    this.logger = logger;
   }
-
   async fetchPackage(request: PackageRequest<MavenClientData>): Promise<PackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
 
@@ -43,7 +41,7 @@ export class MavenClient
     let search = group.replace(/\./g, "/") + "/" + artifact
     const queryUrl = `${url}${search}/maven-metadata.xml`;
 
-    return createRemotePackageDocument(this, queryUrl, request, semverSpec)
+    return this.createRemotePackageDocument(queryUrl, request, semverSpec)
       .catch((error: HttpClientResponse) => {
         if (error.status === 404) {
           return DocumentFactory.createNotFound(
@@ -57,66 +55,73 @@ export class MavenClient
       });
   }
 
-}
+  async createRemotePackageDocument(
+    url: string,
+    request: PackageRequest<MavenClientData>,
+    semverSpec: SemverSpec
+  ): Promise<PackageDocument> {
 
-async function createRemotePackageDocument(
-  client: HttpClientRequest,
-  url: string,
-  request: PackageRequest<MavenClientData>,
-  semverSpec: SemverSpec
-): Promise<PackageDocument> {
+    const query = {};
+    const headers = {};
 
-  return client.request(HttpClientRequestMethods.get, url, {})
-    .then(function (httpResponse): PackageDocument {
+    return this.httpClient.request(
+      HttpClientRequestMethods.get,
+      url,
+      query,
+      headers
+    )
+      .then(function (httpResponse): PackageDocument {
 
-      const { data } = httpResponse;
+        const { data } = httpResponse;
 
-      const source = PackageSourceTypes.Registry;
+        const source = PackageSourceTypes.Registry;
 
-      const { providerName } = request;
+        const { providerName } = request;
 
-      const requested = request.package;
+        const requested = request.package;
 
-      const versionRange = semverSpec.rawVersion;
+        const versionRange = semverSpec.rawVersion;
 
-      const response = {
-        source: httpResponse.source,
-        status: httpResponse.status,
-      };
+        const response = {
+          source: httpResponse.source,
+          status: httpResponse.status,
+        };
 
-      // extract versions form xml
-      const rawVersions = getVersionsFromPackageXml(data);
+        // extract versions form xml
+        const rawVersions = getVersionsFromPackageXml(data);
 
-      // extract semver versions only
-      const semverVersions = VersionHelpers.filterSemverVersions(rawVersions);
+        // extract semver versions only
+        const semverVersions = VersionHelpers.filterSemverVersions(rawVersions);
 
-      // seperate versions to releases and prereleases
-      const { releases, prereleases } = VersionHelpers.splitReleasesFromArray(
-        semverVersions
-      );
+        // seperate versions to releases and prereleases
+        const { releases, prereleases } = VersionHelpers.splitReleasesFromArray(
+          semverVersions
+        );
 
-      const resolved = {
-        name: requested.name,
-        version: versionRange,
-      };
+        const resolved = {
+          name: requested.name,
+          version: versionRange,
+        };
 
-      // analyse suggestions
-      const suggestions = SuggestionFactory.createSuggestionTags(
-        versionRange,
-        releases,
-        prereleases
-      );
+        // analyse suggestions
+        const suggestions = SuggestionFactory.createSuggestionTags(
+          versionRange,
+          releases,
+          prereleases
+        );
 
-      return {
-        providerName,
-        source,
-        response,
-        type: semverSpec.type,
-        requested,
-        resolved,
-        suggestions,
-      };
-    });
+        return {
+          providerName,
+          source,
+          response,
+          type: semverSpec.type,
+          requested,
+          resolved,
+          suggestions,
+        };
+      });
+  }
+
 }
 
 function getVersionsFromPackageXml(packageXml: string): Array<string> {

@@ -1,18 +1,12 @@
-import { IRepository } from 'core.generics';
+import { IConfig } from 'core.configuration';
 
-enum StatusesContributions {
-  ShowOnStartup = 'statuses.showOnStartup',
-  NotInstalledColour = 'statuses.notInstalledColour',
-  InstalledColour = 'statuses.installedColour',
-  OutdatedColour = 'statuses.outdatedColour',
-  prereleaseInstalledColour = 'statuses.prereleaseInstalledColour',
-}
+import { StatusesContributions } from '../definitions/eStatusesContributions';
 
 export class StatusesOptions {
 
-  private config: IRepository;
+  private config: IConfig;
 
-  constructor(config: IRepository) {
+  constructor(config: IConfig) {
     this.config = config;
   }
 

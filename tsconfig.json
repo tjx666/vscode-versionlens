@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES2019",
-    "module": "system",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "outDir": "../out/",
     "lib": [
       "ES2019"
     ],
@@ -15,7 +17,7 @@
       "infrastructure.*": [
         "infrastructure.*/index",
       ],
-      "infrastructure.providers/*": [
+      "infrastructure.providers.*": [
         "infrastructure.providers/*/index"
       ],
       "presentation.*": [
@@ -27,7 +29,7 @@
       "test.infrastructure.*": [
         "infrastructure.*/index.test",
       ],
-      "test.infrastructure.providers/*": [
+      "test.infrastructure.providers.*": [
         "infrastructure.providers/*/index.test",
       ],
       "test.providers.*": [

@@ -3,19 +3,19 @@ import * as VsCodeTypes from 'vscode';
 
 // imports
 import { ILogger } from 'core.logging';
-import { RequestFactory } from 'core.packages';
+import { RequestFactory, IPackageClient } from 'core.packages';
 
 import { VersionLensFetchResponse } from 'presentation.providers';
 
-import { NpmVersionLensProvider } from 'infrastructure.providers/npm';
+import { NpmVersionLensProvider } from 'infrastructure.providers.npm';
 
 import { extractPackageDependenciesFromJson } from './jspmPackageParser';
 import { JspmConfig } from './jspmConfig';
 
 export class JspmVersionLensProvider extends NpmVersionLensProvider {
 
-  constructor(config: JspmConfig, logger: ILogger) {
-    super(config, logger);
+  constructor(config: JspmConfig, client: IPackageClient<null>, logger: ILogger) {
+    super(config, client, logger);
   }
 
   async fetchVersionLenses(
@@ -35,11 +35,11 @@ export class JspmVersionLensProvider extends NpmVersionLensProvider {
     const context = {
       includePrereleases,
       clientData: null,
-    }
+    };
 
     return RequestFactory.executeDependencyRequests(
       packagePath,
-      this.packageClient,
+      this.client,
       packageDependencies,
       context,
     );

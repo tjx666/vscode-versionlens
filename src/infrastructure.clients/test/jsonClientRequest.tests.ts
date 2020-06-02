@@ -1,29 +1,38 @@
+import { LoggerStub } from 'test.core.logging'
+
+import { ILogger } from 'core.logging'
 import {
   ClientResponseSource,
   HttpClientRequestMethods,
-  HttpRequestOptions,
+  JsonHttpClient,
+  CachingOptions,
+  HttpOptions,
+  IHttpOptions,
+  ICachingOptions,
+  IHttpClient,
 } from 'core.clients'
 
-import { JsonHttpClientRequest } from 'infrastructure.clients'
-import { LoggerMock } from 'infrastructure.testing'
+import { HttpClient } from 'infrastructure.clients';
+
+const { mock, instance, when, anything } = require('ts-mockito');
 
 const assert = require('assert')
-const mock = require('mock-require')
 
-let requestLightMock = null
+let cachingOptsMock: ICachingOptions;
+let httpOptsMock: IHttpOptions;
+let httpClientMock: IHttpClient;
+let loggerMock: ILogger;
 
 export const JsonClientRequestTests = {
 
-  beforeAll: () => {
-    // mock require modules
-    requestLightMock = {}
-    mock('request-light', requestLightMock)
-  },
-
-  afterAll: () => mock.stopAll(),
-
   beforeEach: () => {
-    requestLightMock.xhr = _ => { throw new Error("Not implemented") }
+    cachingOptsMock = mock(CachingOptions);
+    httpOptsMock = mock(HttpOptions);
+    loggerMock = mock(LoggerStub);
+    httpClientMock = mock(HttpClient);
+
+    when(cachingOptsMock.duration).thenReturn(30000);
+    when(httpOptsMock.strictSSL).thenReturn(true);
   },
 
   "requestJson": {
@@ -34,35 +43,32 @@ export const JsonClientRequestTests = {
       const testResponse = {
         source: ClientResponseSource.remote,
         status: 404,
-        responseText: '{ "item1": "not found" }',
-      };
+        data: '{ "item1": "not found" }',
+      }
 
       const expectedCacheData = {
         source: ClientResponseSource.remote,
         status: testResponse.status,
-        data: JSON.parse(testResponse.responseText),
+        data: JSON.parse(testResponse.data),
       }
 
-      requestLightMock.xhr = options => {
-        return Promise.resolve(testResponse)
-      };
+      when(
+        httpClientMock.request(
+          anything(),
+          anything(),
+          anything(),
+          anything()
+        )
+      ).thenResolve(testResponse)
 
-      const rut = new JsonHttpClientRequest(
-        new LoggerMock(),
-        <HttpRequestOptions>{
-          caching: { duration: 30000 },
-          http: { strictSSL: true }
-        }
-      );
-
-      await rut.requestJson(
+      const rut = new JsonHttpClient(instance(httpClientMock));
+      await rut.request(
         HttpClientRequestMethods.get,
         testUrl,
         testQueryParams
-      )
-        .then(response => {
-          assert.deepEqual(response, expectedCacheData);
-        })
+      ).then(response => {
+        assert.deepEqual(response, expectedCacheData);
+      })
     },
 
   },

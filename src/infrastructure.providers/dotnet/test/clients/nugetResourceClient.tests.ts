@@ -1,32 +1,30 @@
+import { LoggerStub } from 'test.core.logging'
+
+import { ILogger } from 'core.logging';
+
+import {
+  UrlHelpers,
+  IJsonHttpClient,
+  JsonHttpClient,
+  HttpClientRequestMethods
+} from 'core.clients';
+
+import { NuGetResourceClient } from 'infrastructure.providers.dotnet';
+
 import Fixtures from './fixtures/nugetResources'
 
-import { DotNetConfig, NuGetResourceClient } from 'infrastructure.providers/dotnet';
-import { UrlHelpers } from 'core.clients';
-
-import { LoggerMock } from 'infrastructure.testing'
-import { VersionLensExtension } from 'presentation.extension';
-
 const assert = require('assert');
-const mock = require('mock-require');
+const { mock, instance, when, anything, capture } = require('ts-mockito');
 
-let defaultExtensionMock: VersionLensExtension;
+let jsonClientMock: IJsonHttpClient;
+let loggerMock: ILogger;
 
 export const NuGetResourceClientTests = {
 
   beforeEach: () => {
-
-    defaultExtensionMock = new VersionLensExtension(
-      {
-        get: (k) => null,
-        defrost: () => null
-      },
-      null
-    );
-
+    jsonClientMock = mock(JsonHttpClient);
+    loggerMock = mock(LoggerStub);
   },
-
-  //  reset mocks
-  afterEach: () => mock.stop('request-light'),
 
   "fetchResource": {
 
@@ -40,26 +38,26 @@ export const NuGetResourceClientTests = {
 
       const mockResponse = {
         status: 200,
-        responseText: JSON.stringify(Fixtures.success),
+        data: Fixtures.success,
       };
 
       const expected = 'https://api.nuget.org/v3-flatcontainer1/';
 
-      mock('request-light', {
-        xhr: options => {
-          assert.equal(options.url, testSource.url)
-          return Promise.resolve(mockResponse)
-        }
-      })
+      when(jsonClientMock.request(anything(), anything(), anything(), anything()))
+        .thenResolve(mockResponse)
 
-      // setup test feeds
-      const config = new DotNetConfig(defaultExtensionMock)
-
-      const cut = new NuGetResourceClient(config, new LoggerMock())
+      const cut = new NuGetResourceClient(
+        instance(jsonClientMock),
+        instance(loggerMock)
+      )
 
       return cut.fetchResource(testSource)
         .then(actualSources => {
           assert.equal(actualSources, expected)
+
+          const [actualMethod, actualUrl] = capture(jsonClientMock.request).first();
+          assert.equal(actualMethod, HttpClientRequestMethods.get);
+          assert.equal(actualUrl, testSource.url);
         });
     },
 
@@ -72,11 +70,6 @@ export const NuGetResourceClientTests = {
         protocol: UrlHelpers.RegistryProtocols.https
       };
 
-      const mockResponse = {
-        status: 404,
-        responseText: 'an error occurred',
-      };
-
       const expectedResponse = {
         source: 'remote',
         status: 404,
@@ -84,20 +77,14 @@ export const NuGetResourceClientTests = {
         rejected: true
       };
 
-      mock('request-light', { xhr: () => Promise.reject(mockResponse) })
+      when(jsonClientMock.request(anything(), anything(), anything(), anything()))
+        .thenReject(expectedResponse)
 
-      // setup test feeds
-      const config = new DotNetConfig(
-        new VersionLensExtension(
-          {
-            get: (k) => <any>[],
-            defrost: () => null
-          },
-          null
-        )
+      const cut = new NuGetResourceClient(
+        instance(jsonClientMock),
+        instance(loggerMock)
       )
 
-      const cut = new NuGetResourceClient(config, new LoggerMock())
       await cut.fetchResource(testSource)
         .catch(err => {
           assert.deepEqual(err, expectedResponse)

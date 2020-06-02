@@ -1,4 +1,4 @@
-import { createDependenciesFromXml } from 'infrastructure.providers/dotnet';
+import { createDependenciesFromXml } from 'infrastructure.providers.dotnet';
 
 import Fixtures from './createDependenciesFromXml.fixtures';
 

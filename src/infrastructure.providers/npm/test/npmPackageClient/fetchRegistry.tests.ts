@@ -1,32 +1,32 @@
-import { NpmConfig, NpmPackageClient } from 'infrastructure.providers/npm'
-import { LoggerMock } from 'infrastructure.testing';
-import { VersionLensExtension } from 'presentation.extension';
+import { LoggerStub } from 'test.core.logging';
+
 import { ClientResponseSource } from 'core.clients';
+
 import { PackageSuggestionFlags } from 'core.packages';
 
-const assert = require('assert')
-const mock = require('mock-require')
+import {
+  NpmConfig,
+  NpmPackageClient,
+  GitHubClient,
+  PacoteClient
+} from 'infrastructure.providers.npm'
 
-let defaultExtensionMock: VersionLensExtension;
-let requestLightMock = null
+const { mock, instance, when, anything } = require('ts-mockito');
+
+const assert = require('assert')
+
+let configMock: NpmConfig;
+let pacoteMock: PacoteClient;
+let githubClientMock: GitHubClient;
+let loggerMock: LoggerStub;
+
 export default {
 
-  beforeAll: () => {
-    // mock require modules
-    requestLightMock = {}
-    mock('request-light', requestLightMock)
-  },
-
-  afterAll: () => mock.stopAll(),
-
   beforeEach: () => {
-    defaultExtensionMock = new VersionLensExtension(
-      {
-        get: (k) => null,
-        defrost: () => null
-      },
-      null
-    );
+    configMock = mock(NpmConfig);
+    pacoteMock = mock(PacoteClient);
+    githubClientMock = mock(GitHubClient);
+    loggerMock = mock(LoggerStub);
   },
 
   'fetchPackage': {
@@ -49,19 +49,20 @@ export default {
 
       // setup initial call
       const cut = new NpmPackageClient(
-        new NpmConfig(defaultExtensionMock),
-        new LoggerMock()
+        instance(configMock),
+        instance(pacoteMock),
+        instance(githubClientMock),
+        instance(loggerMock)
       );
 
       return testStates.forEach(async testState => {
 
-        requestLightMock.xhr = options => {
-          return Promise.resolve({
+        when(pacoteMock.fetchPackage(anything(), anything()))
+          .thenReject({
             status: testState.status,
-            responseText: "response",
+            data: "response",
             source: ClientResponseSource.remote
           })
-        };
 
         await cut.fetchPackage(testRequest)
           .then((actual) => {
@@ -77,6 +78,7 @@ export default {
               }]
             )
           })
+          .catch(e => console.error(e))
 
       })
 

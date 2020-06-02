@@ -1,16 +1,12 @@
-import { IRepository } from 'core.generics';
+import { IConfig } from 'core.configuration';
 
-enum SuggestionContributions {
-  // DefaultVersionPrefix = 'versionlens.suggestions.defaultVersionPrefix',
-  ShowOnStartup = 'suggestions.showOnStartup',
-  ShowPrereleasesOnStartup = 'suggestions.showPrereleasesOnStartup',
-}
+import { SuggestionContributions } from '../definitions/eSuggestionContributions';
 
 export class SuggestionsOptions {
 
-  private config: IRepository;
+  private config: IConfig;
 
-  constructor(config: IRepository) {
+  constructor(config: IConfig) {
     this.config = config;
   }
 

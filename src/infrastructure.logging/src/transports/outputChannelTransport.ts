@@ -7,11 +7,11 @@ const MESSAGE = Symbol.for('message');
 
 class OutputChannelTransport extends Transport {
 
-  channel: VsCodeTypes.OutputChannel;
+  outputChannel: VsCodeTypes.OutputChannel;
 
-  constructor(channel: VsCodeTypes.OutputChannel, transportOptions) {
+  constructor(outputChannel: VsCodeTypes.OutputChannel, transportOptions) {
     super(transportOptions);
-    this.channel = channel;
+    this.outputChannel = outputChannel;
   }
 
   log(entry, callback) {
@@ -19,7 +19,7 @@ class OutputChannelTransport extends Transport {
     setImmediate(() => {
       this.emit('logged', entry)
 
-      this.channel.appendLine(`${entry[MESSAGE]}`);
+      this.outputChannel.appendLine(`${entry[MESSAGE]}`);
     });
 
     callback();

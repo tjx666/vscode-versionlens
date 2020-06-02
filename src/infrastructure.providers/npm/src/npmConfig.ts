@@ -1,9 +1,4 @@
-import {
-  CachingOptions,
-  ICachingOptions,
-  IHttpOptions,
-  HttpOptions
-} from 'core.clients';
+import { ICachingOptions, IHttpOptions } from 'core.clients';
 import { VersionLensExtension } from 'presentation.extension';
 import {
   ProviderSupport,
@@ -12,15 +7,7 @@ import {
 } from 'presentation.providers';
 
 import { GitHubOptions } from './options/githubOptions';
-
-enum NpmContributions {
-  Caching = 'npm.caching',
-  Http = 'npm.http',
-
-  Github = 'npm.github',
-  DependencyProperties = 'npm.dependencyProperties',
-  DistTagFilter = 'npm.distTagFilter',
-}
+import { NpmContributions } from './definitions/eNpmContributions';
 
 export class NpmConfig extends AbstractProviderConfig {
 
@@ -44,26 +31,17 @@ export class NpmConfig extends AbstractProviderConfig {
 
   github: GitHubOptions;
 
-  constructor(extension: VersionLensExtension) {
+  constructor(
+    extension: VersionLensExtension,
+    caching: ICachingOptions,
+    http: IHttpOptions,
+    github: GitHubOptions,
+  ) {
     super(extension);
 
-    this.caching = new CachingOptions(
-      extension.config,
-      NpmContributions.Caching,
-      'caching'
-    );
-
-    this.http = new HttpOptions(
-      extension.config,
-      NpmContributions.Http,
-      'http'
-    );
-
-    this.github = new GitHubOptions(
-      extension.config,
-      NpmContributions.Github,
-      'github'
-    );
+    this.caching = caching;
+    this.http = http;
+    this.github = github;
   }
 
   get dependencyProperties(): Array<string> {

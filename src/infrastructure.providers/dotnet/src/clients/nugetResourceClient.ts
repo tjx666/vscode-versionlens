@@ -1,28 +1,37 @@
 import { ILogger } from 'core.logging';
 import {
   HttpClientResponse,
-  HttpRequestOptions,
-  HttpClientRequestMethods
+  HttpClientRequestMethods,
+  IJsonHttpClient
 } from 'core.clients';
-
-import { JsonHttpClientRequest } from 'infrastructure.clients';
 
 import { NugetServiceIndexResponse } from '../definitions/nuget';
 import { DotNetSource } from '../definitions/dotnet';
 
-export class NuGetResourceClient extends JsonHttpClientRequest {
+export class NuGetResourceClient {
 
-  constructor(options: HttpRequestOptions, logger: ILogger) {
-    super(logger, options)
+  logger: any;
+
+  client: IJsonHttpClient;
+
+  constructor(client: IJsonHttpClient, logger: ILogger) {
+    this.client = client;
+    this.logger = logger;
   }
 
   async fetchResource(source: DotNetSource): Promise<string> {
+    const query = {};
+    const headers = {};
 
     this.logger.debug("Requesting PackageBaseAddressService from %s", source.url)
 
-    return await this.requestJson(HttpClientRequestMethods.get, source.url)
+    return await this.client.request(
+      HttpClientRequestMethods.get,
+      source.url,
+      query,
+      headers
+    )
       .then((response: NugetServiceIndexResponse) => {
-
         const packageBaseAddressServices = response.data.resources
           .filter(res => res["@type"].indexOf('PackageBaseAddress') > -1);
 

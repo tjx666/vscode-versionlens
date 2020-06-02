@@ -1,35 +1,30 @@
 // vscode references
 import * as VsCodeTypes from 'vscode';
-
 import { ILogger } from 'core.logging';
 
-import { providerRegistry } from 'presentation.providers';
 import { CommandHelpers } from 'presentation.extension';
+import { ProviderRegistry } from 'presentation.providers';
 
-import { VersionLensExtension } from "../versionLensExtension";
+import { IconCommandContributions } from '../definitions/eIconCommandContributions';
 import * as InstalledStatusHelpers from '../helpers/installedStatusHelpers';
 import { VersionLensState } from '../versionLensState';
-
-export enum IconCommandContributions {
-  ShowError = 'versionlens.onShowError',
-  ShowingProgress = 'versionlens.onShowingProgress',
-  ShowInstalledStatuses = 'versionlens.onShowInstalledStatuses',
-  HideInstalledStatuses = 'versionlens.onHideInstalledStatuses',
-  ShowPrereleaseVersions = 'versionlens.onShowPrereleaseVersions',
-  HidePrereleaseVersions = 'versionlens.onHidePrereleaseVersions',
-  ShowVersionLenses = 'versionlens.onShowVersionLenses',
-  HideVersionLenses = 'versionlens.onHideVersionLenses',
-}
 
 export class IconCommands {
 
   state: VersionLensState;
 
-  extension: VersionLensExtension;
+  outputChannel: VsCodeTypes.OutputChannel;
 
-  constructor(extension: VersionLensExtension) {
-    this.extension = extension
-    this.state = extension.state;
+  providerRegistry: ProviderRegistry;
+
+  constructor(
+    state: VersionLensState,
+    outputChannel: VsCodeTypes.OutputChannel,
+    providerRegistry: ProviderRegistry
+  ) {
+    this.state = state;
+    this.outputChannel = outputChannel;
+    this.providerRegistry = providerRegistry;
   }
 
   onShowError(resourceUri: VsCodeTypes.Uri) {
@@ -38,42 +33,42 @@ export class IconCommands {
       this.state.providerBusy.change(0)
     ])
       .then(_ => {
-        this.extension.outputChannel.show();
+        this.outputChannel.show();
       });
   }
 
   onShowVersionLenses(resourceUri: VsCodeTypes.Uri) {
     this.state.enabled.change(true)
       .then(_ => {
-        providerRegistry.refreshActiveCodeLenses();
+        this.providerRegistry.refreshActiveCodeLenses();
       });
   }
 
   onHideVersionLenses(resourceUri: VsCodeTypes.Uri) {
     this.state.enabled.change(false)
       .then(_ => {
-        providerRegistry.refreshActiveCodeLenses();
+        this.providerRegistry.refreshActiveCodeLenses();
       });
   }
 
   onShowPrereleaseVersions(resourceUri: VsCodeTypes.Uri) {
     this.state.prereleasesEnabled.change(true)
       .then(_ => {
-        providerRegistry.refreshActiveCodeLenses();
+        this.providerRegistry.refreshActiveCodeLenses();
       });
   }
 
   onHidePrereleaseVersions(resourceUri: VsCodeTypes.Uri) {
     this.state.prereleasesEnabled.change(false)
       .then(_ => {
-        providerRegistry.refreshActiveCodeLenses();
+        this.providerRegistry.refreshActiveCodeLenses();
       });
   }
 
   onShowInstalledStatuses(resourceUri: VsCodeTypes.Uri) {
     this.state.installedStatusesEnabled.change(true)
       .then(_ => {
-        providerRegistry.refreshActiveCodeLenses();
+        this.providerRegistry.refreshActiveCodeLenses();
       });
   }
 
@@ -89,14 +84,28 @@ export class IconCommands {
 }
 
 export function registerIconCommands(
-  extension: VersionLensExtension, logger: ILogger
-): Array<VsCodeTypes.Disposable> {
+  state: VersionLensState,
+  providerRegistry: ProviderRegistry,
+  subscriptions: Array<VsCodeTypes.Disposable>,
+  outputChannel: VsCodeTypes.OutputChannel,
+  logger: ILogger
+): IconCommands {
 
-  const iconCommands = new IconCommands(extension);
-
-  return CommandHelpers.registerCommands(
-    IconCommandContributions,
-    <any>iconCommands,
-    logger
+  // create the dependency
+  const iconCommands = new IconCommands(
+    state,
+    outputChannel,
+    providerRegistry
   );
+
+  // register commands with vscode
+  subscriptions.push(
+    ...CommandHelpers.registerCommands(
+      IconCommandContributions,
+      <any>iconCommands,
+      logger
+    )
+  )
+
+  return iconCommands;
 }

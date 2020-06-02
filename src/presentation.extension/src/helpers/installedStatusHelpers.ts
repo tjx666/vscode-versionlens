@@ -1,15 +1,10 @@
 // vscode references
-import * as VsCodeTypes from 'vscode';
-
-const { window } = require('vscode');
+import { window, Range, Position } from 'vscode';
 
 let _decorations = [];
-const _decorationTypeKey = window.createTextEditorDecorationType({
-  margin: '0 .2em 0 0'
-});
+const _decorationTypeKey = window.createTextEditorDecorationType({});
 
 export function clearDecorations() {
-  const { window } = require('vscode');
   if (!window || !window.activeTextEditor) return;
 
   _decorations = [];
@@ -20,7 +15,6 @@ export function clearDecorations() {
 }
 
 export function setDecorations(decorationList) {
-  const { window } = require('vscode');
   if (!window || !window.activeTextEditor)
     return;
 
@@ -78,8 +72,7 @@ export function createRenderOptions(contentText, color) {
   };
 }
 
-export function renderMissingDecoration(range: VsCodeTypes.Range, missingStatusColour: string) {
-  const { Range, Position } = require('vscode');
+export function renderMissingDecoration(range: Range, missingStatusColour: string) {
   updateDecoration({
     range: new Range(
       range.start,
@@ -96,10 +89,10 @@ export function renderMissingDecoration(range: VsCodeTypes.Range, missingStatusC
 }
 
 export function renderInstalledDecoration(
-  range: VsCodeTypes.Range,
+  range: Range,
   version: string,
   installedStatusColour: string) {
-  const { Range, Position } = require('vscode');
+
   updateDecoration({
     range: new Range(
       range.start,
@@ -116,11 +109,11 @@ export function renderInstalledDecoration(
 }
 
 export function renderNeedsUpdateDecoration(
-  range: VsCodeTypes.Range,
+  range: Range,
   version: string,
   outdatedStatusColour: string
 ) {
-  const { Range, Position } = require('vscode');
+
   updateDecoration({
     range: new Range(
       range.start,
@@ -137,11 +130,11 @@ export function renderNeedsUpdateDecoration(
 }
 
 export function renderOutdatedDecoration(
-  range: VsCodeTypes.Range,
+  range: Range,
   version: string,
   outdatedStatusColour: string
 ) {
-  const { Range, Position } = require('vscode');
+
   updateDecoration({
     range: new Range(
       range.start,
@@ -158,11 +151,10 @@ export function renderOutdatedDecoration(
 }
 
 export function renderPrereleaseInstalledDecoration(
-  range: VsCodeTypes.Range,
+  range: Range,
   version: string,
   prereleaseInstalledStatusColour: string
 ) {
-  const { Range, Position } = require('vscode');
   updateDecoration({
     range: new Range(
       range.start,

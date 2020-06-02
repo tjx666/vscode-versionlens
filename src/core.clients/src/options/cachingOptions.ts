@@ -1,12 +1,14 @@
-import { OptionsWithFallback } from 'core.configuration';
-import { IFrozenRepository, Nullable } from 'core.generics';
+import { IFrozenOptions, OptionsWithFallback } from 'core.configuration';
+import { Nullable } from 'core.generics';
 
-import { CachingContributions, ICachingOptions } from '../definitions/iOptions';
+import { CachingContributions } from '../definitions/eCachingContributions';
+import { ICachingOptions } from "../definitions/iCachingOptions";
 
-export class CachingOptions extends OptionsWithFallback implements ICachingOptions {
+export class CachingOptions extends OptionsWithFallback
+  implements ICachingOptions {
 
   constructor(
-    config: IFrozenRepository,
+    config: IFrozenOptions,
     section: string,
     fallbackSection: Nullable<string> = null
   ) {

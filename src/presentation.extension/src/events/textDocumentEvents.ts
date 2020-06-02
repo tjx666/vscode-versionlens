@@ -55,15 +55,3 @@ export class TextDocumentEvents {
   }
 
 }
-
-let _singleton = null;
-export default _singleton;
-
-export function registerTextDocumentEvents(
-  extensionState: VersionLensState, extLogger: ILogger
-): TextDocumentEvents {
-
-  _singleton = new TextDocumentEvents(extensionState, extLogger);
-
-  return _singleton;
-}

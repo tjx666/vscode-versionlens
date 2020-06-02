@@ -1,6 +1,12 @@
-import { IFrozenRepository } from 'core.generics';
+import { IConfig } from "./iConfig";
 
-export interface IOptions extends IFrozenRepository { }
+export interface IFrozenOptions extends IConfig {
+
+  defrost(): void;
+
+}
+
+export interface IOptions extends IFrozenOptions { }
 
 export interface IOptionsWithDefaults extends IOptions {
 

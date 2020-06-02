@@ -8,36 +8,28 @@ import { RequestFactory } from 'core.packages';
 
 import { AbstractVersionLensProvider } from 'presentation.providers';
 
+import { MavenClientData } from './definitions/mavenClientData';
 import * as MavenXmlFactory from './mavenXmlParserFactory';
 import { MavenConfig } from './mavenConfig';
-import { MavenClientData } from './definitions/mavenClientData';
-import { MvnClient } from './clients/mvnClient';
+import { MvnCli } from './clients/mvnCli';
 import { MavenClient } from './clients/mavenClient';
 
-export class MavenVersionLensProvider
-  extends AbstractVersionLensProvider<MavenConfig> {
+export class MavenVersionLensProvider extends AbstractVersionLensProvider<MavenConfig> {
 
-  mvnClient: MvnClient;
-  mavenClient: MavenClient;
+  mvnCli: MvnCli;
 
-  constructor(config: MavenConfig, logger: ILogger) {
+  client: MavenClient;
+
+  constructor(
+    config: MavenConfig,
+    mnvCli: MvnCli,
+    client: MavenClient,
+    logger: ILogger
+  ) {
     super(config, logger);
 
-    const requestOptions = {
-      caching: config.caching,
-      http: config.http
-    };
-
-    this.mvnClient = new MvnClient(
-      config,
-      logger.child({ namespace: 'maven cli' })
-    );
-
-    this.mavenClient = new MavenClient(
-      config,
-      requestOptions,
-      logger.child({ namespace: 'maven pkg client' })
-    );
+    this.mvnCli = mnvCli;
+    this.client = client;
   }
 
   async fetchVersionLenses(
@@ -52,7 +44,7 @@ export class MavenVersionLensProvider
     if (packageDependencies.length === 0) return null;
 
     // gets source feeds from the project path
-    const promisedRepos = this.mvnClient.fetchRepositories(packagePath);
+    const promisedRepos = this.mvnCli.fetchRepositories(packagePath);
 
     return promisedRepos.then(repos => {
 
@@ -71,7 +63,7 @@ export class MavenVersionLensProvider
 
       return RequestFactory.executeDependencyRequests(
         packagePath,
-        this.mavenClient,
+        this.client,
         packageDependencies,
         clientContext,
       );

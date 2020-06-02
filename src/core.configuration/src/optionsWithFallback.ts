@@ -1,12 +1,12 @@
-import { IFrozenRepository, Nullable } from 'core.generics';
-import { Options, IOptionsWithDefaults } from 'core.configuration';
+import { Nullable } from 'core.generics';
+import { IFrozenOptions, Options, IOptionsWithDefaults } from 'core.configuration';
 
 export class OptionsWithFallback extends Options
   implements IOptionsWithDefaults {
 
   protected fallbackSection: Nullable<string>;
 
-  constructor(config: IFrozenRepository, section: string, fallbackSection: Nullable<string> = null) {
+  constructor(config: IFrozenOptions, section: string, fallbackSection: Nullable<string> = null) {
     super(config, section);
     this.fallbackSection = fallbackSection;
   }

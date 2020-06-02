@@ -25,7 +25,7 @@
       ],
     },
     {
-      "label": "compile:test",
+      "label": "pretest",
       "presentation": {
         "echo": true,
         "reveal": "always",
@@ -34,7 +34,7 @@
       },
       "group": "build",
       "args": [
-        "compile:test"
+        "pretest"
       ],
     }
   ]
