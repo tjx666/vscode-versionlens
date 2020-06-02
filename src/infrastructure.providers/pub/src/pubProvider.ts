@@ -1,7 +1,5 @@
-// vscode references
-import * as VsCodeTypes from 'vscode';
+import { TextDocument } from 'vscode';
 
-// imports
 import { ILogger } from 'core.logging';
 import {
   extractPackageDependenciesFromYaml,
@@ -12,6 +10,7 @@ import {
   AbstractVersionLensProvider,
   VersionLensFetchResponse
 } from 'presentation.providers';
+import { VersionLensExtension } from 'presentation.extension';
 
 import { PubConfig } from './pubConfig';
 import { PubClient } from './pubClient';
@@ -23,17 +22,14 @@ export class PubVersionLensProvider extends AbstractVersionLensProvider<PubConfi
 
   logger: ILogger
 
-  constructor(config: PubConfig, client: PubClient, logger: ILogger) {
-    super(config, logger);
+  constructor(extension: VersionLensExtension, client: PubClient, logger: ILogger) {
+    super(extension, client.config, logger);
     this.client = client;
     this.logger = logger;
-
   }
 
   async fetchVersionLenses(
-    packagePath: string,
-    document: VsCodeTypes.TextDocument,
-    token: VsCodeTypes.CancellationToken
+    packagePath: string, document: TextDocument
   ): VersionLensFetchResponse {
 
     const yamlText = document.getText();

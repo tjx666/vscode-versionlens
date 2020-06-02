@@ -1,10 +1,11 @@
 import { AwilixContainer, asFunction } from 'awilix';
 
 import { CachingOptions, HttpOptions } from 'core.clients';
+import { IProviderConfig } from 'core.providers';
 
 import { createJsonClient } from 'infrastructure.clients';
 
-import { IProviderConfig, AbstractVersionLensProvider } from 'presentation.providers';
+import { AbstractVersionLensProvider } from 'presentation.providers';
 
 import { ComposerContributions } from './definitions/eComposerContributions';
 import { IComposerContainerMap } from './definitions/iComposerContainerMap';
@@ -20,16 +21,16 @@ export function configureContainer(
 
     // options
     composerCachingOpts: asFunction(
-      extension => new CachingOptions(
-        extension.config,
+      rootConfig => new CachingOptions(
+        rootConfig,
         ComposerContributions.Caching,
         'caching'
       )
     ).singleton(),
 
     composerHttpOpts: asFunction(
-      extension => new HttpOptions(
-        extension.config,
+      rootConfig => new HttpOptions(
+        rootConfig,
         ComposerContributions.Http,
         'http'
       )
@@ -37,8 +38,8 @@ export function configureContainer(
 
     // config
     composerConfig: asFunction(
-      (extension, composerCachingOpts, composerHttpOpts) =>
-        new ComposerConfig(extension, composerCachingOpts, composerHttpOpts)
+      (rootConfig, composerCachingOpts, composerHttpOpts) =>
+        new ComposerConfig(rootConfig, composerCachingOpts, composerHttpOpts)
     ).singleton(),
 
     // clients
@@ -64,9 +65,9 @@ export function configureContainer(
 
     // provider
     composerProvider: asFunction(
-      (composerConfig, composerClient, logger) =>
+      (extension, composerClient, logger) =>
         new ComposerVersionLensProvider(
-          composerConfig,
+          extension,
           composerClient,
           logger.child({ namespace: 'composer provider' })
         )

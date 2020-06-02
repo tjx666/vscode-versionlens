@@ -1,18 +1,17 @@
-// vscode references
-import * as VsCodeTypes from 'vscode';
+import { TextDocument } from 'vscode';
 
-// imports
 import { ILogger } from 'core.logging';
 import { UrlHelpers } from 'core.clients';
 import { RequestFactory } from 'core.packages';
 
-import { AbstractVersionLensProvider } from 'presentation.providers';
+import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation.providers';
+import { VersionLensExtension } from 'presentation.extension';
 
 import { MavenClientData } from './definitions/mavenClientData';
-import * as MavenXmlFactory from './mavenXmlParserFactory';
-import { MavenConfig } from './mavenConfig';
 import { MvnCli } from './clients/mvnCli';
 import { MavenClient } from './clients/mavenClient';
+import * as MavenXmlFactory from './mavenXmlParserFactory';
+import { MavenConfig } from './mavenConfig';
 
 export class MavenVersionLensProvider extends AbstractVersionLensProvider<MavenConfig> {
 
@@ -21,22 +20,20 @@ export class MavenVersionLensProvider extends AbstractVersionLensProvider<MavenC
   client: MavenClient;
 
   constructor(
-    config: MavenConfig,
+    extension: VersionLensExtension,
     mnvCli: MvnCli,
     client: MavenClient,
     logger: ILogger
   ) {
-    super(config, logger);
+    super(extension, client.config, logger);
 
     this.mvnCli = mnvCli;
     this.client = client;
   }
 
   async fetchVersionLenses(
-    packagePath: string,
-    document: VsCodeTypes.TextDocument,
-    token: VsCodeTypes.CancellationToken,
-  ) {
+    packagePath: string, document: TextDocument
+  ): VersionLensFetchResponse {
     const packageDependencies = MavenXmlFactory.createDependenciesFromXml(
       document.getText(),
       this.config.dependencyProperties

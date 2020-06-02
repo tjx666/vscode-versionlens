@@ -1,27 +1,27 @@
-// vscode references
-import * as VsCodeTypes from 'vscode';
+import { TextDocument } from 'vscode';
 
-// imports
 import { ILogger } from 'core.logging';
-import { RequestFactory, IPackageClient } from 'core.packages';
+import { RequestFactory } from 'core.packages';
+
+import { NpmVersionLensProvider, NpmPackageClient } from 'infrastructure.providers.npm';
 
 import { VersionLensFetchResponse } from 'presentation.providers';
-
-import { NpmVersionLensProvider } from 'infrastructure.providers.npm';
+import { VersionLensExtension } from 'presentation.extension';
 
 import { extractPackageDependenciesFromJson } from './jspmPackageParser';
-import { JspmConfig } from './jspmConfig';
 
 export class JspmVersionLensProvider extends NpmVersionLensProvider {
 
-  constructor(config: JspmConfig, client: IPackageClient<null>, logger: ILogger) {
-    super(config, client, logger);
+  constructor(
+    extension: VersionLensExtension,
+    client: NpmPackageClient,
+    logger: ILogger
+  ) {
+    super(extension, client, logger);
   }
 
   async fetchVersionLenses(
-    packagePath: string,
-    document: VsCodeTypes.TextDocument,
-    token: VsCodeTypes.CancellationToken
+    packagePath: string, document: TextDocument
   ): VersionLensFetchResponse {
 
     const packageDependencies = extractPackageDependenciesFromJson(

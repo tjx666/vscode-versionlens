@@ -1,11 +1,7 @@
 import { PackageFileFilter } from 'core.packages';
 import { IPackageClientOptions } from 'core.packages';
 
-export enum ProviderSupport {
-  Releases = 'releases',
-  Prereleases = 'prereleases',
-  InstalledStatuses = 'installedStatuses'
-}
+import { ProviderSupport } from './eProviderSupport';
 
 export interface IProviderOptions extends IPackageClientOptions {
   supports: Array<ProviderSupport>;

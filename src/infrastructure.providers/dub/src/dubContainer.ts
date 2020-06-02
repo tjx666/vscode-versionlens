@@ -1,10 +1,11 @@
 import { AwilixContainer, asFunction } from 'awilix';
 
 import { CachingOptions, HttpOptions } from 'core.clients';
+import { IProviderConfig } from 'core.providers';
 
 import { createJsonClient } from 'infrastructure.clients';
 
-import { IProviderConfig, AbstractVersionLensProvider } from 'presentation.providers';
+import { AbstractVersionLensProvider } from 'presentation.providers';
 
 import { DubContributions } from './definitions/eDubContributions';
 import { IDubContainerMap } from './definitions/iDubContainerMap';
@@ -20,16 +21,16 @@ export function configureContainer(
 
     // options
     dubCachingOpts: asFunction(
-      extension => new CachingOptions(
-        extension.config,
+      rootConfig => new CachingOptions(
+        rootConfig,
         DubContributions.Caching,
         'caching'
       )
     ).singleton(),
 
     dubHttpOpts: asFunction(
-      extension => new HttpOptions(
-        extension.config,
+      rootConfig => new HttpOptions(
+        rootConfig,
         DubContributions.Http,
         'http'
       )
@@ -37,8 +38,8 @@ export function configureContainer(
 
     // config
     dubConfig: asFunction(
-      (extension, dubCachingOpts, dubHttpOpts) =>
-        new DubConfig(extension, dubCachingOpts, dubHttpOpts)
+      (rootConfig, dubCachingOpts, dubHttpOpts) =>
+        new DubConfig(rootConfig, dubCachingOpts, dubHttpOpts)
     ).singleton(),
 
     // clients
@@ -64,9 +65,9 @@ export function configureContainer(
 
     // provider
     dubProvider: asFunction(
-      (dubConfig, dubClient, logger) =>
+      (extension, dubClient, logger) =>
         new DubVersionLensProvider(
-          dubConfig,
+          extension,
           dubClient,
           logger.child({ namespace: 'dub provider' })
         )

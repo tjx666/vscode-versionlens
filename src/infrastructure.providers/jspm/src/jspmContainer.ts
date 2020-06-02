@@ -1,12 +1,10 @@
 import { AwilixContainer, asFunction } from 'awilix';
 
+import { IProviderConfig } from 'core.providers';
 import { CachingOptions, HttpOptions } from 'core.clients';
 
-import { IProviderConfig, AbstractVersionLensProvider } from 'presentation.providers';
+import { AbstractVersionLensProvider } from 'presentation.providers';
 
-import { JspmConfig } from './jspmConfig';
-import { JspmVersionLensProvider } from './jspmProvider'
-import { IJspmContainerMap } from './definitions/iJspmContainerMap';
 import { createJsonClient } from 'infrastructure.clients';
 import {
   NpmContributions,
@@ -16,6 +14,10 @@ import {
   GitHubOptions
 } from 'infrastructure.providers.npm';
 
+import { IJspmContainerMap } from './definitions/iJspmContainerMap';
+import { JspmConfig } from './jspmConfig';
+import { JspmVersionLensProvider } from './jspmProvider'
+
 export function configureContainer(
   container: AwilixContainer<IJspmContainerMap>
 ): AbstractVersionLensProvider<IProviderConfig> {
@@ -24,24 +26,24 @@ export function configureContainer(
 
     // options
     jspmCachingOpts: asFunction(
-      extension => new CachingOptions(
-        extension.config,
+      rootConfig => new CachingOptions(
+        rootConfig,
         NpmContributions.Caching,
         'caching'
       )
     ).singleton(),
 
     jspmHttpOpts: asFunction(
-      extension => new HttpOptions(
-        extension.config,
+      rootConfig => new HttpOptions(
+        rootConfig,
         NpmContributions.Http,
         'http'
       )
     ).singleton(),
 
     jspmGitHubOpts: asFunction(
-      extension => new GitHubOptions(
-        extension.config,
+      rootConfig => new GitHubOptions(
+        rootConfig,
         NpmContributions.Github,
         'github'
       )
@@ -49,8 +51,8 @@ export function configureContainer(
 
     // config
     jspmConfig: asFunction(
-      (extension, jspmCachingOpts, jspmHttpOpts, jspmGitHubOpts) =>
-        new JspmConfig(extension, jspmCachingOpts, jspmHttpOpts, jspmGitHubOpts)
+      (rootConfig, jspmCachingOpts, jspmHttpOpts, jspmGitHubOpts) =>
+        new JspmConfig(rootConfig, jspmCachingOpts, jspmHttpOpts, jspmGitHubOpts)
     ).singleton(),
 
     // clients
@@ -94,9 +96,9 @@ export function configureContainer(
 
     // provider
     jspmProvider: asFunction(
-      (jspmConfig, jspmClient, logger) =>
+      (extension, jspmClient, logger) =>
         new JspmVersionLensProvider(
-          jspmConfig,
+          extension,
           jspmClient,
           logger.child({ namespace: 'jspm provider' })
         )

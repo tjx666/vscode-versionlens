@@ -1,17 +1,20 @@
 import { AwilixContainer, asFunction } from 'awilix';
 
 import { CachingOptions, HttpOptions } from 'core.clients';
-import { ProcessClient, createJsonClient, createProcessClient } from 'infrastructure.clients';
-import { IProviderConfig, AbstractVersionLensProvider } from 'presentation.providers';
+import { IProviderConfig } from 'core.providers';
+
+import { createJsonClient, createProcessClient } from 'infrastructure.clients';
+
+import { AbstractVersionLensProvider } from 'presentation.providers';
 
 import { IDotNetContainerMap } from './definitions/iDotNetContainerMap';
 import { DotNetContributions } from './definitions/eDotNetContributions';
-import { DotNetVersionLensProvider } from './dotnetProvider';
-import { DotNetConfig } from './dotnetConfig';
 import { NugetOptions } from './options/nugetOptions';
 import { DotNetCli } from './clients/dotnetCli';
 import { NuGetResourceClient } from './clients/nugetResourceClient';
 import { NuGetPackageClient } from './clients/nugetPackageClient';
+import { DotNetVersionLensProvider } from './dotnetProvider';
+import { DotNetConfig } from './dotnetConfig';
 
 export function configureContainer(
   container: AwilixContainer<IDotNetContainerMap>
@@ -21,23 +24,23 @@ export function configureContainer(
 
     // options
     nugetOpts: asFunction(
-      extension => new NugetOptions(
-        extension.config,
+      rootConfig => new NugetOptions(
+        rootConfig,
         DotNetContributions.Nuget
       )
     ).singleton(),
 
     dotnetCachingOpts: asFunction(
-      extension => new CachingOptions(
-        extension.config,
+      rootConfig => new CachingOptions(
+        rootConfig,
         DotNetContributions.Caching,
         'caching'
       )
     ).singleton(),
 
     dotnetHttpOpts: asFunction(
-      extension => new HttpOptions(
-        extension.config,
+      rootConfig => new HttpOptions(
+        rootConfig,
         DotNetContributions.Http,
         'http'
       )
@@ -45,9 +48,9 @@ export function configureContainer(
 
     // config
     dotnetConfig: asFunction(
-      (extension, dotnetCachingOpts, dotnetHttpOpts, nugetOpts) =>
+      (rootConfig, dotnetCachingOpts, dotnetHttpOpts, nugetOpts) =>
         new DotNetConfig(
-          extension,
+          rootConfig,
           dotnetCachingOpts,
           dotnetHttpOpts,
           nugetOpts
@@ -103,9 +106,9 @@ export function configureContainer(
 
     // provider
     dotnetProvider: asFunction(
-      (dotnetConfig, dotnetCli, nugetClient, nugetResClient, logger) =>
+      (extension, dotnetCli, nugetClient, nugetResClient, logger) =>
         new DotNetVersionLensProvider(
-          dotnetConfig,
+          extension,
           dotnetCli,
           nugetClient,
           nugetResClient,

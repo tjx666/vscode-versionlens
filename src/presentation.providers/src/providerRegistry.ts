@@ -1,11 +1,11 @@
 import { languages, Disposable } from 'vscode';
+import { AwilixContainer } from 'awilix';
 
 import { KeyDictionary } from 'core.generics'
 import { ILogger } from 'core.logging';
+import { IProviderConfig } from 'core.providers';
 
 import { AbstractVersionLensProvider } from 'presentation.providers'
-import { IProviderConfig } from './definitions/iProviderConfig';
-import { AwilixContainer } from 'awilix';
 import { IContainerMap } from 'presentation.extension';
 
 export class ProviderRegistry {

@@ -1,9 +1,7 @@
-// vscode references
-import * as VsCodeTypes from 'vscode';
+import { EventEmitter, TextDocument, CancellationToken } from 'vscode';
 
-// imports
 import { ILogger } from 'core.logging';
-
+import { IProviderConfig } from 'core.providers';
 import {
   PackageSourceTypes,
   PackageResponseErrors,
@@ -19,14 +17,13 @@ import {
 } from "presentation.lenses";
 import { VersionLensExtension } from 'presentation.extension';
 
-import { IProviderConfig } from './definitions/iProviderConfig';
 import { defaultReplaceFn } from './providerUtils';
 
 export type VersionLensFetchResponse = Promise<Array<PackageResponse>>;
 
 export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfig> {
 
-  _onChangeCodeLensesEmitter: VsCodeTypes.EventEmitter<void>;
+  _onChangeCodeLensesEmitter: EventEmitter<void>;
 
   onDidChangeCodeLenses: any;
 
@@ -38,23 +35,16 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
 
   customReplaceFn: ReplaceVersionFunction;
 
-  // abstract updateOutdated(packagePath: string): Promise<any>;
-
-  // abstract generateDecorations(versionLens: VersionLens): void;
-
   abstract fetchVersionLenses(
-    packagePath: string,
-    document: VsCodeTypes.TextDocument,
-    token: VsCodeTypes.CancellationToken
+    packagePath: string, document: TextDocument
   ): VersionLensFetchResponse;
 
-  constructor(config: TConfig, logger: ILogger) {
-    const { EventEmitter } = require('vscode');
+  constructor(extension: VersionLensExtension, config: TConfig, logger: ILogger) {
+    this.extension = extension;
     this.config = config;
     this._onChangeCodeLensesEmitter = new EventEmitter();
     this.onDidChangeCodeLenses = this._onChangeCodeLensesEmitter.event;
     this.logger = logger;
-    this.extension = config.extension;
   }
 
   refreshCodeLenses() {
@@ -62,7 +52,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
   }
 
   async provideCodeLenses(
-    document: VsCodeTypes.TextDocument, token: VsCodeTypes.CancellationToken
+    document: TextDocument, token: CancellationToken
   ): Promise<VersionLens[] | null> {
     if (this.extension.state.enabled.value === false) return null;
 
@@ -86,7 +76,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
       this.config.caching.duration
     );
 
-    return this.fetchVersionLenses(packagePath, document, token)
+    return this.fetchVersionLenses(packagePath, document)
       .then(responses => {
         this.extension.state.providerBusy.value--;
         if (responses === null) {
@@ -110,8 +100,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
   }
 
   async resolveCodeLens(
-    codeLens: IVersionCodeLens,
-    token: VsCodeTypes.CancellationToken
+    codeLens: IVersionCodeLens, token: CancellationToken
   ): Promise<VersionLens> {
     if (codeLens instanceof VersionLens) {
       // evaluate the code lens
@@ -122,9 +111,7 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
     }
   }
 
-  evaluateCodeLens(
-    codeLens: IVersionCodeLens, token: VsCodeTypes.CancellationToken
-  ) {
+  evaluateCodeLens(codeLens: IVersionCodeLens, token: CancellationToken) {
     if (codeLens.hasPackageError(PackageResponseErrors.Unexpected))
       return CommandFactory.createPackageUnexpectedError(codeLens);
 

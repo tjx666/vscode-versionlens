@@ -1,12 +1,11 @@
-// vscode references
-import * as VsCodeTypes from 'vscode';
+import { TextDocument } from 'vscode';
 
-// imports
 import { ILogger } from 'core.logging';
 import { UrlHelpers } from 'core.clients';
 import { RequestFactory } from 'core.packages';
 
 import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation.providers';
+import { VersionLensExtension } from 'presentation.extension';
 
 import { NuGetClientData } from './definitions/nuget';
 import { DotNetConfig } from './dotnetConfig';
@@ -25,13 +24,13 @@ export class DotNetVersionLensProvider
   nugetResClient: NuGetResourceClient;
 
   constructor(
-    dotnetConfig: DotNetConfig,
+    extension: VersionLensExtension,
     dotnetCli: DotNetCli,
     nugetClient: NuGetPackageClient,
     nugetResClient: NuGetResourceClient,
     dotnetLogger: ILogger
   ) {
-    super(dotnetConfig, dotnetLogger);
+    super(extension, nugetClient.config, dotnetLogger);
 
     this.dotnetClient = dotnetCli;
     this.nugetPackageClient = nugetClient;
@@ -39,9 +38,7 @@ export class DotNetVersionLensProvider
   }
 
   async fetchVersionLenses(
-    packagePath: string,
-    document: VsCodeTypes.TextDocument,
-    token: VsCodeTypes.CancellationToken
+    packagePath: string, document: TextDocument
   ): VersionLensFetchResponse {
 
     const packageDependencies = createDependenciesFromXml(

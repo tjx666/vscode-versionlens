@@ -1,16 +1,18 @@
 import { AwilixContainer, asFunction } from 'awilix';
 
 import { CachingOptions, HttpOptions } from 'core.clients';
+import { IProviderConfig } from 'core.providers';
 
-import { IProviderConfig, AbstractVersionLensProvider } from 'presentation.providers';
+import { createHttpClient, createProcessClient } from 'infrastructure.clients';
 
-import { MavenConfig } from './mavenConfig';
-import { MavenVersionLensProvider } from './mavenProvider'
+import { AbstractVersionLensProvider } from 'presentation.providers';
+
 import { MavenContributions } from './definitions/eMavenContributions';
 import { IMavenContainerMap } from './definitions/iMavenContainerMap';
 import { MvnCli } from './clients/mvnCli';
 import { MavenClient } from './clients/mavenClient';
-import { createHttpClient, ProcessClient, createProcessClient } from 'infrastructure.clients';
+import { MavenConfig } from './mavenConfig';
+import { MavenVersionLensProvider } from './mavenProvider'
 
 export function configureContainer(
   container: AwilixContainer<IMavenContainerMap>
@@ -20,16 +22,16 @@ export function configureContainer(
 
     // options
     mavenCachingOpts: asFunction(
-      extension => new CachingOptions(
-        extension.config,
+      rootConfig => new CachingOptions(
+        rootConfig,
         MavenContributions.Caching,
         'caching'
       )
     ).singleton(),
 
     mavenHttpOpts: asFunction(
-      extension => new HttpOptions(
-        extension.config,
+      rootConfig => new HttpOptions(
+        rootConfig,
         MavenContributions.Http,
         'http'
       )
@@ -37,9 +39,9 @@ export function configureContainer(
 
     // config
     mavenConfig: asFunction(
-      (extension, mavenCachingOpts, mavenHttpOpts) =>
+      (rootConfig, mavenCachingOpts, mavenHttpOpts) =>
         new MavenConfig(
-          extension,
+          rootConfig,
           mavenCachingOpts,
           mavenHttpOpts
         )
@@ -86,9 +88,9 @@ export function configureContainer(
 
     // provider
     mavenProvider: asFunction(
-      (mavenConfig, mvnCli, mavenClient, logger) =>
+      (extension, mvnCli, mavenClient, logger) =>
         new MavenVersionLensProvider(
-          mavenConfig,
+          extension,
           mvnCli,
           mavenClient,
           logger.child({ namespace: 'maven provider' })

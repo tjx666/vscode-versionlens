@@ -2,7 +2,10 @@
 import * as VsCodeTypes from 'vscode';
 
 import { ILogger } from 'core.logging';
-import { ProviderSupport, ProviderRegistry } from 'presentation.providers';
+import { ProviderSupport } from 'core.providers';
+
+import { ProviderRegistry } from 'presentation.providers';
+
 import { VersionLensState } from '../versionLensState';
 
 export class TextEditorEvents {

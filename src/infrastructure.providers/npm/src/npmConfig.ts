@@ -1,10 +1,10 @@
 import { ICachingOptions, IHttpOptions } from 'core.clients';
-import { VersionLensExtension } from 'presentation.extension';
+import { IFrozenOptions } from 'core.configuration';
 import {
-  ProviderSupport,
   IProviderOptions,
+  ProviderSupport,
   AbstractProviderConfig
-} from 'presentation.providers';
+} from 'core.providers';
 
 import { GitHubOptions } from './options/githubOptions';
 import { NpmContributions } from './definitions/eNpmContributions';
@@ -32,12 +32,12 @@ export class NpmConfig extends AbstractProviderConfig {
   github: GitHubOptions;
 
   constructor(
-    extension: VersionLensExtension,
+    config: IFrozenOptions,
     caching: ICachingOptions,
     http: IHttpOptions,
     github: GitHubOptions,
   ) {
-    super(extension);
+    super(config);
 
     this.caching = caching;
     this.http = http;
@@ -45,11 +45,11 @@ export class NpmConfig extends AbstractProviderConfig {
   }
 
   get dependencyProperties(): Array<string> {
-    return this.extension.config.get(NpmContributions.DependencyProperties);
+    return this.config.get(NpmContributions.DependencyProperties);
   }
 
   get distTagFilter(): Array<string> {
-    return this.extension.config.get(NpmContributions.DistTagFilter);
+    return this.config.get(NpmContributions.DistTagFilter);
   }
 
 }

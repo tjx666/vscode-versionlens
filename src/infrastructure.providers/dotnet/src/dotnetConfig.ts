@@ -1,11 +1,10 @@
+import { IFrozenOptions } from 'core.configuration';
 import { ICachingOptions, IHttpOptions } from 'core.clients';
-
-import { VersionLensExtension } from 'presentation.extension';
 import {
   IProviderOptions,
   ProviderSupport,
   AbstractProviderConfig
-} from 'presentation.providers';
+} from 'core.providers';
 
 import { INugetOptions } from "./definitions/iNugetOptions";
 import { DotNetContributions } from './definitions/eDotNetContributions';
@@ -32,12 +31,12 @@ export class DotNetConfig extends AbstractProviderConfig {
   nuget: INugetOptions;
 
   constructor(
-    extension: VersionLensExtension,
+    config: IFrozenOptions,
     dotnetCachingOpts: ICachingOptions,
     dotnetHttpOpts: IHttpOptions,
     nugetOpts: INugetOptions,
   ) {
-    super(extension);
+    super(config);
 
     this.caching = dotnetCachingOpts;
     this.http = dotnetHttpOpts;
@@ -45,11 +44,11 @@ export class DotNetConfig extends AbstractProviderConfig {
   }
 
   get dependencyProperties(): Array<string> {
-    return this.extension.config.get(DotNetContributions.DependencyProperties);
+    return this.config.get(DotNetContributions.DependencyProperties);
   }
 
   get tagFilter(): Array<string> {
-    return this.extension.config.get(DotNetContributions.TagFilter);
+    return this.config.get(DotNetContributions.TagFilter);
   }
 
   get fallbackNugetSource(): string {

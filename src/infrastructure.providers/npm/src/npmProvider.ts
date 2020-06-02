@@ -1,11 +1,8 @@
-// vscode references
-import * as VsCodeTypes from 'vscode';
+import { TextDocument } from 'vscode';
 
-// imports
 import { ILogger } from 'core.logging';
 import {
   extractPackageDependenciesFromJson,
-  IPackageClient,
   RequestFactory
 } from 'core.packages';
 
@@ -13,7 +10,9 @@ import {
   AbstractVersionLensProvider,
   VersionLensFetchResponse
 } from 'presentation.providers';
+import { VersionLensExtension } from 'presentation.extension';
 
+import { NpmPackageClient } from './clients/npmPackageClient';
 import { NpmConfig } from './npmConfig';
 import { npmReplaceVersion } from './npmUtils';
 
@@ -21,10 +20,14 @@ export class NpmVersionLensProvider extends AbstractVersionLensProvider<NpmConfi
 
   logger: ILogger;
 
-  client: IPackageClient<null>;
+  client: NpmPackageClient;
 
-  constructor(config: NpmConfig, client: IPackageClient<null>, logger: ILogger) {
-    super(config, logger);
+  constructor(
+    extension: VersionLensExtension,
+    client: NpmPackageClient,
+    logger: ILogger
+  ) {
+    super(extension, client.config, logger);
 
     this.logger = logger;
     this.client = client;
@@ -32,9 +35,7 @@ export class NpmVersionLensProvider extends AbstractVersionLensProvider<NpmConfi
   }
 
   async fetchVersionLenses(
-    packagePath: string,
-    document: VsCodeTypes.TextDocument,
-    token: VsCodeTypes.CancellationToken
+    packagePath: string, document: TextDocument
   ): VersionLensFetchResponse {
 
     const packageDependencies = extractPackageDependenciesFromJson(
@@ -68,4 +69,4 @@ export class NpmVersionLensProvider extends AbstractVersionLensProvider<NpmConfi
 
   }
 
-} // End NpmCodeLensProvider
+}

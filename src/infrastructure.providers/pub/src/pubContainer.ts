@@ -1,15 +1,17 @@
 import { AwilixContainer, asFunction } from 'awilix';
 
 import { CachingOptions, HttpOptions } from 'core.clients';
+import { IProviderConfig } from 'core.providers';
 
-import { IProviderConfig, AbstractVersionLensProvider } from 'presentation.providers';
+import { createJsonClient } from 'infrastructure.clients';
+
+import { AbstractVersionLensProvider } from 'presentation.providers';
 
 import { PubContributions } from './definitions/ePubContributions';
 import { IPubContainerMap } from './definitions/iPubContainerMap';
 import { PubVersionLensProvider } from './pubProvider'
 import { PubConfig } from './pubConfig';
 import { PubClient } from './pubClient';
-import { createJsonClient } from 'infrastructure.clients';
 
 export function configureContainer(
   container: AwilixContainer<IPubContainerMap>
@@ -19,16 +21,16 @@ export function configureContainer(
 
     // options
     pubCachingOpts: asFunction(
-      extension => new CachingOptions(
-        extension.config,
+      rootConfig => new CachingOptions(
+        rootConfig,
         PubContributions.Caching,
         'caching'
       )
     ).singleton(),
 
     pubHttpOpts: asFunction(
-      extension => new HttpOptions(
-        extension.config,
+      rootConfig => new HttpOptions(
+        rootConfig,
         PubContributions.Http,
         'http'
       )
@@ -36,8 +38,8 @@ export function configureContainer(
 
     // config
     pubConfig: asFunction(
-      (extension, pubCachingOpts, pubHttpOpts) =>
-        new PubConfig(extension, pubCachingOpts, pubHttpOpts)
+      (rootConfig, pubCachingOpts, pubHttpOpts) =>
+        new PubConfig(rootConfig, pubCachingOpts, pubHttpOpts)
     ).singleton(),
 
     // clients
@@ -63,9 +65,9 @@ export function configureContainer(
 
     // provider
     pubProvider: asFunction(
-      (pubConfig, pubClient, logger) =>
+      (extension, pubClient, logger) =>
         new PubVersionLensProvider(
-          pubConfig,
+          extension,
           pubClient,
           logger.child({ namespace: 'pub provider' })
         )

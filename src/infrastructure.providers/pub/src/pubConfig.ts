@@ -1,11 +1,10 @@
 import { ICachingOptions, IHttpOptions } from 'core.clients';
-
-import { VersionLensExtension } from "presentation.extension";
+import { IFrozenOptions } from 'core.configuration';
 import {
-  ProviderSupport,
   IProviderOptions,
-  AbstractProviderConfig,
-} from 'presentation.providers';
+  ProviderSupport,
+  AbstractProviderConfig
+} from 'core.providers';
 
 import { PubContributions } from './definitions/ePubContributions';
 
@@ -29,22 +28,22 @@ export class PubConfig extends AbstractProviderConfig {
   http: IHttpOptions;
 
   constructor(
-    extension: VersionLensExtension,
+    config: IFrozenOptions,
     caching: ICachingOptions,
     http: IHttpOptions
   ) {
-    super(extension);
+    super(config);
 
     this.caching = caching;
     this.http = http;
   }
 
   get dependencyProperties(): Array<string> {
-    return this.extension.config.get(PubContributions.DependencyProperties);
+    return this.config.get(PubContributions.DependencyProperties);
   }
 
   get apiUrl(): string {
-    return this.extension.config.get(PubContributions.ApiUrl);
+    return this.config.get(PubContributions.ApiUrl);
   }
 
 }

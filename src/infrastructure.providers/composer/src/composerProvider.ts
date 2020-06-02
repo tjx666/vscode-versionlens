@@ -1,14 +1,17 @@
-// vscode references
 import * as VsCodeTypes from 'vscode';
 
-// imports
 import { ILogger } from 'core.logging';
-import { VersionHelpers, extractPackageDependenciesFromJson, RequestFactory } from 'core.packages';
+import {
+  VersionHelpers,
+  extractPackageDependenciesFromJson,
+  RequestFactory
+} from 'core.packages';
 
 import {
   renderMissingDecoration,
   renderInstalledDecoration,
-  renderOutdatedDecoration
+  renderOutdatedDecoration,
+  VersionLensExtension
 } from 'presentation.extension';
 import { VersionLens } from 'presentation.lenses';
 import { VersionLensFetchResponse, AbstractVersionLensProvider } from 'presentation.providers';
@@ -23,15 +26,17 @@ export class ComposerVersionLensProvider
 
   client: ComposerClient;
 
-  constructor(config: ComposerConfig, client: ComposerClient, logger: ILogger) {
-    super(config, logger);
+  constructor(
+    extension: VersionLensExtension,
+    client: ComposerClient,
+    logger: ILogger
+  ) {
+    super(extension, client.config, logger);
     this.client = client;
   }
 
   async fetchVersionLenses(
-    packagePath: string,
-    document: VsCodeTypes.TextDocument,
-    token: VsCodeTypes.CancellationToken
+    packagePath: string, document: VsCodeTypes.TextDocument
   ): VersionLensFetchResponse {
 
     const packageDependencies = extractPackageDependenciesFromJson(
@@ -84,7 +89,7 @@ export class ComposerVersionLensProvider
     if (!this._outdatedCache) {
       renderMissingDecoration(
         versionLens.replaceRange,
-        this.config.extension.statuses.notInstalledColour
+        this.extension.statuses.notInstalledColour
       );
       return;
     }
@@ -93,7 +98,7 @@ export class ComposerVersionLensProvider
     if (!currentVersion) {
       renderMissingDecoration(
         versionLens.replaceRange,
-        this.config.extension.statuses.notInstalledColour
+        this.extension.statuses.notInstalledColour
       );
       return;
     }
@@ -102,7 +107,7 @@ export class ComposerVersionLensProvider
       renderInstalledDecoration(
         versionLens.replaceRange,
         currentPackageVersion,
-        this.config.extension.statuses.installedColour
+        this.extension.statuses.installedColour
       );
       return;
     }
@@ -110,7 +115,7 @@ export class ComposerVersionLensProvider
     renderOutdatedDecoration(
       versionLens.replaceRange,
       currentVersion,
-      this.config.extension.statuses.outdatedColour
+      this.extension.statuses.outdatedColour
     );
   }
 

@@ -1,3 +1,4 @@
+import { ILogger } from 'core.logging';
 import {
   DocumentFactory,
   ResponseFactory,
@@ -9,7 +10,6 @@ import {
   SemverSpec,
   IPackageClient
 } from 'core.packages';
-
 import {
   HttpClientRequestMethods,
   HttpClientResponse,
@@ -18,7 +18,6 @@ import {
 } from 'core.clients';
 
 import { ComposerConfig } from './composerConfig';
-import { ILogger } from 'core.logging';
 
 export class ComposerClient implements IPackageClient<null> {
 

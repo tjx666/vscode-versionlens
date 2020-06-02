@@ -1,7 +1,5 @@
-// vscode references
-import * as VsCodeTypes from 'vscode';
+import { TextDocument } from 'vscode';
 
-// imports
 import { ILogger } from 'core.logging';
 import { extractPackageDependenciesFromJson, RequestFactory } from 'core.packages';
 
@@ -9,6 +7,7 @@ import {
   AbstractVersionLensProvider,
   VersionLensFetchResponse
 } from 'presentation.providers';
+import { VersionLensExtension } from 'presentation.extension';
 
 import { DubConfig } from './dubConfig';
 import { DubClient } from './dubClient';
@@ -17,16 +16,18 @@ export class DubVersionLensProvider extends AbstractVersionLensProvider<DubConfi
 
   client: DubClient;
 
-  constructor(config: DubConfig, client: DubClient, logger: ILogger) {
-    super(config, logger);
+  constructor(
+    extension: VersionLensExtension,
+    client: DubClient,
+    logger: ILogger
+  ) {
+    super(extension, client.config, logger);
     this.client = client;
     this.logger = logger;
   }
 
   async fetchVersionLenses(
-    packagePath: string,
-    document: VsCodeTypes.TextDocument,
-    token: VsCodeTypes.CancellationToken
+    packagePath: string, document: TextDocument
   ): VersionLensFetchResponse {
     const packageDependencies = extractPackageDependenciesFromJson(
       document.getText(),

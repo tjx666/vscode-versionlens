@@ -1,18 +1,20 @@
 import { AwilixContainer, asFunction } from 'awilix';
 
 import { CachingOptions, HttpOptions } from 'core.clients';
+import { IProviderConfig } from 'core.providers';
 
-import { IProviderConfig, AbstractVersionLensProvider } from 'presentation.providers';
+import { createJsonClient } from 'infrastructure.clients';
 
-import { NpmConfig } from './npmConfig';
-import { NpmVersionLensProvider } from './npmProvider'
+import { AbstractVersionLensProvider } from 'presentation.providers';
+
 import { NpmContributions } from './definitions/eNpmContributions';
 import { INpmContainerMap } from './definitions/iNpmContainerMap';
 import { GitHubOptions } from './options/githubOptions';
 import { NpmPackageClient } from './clients/npmPackageClient';
 import { PacoteClient } from './clients/pacoteClient';
 import { GitHubClient } from './clients/githubClient';
-import { createJsonClient } from 'infrastructure.clients';
+import { NpmVersionLensProvider } from './npmProvider'
+import { NpmConfig } from './npmConfig';
 
 export function configureContainer(
   container: AwilixContainer<INpmContainerMap>
@@ -22,24 +24,24 @@ export function configureContainer(
 
     // options
     npmCachingOpts: asFunction(
-      extension => new CachingOptions(
-        extension.config,
+      rootConfig => new CachingOptions(
+        rootConfig,
         NpmContributions.Caching,
         'caching'
       )
     ).singleton(),
 
     npmHttpOpts: asFunction(
-      extension => new HttpOptions(
-        extension.config,
+      rootConfig => new HttpOptions(
+        rootConfig,
         NpmContributions.Http,
         'http'
       )
     ).singleton(),
 
     npmGitHubOpts: asFunction(
-      extension => new GitHubOptions(
-        extension.config,
+      rootConfig => new GitHubOptions(
+        rootConfig,
         NpmContributions.Github,
         'github'
       )
@@ -47,8 +49,8 @@ export function configureContainer(
 
     // config
     npmConfig: asFunction(
-      (extension, npmCachingOpts, npmHttpOpts, npmGitHubOpts) =>
-        new NpmConfig(extension, npmCachingOpts, npmHttpOpts, npmGitHubOpts)
+      (rootConfig, npmCachingOpts, npmHttpOpts, npmGitHubOpts) =>
+        new NpmConfig(rootConfig, npmCachingOpts, npmHttpOpts, npmGitHubOpts)
     ).singleton(),
 
     // clients
@@ -76,7 +78,7 @@ export function configureContainer(
       (npmConfig, logger) =>
         new PacoteClient(
           npmConfig,
-          logger.child({ namespace: 'pacote client' })
+          logger.child({ namespace: 'npm pacote' })
         )
     ).singleton(),
 
@@ -92,9 +94,9 @@ export function configureContainer(
 
     // provider
     npmProvider: asFunction(
-      (npmConfig, npmClient, logger) =>
+      (extension, npmClient, logger) =>
         new NpmVersionLensProvider(
-          npmConfig,
+          extension,
           npmClient,
           logger.child({ namespace: 'npm provider' })
         )

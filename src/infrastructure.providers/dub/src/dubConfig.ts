@@ -1,11 +1,10 @@
+import { IFrozenOptions } from 'core.configuration';
 import { ICachingOptions, IHttpOptions } from 'core.clients';
-
 import {
   IProviderOptions,
   ProviderSupport,
   AbstractProviderConfig
-} from 'presentation.providers';
-import { VersionLensExtension } from 'presentation.extension';
+} from 'core.providers';
 
 import { DubContributions } from './definitions/eDubContributions';
 
@@ -30,22 +29,22 @@ export class DubConfig extends AbstractProviderConfig {
   http: IHttpOptions;
 
   constructor(
-    extension: VersionLensExtension,
+    config: IFrozenOptions,
     caching: ICachingOptions,
     http: IHttpOptions,
   ) {
-    super(extension);
+    super(config);
 
     this.caching = caching;
     this.http = http;
   }
 
   get dependencyProperties(): Array<string> {
-    return this.extension.config.get(DubContributions.DependencyProperties);
+    return this.config.get(DubContributions.DependencyProperties);
   }
 
   get apiUrl(): Array<string> {
-    return this.extension.config.get(DubContributions.ApiUrl);
+    return this.config.get(DubContributions.ApiUrl);
   }
 
 }
