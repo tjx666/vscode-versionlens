@@ -1,3 +1,7 @@
+# next
+
+- Logging level can now be changed without restarting vscode
+
 # 1.0.7
 
 - Added a troubleshooting section to the [README](https://github.com/vscode-contrib/vscode-versionlens/blob/master/README.md)

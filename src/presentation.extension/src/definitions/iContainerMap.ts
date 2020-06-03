@@ -1,4 +1,4 @@
-import * as VsCodeTypes from 'vscode';
+import { OutputChannel, Disposable } from 'vscode';
 
 import { ILogger, LoggingOptions } from 'core.logging';
 import { HttpOptions, CachingOptions } from 'core.clients';
@@ -13,28 +13,37 @@ import {
 } from 'presentation.extension';
 
 import { ProviderRegistry } from 'presentation.providers';
+import { ILoggerTransport } from 'infrastructure.logging';
 
 export interface IContainerMap {
+
+  extensionName: string,
 
   // configuration
   rootConfig: VsCodeConfig,
 
-  // logging
-  outputChannel: VsCodeTypes.OutputChannel,
-  logger: ILogger,
-
   // logging options
   loggingOptions: LoggingOptions,
+
   httpOptions: HttpOptions,
+
   cachingOptions: CachingOptions,
 
+  // logging
+  outputChannel: OutputChannel,
+
+  outputChannelTransport: ILoggerTransport,
+
+  logger: ILogger,
+
   // extension
-  extensionName: string,
   extension: VersionLensExtension,
 
   // commands
-  subscriptions: Array<VsCodeTypes.Disposable>,
+  subscriptions: Array<Disposable>,
+
   iconCommands: IconCommands,
+
   suggestionCommands: SuggestionCommands,
 
   // events

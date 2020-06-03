@@ -1,6 +1,8 @@
+import { IFrozenOptions } from "core.configuration";
+
 import { LogLevelTypes } from "./iLogger";
 
-export interface ILoggingOptions {
+export interface ILoggingOptions extends IFrozenOptions {
 
   level: LogLevelTypes;
 

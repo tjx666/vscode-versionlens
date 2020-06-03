@@ -209,7 +209,7 @@
             "verbose"
           ],
           "default": "error",
-          "description": "Sets the level of logs to be written to the VersionLens output channel. Vscode needs to be restarted for this to take effect."
+          "description": "Sets the level of logs to be written to the VersionLens output channel."
         },
         "versionlens.caching.duration": {
           "type": [

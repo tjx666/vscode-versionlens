@@ -24,6 +24,7 @@ import {
 import { createProviderRegistry } from 'presentation.providers';
 
 import { IContainerMap } from './definitions/iContainerMap';
+import { OutputChannelTransport } from 'infrastructure.logging';
 
 export async function configureContainer(
   context: ExtensionContext
@@ -60,10 +61,14 @@ export async function configureContainer(
       extensionName => window.createOutputChannel(extensionName)
     ).singleton(),
 
-    logger: asFunction(
+    outputChannelTransport: asFunction(
       (outputChannel, loggingOptions) =>
-        createWinstonLogger(outputChannel, loggingOptions)
-          .child({ namespace: 'extension' })
+        new OutputChannelTransport(outputChannel, loggingOptions)
+    ).singleton(),
+
+    logger: asFunction(
+      (outputChannelTransport) =>
+        createWinstonLogger(outputChannelTransport, { namespace: 'extension' })
     ).singleton(),
 
     // extension
@@ -96,11 +101,11 @@ export async function configureContainer(
 
     // events
     textEditorEvents: asFunction(
-      (extension, providerRegistry, logger) =>
+      (extension, providerRegistry, outputChannelTransport, logger) =>
         new TextEditorEvents(
           extension.state,
           providerRegistry,
-          logger.child({ namespace: 'text editor' })
+          outputChannelTransport
         )
     ).singleton(),
 
@@ -114,7 +119,7 @@ export async function configureContainer(
   const providerRegistry = await createProviderRegistry(
     container,
     subscriptions,
-    logger.child({ namespace: 'provider registry' })
+    logger.child({ namespace: 'registry' })
   )
 
   // add the registry in to the container

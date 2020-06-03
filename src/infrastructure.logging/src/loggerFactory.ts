@@ -1,39 +1,38 @@
-// vscode references
-import * as VsCodeTypes from 'vscode';
+import { ILogger } from 'core.logging';
 
-import {
-  ILogger,
-  ILoggingOptions
-} from 'core.logging';
+import { ILoggerTransport } from './transports/iLoggerTransport';
 
-import { createOutputChannelTransport } from './transports/outputChannelTransport';
+const { loggers, format, transports } = require('winston');
 
 export function createWinstonLogger(
-  outputChannel: VsCodeTypes.OutputChannel, loggingOptions: ILoggingOptions
+  loggerTransport: ILoggerTransport, defaultMeta: object
 ): ILogger {
-  const { loggers, format, transports } = require('winston');
 
   const logTransports = [
     // capture errors in the console
     new transports.Console({ level: 'error' }),
 
-    // send info to output channel
-    createOutputChannelTransport(outputChannel, { level: loggingOptions.level })
+    // send info to the transport
+    loggerTransport
   ];
 
   const logFormat = format.combine(
-    format.timestamp({ format: loggingOptions.timestampFormat }),
+    format.timestamp({ format: loggerTransport.logging.timestampFormat }),
     format.simple(),
     format.splat(),
     format.printf(loggerFormatter)
   );
 
-  return loggers.add(outputChannel.name, {
-    format: logFormat,
-    transports: logTransports,
-  });
+  return loggers.add(
+    loggerTransport.name,
+    {
+      format: logFormat,
+      defaultMeta,
+      transports: logTransports,
+    }
+  );
 }
 
 function loggerFormatter(entry) {
-  return `${entry.timestamp} [${entry.namespace}] [${entry.level}]: ${entry.message}`
+  return `[${entry.timestamp}] [${entry.namespace}] [${entry.level}] ${entry.message}`
 }

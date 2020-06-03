@@ -1,38 +1,36 @@
-// vscode references
-import * as VsCodeTypes from 'vscode';
+import { window, TextEditor } from 'vscode';
 
-import { ILogger } from 'core.logging';
 import { ProviderSupport } from 'core.providers';
 
 import { ProviderRegistry } from 'presentation.providers';
 
 import { VersionLensState } from '../versionLensState';
+import { ILoggerTransport } from 'infrastructure.logging';
 
 export class TextEditorEvents {
 
   state: VersionLensState;
 
-  logger: ILogger;
-
   providerRegistry: ProviderRegistry;
+
+  loggerTransport: ILoggerTransport;
 
   constructor(
     state: VersionLensState,
     registry: ProviderRegistry,
-    logger: ILogger
+    loggerTransport: ILoggerTransport
   ) {
     this.state = state;
-    this.logger = logger;
     this.providerRegistry = registry;
+    this.loggerTransport = loggerTransport;
 
     // register editor events
-    const { window } = require('vscode');
     window.onDidChangeActiveTextEditor(
       this.onDidChangeActiveTextEditor.bind(this)
     );
   }
 
-  onDidChangeActiveTextEditor(textEditor: VsCodeTypes.TextEditor) {
+  onDidChangeActiveTextEditor(textEditor: TextEditor) {
     // maintain versionLens.providerActive state
     // each time the active editor changes
 
@@ -53,6 +51,9 @@ export class TextEditorEvents {
       this.state.providerActive.value = false;
       return;
     }
+
+    // ensure the latest logging level is set
+    this.loggerTransport.updateLevel();
 
     // determine prerelease support
     const providerSupportsPrereleases = providersMatchingFilename.reduce(

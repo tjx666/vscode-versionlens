@@ -66,7 +66,11 @@ export abstract class AbstractVersionLensProvider<TConfig extends IProviderConfi
     // set in progress
     this.extension.state.providerBusy.value++;
 
-    this.logger.info("Analysing dependencies for %s", document.uri.fsPath);
+    this.logger.info(
+      "Analysing %s dependencies for %s",
+      this.config.options.providerName,
+      document.uri.fsPath
+    );
 
     // unfreeze config per file request
     this.config.caching.defrost();
