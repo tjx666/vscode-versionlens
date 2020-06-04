@@ -6,7 +6,7 @@ import {
 } from 'core.clients';
 
 import { MavenConfig } from '../mavenConfig';
-import { MavenVersionLensProvider } from '../mavenProvider';
+import { MavenSuggestionProvider } from '../mavenSuggestionProvider';
 import { MvnCli } from '../clients/mvnCli';
 import { MavenClient } from '../clients/mavenClient';
 
@@ -31,5 +31,5 @@ export interface IMavenContainerMap {
   mavenClient: MavenClient,
 
   // provider
-  mavenProvider: MavenVersionLensProvider
+  mavenProvider: MavenSuggestionProvider
 }

@@ -1,21 +1,19 @@
 import { AwilixContainer, asFunction } from 'awilix';
 
 import { CachingOptions, HttpOptions } from 'core.clients';
-import { IProviderConfig } from 'core.providers';
+import { ISuggestionProvider } from 'core.suggestions';
 
 import { createJsonClient } from 'infrastructure.clients';
 
-import { AbstractVersionLensProvider } from 'presentation.providers';
-
 import { DubContributions } from './definitions/eDubContributions';
 import { IDubContainerMap } from './definitions/iDubContainerMap';
-import { DubVersionLensProvider } from './dubProvider'
+import { DubSuggestionProvider } from './dubSuggestionProvider'
 import { DubConfig } from './dubConfig';
 import { DubClient } from './dubClient';
 
 export function configureContainer(
   container: AwilixContainer<IDubContainerMap>
-): AbstractVersionLensProvider<IProviderConfig> {
+): ISuggestionProvider {
 
   const containerMap = {
 
@@ -65,9 +63,8 @@ export function configureContainer(
 
     // provider
     dubProvider: asFunction(
-      (extension, dubClient, logger) =>
-        new DubVersionLensProvider(
-          extension,
+      (dubClient, logger) =>
+        new DubSuggestionProvider(
           dubClient,
           logger.child({ namespace: 'dub provider' })
         )

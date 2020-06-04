@@ -1,11 +1,9 @@
 import { AwilixContainer, asFunction } from 'awilix';
 
 import { CachingOptions, HttpOptions } from 'core.clients';
-import { IProviderConfig } from 'core.providers';
+import { ISuggestionProvider } from 'core.suggestions';
 
 import { createJsonClient, createProcessClient } from 'infrastructure.clients';
-
-import { AbstractVersionLensProvider } from 'presentation.providers';
 
 import { IDotNetContainerMap } from './definitions/iDotNetContainerMap';
 import { DotNetContributions } from './definitions/eDotNetContributions';
@@ -13,12 +11,12 @@ import { NugetOptions } from './options/nugetOptions';
 import { DotNetCli } from './clients/dotnetCli';
 import { NuGetResourceClient } from './clients/nugetResourceClient';
 import { NuGetPackageClient } from './clients/nugetPackageClient';
-import { DotNetVersionLensProvider } from './dotnetProvider';
+import { DotNetSuggestionProvider } from './dotnetSuggestionProvider';
 import { DotNetConfig } from './dotnetConfig';
 
 export function configureContainer(
   container: AwilixContainer<IDotNetContainerMap>
-): AbstractVersionLensProvider<IProviderConfig> {
+): ISuggestionProvider {
 
   const containerMap = {
 
@@ -106,9 +104,8 @@ export function configureContainer(
 
     // provider
     dotnetProvider: asFunction(
-      (extension, dotnetCli, nugetClient, nugetResClient, logger) =>
-        new DotNetVersionLensProvider(
-          extension,
+      (dotnetCli, nugetClient, nugetResClient, logger) =>
+        new DotNetSuggestionProvider(
           dotnetCli,
           nugetClient,
           nugetResClient,

@@ -2,7 +2,7 @@
 import * as VsCodeTypes from 'vscode';
 
 import { ILogger } from 'core.logging';
-import { VersionLensState } from '../versionLensState';
+import { VersionLensState } from '../state/versionLensState';
 import * as InstalledStatusHelpers from '../helpers/installedStatusHelpers';
 
 export class TextDocumentEvents {

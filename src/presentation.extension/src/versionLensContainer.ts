@@ -12,7 +12,7 @@ import { LoggingOptions } from 'core.logging';
 import { HttpOptions, CachingOptions } from 'core.clients';
 
 import { VsCodeConfig } from 'infrastructure.configuration';
-import { createWinstonLogger } from 'infrastructure.logging';
+import { createWinstonLogger, OutputChannelTransport } from 'infrastructure.logging';
 
 import {
   VersionLensExtension,
@@ -21,10 +21,9 @@ import {
   TextEditorEvents
 } from 'presentation.extension';
 
-import { createProviderRegistry } from 'presentation.providers';
-
 import { IContainerMap } from './definitions/iContainerMap';
-import { OutputChannelTransport } from 'infrastructure.logging';
+import { registerSuggestionProviders } from './container/registerSuggestionProviders';
+import { registerVersionLensProviders } from './container/registerVersionLensProviders';
 
 export async function configureContainer(
   context: ExtensionContext
@@ -80,10 +79,10 @@ export async function configureContainer(
     subscriptions: asValue(context.subscriptions),
 
     iconCommands: asFunction(
-      (extension, providerRegistry, subscriptions, outputChannel, logger) =>
+      (extension, versionLensProviders, subscriptions, outputChannel, logger) =>
         registerIconCommands(
           extension.state,
-          providerRegistry,
+          versionLensProviders,
           subscriptions,
           outputChannel,
           logger.child({ namespace: 'icon commands' })
@@ -101,13 +100,34 @@ export async function configureContainer(
 
     // events
     textEditorEvents: asFunction(
-      (extension, providerRegistry, outputChannelTransport, logger) =>
+      (extension, suggestionProviders, outputChannelTransport) =>
         new TextEditorEvents(
           extension.state,
-          providerRegistry,
+          suggestionProviders,
           outputChannelTransport
         )
     ).singleton(),
+
+    // codelens providers
+    providerNames: asValue([
+      'composer',
+      'dotnet',
+      'dub',
+      'jspm',
+      'maven',
+      'npm',
+      'pub',
+    ]),
+
+    versionLensProviders: asFunction(
+      (extension, suggestionProviders, subscriptions, logger) =>
+        registerVersionLensProviders(
+          extension,
+          suggestionProviders,
+          subscriptions,
+          logger
+        )
+    )
 
   };
 
@@ -115,16 +135,16 @@ export async function configureContainer(
   container.register(containerMap);
 
   // generate the provider registry async
-  const { subscriptions, logger } = container.cradle;
-  const providerRegistry = await createProviderRegistry(
+  const { logger, providerNames } = container.cradle;
+  const suggestionProviders = await registerSuggestionProviders(
+    providerNames,
     container,
-    subscriptions,
     logger.child({ namespace: 'registry' })
   )
 
   // add the registry in to the container
   container.register({
-    providerRegistry: asValue(providerRegistry)
+    suggestionProviders: asValue(suggestionProviders)
   });
 
   return container;

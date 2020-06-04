@@ -1,4 +1,4 @@
-import * as VsCodeTypes from "vscode";
+import * as VsCodeTypes from 'vscode';
 
 import {
   PackageSourceTypes,

@@ -1,7 +1,7 @@
 import { ICachingOptions, IHttpOptions, IJsonHttpClient } from 'core.clients';
 
 import { ComposerConfig } from '../composerConfig';
-import { ComposerVersionLensProvider } from '../composerProvider';
+import { ComposerSuggestionProvider } from '../composerSuggestionProvider';
 import { ComposerClient } from '../composerClient';
 
 export interface IComposerContainerMap {
@@ -20,6 +20,6 @@ export interface IComposerContainerMap {
   composerClient: ComposerClient,
 
   // provider
-  composerProvider: ComposerVersionLensProvider
+  composerProvider: ComposerSuggestionProvider
 
 }

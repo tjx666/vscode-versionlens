@@ -1,42 +1,36 @@
 import { IFrozenOptions } from 'core.configuration';
 import { ICachingOptions, IHttpOptions } from 'core.clients';
-import {
-  ProviderSupport,
-  IProviderOptions,
-  AbstractProviderConfig
-} from 'core.providers';
+import { ProviderSupport, IProviderConfig, TProviderFileMatcher } from 'core.providers';
 
 import { ComposerContributions } from './definitions/eComposerContributions';
 
-export class ComposerConfig extends AbstractProviderConfig {
+export class ComposerConfig implements IProviderConfig {
 
-  options: IProviderOptions = {
-    providerName: 'composer',
-    supports: [
-      ProviderSupport.Releases,
-      ProviderSupport.Prereleases,
-      ProviderSupport.InstalledStatuses,
-    ],
-    selector: {
-      language: 'json',
-      scheme: 'file',
-      pattern: '**/composer.json',
-    }
+  constructor(config: IFrozenOptions, caching: ICachingOptions, http: IHttpOptions) {
+    this.config = config;
+    this.caching = caching;
+    this.http = http;
   }
+
+  config: IFrozenOptions;
+
+  providerName: string = 'composer';
+
+  supports: Array<ProviderSupport> = [
+    ProviderSupport.Releases,
+    ProviderSupport.Prereleases,
+    ProviderSupport.InstalledStatuses,
+  ];
+
+  fileMatcher: TProviderFileMatcher = {
+    language: 'json',
+    scheme: 'file',
+    pattern: '**/composer.json',
+  };
 
   http: IHttpOptions;
 
   caching: ICachingOptions;
-
-  constructor(
-    config: IFrozenOptions,
-    caching: ICachingOptions,
-    http: IHttpOptions
-  ) {
-    super(config);
-    this.caching = caching;
-    this.http = http;
-  }
 
   get dependencyProperties(): Array<string> {
     return this.config.get(ComposerContributions.DependencyProperties);

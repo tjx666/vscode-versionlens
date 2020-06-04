@@ -1,9 +1,7 @@
 import { AwilixContainer, asFunction } from 'awilix';
 
-import { IProviderConfig } from 'core.providers';
+import { ISuggestionProvider } from 'core.suggestions';
 import { CachingOptions, HttpOptions } from 'core.clients';
-
-import { AbstractVersionLensProvider } from 'presentation.providers';
 
 import { createJsonClient } from 'infrastructure.clients';
 import {
@@ -16,11 +14,11 @@ import {
 
 import { IJspmContainerMap } from './definitions/iJspmContainerMap';
 import { JspmConfig } from './jspmConfig';
-import { JspmVersionLensProvider } from './jspmProvider'
+import { JspmSuggestionProvider } from './jspmSuggestionProvider'
 
 export function configureContainer(
   container: AwilixContainer<IJspmContainerMap>
-): AbstractVersionLensProvider<IProviderConfig> {
+): ISuggestionProvider {
 
   const containerMap = {
 
@@ -96,9 +94,8 @@ export function configureContainer(
 
     // provider
     jspmProvider: asFunction(
-      (extension, jspmClient, logger) =>
-        new JspmVersionLensProvider(
-          extension,
+      (jspmClient, logger) =>
+        new JspmSuggestionProvider(
           jspmClient,
           logger.child({ namespace: 'jspm provider' })
         )

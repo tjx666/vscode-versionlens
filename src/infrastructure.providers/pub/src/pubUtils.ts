@@ -1,6 +1,5 @@
 import { PackageResponse } from 'core.packages';
-
-import { defaultReplaceFn } from 'presentation.providers';
+import { defaultReplaceFn } from 'core.suggestions';
 
 export function pubReplaceVersion(
   packageInfo: PackageResponse, newVersion: string

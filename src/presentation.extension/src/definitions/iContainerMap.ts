@@ -2,8 +2,10 @@ import { OutputChannel, Disposable } from 'vscode';
 
 import { ILogger, LoggingOptions } from 'core.logging';
 import { HttpOptions, CachingOptions } from 'core.clients';
+import { ISuggestionProvider } from 'core.suggestions';
 
 import { VsCodeConfig } from 'infrastructure.configuration';
+import { ILoggerTransport } from 'infrastructure.logging';
 
 import {
   VersionLensExtension,
@@ -12,8 +14,7 @@ import {
   SuggestionCommands
 } from 'presentation.extension';
 
-import { ProviderRegistry } from 'presentation.providers';
-import { ILoggerTransport } from 'infrastructure.logging';
+import { VersionLensProvider } from 'presentation.lenses';
 
 export interface IContainerMap {
 
@@ -50,5 +51,9 @@ export interface IContainerMap {
   textEditorEvents: TextEditorEvents,
 
   // providers
-  providerRegistry: ProviderRegistry
+  providerNames: Array<string>,
+
+  suggestionProviders: Array<ISuggestionProvider>,
+
+  versionLensProviders: Array<VersionLensProvider>
 }

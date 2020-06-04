@@ -1,11 +1,9 @@
 import { AwilixContainer, asFunction } from 'awilix';
 
 import { CachingOptions, HttpOptions } from 'core.clients';
-import { IProviderConfig } from 'core.providers';
+import { ISuggestionProvider } from 'core.suggestions';
 
 import { createJsonClient } from 'infrastructure.clients';
-
-import { AbstractVersionLensProvider } from 'presentation.providers';
 
 import { NpmContributions } from './definitions/eNpmContributions';
 import { INpmContainerMap } from './definitions/iNpmContainerMap';
@@ -13,12 +11,12 @@ import { GitHubOptions } from './options/githubOptions';
 import { NpmPackageClient } from './clients/npmPackageClient';
 import { PacoteClient } from './clients/pacoteClient';
 import { GitHubClient } from './clients/githubClient';
-import { NpmVersionLensProvider } from './npmProvider'
+import { NpmSuggestionProvider } from './npmSuggestionProvider'
 import { NpmConfig } from './npmConfig';
 
 export function configureContainer(
   container: AwilixContainer<INpmContainerMap>
-): AbstractVersionLensProvider<IProviderConfig> {
+): ISuggestionProvider {
 
   const containerMap = {
 
@@ -94,9 +92,8 @@ export function configureContainer(
 
     // provider
     npmProvider: asFunction(
-      (extension, npmClient, logger) =>
-        new NpmVersionLensProvider(
-          extension,
+      (npmClient, logger) =>
+        new NpmSuggestionProvider(
           npmClient,
           logger.child({ namespace: 'npm provider' })
         )

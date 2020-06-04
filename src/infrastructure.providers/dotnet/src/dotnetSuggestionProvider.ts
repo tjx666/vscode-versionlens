@@ -1,21 +1,21 @@
-import { TextDocument } from 'vscode';
-
 import { ILogger } from 'core.logging';
 import { UrlHelpers } from 'core.clients';
-import { RequestFactory } from 'core.packages';
+import { ISuggestionProvider, defaultReplaceFn } from 'core.suggestions';
+import {
+  RequestFactory,
+  IPackageDependency,
+  PackageResponse,
+  ReplaceVersionFunction
+} from 'core.packages';
 
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation.providers';
-import { VersionLensExtension } from 'presentation.extension';
-
-import { NuGetClientData } from './definitions/nuget';
-import { DotNetConfig } from './dotnetConfig';
-import { createDependenciesFromXml } from './dotnetXmlParserFactory'
 import { DotNetCli } from './clients/dotnetCli';
 import { NuGetPackageClient } from './clients/nugetPackageClient';
 import { NuGetResourceClient } from './clients/nugetResourceClient';
+import { NuGetClientData } from './definitions/nuget';
+import { DotNetConfig } from './dotnetConfig';
+import { createDependenciesFromXml } from './dotnetXmlParserFactory'
 
-export class DotNetVersionLensProvider
-  extends AbstractVersionLensProvider<DotNetConfig> {
+export class DotNetSuggestionProvider implements ISuggestionProvider {
 
   dotnetClient: DotNetCli;
 
@@ -23,29 +23,39 @@ export class DotNetVersionLensProvider
 
   nugetResClient: NuGetResourceClient;
 
+  config: DotNetConfig;
+
+  logger: ILogger;
+
+  suggestionReplaceFn: ReplaceVersionFunction;
+
   constructor(
-    extension: VersionLensExtension,
     dotnetCli: DotNetCli,
     nugetClient: NuGetPackageClient,
     nugetResClient: NuGetResourceClient,
-    dotnetLogger: ILogger
+    logger: ILogger
   ) {
-    super(extension, nugetClient.config, dotnetLogger);
-
     this.dotnetClient = dotnetCli;
     this.nugetPackageClient = nugetClient;
     this.nugetResClient = nugetResClient;
+    this.config = nugetClient.config;
+    this.logger = logger;
+    this.suggestionReplaceFn = defaultReplaceFn
   }
 
-  async fetchVersionLenses(
-    packagePath: string, document: TextDocument
-  ): VersionLensFetchResponse {
-
+  parseDependencies(packageText: string): Array<IPackageDependency> {
     const packageDependencies = createDependenciesFromXml(
-      document.getText(),
+      packageText,
       this.config.dependencyProperties
     );
-    if (packageDependencies.length === 0) return null;
+
+    return packageDependencies;
+  }
+
+  async fetchSuggestions(
+    packagePath: string,
+    packageDependencies: Array<IPackageDependency>
+  ): Promise<Array<PackageResponse>> {
 
     // ensure latest nuget sources from settings
     this.config.nuget.defrost();
@@ -71,18 +81,11 @@ export class DotNetVersionLensProvider
 
     const clientData: NuGetClientData = { serviceUrls: autoCompleteUrls }
 
-    const includePrereleases = this.extension.state.prereleasesEnabled.value;
-
-    const context = {
-      includePrereleases,
-      clientData,
-    }
-
     return RequestFactory.executeDependencyRequests(
       packagePath,
       this.nugetPackageClient,
+      clientData,
       packageDependencies,
-      context,
     );
 
   }

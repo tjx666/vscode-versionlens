@@ -1,35 +1,11 @@
 import { ICachingOptions, IHttpOptions } from 'core.clients';
 import { IFrozenOptions } from 'core.configuration';
-import {
-  IProviderOptions,
-  ProviderSupport,
-  AbstractProviderConfig
-} from 'core.providers';
+import { ProviderSupport, IProviderConfig, TProviderFileMatcher } from 'core.providers';
 
 import { GitHubOptions } from './options/githubOptions';
 import { NpmContributions } from './definitions/eNpmContributions';
 
-export class NpmConfig extends AbstractProviderConfig {
-
-  options: IProviderOptions = {
-    providerName: 'npm',
-    supports: [
-      ProviderSupport.Releases,
-      ProviderSupport.Prereleases,
-      ProviderSupport.InstalledStatuses,
-    ],
-    selector: {
-      language: 'json',
-      scheme: 'file',
-      pattern: '**/package.json',
-    }
-  };
-
-  caching: ICachingOptions;
-
-  http: IHttpOptions;
-
-  github: GitHubOptions;
+export class NpmConfig implements IProviderConfig {
 
   constructor(
     config: IFrozenOptions,
@@ -37,12 +13,33 @@ export class NpmConfig extends AbstractProviderConfig {
     http: IHttpOptions,
     github: GitHubOptions,
   ) {
-    super(config);
-
+    this.config = config;
     this.caching = caching;
     this.http = http;
     this.github = github;
   }
+
+  config: IFrozenOptions;
+
+  providerName: string = 'npm';
+
+  supports: Array<ProviderSupport> = [
+    ProviderSupport.Releases,
+    ProviderSupport.Prereleases,
+    ProviderSupport.InstalledStatuses,
+  ];
+
+  fileMatcher: TProviderFileMatcher = {
+    language: 'json',
+    scheme: 'file',
+    pattern: '**/package.json',
+  };
+
+  caching: ICachingOptions;
+
+  http: IHttpOptions;
+
+  github: GitHubOptions;
 
   get dependencyProperties(): Array<string> {
     return this.config.get(NpmContributions.DependencyProperties);

@@ -1,10 +1,18 @@
+import { IFrozenOptions } from 'core.configuration';
 import { ICachingOptions, IHttpOptions } from 'core.clients';
 
-import { IProviderOptions } from "./iProviderOptions";
+import { ProviderSupport } from './eProviderSupport';
+import { TProviderFileMatcher } from './tProviderFileMatcher';
 
 export interface IProviderConfig {
 
-  options: IProviderOptions;
+  config: IFrozenOptions;
+
+  providerName: string;
+
+  supports: Array<ProviderSupport>;
+
+  fileMatcher: TProviderFileMatcher;
 
   caching: ICachingOptions;
 

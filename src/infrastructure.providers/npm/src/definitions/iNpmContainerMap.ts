@@ -2,7 +2,7 @@ import { ICachingOptions, IHttpOptions, IJsonHttpClient } from 'core.clients';
 
 import { NpmConfig } from '../npmConfig';
 import { GitHubOptions } from '../options/githubOptions';
-import { NpmVersionLensProvider } from '../npmProvider'
+import { NpmSuggestionProvider } from '../npmSuggestionProvider'
 import { NpmPackageClient } from '../clients/npmPackageClient';
 import { PacoteClient } from '../clients/pacoteClient';
 import { GitHubClient } from '../clients/githubClient';
@@ -29,5 +29,5 @@ export interface INpmContainerMap {
   npmClient: NpmPackageClient,
 
   // provider
-  npmProvider: NpmVersionLensProvider
+  npmProvider: NpmSuggestionProvider
 }

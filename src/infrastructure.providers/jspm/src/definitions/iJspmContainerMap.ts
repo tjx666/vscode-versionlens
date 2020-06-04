@@ -1,7 +1,7 @@
 import { ICachingOptions, IHttpOptions, IJsonHttpClient } from 'core.clients';
 
 import { JspmConfig } from '../jspmConfig';
-import { JspmVersionLensProvider } from '../jspmProvider'
+import { JspmSuggestionProvider } from '../jspmSuggestionProvider'
 import {
   GitHubOptions,
   PacoteClient,
@@ -31,5 +31,5 @@ export interface IJspmContainerMap {
   jspmClient: NpmPackageClient,
 
   // provider
-  jspmProvider: JspmVersionLensProvider
+  jspmProvider: JspmSuggestionProvider
 }

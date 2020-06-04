@@ -1,7 +1,5 @@
-// vscode references
-import * as VsCodeTypes from 'vscode';
+import { CodeLens, Range, Uri } from 'vscode';
 
-// imports
 import {
   PackageResponse,
   PackageResponseErrors,
@@ -9,28 +7,25 @@ import {
   ReplaceVersionFunction,
 } from 'core.packages';
 
-import { IVersionCodeLens } from "./definitions/iVersionCodeLens";
-
-// vscode implementations
-const { CodeLens } = require('vscode');
+import { IVersionCodeLens } from './definitions/iVersionCodeLens';
 
 export class VersionLens extends CodeLens implements IVersionCodeLens {
 
-  replaceRange: VsCodeTypes.Range;
+  replaceRange: Range;
 
   package: PackageResponse;
 
-  documentUrl: VsCodeTypes.Uri;
+  documentUrl: Uri;
 
   replaceVersionFn: ReplaceVersionFunction;
 
   command: any;
 
   constructor(
-    commandRange: VsCodeTypes.Range,
-    replaceRange: VsCodeTypes.Range,
+    commandRange: Range,
+    replaceRange: Range,
     packageResponse: PackageResponse,
-    documentUrl: VsCodeTypes.Uri,
+    documentUrl: Uri,
     replaceVersionFn: ReplaceVersionFunction
   ) {
     super(commandRange);

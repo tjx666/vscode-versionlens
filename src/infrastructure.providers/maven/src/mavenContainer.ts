@@ -1,22 +1,20 @@
 import { AwilixContainer, asFunction } from 'awilix';
 
 import { CachingOptions, HttpOptions } from 'core.clients';
-import { IProviderConfig } from 'core.providers';
+import { ISuggestionProvider } from 'core.suggestions';
 
 import { createHttpClient, createProcessClient } from 'infrastructure.clients';
-
-import { AbstractVersionLensProvider } from 'presentation.providers';
 
 import { MavenContributions } from './definitions/eMavenContributions';
 import { IMavenContainerMap } from './definitions/iMavenContainerMap';
 import { MvnCli } from './clients/mvnCli';
 import { MavenClient } from './clients/mavenClient';
 import { MavenConfig } from './mavenConfig';
-import { MavenVersionLensProvider } from './mavenProvider'
+import { MavenSuggestionProvider } from './mavenSuggestionProvider'
 
 export function configureContainer(
   container: AwilixContainer<IMavenContainerMap>
-): AbstractVersionLensProvider<IProviderConfig> {
+): ISuggestionProvider {
 
   const containerMap = {
 
@@ -88,9 +86,8 @@ export function configureContainer(
 
     // provider
     mavenProvider: asFunction(
-      (extension, mvnCli, mavenClient, logger) =>
-        new MavenVersionLensProvider(
-          extension,
+      (mvnCli, mavenClient, logger) =>
+        new MavenSuggestionProvider(
           mvnCli,
           mavenClient,
           logger.child({ namespace: 'maven provider' })

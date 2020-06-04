@@ -1,41 +1,35 @@
 import { IFrozenOptions } from 'core.configuration';
 import { ICachingOptions, IHttpOptions } from 'core.clients';
-import {
-  IProviderOptions,
-  ProviderSupport,
-  AbstractProviderConfig
-} from 'core.providers';
+import { ProviderSupport, IProviderConfig, TProviderFileMatcher } from 'core.providers';
 
 import { MavenContributions } from './definitions/eMavenContributions';
 
-export class MavenConfig extends AbstractProviderConfig {
+export class MavenConfig implements IProviderConfig {
 
-  options: IProviderOptions = {
-    providerName: 'maven',
-    supports: [
-      ProviderSupport.Releases,
-      ProviderSupport.Prereleases,
-    ],
-    selector: {
-      language: 'xml',
-      scheme: 'file',
-      pattern: '**/pom.xml',
-    }
+  constructor(config: IFrozenOptions, caching: ICachingOptions, http: IHttpOptions) {
+    this.config = config;
+    this.caching = caching;
+    this.http = http;
+  }
+
+  config: IFrozenOptions;
+
+  providerName: string = 'maven';
+
+  supports: Array<ProviderSupport> = [
+    ProviderSupport.Releases,
+    ProviderSupport.Prereleases,
+  ];
+
+  fileMatcher: TProviderFileMatcher = {
+    language: 'xml',
+    scheme: 'file',
+    pattern: '**/pom.xml',
   };
 
   caching: ICachingOptions;
 
   http: IHttpOptions;
-
-  constructor(
-    config: IFrozenOptions,
-    caching: ICachingOptions,
-    http: IHttpOptions
-  ) {
-    super(config);
-    this.caching = caching;
-    this.http = http;
-  }
 
   get dependencyProperties(): Array<string> {
     return this.config.get(MavenContributions.DependencyProperties);

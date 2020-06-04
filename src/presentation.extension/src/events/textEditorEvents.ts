@@ -1,27 +1,21 @@
 import { window, TextEditor } from 'vscode';
 
 import { ProviderSupport } from 'core.providers';
+import { ISuggestionProvider, filtersProvidersByFileName } from 'core.suggestions';
 
-import { ProviderRegistry } from 'presentation.providers';
-
-import { VersionLensState } from '../versionLensState';
 import { ILoggerTransport } from 'infrastructure.logging';
+
+import { VersionLensState } from '../state/versionLensState';
 
 export class TextEditorEvents {
 
-  state: VersionLensState;
-
-  providerRegistry: ProviderRegistry;
-
-  loggerTransport: ILoggerTransport;
-
   constructor(
     state: VersionLensState,
-    registry: ProviderRegistry,
+    suggestionProviders: Array<ISuggestionProvider>,
     loggerTransport: ILoggerTransport
   ) {
     this.state = state;
-    this.providerRegistry = registry;
+    this.suggestionProviders = suggestionProviders;
     this.loggerTransport = loggerTransport;
 
     // register editor events
@@ -29,6 +23,12 @@ export class TextEditorEvents {
       this.onDidChangeActiveTextEditor.bind(this)
     );
   }
+
+  state: VersionLensState;
+
+  suggestionProviders: Array<ISuggestionProvider>;
+
+  loggerTransport: ILoggerTransport;
 
   onDidChangeActiveTextEditor(textEditor: TextEditor) {
     // maintain versionLens.providerActive state
@@ -42,8 +42,9 @@ export class TextEditorEvents {
 
     if (textEditor.document.uri.scheme !== 'file') return;
 
-    const providersMatchingFilename = this.providerRegistry.getByFileName(
-      textEditor.document.fileName
+    const providersMatchingFilename = filtersProvidersByFileName(
+      textEditor.document.fileName,
+      this.suggestionProviders
     );
 
     if (providersMatchingFilename.length === 0) {
@@ -57,13 +58,13 @@ export class TextEditorEvents {
 
     // determine prerelease support
     const providerSupportsPrereleases = providersMatchingFilename.reduce(
-      (v, p) => p.config.options.supports.includes(ProviderSupport.Prereleases)
+      (v, p) => p.config.supports.includes(ProviderSupport.Prereleases)
       , false
     );
 
     // determine installed statuses support
     const providerSupportsInstalledStatuses = providersMatchingFilename.reduce(
-      (v, p) => p.config.options.supports.includes(ProviderSupport.InstalledStatuses)
+      (v, p) => p.config.supports.includes(ProviderSupport.InstalledStatuses)
       , false
     );
 

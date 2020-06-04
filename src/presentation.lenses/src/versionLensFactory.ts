@@ -1,12 +1,11 @@
-// vscode references
-import * as VsCodeTypes from 'vscode';
+import { TextDocument } from 'vscode';
 
-// imports
 import { PackageResponse, ReplaceVersionFunction } from 'core.packages';
+
 import { VersionLens } from './versionLens';
 
 export function createFromPackageResponses(
-  document: VsCodeTypes.TextDocument,
+  document: TextDocument,
   responses: Array<PackageResponse>,
   replaceVersionFn: ReplaceVersionFunction,
 ): Array<VersionLens> {
@@ -23,7 +22,7 @@ export function createFromPackageResponses(
 
 function createFromPackageResponse(
   packageResponse: PackageResponse,
-  document: VsCodeTypes.TextDocument,
+  document: TextDocument,
   replaceVersionFn: ReplaceVersionFunction,
 ): VersionLens {
   const { Uri, Range } = require('vscode')
@@ -43,6 +42,6 @@ function createFromPackageResponse(
     replaceRange,
     packageResponse,
     Uri.file(document.fileName),
-    replaceVersionFn
+    replaceVersionFn.bind(document.getText())
   );
 }

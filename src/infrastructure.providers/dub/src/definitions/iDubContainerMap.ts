@@ -5,7 +5,7 @@ import {
 } from 'core.clients';
 
 import { DubConfig } from '../dubConfig';
-import { DubVersionLensProvider } from '../dubProvider';
+import { DubSuggestionProvider } from '../dubSuggestionProvider';
 import { DubClient } from '../dubClient';
 
 export interface IDubContainerMap {
@@ -24,6 +24,6 @@ export interface IDubContainerMap {
   dubClient: DubClient,
 
   // provider
-  dubProvider: DubVersionLensProvider
+  dubProvider: DubSuggestionProvider
 
 }

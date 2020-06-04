@@ -1,42 +1,35 @@
 import { ICachingOptions, IHttpOptions } from 'core.clients';
 import { IFrozenOptions } from 'core.configuration';
-import {
-  IProviderOptions,
-  ProviderSupport,
-  AbstractProviderConfig
-} from 'core.providers';
+import { ProviderSupport, IProviderConfig, TProviderFileMatcher } from 'core.providers';
 
 import { PubContributions } from './definitions/ePubContributions';
 
-export class PubConfig extends AbstractProviderConfig {
+export class PubConfig implements IProviderConfig {
 
-  options: IProviderOptions = {
-    providerName: 'pub',
-    supports: [
-      ProviderSupport.Releases,
-      ProviderSupport.Prereleases,
-    ],
-    selector: {
-      language: "yaml",
-      scheme: "file",
-      pattern: "**/pubspec.yaml",
-    }
+  constructor(config: IFrozenOptions, caching: ICachingOptions, http: IHttpOptions) {
+    this.config = config;
+    this.caching = caching;
+    this.http = http;
+  }
+
+  config: IFrozenOptions;
+
+  providerName: string = 'pub';
+
+  supports: Array<ProviderSupport> = [
+    ProviderSupport.Releases,
+    ProviderSupport.Prereleases,
+  ];
+
+  fileMatcher: TProviderFileMatcher = {
+    language: "yaml",
+    scheme: "file",
+    pattern: "**/pubspec.yaml",
   };
 
   caching: ICachingOptions;
 
   http: IHttpOptions;
-
-  constructor(
-    config: IFrozenOptions,
-    caching: ICachingOptions,
-    http: IHttpOptions
-  ) {
-    super(config);
-
-    this.caching = caching;
-    this.http = http;
-  }
 
   get dependencyProperties(): Array<string> {
     return this.config.get(PubContributions.DependencyProperties);

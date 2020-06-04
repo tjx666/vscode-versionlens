@@ -1,43 +1,36 @@
 import { IFrozenOptions } from 'core.configuration';
 import { ICachingOptions, IHttpOptions } from 'core.clients';
-import {
-  IProviderOptions,
-  ProviderSupport,
-  AbstractProviderConfig
-} from 'core.providers';
+import { ProviderSupport, IProviderConfig, TProviderFileMatcher } from 'core.providers';
 
 import { DubContributions } from './definitions/eDubContributions';
 
-export class DubConfig extends AbstractProviderConfig {
+export class DubConfig implements IProviderConfig {
 
-  options: IProviderOptions = {
-    providerName: 'dub',
-    supports: [
-      ProviderSupport.Releases,
-      ProviderSupport.Prereleases,
-      ProviderSupport.InstalledStatuses,
-    ],
-    selector: {
-      language: 'json',
-      scheme: 'file',
-      pattern: '**/{dub.json,dub.selections.json}',
-    }
+  constructor(config: IFrozenOptions, caching: ICachingOptions, http: IHttpOptions) {
+    this.config = config;
+    this.caching = caching;
+    this.http = http;
+  }
+
+  config: IFrozenOptions;
+
+  providerName: string = 'dub';
+
+  supports: Array<ProviderSupport> = [
+    ProviderSupport.Releases,
+    ProviderSupport.Prereleases,
+    ProviderSupport.InstalledStatuses,
+  ];
+
+  fileMatcher: TProviderFileMatcher = {
+    language: 'json',
+    scheme: 'file',
+    pattern: '**/{dub.json,dub.selections.json}',
   };
 
   caching: ICachingOptions;
 
   http: IHttpOptions;
-
-  constructor(
-    config: IFrozenOptions,
-    caching: ICachingOptions,
-    http: IHttpOptions,
-  ) {
-    super(config);
-
-    this.caching = caching;
-    this.http = http;
-  }
 
   get dependencyProperties(): Array<string> {
     return this.config.get(DubContributions.DependencyProperties);

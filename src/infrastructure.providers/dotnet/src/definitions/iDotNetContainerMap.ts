@@ -6,7 +6,7 @@ import {
 } from 'core.clients';
 
 import { DotNetConfig } from '../dotnetConfig';
-import { DotNetVersionLensProvider } from '../dotnetProvider';
+import { DotNetSuggestionProvider } from '../dotnetSuggestionProvider';
 import { NugetOptions } from '../options/nugetOptions';
 import { DotNetCli } from '../clients/dotnetCli';
 import { NuGetResourceClient } from '../clients/nugetResourceClient';
@@ -36,6 +36,6 @@ export interface IDotNetContainerMap {
   nugetResClient: NuGetResourceClient,
 
   // provider
-  dotnetProvider: DotNetVersionLensProvider
+  dotnetProvider: DotNetSuggestionProvider
 
 }

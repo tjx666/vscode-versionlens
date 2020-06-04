@@ -12,7 +12,8 @@ export class JspmConfig extends NpmConfig {
     github: GitHubOptions
   ) {
     super(config, caching, http, github);
-    this.options.providerName = 'jspm';
   }
+
+  providerName: string = 'jspm';
 
 }

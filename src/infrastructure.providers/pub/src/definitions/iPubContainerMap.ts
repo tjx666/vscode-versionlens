@@ -2,7 +2,7 @@ import { ICachingOptions, IHttpOptions, IJsonHttpClient } from 'core.clients';
 
 import { PubConfig } from '../pubConfig';
 import { PubClient } from '../pubClient';
-import { PubVersionLensProvider } from '../pubProvider';
+import { PubSuggestionProvider } from '../pubSuggestionProvider';
 
 export interface IPubContainerMap {
 
@@ -20,6 +20,6 @@ export interface IPubContainerMap {
   pubClient: PubClient,
 
   // provider
-  pubProvider: PubVersionLensProvider
+  pubProvider: PubSuggestionProvider
 
 }

@@ -1,3 +1,5 @@
+import { commands } from 'vscode';
+
 export class ContextState<T> {
 
   private key: string;
@@ -16,9 +18,8 @@ export class ContextState<T> {
     this.change(newValue);
   }
 
-  change(newValue: T): Promise<T> {
+  change(newValue: T): Thenable<T> {
     this._value = newValue;
-    const { commands } = require('vscode');
     return commands.executeCommand(
       'setContext',
       this.key,

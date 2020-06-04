@@ -1,11 +1,12 @@
-import { TextDocument } from 'vscode';
-
 import { ILogger } from 'core.logging';
 import { UrlHelpers } from 'core.clients';
-import { RequestFactory } from 'core.packages';
-
-import { AbstractVersionLensProvider, VersionLensFetchResponse } from 'presentation.providers';
-import { VersionLensExtension } from 'presentation.extension';
+import { ISuggestionProvider } from 'core.suggestions';
+import {
+  RequestFactory,
+  ReplaceVersionFunction,
+  PackageResponse,
+  IPackageDependency
+} from 'core.packages';
 
 import { MavenClientData } from './definitions/mavenClientData';
 import { MvnCli } from './clients/mvnCli';
@@ -13,32 +14,38 @@ import { MavenClient } from './clients/mavenClient';
 import * as MavenXmlFactory from './mavenXmlParserFactory';
 import { MavenConfig } from './mavenConfig';
 
-export class MavenVersionLensProvider extends AbstractVersionLensProvider<MavenConfig> {
+export class MavenSuggestionProvider implements ISuggestionProvider {
 
   mvnCli: MvnCli;
 
+  config: MavenConfig;
+
   client: MavenClient;
 
-  constructor(
-    extension: VersionLensExtension,
-    mnvCli: MvnCli,
-    client: MavenClient,
-    logger: ILogger
-  ) {
-    super(extension, client.config, logger);
+  logger: ILogger;
 
+  suggestionReplaceFn: ReplaceVersionFunction;
+
+  constructor(mnvCli: MvnCli, client: MavenClient, logger: ILogger) {
     this.mvnCli = mnvCli;
     this.client = client;
+    this.config = client.config;
+    this.logger = logger;
   }
 
-  async fetchVersionLenses(
-    packagePath: string, document: TextDocument
-  ): VersionLensFetchResponse {
+  parseDependencies(packageText: string): Array<IPackageDependency> {
     const packageDependencies = MavenXmlFactory.createDependenciesFromXml(
-      document.getText(),
+      packageText,
       this.config.dependencyProperties
     );
-    if (packageDependencies.length === 0) return null;
+
+    return packageDependencies;
+  }
+
+  async fetchSuggestions(
+    packagePath: string,
+    packageDependencies: Array<IPackageDependency>
+  ): Promise<Array<PackageResponse>> {
 
     // gets source feeds from the project path
     const promisedRepos = this.mvnCli.fetchRepositories(packagePath);
@@ -49,20 +56,13 @@ export class MavenVersionLensProvider extends AbstractVersionLensProvider<MavenC
         repo => repo.protocol === UrlHelpers.RegistryProtocols.https
       );
 
-      const includePrereleases = this.extension.state.prereleasesEnabled.value;
-
       const clientData: MavenClientData = { repositories }
-
-      const clientContext = {
-        includePrereleases,
-        clientData,
-      }
 
       return RequestFactory.executeDependencyRequests(
         packagePath,
         this.client,
-        packageDependencies,
-        clientContext,
+        clientData,
+        packageDependencies
       );
     })
 

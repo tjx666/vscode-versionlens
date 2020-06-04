@@ -4,10 +4,6 @@ export * from './src/definitions/iPackageDependency';
 export * from './src/definitions/packageDocument';
 export * from "./src/definitions/packageRequest";
 export * from "./src/definitions/packageResponse";
-export * from "./src/definitions/packageClientContext";
-
-export * from './src/options/iPackageProviderOptions';
-export * from './src/options/iPackageClientOptions';
 
 export * as DocumentFactory from './src/factories/packageDocumentFactory';
 export * as RequestFactory from './src/factories/packageRequestFactory';

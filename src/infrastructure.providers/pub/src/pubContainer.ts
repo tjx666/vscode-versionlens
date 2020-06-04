@@ -1,21 +1,19 @@
 import { AwilixContainer, asFunction } from 'awilix';
 
 import { CachingOptions, HttpOptions } from 'core.clients';
-import { IProviderConfig } from 'core.providers';
+import { ISuggestionProvider } from 'core.suggestions';
 
 import { createJsonClient } from 'infrastructure.clients';
 
-import { AbstractVersionLensProvider } from 'presentation.providers';
-
 import { PubContributions } from './definitions/ePubContributions';
 import { IPubContainerMap } from './definitions/iPubContainerMap';
-import { PubVersionLensProvider } from './pubProvider'
+import { PubSuggestionProvider } from './pubSuggestionProvider'
 import { PubConfig } from './pubConfig';
 import { PubClient } from './pubClient';
 
 export function configureContainer(
   container: AwilixContainer<IPubContainerMap>
-): AbstractVersionLensProvider<IProviderConfig> {
+): ISuggestionProvider {
 
   const containerMap = {
 
@@ -65,9 +63,8 @@ export function configureContainer(
 
     // provider
     pubProvider: asFunction(
-      (extension, pubClient, logger) =>
-        new PubVersionLensProvider(
-          extension,
+      (pubClient, logger) =>
+        new PubSuggestionProvider(
           pubClient,
           logger.child({ namespace: 'pub provider' })
         )

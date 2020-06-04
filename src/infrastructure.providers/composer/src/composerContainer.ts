@@ -1,21 +1,19 @@
 import { AwilixContainer, asFunction } from 'awilix';
 
 import { CachingOptions, HttpOptions } from 'core.clients';
-import { IProviderConfig } from 'core.providers';
+import { ISuggestionProvider } from 'core.suggestions';
 
 import { createJsonClient } from 'infrastructure.clients';
 
-import { AbstractVersionLensProvider } from 'presentation.providers';
-
 import { ComposerContributions } from './definitions/eComposerContributions';
 import { IComposerContainerMap } from './definitions/iComposerContainerMap';
-import { ComposerVersionLensProvider } from './composerProvider'
+import { ComposerSuggestionProvider } from './composerSuggestionProvider'
 import { ComposerConfig } from './composerConfig';
 import { ComposerClient } from './composerClient';
 
 export function configureContainer(
   container: AwilixContainer<IComposerContainerMap>
-): AbstractVersionLensProvider<IProviderConfig> {
+): ISuggestionProvider {
 
   const containerMap = {
 
@@ -65,9 +63,8 @@ export function configureContainer(
 
     // provider
     composerProvider: asFunction(
-      (extension, composerClient, logger) =>
-        new ComposerVersionLensProvider(
-          extension,
+      (composerClient, logger) =>
+        new ComposerSuggestionProvider(
           composerClient,
           logger.child({ namespace: 'composer provider' })
         )

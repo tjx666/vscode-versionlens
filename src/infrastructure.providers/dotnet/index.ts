@@ -7,7 +7,7 @@ export * from './src/definitions/nuget'
 export * from './src/definitions/iNugetOptions'
 
 export * from './src/dotnetConfig'
-export * from './src/dotnetProvider'
+export * from './src/dotnetSuggestionProvider'
 export * from './src/dotnetUtils'
 export * from './src/dotnetXmlParserFactory'
 

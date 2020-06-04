@@ -1,6 +1,6 @@
-import { StateContributions } from "./definitions/eStateContributions";
-import { ContextState } from "./models/contextState";
-import { VersionLensExtension } from "./versionLensExtension";
+import { StateContributions } from "../definitions/eStateContributions";
+import { ContextState } from "./contextState";
+import { VersionLensExtension } from "../versionLensExtension";
 
 export class VersionLensState {
 
