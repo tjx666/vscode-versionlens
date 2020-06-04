@@ -32,9 +32,25 @@
         "panel": "shared",
         "clear": true,
       },
-      "group": "build",
+      "group": "test",
       "args": [
         "pretest"
+      ],
+    },
+    {
+      "label": "test:unit",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "shared",
+        "clear": true,
+      },
+      "group": {
+        "isDefault": true,
+        "kind": "test",
+      },
+      "args": [
+        "test:unit"
       ],
     }
   ]

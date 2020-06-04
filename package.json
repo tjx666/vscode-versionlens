@@ -47,22 +47,23 @@
     "lint:test": "npm run -s compile:test -- --noEmit",
     "pack:test": "npm run -s pack -- --env.test=true --mode=development",
     "pretest": "npm run -s clean && npm run -s lint:test && npm run -s pack:test",
-    "test": "node ./test/ci.runner.js"
+    "test": "node ./test/run.vscode.tests",
+    "test:unit": "npm run pretest && env TEST=unit node ./dist/extension.test.js"
   },
   "devDependencies": {
     "@types/node": "^12",
     "@types/vscode": "1.45.1",
     "@types/winston": "2.4.4",
-    "mocha": "7.1.2",
-    "mocha-ui-esm": "1.0.0-alpha.4",
     "rimraf": "3.0.2",
-    "source-map-support": "0.5.19",
+    "typescript": "3.9.3",
     "ts-loader": "7.0.5",
     "ts-mockito": "2.5.0",
-    "typescript": "3.9.3",
-    "vscode-test": "1.4.0",
+    "mocha": "7.2.0",
+    "mocha-ui-esm": "1.0.0-alpha.4",
+    "source-map-support": "0.5.19",
     "webpack": "4.43.0",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "3.3.11",
+    "vscode-test": "1.4.0"
   },
   "dependencies": {
     "@npmcli/promise-spawn": "1.2.0",
