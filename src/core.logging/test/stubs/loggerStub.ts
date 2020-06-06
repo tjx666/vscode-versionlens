@@ -1,14 +1,5 @@
 import { KeyDictionary } from 'core.generics';
-import { ILogger, LogLevelTypes, LoggerOptions } from 'core.logging';
-
-let defaultLoggerIntercepts = {
-  log: () => 0,
-  debug: () => 0,
-  error: () => 0,
-  info: () => 0,
-  verbose: () => 0,
-  child: () => defaultLoggerIntercepts
-};
+import { ILogger, LogLevelTypes, TChildLoggerOptions } from 'core.logging';
 
 export class LoggerStub implements ILogger {
 
@@ -24,9 +15,7 @@ export class LoggerStub implements ILogger {
 
   error(message: string, ...splats: any): void { }
 
-  verbose(message: string, ...splats: any): void { }
-
-  child(options: LoggerOptions): ILogger {
+  child(options: TChildLoggerOptions): ILogger {
     return this;
   }
 

@@ -206,8 +206,7 @@
           "enum": [
             "error",
             "info",
-            "debug",
-            "verbose"
+            "debug"
           ],
           "default": "error",
           "description": "Sets the level of logs to be written to the VersionLens output channel."

@@ -1,15 +1,5 @@
-export enum LogLevelTypes {
-  Error = "error",
-  Info = "info",
-  Verbose = "verbose",
-  Debug = "debug",
-}
-
-export type LoggerOptions = {
-
-  namespace: string;
-
-}
+import { LogLevelTypes } from "./eLogLevelTypes";
+import { TChildLoggerOptions } from "./tChildLoggerOptions";
 
 export interface ILogger {
 
@@ -20,8 +10,7 @@ export interface ILogger {
   debug(message: string, ...splats: any): void;
 
   error(message: string, ...splats: any): void;
+  
+  child(options: TChildLoggerOptions): ILogger;
 
-  verbose(message: string, ...splats: any): void;
-
-  child(options: LoggerOptions): ILogger;
 }
