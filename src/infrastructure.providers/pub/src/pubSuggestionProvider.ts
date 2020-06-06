@@ -1,12 +1,11 @@
 import { ILogger } from 'core.logging';
+import { ISuggestionProvider, TSuggestionReplaceFunction } from 'core.suggestions';
 import {
   extractPackageDependenciesFromYaml,
   RequestFactory,
   IPackageDependency,
-  PackageResponse,
-  TReplaceVersionFunction
+  PackageResponse
 } from 'core.packages';
-import { ISuggestionProvider } from 'core.suggestions';
 
 import { PubConfig } from './pubConfig';
 import { PubClient } from './pubClient';
@@ -20,7 +19,7 @@ export class PubSuggestionProvider implements ISuggestionProvider {
 
   logger: ILogger
 
-  suggestionReplaceFn: TReplaceVersionFunction;
+  suggestionReplaceFn: TSuggestionReplaceFunction;
 
   constructor(client: PubClient, logger: ILogger) {
     this.client = client;

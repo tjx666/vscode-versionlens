@@ -1,9 +1,12 @@
 import { ILogger } from 'core.logging';
-import { ISuggestionProvider, defaultReplaceFn } from 'core.suggestions';
+import {
+  ISuggestionProvider,
+  defaultReplaceFn,
+  TSuggestionReplaceFunction
+} from 'core.suggestions';
 import {
   extractPackageDependenciesFromJson,
   RequestFactory,
-  TReplaceVersionFunction,
   IPackageDependency,
   PackageResponse
 } from 'core.packages';
@@ -19,7 +22,7 @@ export class ComposerSuggestionProvider implements ISuggestionProvider {
 
   logger: ILogger;
 
-  suggestionReplaceFn: TReplaceVersionFunction;
+  suggestionReplaceFn: TSuggestionReplaceFunction;
 
   constructor(client: ComposerClient, logger: ILogger) {
     this.client = client;

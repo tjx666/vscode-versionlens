@@ -1,9 +1,8 @@
 import { ILogger } from 'core.logging';
 import { UrlHelpers } from 'core.clients';
-import { ISuggestionProvider } from 'core.suggestions';
+import { ISuggestionProvider, TSuggestionReplaceFunction } from 'core.suggestions';
 import {
   RequestFactory,
-  TReplaceVersionFunction,
   PackageResponse,
   IPackageDependency
 } from 'core.packages';
@@ -24,7 +23,7 @@ export class MavenSuggestionProvider implements ISuggestionProvider {
 
   logger: ILogger;
 
-  suggestionReplaceFn: TReplaceVersionFunction;
+  suggestionReplaceFn: TSuggestionReplaceFunction;
 
   constructor(mnvCli: MvnCli, client: MavenClient, logger: ILogger) {
     this.mvnCli = mnvCli;

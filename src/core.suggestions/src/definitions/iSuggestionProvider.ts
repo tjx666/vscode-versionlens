@@ -2,9 +2,10 @@ import { ILogger } from "core.logging";
 import { IProviderConfig } from "core.providers";
 import {
   PackageResponse,
-  IPackageDependency,
-  TReplaceVersionFunction
+  IPackageDependency
 } from "core.packages";
+
+import { TSuggestionReplaceFunction } from "./tSuggestionReplaceFunction";
 
 export interface ISuggestionProvider {
 
@@ -12,7 +13,7 @@ export interface ISuggestionProvider {
 
   logger: ILogger;
 
-  suggestionReplaceFn: TReplaceVersionFunction;
+  suggestionReplaceFn: TSuggestionReplaceFunction;
 
   parseDependencies(packageText: string): Array<IPackageDependency>;
 

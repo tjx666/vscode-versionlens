@@ -1,10 +1,9 @@
 import { CodeLens, Range, Uri } from 'vscode';
-
+import { TSuggestionReplaceFunction } from 'core.suggestions';
 import {
   PackageResponse,
   PackageResponseErrors,
-  PackageSourceTypes,
-  TReplaceVersionFunction,
+  PackageSourceTypes
 } from 'core.packages';
 
 export class VersionLens extends CodeLens {
@@ -15,7 +14,7 @@ export class VersionLens extends CodeLens {
 
   documentUrl: Uri;
 
-  replaceVersionFn: TReplaceVersionFunction;
+  replaceVersionFn: TSuggestionReplaceFunction;
 
   command: any;
 
@@ -24,7 +23,7 @@ export class VersionLens extends CodeLens {
     replaceRange: Range,
     packageResponse: PackageResponse,
     documentUrl: Uri,
-    replaceVersionFn: TReplaceVersionFunction
+    replaceVersionFn: TSuggestionReplaceFunction
   ) {
     super(commandRange);
     this.replaceRange = replaceRange || commandRange;

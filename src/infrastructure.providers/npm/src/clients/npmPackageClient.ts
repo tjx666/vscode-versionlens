@@ -119,7 +119,9 @@ export class NpmPackageClient implements IPackageClient<null> {
         );
       }
 
-      const status = response.status && response.status.startsWith('E') ?
+      const status = response.status &&
+        !Number.isInteger(response.status) &&
+        response.status.startsWith('E') ?
         response.status.substr(1) :
         response.status;
 

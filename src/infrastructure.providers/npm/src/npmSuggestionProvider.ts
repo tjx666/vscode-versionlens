@@ -1,11 +1,10 @@
 import { ILogger } from 'core.logging';
-import { ISuggestionProvider } from 'core.suggestions';
+import { ISuggestionProvider, TSuggestionReplaceFunction } from 'core.suggestions';
 import {
   extractPackageDependenciesFromJson,
   RequestFactory,
   IPackageDependency,
-  PackageResponse,
-  TReplaceVersionFunction
+  PackageResponse
 } from 'core.packages';
 
 import { NpmPackageClient } from './clients/npmPackageClient';
@@ -20,7 +19,7 @@ export class NpmSuggestionProvider implements ISuggestionProvider {
 
   logger: ILogger;
 
-  suggestionReplaceFn: TReplaceVersionFunction;
+  suggestionReplaceFn: TSuggestionReplaceFunction;
 
   constructor(client: NpmPackageClient, logger: ILogger) {
     this.client = client;

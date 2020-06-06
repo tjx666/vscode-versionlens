@@ -1,11 +1,14 @@
 import { ILogger } from 'core.logging';
-import { ISuggestionProvider, defaultReplaceFn } from 'core.suggestions';
+import {
+  ISuggestionProvider,
+  defaultReplaceFn,
+  TSuggestionReplaceFunction
+} from 'core.suggestions';
 import {
   extractPackageDependenciesFromJson,
   RequestFactory,
   IPackageDependency,
-  PackageResponse,
-  TReplaceVersionFunction
+  PackageResponse
 } from 'core.packages';
 
 import { DubConfig } from './dubConfig';
@@ -19,7 +22,7 @@ export class DubSuggestionProvider implements ISuggestionProvider {
 
   logger: ILogger;
 
-  suggestionReplaceFn: TReplaceVersionFunction;
+  suggestionReplaceFn: TSuggestionReplaceFunction;
 
   constructor(client: DubClient, logger: ILogger) {
     this.client = client;

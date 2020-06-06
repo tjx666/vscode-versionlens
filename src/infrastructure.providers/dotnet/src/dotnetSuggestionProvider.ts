@@ -1,11 +1,14 @@
 import { ILogger } from 'core.logging';
 import { UrlHelpers } from 'core.clients';
-import { ISuggestionProvider, defaultReplaceFn } from 'core.suggestions';
+import {
+  ISuggestionProvider,
+  defaultReplaceFn,
+  TSuggestionReplaceFunction
+} from 'core.suggestions';
 import {
   RequestFactory,
   IPackageDependency,
-  PackageResponse,
-  TReplaceVersionFunction
+  PackageResponse
 } from 'core.packages';
 
 import { DotNetCli } from './clients/dotnetCli';
@@ -27,7 +30,7 @@ export class DotNetSuggestionProvider implements ISuggestionProvider {
 
   logger: ILogger;
 
-  suggestionReplaceFn: TReplaceVersionFunction;
+  suggestionReplaceFn: TSuggestionReplaceFunction;
 
   constructor(
     dotnetCli: DotNetCli,

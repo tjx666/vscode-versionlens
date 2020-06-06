@@ -11,7 +11,6 @@ export * from './src/definitions/tPackageIdentifier';
 export * from './src/definitions/tPackageNameVersion';
 export * from "./src/definitions/tPackageRequest";
 export * from "./src/definitions/tPackageResponseStatus";
-export * from "./src/definitions/tReplaceVersionFunction";
 export * from './src/definitions/tSemverSpec';
 
 export * as DocumentFactory from './src/factories/packageDocumentFactory';

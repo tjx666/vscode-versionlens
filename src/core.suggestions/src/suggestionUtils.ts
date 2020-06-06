@@ -5,9 +5,7 @@ import { PackageResponse, VersionHelpers } from 'core.packages';
 
 import { ISuggestionProvider } from './definitions/iSuggestionProvider';
 
-export function defaultReplaceFn(
-  packageResponse: PackageResponse, newVersion: string
-): string {
+export function defaultReplaceFn(packageResponse: PackageResponse, newVersion: string): string {
   return VersionHelpers.formatWithExistingLeading(
     packageResponse.requested.version,
     newVersion
