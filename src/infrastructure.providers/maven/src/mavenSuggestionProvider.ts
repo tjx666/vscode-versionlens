@@ -3,7 +3,7 @@ import { UrlHelpers } from 'core.clients';
 import { ISuggestionProvider } from 'core.suggestions';
 import {
   RequestFactory,
-  ReplaceVersionFunction,
+  TReplaceVersionFunction,
   PackageResponse,
   IPackageDependency
 } from 'core.packages';
@@ -24,7 +24,7 @@ export class MavenSuggestionProvider implements ISuggestionProvider {
 
   logger: ILogger;
 
-  suggestionReplaceFn: ReplaceVersionFunction;
+  suggestionReplaceFn: TReplaceVersionFunction;
 
   constructor(mnvCli: MvnCli, client: MavenClient, logger: ILogger) {
     this.mvnCli = mnvCli;

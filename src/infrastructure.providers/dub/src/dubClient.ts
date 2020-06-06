@@ -1,21 +1,22 @@
 import { ILogger } from 'core.logging';
 import {
+  SuggestionFactory,
+  TPackageSuggestion,
+  SuggestionStatus
+} from 'core.suggestions';
+import {
   HttpClientResponse,
   HttpClientRequestMethods,
   IJsonHttpClient
 } from 'core.clients';
 import {
   DocumentFactory,
-  ResponseFactory,
-  SuggestionFactory,
   VersionHelpers,
   PackageSourceTypes,
-  PackageDocument,
-  SemverSpec,
-  PackageRequest,
+  TPackageDocument,
+  TSemverSpec,
+  TPackageRequest,
   IPackageClient,
-  PackageVersionStatus,
-  PackageSuggestion,
 } from 'core.packages';
 
 import { DubConfig } from './dubConfig';
@@ -30,23 +31,31 @@ export class DubClient implements IPackageClient<null> {
 
   constructor(config: DubConfig, client: IJsonHttpClient, logger: ILogger) {
     this.config = config;
-    this.logger = logger;
     this.client = client;
+    this.logger = logger;
   }
 
-  async fetchPackage(request: PackageRequest<null>): Promise<PackageDocument> {
+  async fetchPackage(request: TPackageRequest<null>): Promise<TPackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
     const url = `${this.config.apiUrl}/${encodeURIComponent(request.package.name)}/info`;
 
     return this.createRemotePackageDocument(url, request, semverSpec)
       .catch((error: HttpClientResponse) => {
-        if (error.status === 404) {
-          return DocumentFactory.createNotFound(
-            request.providerName,
-            request.package,
-            null,
-            ResponseFactory.createResponseStatus(error.source, error.status)
-          );
+
+        this.logger.debug(
+          "Caught exception from %s: %O",
+          PackageSourceTypes.Registry,
+          error
+        );
+
+        const suggestion = SuggestionFactory.createFromHttpStatus(error.status);
+        if (suggestion != null) {
+          return DocumentFactory.create(
+            PackageSourceTypes.Registry,
+            request,
+            error,
+            [suggestion]
+          )
         }
         return Promise.reject(error);
       });
@@ -54,9 +63,9 @@ export class DubClient implements IPackageClient<null> {
 
   async createRemotePackageDocument(
     url: string,
-    request: PackageRequest<null>,
-    semverSpec: SemverSpec
-  ): Promise<PackageDocument> {
+    request: TPackageRequest<null>,
+    semverSpec: TSemverSpec
+  ): Promise<TPackageDocument> {
 
     const query = {
       minimize: 'true',
@@ -65,7 +74,7 @@ export class DubClient implements IPackageClient<null> {
     const headers = {};
 
     return this.client.request(HttpClientRequestMethods.get, url, query, headers)
-      .then(function (httpResponse): PackageDocument {
+      .then(function (httpResponse): TPackageDocument {
 
         const packageInfo = httpResponse.data;
 
@@ -91,7 +100,7 @@ export class DubClient implements IPackageClient<null> {
         const { releases, prereleases } = VersionHelpers.splitReleasesFromArray(rawVersions)
 
         // analyse suggestions
-        const suggestions = createSuggestionTags(
+        const suggestions = createSuggestions(
           versionRange,
           releases,
           prereleases
@@ -111,13 +120,13 @@ export class DubClient implements IPackageClient<null> {
 
 }
 
-export function createSuggestionTags(
+export function createSuggestions(
   versionRange: string,
   releases: string[],
   prereleases: string[]
-): Array<PackageSuggestion> {
+): Array<TPackageSuggestion> {
 
-  const suggestions = SuggestionFactory.createSuggestionTags(
+  const suggestions = SuggestionFactory.createSuggestions(
     versionRange,
     releases,
     prereleases
@@ -125,7 +134,7 @@ export function createSuggestionTags(
 
   // check for ~{name} suggestion if no matches found
   const firstSuggestion = suggestions[0];
-  const hasNoMatch = firstSuggestion.name === PackageVersionStatus.NoMatch;
+  const hasNoMatch = firstSuggestion.name === SuggestionStatus.NoMatch;
   const isTildeVersion = versionRange.charAt(0) === '~';
 
   if (hasNoMatch && isTildeVersion && releases.length > 0) {

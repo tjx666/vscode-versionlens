@@ -1,4 +1,4 @@
-import { PackageSuggestionFlags } from 'core.packages';
+import { SuggestionFlags } from 'core.suggestions';
 
 import { SuggestionIndicators } from 'presentation.extension';
 import { VersionLens } from 'presentation.lenses';
@@ -29,9 +29,9 @@ export function createDirectoryLinkCommand(codeLens) {
 
 export function createSuggestedVersionCommand(codeLens: VersionLens) {
   const { name, version, flags } = codeLens.package.suggestion;
-  const isStatus = (flags & PackageSuggestionFlags.status);
-  const isTag = (flags & PackageSuggestionFlags.tag);
-  const isPrerelease = flags & PackageSuggestionFlags.prerelease;
+  const isStatus = (flags & SuggestionFlags.status);
+  const isTag = (flags & SuggestionFlags.tag);
+  const isPrerelease = flags & SuggestionFlags.prerelease;
 
   if (!isStatus) {
     const replaceWithVersion: string = isPrerelease || isTag ?

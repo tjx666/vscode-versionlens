@@ -1,8 +1,8 @@
 import {
   SuggestionFactory,
-  PackageVersionStatus,
-  PackageSuggestionFlags
-} from 'core.packages';
+  SuggestionStatus,
+  SuggestionFlags
+} from 'core.suggestions';
 
 const assert = require('assert');
 
@@ -13,16 +13,16 @@ export default {
     "when releases and prereleases are empty": () => {
       const expected = [
         {
-          name: PackageVersionStatus.NoMatch,
+          name: SuggestionStatus.NoMatch,
           version: '',
-          flags: PackageSuggestionFlags.status
+          flags: SuggestionFlags.status
         }
       ]
 
       const testRange = '*'
       const testReleases = []
       const testPrereleases = []
-      const results = SuggestionFactory.createSuggestionTags(
+      const results = SuggestionFactory.createSuggestions(
         testRange,
         testReleases,
         testPrereleases
@@ -37,21 +37,21 @@ export default {
 
       const expected = [
         {
-          name: PackageVersionStatus.NoMatch,
+          name: SuggestionStatus.NoMatch,
           version: '',
-          flags: PackageSuggestionFlags.status
+          flags: SuggestionFlags.status
         },
         {
-          name: PackageVersionStatus.Latest,
+          name: SuggestionStatus.Latest,
           version: '1.0.0',
-          flags: PackageSuggestionFlags.release
+          flags: SuggestionFlags.release
         }
       ]
 
       const testRange = '2.0.0'
       const testReleases = ['1.0.0']
       const testPrereleases = ['1.1.0-alpha.1']
-      const results = SuggestionFactory.createSuggestionTags(
+      const results = SuggestionFactory.createSuggestions(
         testRange,
         testReleases,
         testPrereleases
@@ -62,21 +62,21 @@ export default {
     "when using a release range": () => {
       const expected = [
         {
-          name: PackageVersionStatus.NoMatch,
+          name: SuggestionStatus.NoMatch,
           version: '',
-          flags: PackageSuggestionFlags.status
+          flags: SuggestionFlags.status
         },
         {
-          name: PackageVersionStatus.Latest,
+          name: SuggestionStatus.Latest,
           version: '1.0.3-1.2.3',
-          flags: PackageSuggestionFlags.release
+          flags: SuggestionFlags.release
         }
       ]
 
       const testRange = '^1.0.0'
       const testReleases = ['0.0.6']
       const testPrereleases = ['1.0.1-1.2.3', '1.0.2-1.2.3', '1.0.3-1.2.3']
-      const results = SuggestionFactory.createSuggestionTags(
+      const results = SuggestionFactory.createSuggestions(
         testRange,
         testReleases,
         testPrereleases,
@@ -93,14 +93,14 @@ export default {
 
       const expected = [
         {
-          name: PackageVersionStatus.Latest,
+          name: SuggestionStatus.Latest,
           version: '',
-          flags: PackageSuggestionFlags.status
+          flags: SuggestionFlags.status
         },
         {
           name: 'next',
           version: '4.0.0-next',
-          flags: PackageSuggestionFlags.prerelease
+          flags: SuggestionFlags.prerelease
         }
       ]
 
@@ -112,7 +112,7 @@ export default {
       ]
 
       testRanges.forEach(testRange => {
-        const results = SuggestionFactory.createSuggestionTags(
+        const results = SuggestionFactory.createSuggestions(
           testRange,
           testReleases,
           testPrereleases
@@ -127,9 +127,9 @@ export default {
 
       const expected = [
         {
-          name: PackageVersionStatus.Latest,
+          name: SuggestionStatus.Latest,
           version: '',
-          flags: PackageSuggestionFlags.status
+          flags: SuggestionFlags.status
         }
       ]
 
@@ -137,7 +137,7 @@ export default {
       const testPrereleases = ['1.1.0-alpha.1', '4.0.0-next']
       const testRange = testSuggestedVersion
 
-      const results = SuggestionFactory.createSuggestionTags(
+      const results = SuggestionFactory.createSuggestions(
         testRange,
         testReleases,
         testPrereleases,
@@ -155,14 +155,14 @@ export default {
 
       const expected = [
         {
-          name: PackageVersionStatus.NoMatch,
+          name: SuggestionStatus.NoMatch,
           version: '',
-          flags: PackageSuggestionFlags.status
+          flags: SuggestionFlags.status
         },
         {
-          name: PackageVersionStatus.LatestIsPrerelease,
+          name: SuggestionStatus.LatestIsPrerelease,
           version: '4.0.0-next',
-          flags: PackageSuggestionFlags.prerelease
+          flags: SuggestionFlags.prerelease
         }
       ]
 
@@ -170,7 +170,7 @@ export default {
       const testPrereleases = ['1.1.0-alpha.1', '4.0.0-next']
       const testRange = '4.0.0'
 
-      const results = SuggestionFactory.createSuggestionTags(
+      const results = SuggestionFactory.createSuggestions(
         testRange,
         testReleases,
         testPrereleases,
@@ -187,26 +187,26 @@ export default {
 
       const expected = [
         {
-          name: PackageVersionStatus.Satisfies,
+          name: SuggestionStatus.Satisfies,
           version: 'latest',
-          flags: PackageSuggestionFlags.status
+          flags: SuggestionFlags.status
         },
         {
-          name: PackageVersionStatus.Latest,
+          name: SuggestionStatus.Latest,
           version: '3.0.0',
-          flags: PackageSuggestionFlags.release
+          flags: SuggestionFlags.release
         },
         {
           name: 'next',
           version: '4.0.0-next',
-          flags: PackageSuggestionFlags.prerelease
+          flags: SuggestionFlags.prerelease
         }
       ]
 
       const testReleases = ['1.0.0', '2.0.0', '2.1.0', '3.0.0']
       const testPrereleases = ['1.1.0-alpha.1', '4.0.0-next']
 
-      const results = SuggestionFactory.createSuggestionTags(
+      const results = SuggestionFactory.createSuggestions(
         '>=2',
         testReleases,
         testPrereleases
@@ -220,26 +220,26 @@ export default {
 
       const expected = [
         {
-          name: PackageVersionStatus.Satisfies,
+          name: SuggestionStatus.Satisfies,
           version: 'latest',
-          flags: PackageSuggestionFlags.status
+          flags: SuggestionFlags.status
         },
         {
-          name: PackageVersionStatus.Latest,
+          name: SuggestionStatus.Latest,
           version: testLatest,
-          flags: PackageSuggestionFlags.release
+          flags: SuggestionFlags.release
         },
         {
           name: 'next',
           version: '8.0.0-next',
-          flags: PackageSuggestionFlags.prerelease
+          flags: SuggestionFlags.prerelease
         }
       ]
 
       const testReleases = ['1.0.0', '2.0.0', '2.1.0', '7.9.6', '7.9.7', testLatest]
       const testPrereleases = ['1.1.0-alpha.1', '8.0.0-next']
 
-      const results = SuggestionFactory.createSuggestionTags(
+      const results = SuggestionFactory.createSuggestions(
         '^7.9.1',
         testReleases,
         testPrereleases,
@@ -252,19 +252,19 @@ export default {
 
       const expected = [
         {
-          name: PackageVersionStatus.Satisfies,
+          name: SuggestionStatus.Satisfies,
           version: '2.1.0',
-          flags: PackageSuggestionFlags.release
+          flags: SuggestionFlags.release
         },
         {
-          name: PackageVersionStatus.Latest,
+          name: SuggestionStatus.Latest,
           version: '3.0.0',
-          flags: PackageSuggestionFlags.release
+          flags: SuggestionFlags.release
         },
         {
           name: 'next',
           version: '4.0.0-next',
-          flags: PackageSuggestionFlags.prerelease
+          flags: SuggestionFlags.prerelease
         }
       ]
 
@@ -275,7 +275,7 @@ export default {
       ]
 
       testRanges.forEach(testRange => {
-        const results = SuggestionFactory.createSuggestionTags(
+        const results = SuggestionFactory.createSuggestions(
           testRange,
           testReleases,
           testPrereleases

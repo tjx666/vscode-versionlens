@@ -1,8 +1,8 @@
 import {
   SuggestionFactory,
-  PackageVersionStatus,
-  PackageSuggestionFlags
-} from 'core.packages';
+  SuggestionStatus,
+  SuggestionFlags
+} from 'core.suggestions';
 
 const assert = require('assert');
 
@@ -15,9 +15,9 @@ export default {
       assert.deepEqual(
         actual,
         {
-          name: PackageVersionStatus.Latest,
-          version: PackageVersionStatus.Latest,
-          flags: PackageSuggestionFlags.tag
+          name: SuggestionStatus.Latest,
+          version: SuggestionStatus.Latest,
+          flags: SuggestionFlags.tag
         });
     },
 
@@ -27,9 +27,9 @@ export default {
       assert.deepEqual(
         actual,
         {
-          name: PackageVersionStatus.Latest,
+          name: SuggestionStatus.Latest,
           version: testRelease,
-          flags: PackageSuggestionFlags.release
+          flags: SuggestionFlags.release
         });
     },
 
@@ -39,9 +39,9 @@ export default {
       assert.deepEqual(
         actual,
         {
-          name: PackageVersionStatus.LatestIsPrerelease,
+          name: SuggestionStatus.LatestIsPrerelease,
           version: testRelease,
-          flags: PackageSuggestionFlags.prerelease
+          flags: SuggestionFlags.prerelease
         });
     },
 

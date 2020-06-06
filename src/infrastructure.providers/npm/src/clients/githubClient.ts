@@ -1,18 +1,17 @@
 import { ILogger } from 'core.logging';
+import { SuggestionFactory } from 'core.suggestions';
 import {
   HttpClientRequestMethods,
   JsonClientResponse,
   IJsonHttpClient
 } from 'core.clients';
 import {
-  PackageRequest,
+  TPackageRequest,
   PackageSourceTypes,
   PackageVersionTypes,
   VersionHelpers,
-  SuggestionFactory,
-  PackageDocument,
-  DocumentFactory,
-  ResponseFactory
+  TPackageDocument,
+  DocumentFactory
 } from 'core.packages';
 
 import { NpmConfig } from "../npmConfig";
@@ -37,7 +36,7 @@ export class GitHubClient {
     this.logger = logger;
   }
 
-  fetchGithub(request: PackageRequest<null>, npaSpec: NpaSpec): Promise<PackageDocument> {
+  fetchGithub(request: TPackageRequest<null>, npaSpec: NpaSpec): Promise<TPackageDocument> {
     const { validRange } = require('semver');
 
     if (npaSpec.gitRange) {
@@ -55,7 +54,7 @@ export class GitHubClient {
     return this.fetchCommits(request, npaSpec);
   }
 
-  fetchTags(request: PackageRequest<null>, npaSpec: NpaSpec): Promise<PackageDocument> {
+  fetchTags(request: TPackageRequest<null>, npaSpec: NpaSpec): Promise<TPackageDocument> {
     // todo pass in auth
     const { user, project } = npaSpec.hosted;
     const tagsRepoUrl = `https://api.github.com/repos/${user}/${project}/tags`;
@@ -68,7 +67,7 @@ export class GitHubClient {
       query,
       headers
     )
-      .then(function (response: JsonClientResponse): PackageDocument {
+      .then(function (response: JsonClientResponse): TPackageDocument {
         const { compareLoose } = require("semver");
 
         // extract versions
@@ -101,7 +100,7 @@ export class GitHubClient {
         );
 
         // analyse suggestions
-        const suggestions = SuggestionFactory.createSuggestionTags(
+        const suggestions = SuggestionFactory.createSuggestions(
           versionRange,
           releases,
           prereleases
@@ -121,7 +120,7 @@ export class GitHubClient {
 
   }
 
-  fetchCommits(request: PackageRequest<null>, npaSpec: NpaSpec): Promise<PackageDocument> {
+  fetchCommits(request: TPackageRequest<null>, npaSpec: NpaSpec): Promise<TPackageDocument> {
     // todo pass in auth
     const { user, project } = npaSpec.hosted;
     const commitsRepoUrl = `https://api.github.com/repos/${user}/${project}/commits`;
@@ -152,11 +151,11 @@ export class GitHubClient {
 
         if (commits.length === 0) {
           // no commits found
-          return DocumentFactory.createNotFound(
-            providerName,
-            requested,
-            PackageVersionTypes.Version,
-            ResponseFactory.createResponseStatus(response.source, 404)
+          return DocumentFactory.create(
+            PackageSourceTypes.Github,
+            request,
+            response,
+            [SuggestionFactory.createNotFound()]
           )
         }
 

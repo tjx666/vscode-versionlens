@@ -3,7 +3,7 @@ import { IProviderConfig } from "core.providers";
 import {
   PackageResponse,
   IPackageDependency,
-  ReplaceVersionFunction
+  TReplaceVersionFunction
 } from "core.packages";
 
 export interface ISuggestionProvider {
@@ -12,7 +12,7 @@ export interface ISuggestionProvider {
 
   logger: ILogger;
 
-  suggestionReplaceFn: ReplaceVersionFunction;
+  suggestionReplaceFn: TReplaceVersionFunction;
 
   parseDependencies(packageText: string): Array<IPackageDependency>;
 

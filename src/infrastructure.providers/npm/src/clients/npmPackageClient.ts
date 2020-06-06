@@ -1,14 +1,15 @@
 import { ILogger } from 'core.logging';
+import { SuggestionFactory, TPackageSuggestion } from 'core.suggestions';
+import { ClientResponseSource } from 'core.clients';
 import {
-  ResponseFactory,
-  PackageRequest,
-  PackageDocument,
-  IPackageClient,
   DocumentFactory,
+  ResponseFactory,
+  IPackageClient,
+  TPackageRequest,
+  TPackageDocument,
   PackageVersionTypes,
   PackageSourceTypes
 } from 'core.packages';
-import { ClientResponseSource } from 'core.clients';
 
 import * as PackageFactory from '../factories/packageFactory';
 import { NpaSpec, NpaTypes } from '../models/npaSpec';
@@ -40,10 +41,11 @@ export class NpmPackageClient implements IPackageClient<null> {
     this.logger = logger;
   }
 
-  async fetchPackage(request: PackageRequest<null>): Promise<PackageDocument> {
+  async fetchPackage(request: TPackageRequest<null>): Promise<TPackageDocument> {
     const npa = require('npm-package-arg');
+    let source: PackageSourceTypes;
 
-    return new Promise<PackageDocument>((resolve, reject) => {
+    return new Promise<TPackageDocument>((resolve, reject) => {
       let npaSpec: NpaSpec;
 
       // try parse the package
@@ -60,6 +62,7 @@ export class NpmPackageClient implements IPackageClient<null> {
 
       // return if directory or file document
       if (npaSpec.type === NpaTypes.Directory || npaSpec.type === NpaTypes.File) {
+        source = PackageSourceTypes.Directory;
         return resolve(
           PackageFactory.createDirectory(
             request.providerName,
@@ -71,6 +74,8 @@ export class NpmPackageClient implements IPackageClient<null> {
       }
 
       if (npaSpec.type === NpaTypes.Git) {
+
+        source = PackageSourceTypes.Git;
 
         if (!npaSpec.hosted) {
           // could not resolve
@@ -95,13 +100,18 @@ export class NpmPackageClient implements IPackageClient<null> {
         }
 
         // resolve tags, committishes
+        source = PackageSourceTypes.Github;
         return resolve(this.githubClient.fetchGithub(request, npaSpec));
       }
 
       // otherwise return registry result
+      source = PackageSourceTypes.Registry;
       return resolve(this.pacoteClient.fetchPackage(request, npaSpec));
 
     }).catch(response => {
+
+      this.logger.debug("Caught exception from %s: %O", source, response);
+
       if (!response.data) {
         response = NpmUtils.convertNpmErrorToResponse(
           response,
@@ -109,70 +119,35 @@ export class NpmPackageClient implements IPackageClient<null> {
         );
       }
 
-      if (response.status === 404 || response.status === 'E404') {
-        return DocumentFactory.createNotFound(
-          request.providerName,
-          request.package,
-          null,
-          ResponseFactory.createResponseStatus(response.source, 404)
-        );
-      }
+      const status = response.status && response.status.startsWith('E') ?
+        response.status.substr(1) :
+        response.status;
 
-      if (response.status === 403 || response.status === 'E403') {
-        return DocumentFactory.createForbidden(
-          request.providerName,
-          request.package,
-          null,
-          ResponseFactory.createResponseStatus(response.source, 403)
-        );
-      }
+      let suggestions: Array<TPackageSuggestion>;
 
-      if (response.status === 401 || response.status === 'E401') {
-        return DocumentFactory.createNotAuthorized(
-          request.providerName,
-          request.package,
-          null,
-          ResponseFactory.createResponseStatus(response.source, 401)
-        );
-      }
+      if (status == 'CONNREFUSED')
+        suggestions = [SuggestionFactory.createConnectionRefused()];
+      else if (status == 'UNSUPPORTEDPROTOCOL' || response.data == 'Not implemented yet')
+        suggestions = [SuggestionFactory.createNotSupported()];
+      else if (status == 'INVALIDTAGNAME' || response.data.includes('Invalid comparator:'))
+        suggestions = [
+          SuggestionFactory.createInvalid(''),
+          SuggestionFactory.createLatest()
+        ];
+      else if (status == 128)
+        suggestions = [SuggestionFactory.createNotFound()]
+      else
+        suggestions = [SuggestionFactory.createFromHttpStatus(status)];
 
-      if (response.status === 'ECONNREFUSED') {
-        return DocumentFactory.createConnectionRefused(
-          request.providerName,
-          request.package,
-          null,
-          ResponseFactory.createResponseStatus(response.source, -1)
-        );
-      }
+      if (suggestions === null) return Promise.reject(response);
 
-      if (response.status === 'EINVALIDTAGNAME' || response.data.includes('Invalid comparator:')) {
-        return DocumentFactory.createInvalidVersion(
-          request.providerName,
-          request.package,
-          ResponseFactory.createResponseStatus(response.source, 404),
-          null
-        );
-      }
+      return DocumentFactory.create(
+        source,
+        request,
+        ResponseFactory.createResponseStatus(response.source, response.status),
+        suggestions
+      );
 
-      if (response.status === 'EUNSUPPORTEDPROTOCOL') {
-        return DocumentFactory.createNotSupported(
-          request.providerName,
-          request.package,
-          ResponseFactory.createResponseStatus(response.source, 404),
-          null
-        );
-      }
-
-      if (response.status === 128) {
-        return DocumentFactory.createGitFailed(
-          request.providerName,
-          request.package,
-          ResponseFactory.createResponseStatus(response.source, 404),
-          null
-        );
-      }
-
-      return Promise.reject(response);
     });
 
   }

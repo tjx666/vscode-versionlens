@@ -5,7 +5,7 @@ import {
   RequestFactory,
   IPackageDependency,
   PackageResponse,
-  ReplaceVersionFunction
+  TReplaceVersionFunction
 } from 'core.packages';
 
 import { DubConfig } from './dubConfig';
@@ -19,7 +19,7 @@ export class DubSuggestionProvider implements ISuggestionProvider {
 
   logger: ILogger;
 
-  suggestionReplaceFn: ReplaceVersionFunction;
+  suggestionReplaceFn: TReplaceVersionFunction;
 
   constructor(client: DubClient, logger: ILogger) {
     this.client = client;

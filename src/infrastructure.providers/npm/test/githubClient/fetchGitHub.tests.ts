@@ -1,6 +1,6 @@
 import { LoggerStub } from 'test.core.logging';
 
-import { PackageSuggestionFlags } from 'core.packages';
+import { SuggestionFlags } from 'core.suggestions';
 
 import {
   NpmConfig,
@@ -80,19 +80,19 @@ export default {
             [{
               name: 'satisfies',
               version: 'latest',
-              flags: PackageSuggestionFlags.status
+              flags: SuggestionFlags.status
             }, {
               name: 'latest',
               version: 'v2.5.0',
-              flags: PackageSuggestionFlags.release
+              flags: SuggestionFlags.release
             }, {
               name: 'rc',
               version: 'v2.6.0-rc.1',
-              flags: PackageSuggestionFlags.prerelease
+              flags: SuggestionFlags.prerelease
             }, {
               name: 'preview',
               version: 'v2.5.0-preview.1',
-              flags: PackageSuggestionFlags.prerelease
+              flags: SuggestionFlags.prerelease
             }]
           )
         })
@@ -142,19 +142,19 @@ export default {
             [{
               name: 'fixed',
               version: 'v2.0.0',
-              flags: PackageSuggestionFlags.status
+              flags: SuggestionFlags.status
             }, {
               name: 'latest',
               version: 'v2.5.0',
-              flags: PackageSuggestionFlags.release
+              flags: SuggestionFlags.release
             }, {
               name: 'rc',
               version: 'v2.6.0-rc.1',
-              flags: PackageSuggestionFlags.prerelease
+              flags: SuggestionFlags.prerelease
             }, {
               name: 'preview',
               version: 'v2.5.0-preview.1',
-              flags: PackageSuggestionFlags.prerelease
+              flags: SuggestionFlags.prerelease
             }]
           )
         })
@@ -203,11 +203,11 @@ export default {
             [{
               name: 'fixed',
               version: '166c3497',
-              flags: PackageSuggestionFlags.status
+              flags: SuggestionFlags.status
             }, {
               name: 'latest',
               version: 'df4d9435',
-              flags: PackageSuggestionFlags.release
+              flags: SuggestionFlags.release
             }]
           )
         })

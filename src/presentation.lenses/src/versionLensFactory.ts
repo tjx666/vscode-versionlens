@@ -1,13 +1,13 @@
 import { TextDocument } from 'vscode';
 
-import { PackageResponse, ReplaceVersionFunction } from 'core.packages';
+import { PackageResponse, TReplaceVersionFunction } from 'core.packages';
 
 import { VersionLens } from './versionLens';
 
 export function createFromPackageResponses(
   document: TextDocument,
   responses: Array<PackageResponse>,
-  replaceVersionFn: ReplaceVersionFunction,
+  replaceVersionFn: TReplaceVersionFunction,
 ): Array<VersionLens> {
   return responses.map(
     function (response) {
@@ -23,7 +23,7 @@ export function createFromPackageResponses(
 function createFromPackageResponse(
   packageResponse: PackageResponse,
   document: TextDocument,
-  replaceVersionFn: ReplaceVersionFunction,
+  replaceVersionFn: TReplaceVersionFunction,
 ): VersionLens {
   const { Uri, Range } = require('vscode')
 

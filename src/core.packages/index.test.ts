@@ -20,15 +20,6 @@ export const VersionHelperTests = {
   lteFromArray,
 }
 
-// PackageSuggestionFactoryTests
-import createSuggestionTags from './test/factories/packageSuggestionFactory/createSuggestionTags.tests';
-import createLatest from './test/factories/packageSuggestionFactory/createLatest.tests';
-
-export const PackageSuggestionFactoryTests = {
-  createSuggestionTags,
-  createLatest
-}
-
 // Package Parser Tests
 import extractPackageDependenciesFromJson from './test/parsers/jsonPackageParser/extractPackageDependenciesFromJson.tests';
 import extractPackageDependenciesFromYaml from './test/parsers/yamlPackageParser/extractPackageDependenciesFromYaml.tests';

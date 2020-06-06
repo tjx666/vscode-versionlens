@@ -5,7 +5,7 @@ import {
   RequestFactory,
   IPackageDependency,
   PackageResponse,
-  ReplaceVersionFunction
+  TReplaceVersionFunction
 } from 'core.packages';
 
 import { NpmPackageClient } from './clients/npmPackageClient';
@@ -20,7 +20,7 @@ export class NpmSuggestionProvider implements ISuggestionProvider {
 
   logger: ILogger;
 
-  suggestionReplaceFn: ReplaceVersionFunction;
+  suggestionReplaceFn: TReplaceVersionFunction;
 
   constructor(client: NpmPackageClient, logger: ILogger) {
     this.client = client;

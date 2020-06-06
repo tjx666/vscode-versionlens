@@ -1,14 +1,13 @@
 import { ILogger } from 'core.logging';
+import { SuggestionFactory } from 'core.suggestions';
 import {
   DocumentFactory,
-  ResponseFactory,
-  SuggestionFactory,
-  PackageDocument,
+  TPackageDocument,
   PackageSourceTypes,
-  PackageRequest,
+  TPackageRequest,
   VersionHelpers,
   IPackageClient,
-  SemverSpec,
+  TSemverSpec,
 } from 'core.packages';
 import {
   HttpClientResponse,
@@ -32,7 +31,7 @@ export class MavenClient implements IPackageClient<MavenClientData> {
     this.httpClient = httpClient;
     this.logger = logger;
   }
-  async fetchPackage(request: PackageRequest<MavenClientData>): Promise<PackageDocument> {
+  async fetchPackage(request: TPackageRequest<MavenClientData>): Promise<TPackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
 
     const { repositories } = request.clientData;
@@ -43,13 +42,21 @@ export class MavenClient implements IPackageClient<MavenClientData> {
 
     return this.createRemotePackageDocument(queryUrl, request, semverSpec)
       .catch((error: HttpClientResponse) => {
-        if (error.status === 404) {
-          return DocumentFactory.createNotFound(
-            request.providerName,
-            request.package,
-            semverSpec.type,
-            ResponseFactory.createResponseStatus(error.source, error.status)
-          );
+
+        this.logger.debug(
+          "Caught exception from %s: %O",
+          PackageSourceTypes.Registry,
+          error
+        );
+
+        const suggestion = SuggestionFactory.createFromHttpStatus(error.status);
+        if (suggestion != null) {
+          return DocumentFactory.create(
+            PackageSourceTypes.Registry,
+            request,
+            error,
+            [suggestion]
+          )
         }
         return Promise.reject(error);
       });
@@ -57,9 +64,9 @@ export class MavenClient implements IPackageClient<MavenClientData> {
 
   async createRemotePackageDocument(
     url: string,
-    request: PackageRequest<MavenClientData>,
-    semverSpec: SemverSpec
-  ): Promise<PackageDocument> {
+    request: TPackageRequest<MavenClientData>,
+    semverSpec: TSemverSpec
+  ): Promise<TPackageDocument> {
 
     const query = {};
     const headers = {};
@@ -70,7 +77,7 @@ export class MavenClient implements IPackageClient<MavenClientData> {
       query,
       headers
     )
-      .then(function (httpResponse): PackageDocument {
+      .then(function (httpResponse): TPackageDocument {
 
         const { data } = httpResponse;
 
@@ -104,7 +111,7 @@ export class MavenClient implements IPackageClient<MavenClientData> {
         };
 
         // analyse suggestions
-        const suggestions = SuggestionFactory.createSuggestionTags(
+        const suggestions = SuggestionFactory.createSuggestions(
           versionRange,
           releases,
           prereleases

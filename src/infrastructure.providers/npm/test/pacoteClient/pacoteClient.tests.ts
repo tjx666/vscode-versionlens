@@ -1,7 +1,7 @@
 import { LoggerStub } from 'test.core.logging';
 
 import { ILogger } from 'core.logging';
-import { PackageSuggestionFlags } from 'core.packages';
+import { SuggestionFlags } from 'core.suggestions';
 
 import {
   ICachingOptions,
@@ -157,7 +157,7 @@ export default {
           assert.deepEqual(actual.suggestions, [{
             name: 'latest',
             version: '',
-            flags: PackageSuggestionFlags.status
+            flags: SuggestionFlags.status
           }])
         })
     },

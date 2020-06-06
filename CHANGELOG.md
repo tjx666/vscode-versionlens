@@ -2,6 +2,12 @@
 
 - Logging level can now be changed without restarting vscode
 
+- Writes any caught exception from clients to the [debug] log
+
+- **Npm** Handles a case where pacote returns a 'Not implemented yet' error (reported in [#254](https://github.com/vscode-contrib/vscode-versionlens/issues/254))
+
+- **Npm** Handles bad requests preventing suggestions from appearing (reported in [#236](https://github.com/vscode-contrib/vscode-versionlens/issues/236))
+
 # 1.0.7
 
 - Added a troubleshooting section to the [README](https://github.com/vscode-contrib/vscode-versionlens/blob/master/README.md)

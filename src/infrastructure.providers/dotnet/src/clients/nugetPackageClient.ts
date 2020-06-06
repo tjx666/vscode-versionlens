@@ -1,11 +1,11 @@
 import { ILogger } from 'core.logging';
+import { SuggestionFactory } from 'core.suggestions';
 import {
   DocumentFactory,
-  SuggestionFactory,
-  PackageDocument,
+  TPackageDocument,
   PackageSourceTypes,
   PackageVersionTypes,
-  PackageRequest,
+  TPackageRequest,
   VersionHelpers,
   IPackageClient,
   ResponseFactory,
@@ -37,20 +37,26 @@ export class NuGetPackageClient implements IPackageClient<NuGetClientData> {
     this.logger = logger;
   }
 
-  async fetchPackage(request: PackageRequest<NuGetClientData>): Promise<PackageDocument> {
+  async fetchPackage(request: TPackageRequest<NuGetClientData>): Promise<TPackageDocument> {
     const dotnetSpec = parseVersionSpec(request.package.version);
     return this.fetchPackageRetry(request, dotnetSpec);
   }
 
   async fetchPackageRetry(
-    request: PackageRequest<NuGetClientData>,
+    request: TPackageRequest<NuGetClientData>,
     dotnetSpec: DotNetVersionSpec
-  ): Promise<PackageDocument> {
+  ): Promise<TPackageDocument> {
     const urls = request.clientData.serviceUrls;
     const autoCompleteUrl = urls[request.attempt];
 
     return this.createRemotePackageDocument(autoCompleteUrl, request, dotnetSpec)
       .catch((error: HttpClientResponse) => {
+
+        this.logger.debug(
+          "Caught exception from %s: %O",
+          PackageSourceTypes.Registry,
+          error
+        );
 
         // increase the attempt number
         request.attempt++;
@@ -61,13 +67,14 @@ export class NuGetPackageClient implements IPackageClient<NuGetClientData> {
           return this.fetchPackageRetry(request, dotnetSpec)
         }
 
-        if (error.status === 404) {
-          return DocumentFactory.createNotFound(
-            request.providerName,
-            request.package,
-            PackageVersionTypes.Version,
-            ResponseFactory.createResponseStatus(error.source, 404)
-          );
+        const suggestion = SuggestionFactory.createFromHttpStatus(error.status);
+        if (suggestion != null) {
+          return DocumentFactory.create(
+            PackageSourceTypes.Registry,
+            request,
+            error,
+            [suggestion]
+          )
         }
 
         // unexpected
@@ -78,9 +85,9 @@ export class NuGetPackageClient implements IPackageClient<NuGetClientData> {
 
   async createRemotePackageDocument(
     url: string,
-    request: PackageRequest<NuGetClientData>,
+    request: TPackageRequest<NuGetClientData>,
     dotnetSpec: DotNetVersionSpec
-  ): Promise<PackageDocument> {
+  ): Promise<TPackageDocument> {
 
     const query = {};
     const headers = {};
@@ -117,11 +124,11 @@ export class NuGetPackageClient implements IPackageClient<NuGetClientData> {
 
         // four segment is not supported
         if (dotnetSpec.spec && dotnetSpec.spec.hasFourSegments) {
-          return DocumentFactory.createFourSegment(
-            providerName,
-            requested,
-            ResponseFactory.createResponseStatus(httpResponse.source, 404),
-            <any>dotnetSpec.type,
+          return DocumentFactory.create(
+            PackageSourceTypes.Registry,
+            request,
+            httpResponse,
+            [],
           )
         }
 
@@ -146,7 +153,7 @@ export class NuGetPackageClient implements IPackageClient<NuGetClientData> {
         };
 
         // analyse suggestions
-        const suggestions = SuggestionFactory.createSuggestionTags(
+        const suggestions = SuggestionFactory.createSuggestions(
           versionRange,
           releases,
           prereleases

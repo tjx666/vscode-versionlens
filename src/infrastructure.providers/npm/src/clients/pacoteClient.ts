@@ -1,10 +1,10 @@
 import { ILogger } from 'core.logging';
+import { SuggestionFactory } from 'core.suggestions';
 import {
   DocumentFactory,
-  PackageRequest,
-  SuggestionFactory,
+  TPackageRequest,
   VersionHelpers,
-  PackageDocument,
+  TPackageDocument,
   PackageVersionTypes,
   PackageSourceTypes
 } from 'core.packages';
@@ -14,7 +14,7 @@ import { NpmConfig } from '../npmConfig';
 import { NpaSpec, NpaTypes } from '../models/npaSpec';
 import * as NpmUtils from '../npmUtils';
 
-export class PacoteClient extends AbstractCachedRequest<number, PackageDocument> {
+export class PacoteClient extends AbstractCachedRequest<number, TPackageDocument> {
 
   config: NpmConfig;
 
@@ -34,8 +34,8 @@ export class PacoteClient extends AbstractCachedRequest<number, PackageDocument>
   }
 
   async fetchPackage(
-    request: PackageRequest<null>, npaSpec: NpaSpec
-  ): Promise<PackageDocument> {
+    request: TPackageRequest<null>, npaSpec: NpaSpec
+  ): Promise<TPackageDocument> {
 
     const cacheKey = `${request.package.name}@${request.package.version}_${request.package.path}`;
     if (this.cache.cachingOpts.duration > 0 && this.cache.hasExpired(cacheKey) === false) {
@@ -62,7 +62,7 @@ export class PacoteClient extends AbstractCachedRequest<number, PackageDocument>
     );
 
     return this.pacote.packument(npaSpec, npmOpts)
-      .then(function (packumentResponse): PackageDocument {
+      .then(function (packumentResponse): TPackageDocument {
 
         const { compareLoose } = require("semver");
 
@@ -140,7 +140,7 @@ export class PacoteClient extends AbstractCachedRequest<number, PackageDocument>
         }
 
         // analyse suggestions
-        const suggestions = SuggestionFactory.createSuggestionTags(
+        const suggestions = SuggestionFactory.createSuggestions(
           versionRange,
           releases,
           prereleases,

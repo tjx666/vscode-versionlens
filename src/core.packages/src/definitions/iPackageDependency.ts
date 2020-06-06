@@ -1,17 +1,12 @@
-export type PackageDependencyRange = {
-  start: number;
-  end: number;
-}
+import { TPackageDependencyRange } from "./tPackageDependencyRange";
+import { TPackageNameVersion } from "./tPackageNameVersion";
 
 export interface IPackageDependency {
 
-  nameRange: PackageDependencyRange;
+  nameRange: TPackageDependencyRange;
 
-  versionRange: PackageDependencyRange;
+  versionRange: TPackageDependencyRange;
 
-  packageInfo: {
-    name: string;
-    version: string;
-  };
+  packageInfo: TPackageNameVersion;
 
 };

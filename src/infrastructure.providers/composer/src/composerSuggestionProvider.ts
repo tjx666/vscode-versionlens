@@ -3,7 +3,7 @@ import { ISuggestionProvider, defaultReplaceFn } from 'core.suggestions';
 import {
   extractPackageDependenciesFromJson,
   RequestFactory,
-  ReplaceVersionFunction,
+  TReplaceVersionFunction,
   IPackageDependency,
   PackageResponse
 } from 'core.packages';
@@ -19,7 +19,7 @@ export class ComposerSuggestionProvider implements ISuggestionProvider {
 
   logger: ILogger;
 
-  suggestionReplaceFn: ReplaceVersionFunction;
+  suggestionReplaceFn: TReplaceVersionFunction;
 
   constructor(client: ComposerClient, logger: ILogger) {
     this.client = client;

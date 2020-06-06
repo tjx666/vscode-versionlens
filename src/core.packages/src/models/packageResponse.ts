@@ -1,29 +1,26 @@
-import {
-  PackageSourceTypes,
-  PackageNameVersion,
-  PackageSuggestion,
-  PackageVersionTypes
-} from "../definitions/packageDocument";
-import { PackageIdentifier } from "../definitions/packageRequest";
-import {
-  PackageResponseErrors,
-  PackageResponseStatus
-} from "../definitions/packageResponse";
-import { PackageDependencyRange } from "../definitions/iPackageDependency";
+import { TPackageSuggestion } from 'core.suggestions';
+
+import { PackageSourceTypes } from '../definitions/ePackageSourceTypes';
+import { PackageVersionTypes } from '../definitions/ePackageVersionTypes';
+import { PackageResponseErrors } from '../definitions/ePackageResponseErrors';
+import { TPackageNameVersion } from '../definitions/tPackageNameVersion';
+import { TPackageIdentifier } from '../definitions/tPackageIdentifier';
+import { TPackageResponseStatus } from '../definitions/tPackageResponseStatus';
+import { TPackageDependencyRange } from '../definitions/tPackageDependencyRange';
 
 export class PackageResponse {
   providerName: string;
-  requested: PackageIdentifier;
+  requested: TPackageIdentifier;
 
-  nameRange: PackageDependencyRange;
-  versionRange: PackageDependencyRange;
+  nameRange: TPackageDependencyRange;
+  versionRange: TPackageDependencyRange;
   order: number;
 
   error?: PackageResponseErrors;
   errorMessage?: string;
   source?: PackageSourceTypes;
-  response?: PackageResponseStatus;
+  response?: TPackageResponseStatus;
   type?: PackageVersionTypes;
-  resolved?: PackageNameVersion;
-  suggestion?: PackageSuggestion;
+  resolved?: TPackageNameVersion;
+  suggestion?: TPackageSuggestion;
 }

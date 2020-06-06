@@ -4,12 +4,10 @@ import {
   PackageResponse,
   PackageResponseErrors,
   PackageSourceTypes,
-  ReplaceVersionFunction,
+  TReplaceVersionFunction,
 } from 'core.packages';
 
-import { IVersionCodeLens } from './definitions/iVersionCodeLens';
-
-export class VersionLens extends CodeLens implements IVersionCodeLens {
+export class VersionLens extends CodeLens {
 
   replaceRange: Range;
 
@@ -17,7 +15,7 @@ export class VersionLens extends CodeLens implements IVersionCodeLens {
 
   documentUrl: Uri;
 
-  replaceVersionFn: ReplaceVersionFunction;
+  replaceVersionFn: TReplaceVersionFunction;
 
   command: any;
 
@@ -26,7 +24,7 @@ export class VersionLens extends CodeLens implements IVersionCodeLens {
     replaceRange: Range,
     packageResponse: PackageResponse,
     documentUrl: Uri,
-    replaceVersionFn: ReplaceVersionFunction
+    replaceVersionFn: TReplaceVersionFunction
   ) {
     super(commandRange);
     this.replaceRange = replaceRange || commandRange;

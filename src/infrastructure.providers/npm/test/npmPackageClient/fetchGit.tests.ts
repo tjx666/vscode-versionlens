@@ -1,6 +1,6 @@
 import { LoggerStub } from 'test.core.logging';
 import { ClientResponseSource } from 'core.clients';
-import { PackageSuggestionFlags } from 'core.packages';
+import { SuggestionFlags } from 'core.suggestions';
 
 import {
   NpmPackageClient,
@@ -69,7 +69,7 @@ export default {
               {
                 name: 'fixed',
                 version: 'git repository',
-                flags: PackageSuggestionFlags.status
+                flags: SuggestionFlags.status
               }
             ]
           )
@@ -107,7 +107,7 @@ export default {
               {
                 name: 'not supported',
                 version: '',
-                flags: PackageSuggestionFlags.status
+                flags: SuggestionFlags.status
               }
             ]
           )

@@ -1,9 +1,8 @@
 import { KeyStringArrayDictionary } from 'core.generics';
-import { SemverSpec } from "../definitions/semverSpec";
-import {
-  PackageNameVersion,
-  PackageVersionTypes,
-} from "../definitions/packageDocument";
+
+import { TSemverSpec } from "../definitions/tSemverSpec";
+import { TPackageNameVersion } from "../definitions/tPackageNameVersion";
+import { PackageVersionTypes } from "../definitions/ePackageVersionTypes";
 
 export const formatTagNameRegex = /^[^0-9\-]*/;
 export const loosePrereleases = { loose: true, includePrerelease: true };
@@ -19,16 +18,16 @@ export function filterPrereleasesFromDistTags(distTags: { [key: string]: string 
   return prereleases;
 }
 
-export function extractVersionsFromMap(versions: Array<PackageNameVersion>): Array<string> {
-  return versions.map(function (pnv: PackageNameVersion) {
+export function extractVersionsFromMap(versions: Array<TPackageNameVersion>): Array<string> {
+  return versions.map(function (pnv: TPackageNameVersion) {
     return pnv.version;
   });
 }
 
-export function extractTaggedVersions(versions: Array<string>): Array<PackageNameVersion> {
+export function extractTaggedVersions(versions: Array<string>): Array<TPackageNameVersion> {
   const { prerelease } = require('semver');
 
-  const results: Array<PackageNameVersion> = [];
+  const results: Array<TPackageNameVersion> = [];
   versions.forEach(function (version) {
     const prereleaseComponents = prerelease(version);
     const isPrerelease = !!prereleaseComponents && prereleaseComponents.length > 0;
@@ -38,7 +37,7 @@ export function extractTaggedVersions(versions: Array<string>): Array<PackageNam
       let name = regexResult[0].toLowerCase();
 
       // capture cases like x.x.x-x.x.x
-      if(!name) name = prereleaseComponents.join('.');
+      if (!name) name = prereleaseComponents.join('.');
 
       results.push({
         name,
@@ -122,7 +121,7 @@ export function friendlifyPrereleaseName(prereleaseName: string): string {
     filteredNames[0];
 }
 
-export function parseSemver(packageVersion: string): SemverSpec {
+export function parseSemver(packageVersion: string): TSemverSpec {
   const { valid, validRange } = require('semver');
   const isVersion = valid(packageVersion, loosePrereleases);
   const isRange = validRange(packageVersion, loosePrereleases);

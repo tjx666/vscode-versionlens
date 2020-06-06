@@ -1,5 +1,5 @@
 import { Nullable } from 'core.generics';
-import { IPackageDependency, PackageDependencyRange } from 'core.packages';
+import { IPackageDependency, TPackageDependencyRange } from 'core.packages';
 
 export function createDependenciesFromXml(
   xml: string, includePropertyNames: Array<string>
@@ -63,7 +63,7 @@ function createFromAttribute(node, xml: string): IPackageDependency {
 
 function getAttributeRange(
   node, attributeName: string, xml: string
-): Nullable<PackageDependencyRange> {
+): Nullable<TPackageDependencyRange> {
   const lineText = xml.substring(node.startTagPosition, node.position);
 
   let start = lineText.toLowerCase().indexOf(attributeName);

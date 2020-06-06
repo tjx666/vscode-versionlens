@@ -5,7 +5,7 @@ import {
   RequestFactory,
   IPackageDependency,
   PackageResponse,
-  ReplaceVersionFunction
+  TReplaceVersionFunction
 } from 'core.packages';
 
 import { DotNetCli } from './clients/dotnetCli';
@@ -27,7 +27,7 @@ export class DotNetSuggestionProvider implements ISuggestionProvider {
 
   logger: ILogger;
 
-  suggestionReplaceFn: ReplaceVersionFunction;
+  suggestionReplaceFn: TReplaceVersionFunction;
 
   constructor(
     dotnetCli: DotNetCli,

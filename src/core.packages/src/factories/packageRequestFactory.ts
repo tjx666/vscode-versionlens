@@ -2,7 +2,7 @@ import {
   RequestFactory,
   ResponseFactory,
   IPackageDependency,
-  PackageRequest,
+  TPackageRequest,
   IPackageClient,
   PackageResponse,
 } from 'core.packages';
@@ -22,7 +22,7 @@ export async function executeDependencyRequests<TClientData>(
 
       // build the client request
       const { name, version } = dependency.packageInfo;
-      const clientRequest: PackageRequest<TClientData> = {
+      const clientRequest: TPackageRequest<TClientData> = {
         providerName,
         clientData,
         dependency,
@@ -59,7 +59,7 @@ export async function executeDependencyRequests<TClientData>(
 
 export async function executePackageRequest<TClientData>(
   client: IPackageClient<TClientData>,
-  request: PackageRequest<TClientData>,
+  request: TPackageRequest<TClientData>,
 ): Promise<Array<PackageResponse> | PackageResponse> {
 
   client.logger.debug(`Queued package: %s`, request.package.name);

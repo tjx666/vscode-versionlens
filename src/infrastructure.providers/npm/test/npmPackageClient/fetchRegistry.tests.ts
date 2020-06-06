@@ -1,8 +1,7 @@
 import { LoggerStub } from 'test.core.logging';
 
 import { ClientResponseSource } from 'core.clients';
-
-import { PackageSuggestionFlags } from 'core.packages';
+import { SuggestionFlags } from 'core.suggestions';
 
 import {
   NpmConfig,
@@ -74,7 +73,7 @@ export default {
               [{
                 name: testState.suggestion.name,
                 version: '',
-                flags: PackageSuggestionFlags.status
+                flags: SuggestionFlags.status
               }]
             )
           })

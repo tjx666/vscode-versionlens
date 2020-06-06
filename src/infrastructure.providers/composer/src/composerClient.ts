@@ -1,13 +1,12 @@
 import { ILogger } from 'core.logging';
+import { SuggestionFactory } from 'core.suggestions';
 import {
   DocumentFactory,
-  ResponseFactory,
-  SuggestionFactory,
   VersionHelpers,
-  PackageRequest,
-  PackageDocument,
+  TPackageRequest,
+  TPackageDocument,
   PackageSourceTypes,
-  SemverSpec,
+  TSemverSpec,
   IPackageClient
 } from 'core.packages';
 import {
@@ -37,35 +36,46 @@ export class ComposerClient implements IPackageClient<null> {
     this.logger = logger;
   }
 
-  async fetchPackage<TClientData>(request: PackageRequest<TClientData>): Promise<PackageDocument> {
+  async fetchPackage<TClientData>(
+    request: TPackageRequest<TClientData>
+  ): Promise<TPackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
     const url = `${this.config.apiUrl}/${request.package.name}.json`;
 
     return this.createRemotePackageDocument(url, request, semverSpec)
       .catch((error: HttpClientResponse) => {
-        if (error.status === 404) {
-          return DocumentFactory.createNotFound(
-            request.providerName,
-            request.package,
-            null,
-            ResponseFactory.createResponseStatus(error.source, error.status)
-          );
+
+        this.logger.debug(
+          "Caught exception from %s: %O",
+          PackageSourceTypes.Registry,
+          error
+        );
+
+        const suggestion = SuggestionFactory.createFromHttpStatus(error.status);
+        if (suggestion != null) {
+          return DocumentFactory.create(
+            PackageSourceTypes.Registry,
+            request,
+            error,
+            [suggestion]
+          )
         }
+
         return Promise.reject(error);
       });
   }
 
   async createRemotePackageDocument<TClientData>(
     url: string,
-    request: PackageRequest<TClientData>,
-    semverSpec: SemverSpec
-  ): Promise<PackageDocument> {
+    request: TPackageRequest<TClientData>,
+    semverSpec: TSemverSpec
+  ): Promise<TPackageDocument> {
 
     const query = {};
     const headers = {};
 
     return this.client.request(HttpClientRequestMethods.get, url, query, headers)
-      .then(function (httpResponse: JsonClientResponse): PackageDocument {
+      .then(function (httpResponse: JsonClientResponse): TPackageDocument {
         const packageInfo = httpResponse.data.packages[request.package.name];
 
         const { providerName } = request;
@@ -95,7 +105,7 @@ export class ComposerClient implements IPackageClient<null> {
         );
 
         // analyse suggestions
-        const suggestions = SuggestionFactory.createSuggestionTags(
+        const suggestions = SuggestionFactory.createSuggestions(
           versionRange,
           releases,
           prereleases

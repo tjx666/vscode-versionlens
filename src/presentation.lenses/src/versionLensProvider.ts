@@ -11,18 +11,17 @@ import {
 } from 'vscode';
 
 import { ILogger } from 'core.logging';
-import { ISuggestionProvider, defaultReplaceFn } from 'core.suggestions';
-import { IProviderConfig } from 'core.providers';
 import {
-  PackageSourceTypes,
-  PackageResponseErrors,
-  PackageSuggestionFlags,
-  PackageVersionStatus
-} from 'core.packages';
+  ISuggestionProvider,
+  SuggestionFlags,
+  SuggestionStatus,
+  defaultReplaceFn,
+} from 'core.suggestions';
+import { IProviderConfig } from 'core.providers';
+import { PackageSourceTypes, PackageResponseErrors } from 'core.packages';
 
 import {
   CommandFactory,
-  IVersionCodeLens,
   VersionLens,
   VersionLensFactory
 } from "presentation.lenses";
@@ -116,7 +115,7 @@ export class VersionLensProvider implements CodeLensProvider {
         }
 
         this.logger.info(
-          "Resolved %s dependencies for %s",
+          "Resolved %s %s dependencies",
           responses.length,
           this.config.providerName
         );
@@ -125,8 +124,8 @@ export class VersionLensProvider implements CodeLensProvider {
           responses = responses.filter(
             function (response) {
               const { suggestion } = response;
-              return (suggestion.flags & PackageSuggestionFlags.prerelease) === 0 ||
-                suggestion.name.includes(PackageVersionStatus.LatestIsPrerelease);
+              return (suggestion.flags & SuggestionFlags.prerelease) === 0 ||
+                suggestion.name.includes(SuggestionStatus.LatestIsPrerelease);
             }
           )
         }
@@ -156,7 +155,7 @@ export class VersionLensProvider implements CodeLensProvider {
     }
   }
 
-  evaluateCodeLens(codeLens: IVersionCodeLens, token: CancellationToken) {
+  evaluateCodeLens(codeLens: VersionLens, token: CancellationToken) {
     if (codeLens.hasPackageError(PackageResponseErrors.Unexpected))
       return CommandFactory.createPackageUnexpectedError(codeLens);
 

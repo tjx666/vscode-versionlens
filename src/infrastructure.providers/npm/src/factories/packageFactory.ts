@@ -1,13 +1,12 @@
 import {
   DocumentFactory,
-  PackageIdentifier,
-  PackageResponseStatus,
-  PackageDocument,
+  TPackageIdentifier,
+  TPackageResponseStatus,
+  TPackageDocument,
   PackageVersionTypes,
-  PackageSourceTypes,
-  PackageSuggestion,
-  PackageSuggestionFlags
+  PackageSourceTypes
 } from 'core.packages';
+import { TPackageSuggestion, SuggestionFlags } from 'core.suggestions';
 
 import { NpaSpec } from '../models/npaSpec';
 
@@ -15,10 +14,10 @@ export const fileDependencyRegex = /^file:(.*)$/;
 
 export function createDirectory(
   providerName: string,
-  requested: PackageIdentifier,
-  response: PackageResponseStatus,
+  requested: TPackageIdentifier,
+  response: TPackageResponseStatus,
   npaSpec: NpaSpec
-): PackageDocument {
+): TPackageDocument {
 
   const fileRegExpResult = fileDependencyRegex.exec(requested.version);
   if (!fileRegExpResult) {
@@ -38,11 +37,11 @@ export function createDirectory(
     version: fileRegExpResult[1],
   };
 
-  const suggestions: Array<PackageSuggestion> = [
+  const suggestions: Array<TPackageSuggestion> = [
     {
       name: 'file://',
       version: resolved.version,
-      flags: PackageSuggestionFlags.release
+      flags: SuggestionFlags.release
     },
   ]
 

@@ -2,6 +2,7 @@
 export * from 'test.core.clients'
 export * from 'test.core.configuration'
 export * from 'test.core.packages'
+export * from 'test.core.suggestions'
 
 export * from 'test.infrastructure.clients'
 export * from 'test.infrastructure.configuration'

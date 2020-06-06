@@ -4,7 +4,7 @@ import {
   RequestFactory,
   IPackageDependency,
   PackageResponse,
-  ReplaceVersionFunction
+  TReplaceVersionFunction
 } from 'core.packages';
 import { ISuggestionProvider } from 'core.suggestions';
 
@@ -20,7 +20,7 @@ export class PubSuggestionProvider implements ISuggestionProvider {
 
   logger: ILogger
 
-  suggestionReplaceFn: ReplaceVersionFunction;
+  suggestionReplaceFn: TReplaceVersionFunction;
 
   constructor(client: PubClient, logger: ILogger) {
     this.client = client;
