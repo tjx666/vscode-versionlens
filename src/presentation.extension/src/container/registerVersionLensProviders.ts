@@ -3,8 +3,7 @@ import { languages, Disposable } from 'vscode';
 import { ILogger } from "core.logging";
 import { ISuggestionProvider } from "core.suggestions";
 
-import { VersionLensExtension } from "presentation.extension";
-import { VersionLensProvider } from "presentation.lenses";
+import { VersionLensExtension, VersionLensProvider } from "presentation.extension";
 
 export function registerVersionLensProviders(
   extension: VersionLensExtension,

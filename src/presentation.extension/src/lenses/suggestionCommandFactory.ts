@@ -1,8 +1,10 @@
 import { SuggestionFlags } from 'core.suggestions';
 
-import { SuggestionIndicators } from 'presentation.extension';
-import { VersionLens } from 'presentation.lenses';
-import { SuggestionCommandContributions } from 'presentation.extension';
+import {
+  SuggestionIndicators,
+  VersionLens,
+  SuggestionCommandContributions
+} from 'presentation.extension';
 
 export function createErrorCommand(errorMsg, codeLens) {
   return codeLens.setCommand(`${errorMsg}`);

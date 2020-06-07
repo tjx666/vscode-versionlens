@@ -4,8 +4,7 @@ import { workspace, WorkspaceEdit, Disposable, env } from 'vscode';
 import { ILogger } from 'core.logging';
 import { PackageSourceTypes } from 'core.packages';
 
-import { VersionLens } from 'presentation.lenses';
-import { CommandHelpers } from 'presentation.extension';
+import { CommandHelpers, VersionLens } from 'presentation.extension';
 
 import { VersionLensState } from '../state/versionLensState';
 import { SuggestionCommandContributions } from '../definitions/eSuggestionCommandContributions';

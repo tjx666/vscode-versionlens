@@ -6,8 +6,7 @@ import * as VsCodeTypes from 'vscode';
 
 import { ILogger } from 'core.logging';
 
-import { CommandHelpers } from 'presentation.extension';
-import { VersionLensProvider } from 'presentation.lenses';
+import { CommandHelpers, VersionLensProvider } from 'presentation.extension';
 
 import { IconCommandContributions } from '../definitions/eIconCommandContributions';
 import * as InstalledStatusHelpers from '../helpers/installedStatusHelpers';

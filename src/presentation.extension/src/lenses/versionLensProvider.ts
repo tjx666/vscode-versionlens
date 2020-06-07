@@ -23,9 +23,10 @@ import { PackageSourceTypes, PackageResponseErrors } from 'core.packages';
 import {
   CommandFactory,
   VersionLens,
-  VersionLensFactory
-} from "presentation.lenses";
-import { VersionLensExtension, VersionLensState } from 'presentation.extension';
+  VersionLensFactory,
+  VersionLensExtension,
+  VersionLensState
+} from 'presentation.extension';
 
 export class VersionLensProvider implements CodeLensProvider {
 

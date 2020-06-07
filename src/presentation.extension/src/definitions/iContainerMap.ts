@@ -11,10 +11,9 @@ import {
   VersionLensExtension,
   TextEditorEvents,
   IconCommands,
-  SuggestionCommands
+  SuggestionCommands,
+  VersionLensProvider
 } from 'presentation.extension';
-
-import { VersionLensProvider } from 'presentation.lenses';
 
 export interface IContainerMap {
 
