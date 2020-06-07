@@ -70,6 +70,8 @@ export const HttpRequestTests = {
           status: 200
         })
 
+      const promised = []
+
       testFlags.forEach(async (test, testIndex) => {
         when(cachingOptsMock.duration).thenReturn(test.testDuration);
         when(httpOptsMock.strictSSL).thenReturn(test.testStrictSSL);
@@ -83,14 +85,16 @@ export const HttpRequestTests = {
           instance(loggerMock)
         );
 
-        await rut.request(HttpClientRequestMethods.get, 'anywhere')
-          .then(() => {
-            const [actualOpts] = capture(requestLightMock.xhr).byCallIndex(testIndex);
-            assert.equal(actualOpts.strictSSL, test.testStrictSSL);
-          })
-          .catch(e => console.error(e))
+        promised.push(
+          rut.request(HttpClientRequestMethods.get, 'anywhere')
+            .then(() => {
+              const [actualOpts] = capture(requestLightMock.xhr).byCallIndex(testIndex);
+              assert.equal(actualOpts.strictSSL, test.testStrictSSL);
+            })
+        )
       })
 
+      return Promise.all(promised)
     },
 
     "generates the expected url with query params": async () => {

@@ -41,7 +41,7 @@ export default {
       };
 
       const testStates = [
-        { status: 401, suggestion: { name: 'not authorized' } },
+        { status: 401, suggestion: { name: '401 not authorized' } },
         { status: 404, suggestion: { name: 'package not found' } },
         { status: 'ECONNREFUSED', suggestion: { name: 'connection refused' } },
       ]
@@ -54,7 +54,9 @@ export default {
         instance(loggerMock)
       );
 
-      return testStates.forEach(async testState => {
+      const promised = []
+
+      testStates.forEach(testState => {
 
         when(pacoteMock.fetchPackage(anything(), anything()))
           .thenReject({
@@ -63,24 +65,27 @@ export default {
             source: ClientResponseSource.remote
           })
 
-        await cut.fetchPackage(testRequest)
-          .then((actual) => {
-            assert.equal(actual.source, 'registry')
-            assert.deepEqual(actual.requested, testRequest.package)
+        promised.push(
+          cut.fetchPackage(testRequest)
+            .then((actual) => {
+              assert.equal(actual.source, 'registry')
+              assert.deepEqual(actual.requested, testRequest.package)
 
-            assert.deepEqual(
-              actual.suggestions,
-              [{
-                name: testState.suggestion.name,
-                version: '',
-                flags: SuggestionFlags.status
-              }]
-            )
-          })
-          .catch(e => console.error(e))
+              assert.deepEqual(
+                actual.suggestions,
+                [{
+                  name: testState.suggestion.name,
+                  version: '',
+                  flags: SuggestionFlags.status
+                }]
+              )
+
+            })
+        )
 
       })
 
+      return await Promise.all(promised)
     }
 
   }
