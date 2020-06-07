@@ -50,22 +50,3 @@ export function createSuggestedVersionCommand(codeLens: VersionLens) {
   // show the status
   return createTagCommand(`${name} ${version}`.trimEnd(), codeLens);
 }
-
-export function createPackageNotFoundCommand(codeLens: VersionLens) {
-  return createErrorCommand(`${codeLens.package.requested.name} could not be found`, codeLens);
-}
-
-export function createPackageUnexpectedError(codeLens: VersionLens) {
-  // An error occurred retrieving this package.
-  return createErrorCommand(
-    `Unexpected error. See dev tools console`,
-    codeLens
-  );
-}
-
-export function createPackageMessageCommand(codeLens) {
-  return createErrorCommand(
-    `${codeLens.package.meta.message}`,
-    codeLens
-  );
-}

@@ -156,18 +156,6 @@ export class VersionLensProvider implements CodeLensProvider {
   }
 
   evaluateCodeLens(codeLens: VersionLens, token: CancellationToken) {
-    if (codeLens.hasPackageError(PackageResponseErrors.Unexpected))
-      return CommandFactory.createPackageUnexpectedError(codeLens);
-
-    if (codeLens.hasPackageError(PackageResponseErrors.NotFound))
-      return CommandFactory.createPackageNotFoundCommand(codeLens);
-
-    if (codeLens.hasPackageError(PackageResponseErrors.NotSupported))
-      return CommandFactory.createPackageMessageCommand(codeLens);
-
-    if (codeLens.hasPackageError(PackageResponseErrors.GitNotFound))
-      return CommandFactory.createPackageMessageCommand(codeLens);
-
     if (codeLens.hasPackageSource(PackageSourceTypes.Directory))
       return CommandFactory.createDirectoryLinkCommand(codeLens);
 
