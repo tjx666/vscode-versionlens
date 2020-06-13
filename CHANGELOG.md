@@ -1,16 +1,20 @@
-# 1.0.8-preview.1
+# 1.0.8
 
 - Logging level can now be changed without restarting vscode
 
-- Writes any caught exception from clients to the [debug] log
+- Writes all caught exceptions by api clients (even when handled) to the [debug] log
 
 - **Npm** Handles a case where pacote returns a 'Not implemented yet' error
 
   reported in [#254](https://github.com/vscode-contrib/vscode-versionlens/issues/254)
 
-- **Npm** Handles bad requests preventing suggestions from appearing 
+- **Npm** Handles bad requests preventing suggestions from appearing
 
   reported in [#236](https://github.com/vscode-contrib/vscode-versionlens/issues/236)
+
+- **Dotnet** Fixes errors when nuget resource client fails
+
+  reported in [#262](https://github.com/vscode-contrib/vscode-versionlens/issues/262)
 
 # 1.0.7
 
