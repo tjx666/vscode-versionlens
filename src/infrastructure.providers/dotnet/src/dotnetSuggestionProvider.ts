@@ -79,10 +79,15 @@ export class DotNetSuggestionProvider implements ISuggestionProvider {
       }
     );
 
-    const autoCompleteUrls = await Promise.all(promised);
-    if (autoCompleteUrls.length === 0) return null;
+    const serviceUrls = (await Promise.all(promised))
+      .filter(url => url.length > 0);
 
-    const clientData: NuGetClientData = { serviceUrls: autoCompleteUrls }
+    if (serviceUrls.length === 0) {
+      this.logger.error("Could not resolve any nuget service urls")
+      return null;
+    }
+
+    const clientData: NuGetClientData = { serviceUrls: serviceUrls }
 
     return RequestFactory.executeDependencyRequests(
       packagePath,

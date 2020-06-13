@@ -48,11 +48,11 @@ export class NuGetResourceClient {
       .catch((error: HttpClientResponse) => {
 
         this.logger.error(
-          "Could not resolve nuget service index. %s",
-          error.data
+          "Could not resolve nuget service index. %O",
+          error
         )
 
-        return Promise.reject(error)
+        return "";
       });
 
   }

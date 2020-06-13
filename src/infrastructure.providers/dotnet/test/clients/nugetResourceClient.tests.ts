@@ -61,7 +61,7 @@ export const NuGetResourceClientTests = {
         });
     },
 
-    "throws an error when no resource or feeds can be obtained": async () => {
+    "returns empty when the resource cannot be obtained": async () => {
 
       const testSource = {
         enabled: true,
@@ -70,15 +70,17 @@ export const NuGetResourceClientTests = {
         protocol: UrlHelpers.RegistryProtocols.https
       };
 
-      const expectedResponse = {
+      const errorResponse = {
         source: 'remote',
         status: 404,
         data: 'an error occurred',
         rejected: true
       };
 
+      const expectedUrl = "";
+
       when(jsonClientMock.request(anything(), anything(), anything(), anything()))
-        .thenReject(expectedResponse)
+        .thenReject(errorResponse)
 
       const cut = new NuGetResourceClient(
         instance(jsonClientMock),
@@ -86,9 +88,13 @@ export const NuGetResourceClientTests = {
       )
 
       await cut.fetchResource(testSource)
+        .then(actualUrl => {
+          assert.equal(actualUrl, expectedUrl)
+        })
         .catch(err => {
-          assert.deepEqual(err, expectedResponse)
+          assert.fail();
         });
+
     },
 
   }
