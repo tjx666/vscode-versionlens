@@ -5,7 +5,7 @@
   "description": "Shows the latest version for each package using code lens",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vscode-contrib/vscode-versionlens.git"
+    "url": "https://gitlab.com/versionlens/vscode-versionlens.git"
   },
   "author": "Peter Flannery",
   "license": "ISC",
