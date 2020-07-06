@@ -54,17 +54,19 @@ If that fails then have a look in the `Log (Extension Host)` channel. Report it 
 
 ## How do I troubleshoot this extension?
 
-Version lens writes a log to an output channel in vscode.
+- Ensure that the package\project file open is using the correct file type. i.e. json instead of jsonc
 
-If your experiencing issues please set your `versionlens.logging.level` to `debug` (vscode needs to be restarted) 
+  ![image](images/faq/json-file-type.png)
 
-Then open the channel like:
+- Version lens writes a log to an output channel in vscode.
 
-![image](images/faq/ext-log.png)
-
+  If your experiencing issues please set your `versionlens.logging.level` to `debug` (vscode needs to be restarted) 
+    
+  Then open the channel like:
+    
+  ![image](images/faq/ext-log.png)
 
 ## License
-
 
 Licensed under ISC
 
