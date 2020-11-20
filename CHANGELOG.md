@@ -1,3 +1,15 @@
+# 1.0.9
+
+- Ensures config urls have end slashes.
+
+  Reported in [#273](https://gitlab.com/versionlens/vscode-versionlens/-/issues/273)
+
+  Part of the fix thanks to [@Yiiu](https://gitlab.com/Yiiu)
+
+- Package dependencies updated
+
+- Moved source code to gitlab https://gitlab.com/versionlens/vscode-versionlens
+
 # 1.0.8
 
 - Logging level can now be changed without restarting vscode
