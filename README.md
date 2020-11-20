@@ -22,7 +22,7 @@ Click the V icon in the package\project file toolbar.
 
 You can also choose the default startup state by setting `versionlens.suggestions.showOnStartup`
 
-![Show releases](images/faq/show-releases.gif)
+![Show releases](https://gitlab.com/versionlens/vscode-versionlens/-/raw/master/images/faq/show-releases.gif)
 
 ## Can I see prerelease versions?
 
@@ -30,7 +30,7 @@ Yes! click on the tag icon in the package\project file toolbar.
 
 You can also choose the default startup state by setting `versionlens.suggestions.showPrereleasesOnStartup`
 
-![Show prereleases](images/faq/show-prereleases.gif)
+![Show prereleases](https://gitlab.com/versionlens/vscode-versionlens/-/raw/master/images/faq/show-prereleases.gif)
 
 ## How do I install this extension?
 
@@ -50,13 +50,13 @@ Try a clean install:
 
 If that fails then have a look in the `Log (Extension Host)` channel. Report it here if that doesn't help.
 
-![image](images/faq/ext-host-log.png)
+![image](https://gitlab.com/versionlens/vscode-versionlens/-/raw/master/images/faq/ext-host-log.png)
 
 ## How do I troubleshoot this extension?
 
 - Ensure that the package\project file open is using the correct file type. i.e. json instead of jsonc
 
-  ![image](images/faq/json-file-type.png)
+  ![image](https://gitlab.com/versionlens/vscode-versionlens/-/raw/master/images/faq/json-file-type.png)
 
 - Version lens writes a log to an output channel in vscode.
 
@@ -64,7 +64,7 @@ If that fails then have a look in the `Log (Extension Host)` channel. Report it 
     
   Then open the channel like:
     
-  ![image](images/faq/ext-log.png)
+  ![image](https://gitlab.com/versionlens/vscode-versionlens/-/raw/master/images/faq/ext-log.png)
 
 ## License
 
