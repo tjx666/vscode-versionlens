@@ -35,7 +35,7 @@ export class PubClient implements IPackageClient<null> {
 
   async fetchPackage(request: TPackageRequest<null>): Promise<TPackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
-    const url = `${this.config.apiUrl}/api/documentation/${request.package.name}`;
+    const url = `${this.config.apiUrl}api/documentation/${request.package.name}`;
 
     return this.createRemotePackageDocument(url, request, semverSpec)
       .catch((error: HttpClientResponse) => {
