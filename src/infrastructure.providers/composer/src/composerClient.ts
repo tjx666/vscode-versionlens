@@ -40,7 +40,7 @@ export class ComposerClient implements IPackageClient<null> {
     request: TPackageRequest<TClientData>
   ): Promise<TPackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
-    const url = `${this.config.apiUrl}/${request.package.name}.json`;
+    const url = `${this.config.apiUrl}${request.package.name}.json`;
 
     return this.createRemotePackageDocument(url, request, semverSpec)
       .catch((error: HttpClientResponse) => {

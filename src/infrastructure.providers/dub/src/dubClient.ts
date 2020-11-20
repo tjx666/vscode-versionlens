@@ -37,7 +37,7 @@ export class DubClient implements IPackageClient<null> {
 
   async fetchPackage(request: TPackageRequest<null>): Promise<TPackageDocument> {
     const semverSpec = VersionHelpers.parseSemver(request.package.version);
-    const url = `${this.config.apiUrl}/${encodeURIComponent(request.package.name)}/info`;
+    const url = `${this.config.apiUrl}${encodeURIComponent(request.package.name)}/info`;
 
     return this.createRemotePackageDocument(url, request, semverSpec)
       .catch((error: HttpClientResponse) => {

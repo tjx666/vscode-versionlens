@@ -1,5 +1,5 @@
 import { IFrozenOptions } from 'core.configuration';
-import { ICachingOptions, IHttpOptions } from 'core.clients';
+import { ICachingOptions, IHttpOptions, UrlHelpers } from 'core.clients';
 import { ProviderSupport, IProviderConfig, TProviderFileMatcher } from 'core.providers';
 
 import { DubContributions } from './definitions/eDubContributions';
@@ -36,8 +36,8 @@ export class DubConfig implements IProviderConfig {
     return this.config.get(DubContributions.DependencyProperties);
   }
 
-  get apiUrl(): Array<string> {
-    return this.config.get(DubContributions.ApiUrl);
+  get apiUrl(): string {
+    return UrlHelpers.ensureEndSlash(this.config.get(DubContributions.ApiUrl));
   }
 
 }

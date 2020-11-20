@@ -1,4 +1,4 @@
-import { ICachingOptions, IHttpOptions } from 'core.clients';
+import { ICachingOptions, IHttpOptions, UrlHelpers } from 'core.clients';
 import { IFrozenOptions } from 'core.configuration';
 import { ProviderSupport, IProviderConfig, TProviderFileMatcher } from 'core.providers';
 
@@ -36,7 +36,7 @@ export class PubConfig implements IProviderConfig {
   }
 
   get apiUrl(): string {
-    return this.config.get(PubContributions.ApiUrl);
+    return UrlHelpers.ensureEndSlash(this.config.get(PubContributions.ApiUrl));
   }
 
 }

@@ -39,4 +39,26 @@ export const UrlHelpersTests = {
 
   },
 
+  "ensureEndSlash": {
+
+    "appends missing slashes": () => {
+      const testUrls = [
+        'https://test.url.example',
+        'https://test.url.example/'
+      ]
+
+      const expectedUrls = [
+        'https://test.url.example/',
+        'https://test.url.example/'
+      ]
+
+      testUrls.forEach((testUrl, testIndex) => {
+        const actual = UrlHelpers.ensureEndSlash(testUrl)
+        assert.equal(actual, expectedUrls[testIndex], "End slash did not match")
+      })
+
+    },
+
+  },
+
 };

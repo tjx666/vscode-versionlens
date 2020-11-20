@@ -294,7 +294,7 @@
         },
         "versionlens.pub.apiUrl": {
           "type": "string",
-          "default": "https://pub.dev/",
+          "default": "https://pub.dev",
           "description": "Defines the pub api to use for package searching."
         },
         "versionlens.dotnet.caching.duration": {
