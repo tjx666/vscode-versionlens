@@ -1,3 +1,9 @@
+# 1.10.0
+
+- **Dotnet** Added PackageVersion to 'versionlens.dotnet.dependencyProperties' setting for "central package versioning"
+
+  Reported in [#278](https://github.com/vscode-contrib/vscode-versionlens/issues/278)
+
 # 1.0.9
 
 - Ensures config urls have end slashes.

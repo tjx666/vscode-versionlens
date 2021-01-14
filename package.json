@@ -9,7 +9,7 @@
   },
   "author": "Peter Flannery",
   "license": "ISC",
-  "version": "1.0.9",
+  "version": "1.10.0",
   "publisher": "pflannery",
   "displayName": "Version Lens",
   "icon": "images/logo.png",
@@ -323,7 +323,7 @@
             "PackageVersion",
             "DotNetCliToolReference"
           ],
-          "description": "Defines which properties in project.json should be parsed by this extension"
+          "description": "Defines which project properties should be parsed by this extension"
         },
         "versionlens.dotnet.tagFilter": {
           "type": "array",
