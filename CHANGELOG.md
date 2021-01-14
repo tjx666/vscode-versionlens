@@ -2,7 +2,7 @@
 
 - **Dotnet** Added PackageVersion to 'versionlens.dotnet.dependencyProperties' setting for "central package versioning"
 
-  Reported in [#278](https://github.com/vscode-contrib/vscode-versionlens/issues/278)
+  Reported in [#278](https://gitlab.com/versionlens/vscode-versionlens/issues/278)
 
 # 1.0.9
 
