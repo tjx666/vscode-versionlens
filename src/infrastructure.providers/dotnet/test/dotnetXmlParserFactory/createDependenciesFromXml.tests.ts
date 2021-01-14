@@ -22,7 +22,7 @@ export default {
   },
 
   "extracts dependency entries from dotnet xml": () => {
-    const includeNames = ["PackageReference"]
+    const includeNames = ["PackageReference", "PackageVersion"]
     const results = createDependenciesFromXml(
       Fixtures.createDependenciesFromXml.test,
       includeNames
