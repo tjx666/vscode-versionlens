@@ -24,7 +24,7 @@
       ]
     },
     {
-      "name": "Vscode tests",
+      "name": "Unit tests",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
